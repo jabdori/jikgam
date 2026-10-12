@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+.next/
+dist/
+outputs/
+*.safetensors
+*.gguf
+recordings/
+.DS_Store

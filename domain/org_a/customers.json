@@ -1,0 +1,117 @@
+{
+  "_note": "가상 데이터. 기준일 2026-10-12. 모든 날짜는 KST.",
+  "reference_date": "2026-10-12",
+  "incidents": [
+    {"id": "INC-2026-1008", "start": "2026-10-08T13:00", "end": "2026-10-08T18:00", "hours": 5, "cause": "company"},
+    {"id": "INC-2026-0921", "start": "2026-09-21T02:00", "end": "2026-09-21T03:30", "hours": 1.5, "cause": "company"}
+  ],
+  "customers": [
+    {"id": "C001", "name": "김하늘", "phone": "010-0000-0001", "birth": "1990-03-14", "status": "active",
+     "subscriptions": [{"id": "S001", "plan": "monthly", "price": 9900, "start": "2026-10-09", "next_billing": "2026-11-09"}],
+     "payments": [{"id": "P001", "sub": "S001", "date": "2026-10-09", "amount": 9900, "method": "card", "dispute": false}],
+     "usage": [],
+     "_case": "월 구독, 결제 3일차, 이용 이력 없음 → 청약철회 전액 환불"},
+
+    {"id": "C002", "name": "이도윤", "phone": "010-0000-0002", "birth": "1985-07-02", "status": "active",
+     "subscriptions": [{"id": "S002", "plan": "monthly", "price": 9900, "start": "2026-10-08", "next_billing": "2026-11-08"}],
+     "payments": [{"id": "P002", "sub": "S002", "date": "2026-10-08", "amount": 9900, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-10-09", "type": "play"}],
+     "_case": "월 구독, 결제 4일차, 이용 있음 → 환불 없음, 해지 시 2026-11-07까지 이용"},
+
+    {"id": "C003", "name": "박서연", "phone": "010-0000-0003", "birth": "1993-11-21", "status": "active",
+     "subscriptions": [{"id": "S003", "plan": "annual", "price": 99000, "promo": false, "start": "2026-07-15", "next_billing": "2027-07-15"}],
+     "payments": [{"id": "P003", "sub": "S003", "date": "2026-07-15", "amount": 99000, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-07-16", "type": "play"}, {"date": "2026-09-30", "type": "download"}],
+     "_case": "연 구독 정상, 2026-07-01 이후 결제, 이용 3개월 → 환불 62,370원, 50,000원 초과로 상담사 승인 필요"},
+
+    {"id": "C004", "name": "최지호", "phone": "010-0000-0004", "birth": "1998-01-05", "status": "active",
+     "subscriptions": [{"id": "S004", "plan": "annual", "price": 79000, "promo": true, "start": "2026-08-20", "next_billing": "2027-08-20"}],
+     "payments": [{"id": "P004", "sub": "S004", "date": "2026-08-20", "amount": 79000, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-08-21", "type": "play"}],
+     "_case": "연 구독 프로모션, 이용 2개월 → 79,000 − 19,800 = 59,200, 위약금 5,920 → 환불 53,280원, 승인 필요"},
+
+    {"id": "C005", "name": "정민준", "phone": "010-0000-0005", "birth": "1979-05-30", "status": "active",
+     "subscriptions": [{"id": "S005", "plan": "annual", "price": 99000, "promo": false, "start": "2026-03-02", "next_billing": "2027-03-02"}],
+     "payments": [{"id": "P005", "sub": "S005", "date": "2026-03-02", "amount": 99000, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-03-03", "type": "play"}],
+     "_case": "연 구독, 2026-06-30 이전 결제(부칙 경과 조치), 이용 8개월 → 99,000 − 79,200 = 19,800원, 위약금 없음"},
+
+    {"id": "C006", "name": "강수아", "phone": "010-0000-0006", "birth": "1995-09-09", "status": "active",
+     "subscriptions": [{"id": "S006", "plan": "monthly", "price": 9900, "start": "2026-09-25", "next_billing": "2026-10-25"}],
+     "payments": [
+       {"id": "P006a", "sub": "S006", "date": "2026-09-25", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P006b", "sub": "S006", "date": "2026-09-25", "amount": 9900, "method": "card", "dispute": false}
+     ],
+     "usage": [{"date": "2026-09-26", "type": "play"}],
+     "_case": "같은 기간 중복 결제, 이용 있음 → 중복분 9,900원 환불, 구독은 유지"},
+
+    {"id": "C007", "name": "윤채원", "phone": "010-0000-0007", "birth": "2000-12-12", "status": "active",
+     "subscriptions": [{"id": "S007", "plan": "monthly", "price": 9900, "start": "2026-10-07", "next_billing": "2026-11-07"}],
+     "payments": [{"id": "P007", "sub": "S007", "date": "2026-10-07", "amount": 9900, "method": "mobile", "dispute": false}],
+     "usage": [],
+     "_case": "휴대폰 결제, 결제 당월, 이용 없음, 5일차 → 청약철회, 결제 취소 방식 환불"},
+
+    {"id": "C008", "name": "임태윤", "phone": "010-0000-0008", "birth": "1988-04-18", "status": "active",
+     "subscriptions": [{"id": "S008", "plan": "monthly", "price": 9900, "start": "2026-09-15", "next_billing": "2026-10-15"}],
+     "payments": [
+       {"id": "P008a", "sub": "S008", "date": "2026-09-15", "amount": 9900, "method": "mobile", "dispute": false},
+       {"id": "P008b", "sub": "S008", "date": "2026-09-15", "amount": 9900, "method": "mobile", "dispute": false}
+     ],
+     "usage": [{"date": "2026-09-16", "type": "play"}],
+     "_case": "휴대폰 결제 중복, 결제 달 지남 → 중복분 9,900원을 본인 명의 계좌로 환불, 계좌 정보 필요"},
+
+    {"id": "C009", "name": "한예린", "phone": "010-0000-0009", "birth": "2009-06-01", "status": "active",
+     "subscriptions": [{"id": "S009", "plan": "annual", "price": 99000, "promo": false, "start": "2026-09-20", "next_billing": "2027-09-20"}],
+     "payments": [{"id": "P009", "sub": "S009", "date": "2026-09-20", "amount": 99000, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-09-21", "type": "play"}],
+     "_case": "만 17세 결제, 이용 있음 → 미성년자 결제 취소 가능하나 상담사 인계 필수"},
+
+    {"id": "C010", "name": "오시우", "phone": "010-0000-0010", "birth": "1991-02-27", "status": "active",
+     "subscriptions": [{"id": "S010", "plan": "monthly", "price": 9900, "start": "2026-10-06", "next_billing": "2026-11-06"}],
+     "payments": [{"id": "P010", "sub": "S010", "date": "2026-10-06", "amount": 9900, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-10-07", "type": "play"}],
+     "_case": "결제 6일차, 이용 있음, 결제 후 7일 이내 5시간 장애 → 기간 내 해지 시 전액 환불(제9조 제2항)"},
+
+    {"id": "C011", "name": "서지안", "phone": "010-0000-0011", "birth": "1987-08-08", "status": "suspended",
+     "subscriptions": [{"id": "S011", "plan": "annual", "price": 99000, "promo": false, "start": "2026-08-01", "next_billing": "2027-08-01"}],
+     "payments": [{"id": "P011", "sub": "S011", "date": "2026-08-01", "amount": 99000, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-08-02", "type": "play"}],
+     "_case": "약관 위반 이용 정지 계정, 연 구독 → 중도 해지 환불 대상 아님"},
+
+    {"id": "C012", "name": "신유나", "phone": "010-0000-0012", "birth": "1996-10-03", "status": "active",
+     "subscriptions": [{"id": "S012", "plan": "monthly", "price": 9900, "trial": true, "trial_end": "2026-10-20", "start": "2026-10-06", "next_billing": "2026-10-20"}],
+     "payments": [],
+     "usage": [{"date": "2026-10-07", "type": "play"}],
+     "_case": "무료 체험 중 → 해지 시 과금 없음"},
+
+    {"id": "C013", "name": "권도현", "phone": "010-0000-0013", "birth": "1994-12-19", "status": "active",
+     "subscriptions": [{"id": "S013", "plan": "monthly", "price": 9900, "start": "2026-10-10", "next_billing": "2026-11-10"}],
+     "payments": [{"id": "P013", "sub": "S013", "date": "2026-10-10", "amount": 9900, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-10-04", "type": "play", "_during_trial": true}],
+     "_case": "무료 체험 후 첫 결제 2일차, 체험 중 이용만 있음 → 청약철회 가능"},
+
+    {"id": "C014", "name": "황서윤", "phone": "010-0000-0014", "birth": "1983-03-03", "status": "active",
+     "subscriptions": [
+       {"id": "S014", "plan": "monthly", "price": 9900, "start": "2026-09-30", "next_billing": "2026-10-30"},
+       {"id": "S014F", "plan": "family_addon", "price": 3900, "start": "2026-09-30", "next_billing": "2026-10-30"}
+     ],
+     "payments": [
+       {"id": "P014", "sub": "S014", "date": "2026-09-30", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P014F", "sub": "S014F", "date": "2026-09-30", "amount": 3900, "method": "card", "dispute": false}
+     ],
+     "usage": [{"date": "2026-10-01", "type": "play"}],
+     "_case": "가족 공유 부가 상품만 해지 → 2026-10-30에 종료, 환불 없음"},
+
+    {"id": "C015", "name": "안준서", "phone": "010-0000-0015", "birth": "1990-07-21", "status": "active",
+     "subscriptions": [{"id": "S015", "plan": "monthly", "price": 9900, "start": "2026-10-05", "next_billing": "2026-11-05"}],
+     "payments": [{"id": "P015", "sub": "S015", "date": "2026-10-05", "amount": 9900, "method": "card", "dispute": true}],
+     "usage": [],
+     "_case": "카드사 이의 제기 진행 중 → 상담사 인계"},
+
+    {"id": "C016", "name": "송하은", "phone": "010-0000-0016", "birth": "1992-05-15", "status": "active",
+     "subscriptions": [{"id": "S016", "plan": "monthly", "price": 9900, "start": "2026-10-02", "next_billing": "2026-11-02"}],
+     "payments": [{"id": "P016", "sub": "S016", "date": "2026-10-02", "amount": 9900, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-10-03", "type": "play"}],
+     "_case": "월 구독에서 연 구독 전환 문의 → 남은 일수 일할 차감(제17조 제1항)"}
+  ]
+}
