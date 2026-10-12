@@ -170,6 +170,8 @@ def validate(cases, articles_by_org, bank):
                 errors.append(f"{w}: '{qid}'의 조항이 article_ids에 없음")
             if qid == "suggestion_valid" and not s.get("previous_suggestion"):
                 errors.append(f"{w}: suggestion_valid에는 previous_suggestion 필요")
+            if qid == "condition_changed" and not s.get("known_facts"):
+                errors.append(f"{w}: known_facts가 비어 있으면 condition_changed를 묻지 않음")
             if qid == "sufficient" and not aids:
                 errors.append(f"{w}: sufficient에는 후보 조항 필요")
             label = c["gold"].get(qid)
@@ -185,26 +187,47 @@ def validate(cases, articles_by_org, bank):
     return errors
 
 
-def assign_splits(groups_with_tag):
-    """group → split. 기존 배정은 유지하고, test가 이미 있으면 새 group은 train/val에만 넣는다."""
+def assign_splits(group_tags, group_sizes):
+    """group → split. 기존 배정은 유지하고, test가 이미 있으면 새 group은 train/val에만 넣는다.
+
+    태그(실패 유형과 action 정답)가 분할마다 목표 비율에 가깝게 퍼지도록, 드문 태그를 가진
+    group부터 그 태그가 목표보다 가장 부족한 분할에 넣는다.
+    """
     existing = json.loads(SPLITS.read_text(encoding="utf-8")) if SPLITS.exists() else {}
     assignment = dict(existing.get("groups", {}))
     frozen = "test" in assignment.values()
-    new = [g for g in groups_with_tag if g not in assignment]
+    new = [g for g in group_tags if g not in assignment]
     if not new:
         return assignment, existing.get("frozen_at")
 
-    pattern = ["train", "train", "val", "train", "test"] if not frozen else ["train", "train", "train", "val"]
-    buckets = defaultdict(list)
-    for g in new:
-        buckets[groups_with_tag[g]].append(g)
-    offset = 0
-    for tag in sorted(buckets):
-        gs = sorted(buckets[tag])
-        random.Random(f"{SEED}-{tag}").shuffle(gs)
-        for g in gs:
-            assignment[g] = pattern[offset % len(pattern)]
-            offset += 1
+    target = {"train": 0.6, "val": 0.2, "test": 0.2} if not frozen else {"train": 0.75, "val": 0.25}
+    tag_total = Counter()
+    for g in group_tags:
+        tag_total.update(group_tags[g])
+    have = defaultdict(Counter)  # split → tag → 사례 수
+    size = Counter()
+    for g, sp in assignment.items():
+        if g in group_tags:
+            have[sp].update(group_tags[g])
+            size[sp] += group_sizes[g]
+    total = sum(group_sizes.values())
+
+    rng = random.Random(SEED)
+    order = sorted(new)
+    rng.shuffle(order)
+    order.sort(key=lambda g: min(tag_total[t] for t in group_tags[g]))
+    for g in order:
+        rare = min(group_tags[g], key=lambda t: (tag_total[t], t))
+
+        def deficit(sp):
+            tag_gap = target[sp] * tag_total[rare] - have[sp][rare]
+            size_gap = target[sp] * total - size[sp]
+            return (tag_gap, size_gap)
+
+        sp = max(target, key=deficit)
+        assignment[g] = sp
+        have[sp].update(group_tags[g])
+        size[sp] += group_sizes[g]
     frozen_at = existing.get("frozen_at") or date.today().isoformat()
     return assignment, frozen_at
 
@@ -276,10 +299,13 @@ def main():
     if args.check:
         return
 
-    primary = {}
+    group_tags, group_sizes = defaultdict(Counter), Counter()
     for c in cases:
-        primary.setdefault(c["group"], c["tags"][0])
-    assignment, frozen_at = assign_splits(primary)
+        group_tags[c["group"]].update(c["tags"])
+        if "action" in c["gold"]:
+            group_tags[c["group"]][f"action={c['gold']['action']}"] += 1
+        group_sizes[c["group"]] += 1
+    assignment, frozen_at = assign_splits(group_tags, group_sizes)
     SPLITS.write_text(json.dumps({"seed": SEED, "frozen_at": frozen_at, "groups": dict(sorted(assignment.items()))},
                                  ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 

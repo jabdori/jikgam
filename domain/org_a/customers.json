@@ -16,7 +16,7 @@
      "subscriptions": [{"id": "S002", "plan": "monthly", "price": 9900, "start": "2026-10-08", "next_billing": "2026-11-08"}],
      "payments": [{"id": "P002", "sub": "S002", "date": "2026-10-08", "amount": 9900, "method": "card", "dispute": false}],
      "usage": [{"date": "2026-10-09", "type": "play"}],
-     "_case": "월 구독, 결제 4일차, 이용 있음 → 환불 없음, 해지 시 2026-11-07까지 이용"},
+     "_case": "월 구독, 결제 4일차, 이용 있음. 결제 당일 5시간 장애(INC-2026-1008)가 있어 7일 안에 해지하면 제9조 제2항으로 전액 환불. 장애를 고려하지 않으면 환불 없이 2026-11-07까지 이용으로 잘못 안내하게 됨"},
 
     {"id": "C003", "name": "박서연", "phone": "010-0000-0003", "birth": "1993-11-21", "status": "active",
      "subscriptions": [{"id": "S003", "plan": "annual", "price": 99000, "promo": false, "start": "2026-07-15", "next_billing": "2027-07-15"}],

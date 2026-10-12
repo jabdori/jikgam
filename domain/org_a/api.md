@@ -21,7 +21,7 @@
 | `list_incidents` | `from`, `to` | 장애 기록(시작, 종료, 시간, 귀책) |
 | `quote_refund` | `customer_id`, `subscription_id`, `reason`, `request_date` | 환불 가능 여부, 환불액, 계산 내역, 근거 조항 ID, 승인 필요 여부, 인계 필요 여부 |
 
-`reason`은 `withdrawal`(청약철회), `annual_cancel`(연 구독 중도 해지), `duplicate`(중복 결제), `incident`(장애), `minor`(미성년자), `trial_cancel`(체험 해지) 중 하나다.
+`reason`은 `withdrawal`(청약철회), `annual_cancel`(연 구독 중도 해지), `duplicate`(중복 결제), `incident`(장애), `minor`(미성년자), `trial_cancel`(체험 해지), `plan_change`(월 구독에서 연 구독으로 변경 시 일할 차감액) 중 하나다.
 
 ## 쓰기
 

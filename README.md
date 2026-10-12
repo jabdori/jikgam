@@ -23,5 +23,10 @@
 | `docs/design.md` | 문제, 가설, 시스템 설계, 실험 원칙 |
 | `docs/data-format.md` | 판별 데이터 형식과 라벨 기준 |
 | `domain/org_a/` | 가상 조직 A의 약관, 업무 API 계약, 가상 고객 데이터 |
+| `docs/labeling-review.md` | 정답 교차 검토 과정, 일치율, 불일치 판정 |
 | `data/questions.json` | 판별 모델에 던지는 고정 질문 세트 |
+| `data/cases/` | 판별 사례 원본 (105건, 대화 그룹 40개) |
+| `data/build/` | 빌드 결과: train/val/test 분할과 요약 |
+| `data/splits.json` | 대화 그룹별 분할 배정 (test는 고정) |
+| `data/scenarios/org_a.jsonl` | AI 고객 시뮬레이션 시나리오 30개 |
 | `scripts/build_dataset.py` | 판별 데이터 검증, 조항 본문 채우기, 분할 |
