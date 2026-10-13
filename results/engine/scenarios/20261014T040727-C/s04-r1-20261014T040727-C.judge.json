@@ -1,0 +1,95 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-2",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 3]에서 할인 요금이 아닌 정상 월 요금 19,800원을 기준으로 차감한다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "고객이 65,800원을 언급했으나, 동의하지 않고 [상담 3]에서 올바른 금액인 53,280원을 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 6]에서 50,000원을 초과하여 상담사 승인 후 확정된다고 안내하여 즉시 확정 처리하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 결제 금액에서 정상 월 요금과 위약금을 차감하여 환불 예정액 53,280원이 발생한다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 카드 승인 취소로 진행되며 3~7영업일 소요된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 서비스 이용은 오늘(2026-10-12) 종료된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 5]에서 약관 제11조 제2항을 근거로 프로모션 할인 가입 시에도 정상 월 요금을 적용하여 차감한다고 설명했습니다."
+   },
+   {
+    "index": 4,
+    "said": true,
+    "reason": "[상담 6]에서 금액이 50,000원을 초과하여 상담사 승인 후 확정된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청대로 연 구독 해지 및 환불 접수(상담사 승인 대기)를 완료하고 결과를 안내하며 대화를 마쳤습니다."
+  },
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 1]과 [고객 2]에서 상담원이 금액을 안내하기 전에 자신의 방식대로 계산한 65,800원을 먼저 주장했습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "대화 중 상담원이 상세한 실제 이용 여부를 묻지 않아 고객이 이를 말할 기회가 없었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 5]에서 사건 실행 표시와 함께 지시된 문장 그대로 반문했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 20243.1,
+   "input_tokens": 3310,
+   "output_tokens": 2569,
+   "thoughts_tokens": 1800,
+   "cost_usd": 0.037448,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.037448,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "s04-r1-20261014T040727-C",
+ "scenario": "s04"
+}
