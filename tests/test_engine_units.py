@@ -207,6 +207,37 @@ def test_generate_checked_regenerates_then_falls_back_on_unbacked_refund_claim()
     assert r.fallback and not refund_claims(r.say)
 
 
+def test_deduction_amount_is_not_a_refund_amount():
+    """s16: 요금제 변경 차감액(6,380원)은 문장에 쓸 수 있지만 amount·amount_final이 되지 않는다."""
+    payload = {"plan": {"action": "answer"}, "articles": [], "system_facts": {}, "refund_claims_need_quote": True,
+               "quotes": {"plan_change": {"status": "eligible", "kind": "deduction", "refund_amount": 6380,
+                                          "breakdown": {"plan_change": {"annual_charge": 92620}}}}}
+    allowed = allowed_from(payload, TODAY)
+    assert allowed.quote_amounts == frozenset() and allowed.deduction_amounts == {6380}
+    r = GenerationResult("남은 20일분 6,380원을 빼 92,620원을 결제합니다.", [], 6380, True, "m")
+    assert check(r, allowed, TODAY) == []
+    sanitize(r, allowed)
+    assert (r.amount, r.amount_final) == (None, False)
+    # 차감액 견적은 환불 근거가 아니다
+    claim = GenerationResult("연 구독으로 바꾸시면 환불받으실 수 있습니다.", [], None, False, "m")
+    assert check(claim, allowed, TODAY)
+
+
+def test_must_mention_is_retried_once_then_kept_with_violation():
+    """s03·s27: plan.must_mention이 빠지면 한 번 다시 만들고, 그래도 빠지면 고정 문구 대신 두 번째 결과를 쓴다."""
+    payload = {"plan": {"action": "answer", "ask": None, "must_mention": ["승인"]}, "articles": [], "quotes": {},
+               "system_facts": {}}
+    g = _BadThenGood(["환불 접수를 진행할까요?", "상담사 승인 후 환불이 확정됩니다. 진행할까요?"])
+    r = asyncio.run(generate_checked(g, payload, TODAY))
+    assert r.attempts == 2 and "승인" in r.say and r.violations == ["'승인'을(를) 안내하지 않았다"]
+    assert "승인" in g.feedback[1]
+    g = _BadThenGood(["환불 접수를 진행할까요?", "접수를 진행할까요?"])
+    r = asyncio.run(generate_checked(g, payload, TODAY))
+    assert not r.fallback and r.say == "접수를 진행할까요?" and len(r.violations) == 2
+    g = _BadThenGood(["상담사 승 인 후 확정됩니다."])  # 띄어쓰기는 보지 않는다
+    assert asyncio.run(generate_checked(g, payload, TODAY)).attempts == 1
+
+
 def test_bizapi_url_env_override(monkeypatch):
     monkeypatch.setenv("JIKGAM_BIZAPI_URL", "http://127.0.0.1:8083/")
     assert load_org("org_a").bizapi_url == "http://127.0.0.1:8083"

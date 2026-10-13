@@ -135,3 +135,26 @@ def test_account_number_is_not_otp():
     c = extract("기업은행 123-456789-01-012 김하늘", TODAY)
     assert c.otps == ()
     assert c.accounts[0].number == "123-456789-01-012"
+
+
+@pytest.mark.parametrize("text,expected", [
+    # 개발용 시나리오 s08(시뮬레이터 실행 20261014T040727-C)에서 은행·계좌번호를 읽지 못한 발화들
+    ("별담은행 111-222-333 임소라로 넣어주세요.", ("별담은행", "111-222-333", "임소라")),
+    ("아 제 거로 할게요. 별담은행 444-555-666 임태윤입니다.", ("별담은행", "444-555-666", "임태윤")),
+    ("별담은행 444-555-666 임태윤이요.", ("별담은행", "444-555-666", "임태윤")),
+    ("별담은행 444-555-666 예금주 임태윤 맞습니다. 처리해 주세요.", ("별담은행", "444-555-666", "임태윤")),
+    ("계좌번호는 444-555-666이에요", (None, "444-555-666", None)),  # '계좌'가 있으면 9자리도 계좌번호
+])
+def test_unlisted_bank_and_nine_digit_account(text, expected):
+    a = extract(text, TODAY).accounts[0]
+    assert (a.bank, a.number, a.holder_name) == expected
+
+
+@pytest.mark.parametrize("text", [
+    "어느 은행으로 해야 돼요?",           # 은행 이름이 아니다
+    "2026-10-12 결제한 거 계좌로 받을래요",  # 날짜(8자리)는 계좌번호가 아니다
+    "주문번호 444-555-666 확인해 주세요",     # 은행·계좌 맥락 없는 9자리
+])
+def test_no_false_bank_or_account(text):
+    for a in extract(text, TODAY).accounts:
+        assert a.number is None and a.bank is None

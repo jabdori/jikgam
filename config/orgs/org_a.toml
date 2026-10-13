@@ -146,6 +146,15 @@ cancel_intents = ["cancel", "cancel_refund"]
 refundable_reasons = ["withdrawal", "incident", "annual_cancel", "duplicate"]
 # 해지만 요청해도 환불을 함께 접수하는 사유. 연 구독 중도 해지는 해지 자체가 환불을 수반한다(제8조 제1항).
 cancel_refund_reasons = ["annual_cancel"]
+# 환불만 요청해도 해지를 함께 접수하는 사유. 이 환불은 그 결제의 이용 기간을 끝낸다: 청약철회(제5조 제3항),
+# 장애 전액 환불(제9조 제2항, 해지 신청이 요건), 연 구독 중도 해지(제8조 제4항). 중복 결제는 구독을 유지한다(제10조 제3항).
+refund_ends_period_reasons = ["withdrawal", "incident", "annual_cancel"]
+# 견적 금액이 환불이 아니라 다른 결제에서 빼는 금액인 사유. 생성 결과의 환불 금액(amount)으로 쓰지 않는다(제17조).
+deduction_reasons = ["plan_change"]
+# 환불 예정액이 승인 기준을 넘는 견적(업무 API의 approval_required): 접수만 하고 상담사 승인 뒤 확정한다(제19조 제2항).
+approval_articles = ["A-19"]
+approval_notice = "환불 예정액이 기준 금액을 넘어 지금은 접수만 하고, 상담사 승인 후 환불이 확정된다는 점"
+approval_must_mention = ["승인"]   # 생성 문장에 반드시 들어가야 하는 낱말(코드 검사)
 addon_plans = ["family_addon"]
 # 부가 상품만 해지(제18조 제2항): 다음 결제일에 종료, 이미 결제한 부가 상품 요금은 환불하지 않는다. 견적 사유가 없으므로
 # 견적을 부르지 않고 이 조항을 근거로 해지만 안내한다. 이용 마지막 날은 해지 접수 결과(업무 API)로 안내한다.
@@ -164,6 +173,16 @@ window_days = 7
 # 견적이 여럿 대상일 때 고르는 순서. 같은 금액이면 일반 규정(제5조)을 예외(제9조 제2항)보다 앞에 둔다.
 # 중복 결제는 구독을 유지하므로(제10조 제3항) 해지를 수반하는 사유보다 앞에 둔다.
 quote_priority = ["minor", "duplicate", "withdrawal", "incident", "annual_cancel", "trial_cancel", "plan_change"]
+
+# 장애 보상(제9조 제1항): 회사 귀책으로 연속 min_hours 이상 중단된 장애는 요청하면 중단 시간 × multiplier만큼 이용 기간을
+# 연장한다. 업무 API에 계산 도구가 없어 장애 기록(list_incidents)으로 코드가 계산한다. 장애 기록 조회 구간은 현재 결제일부터
+# 기준일까지다(policy.incident_window).
+[policy.compensation]
+intents = ["compensation"]
+causes = ["company"]
+min_hours = 4
+multiplier = 3
+articles = ["A-09"]
 
 # 요청별로 견적을 물어볼 사유. 실제로 물을지는 시스템 사실로 거른다(policy.plausible_reasons).
 # 해지만 요청해도 환불 예정액과 근거를 안내해야 하므로(제20조) 환불 가능 여부를 견적으로 확인한다.

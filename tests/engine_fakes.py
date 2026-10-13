@@ -124,6 +124,61 @@ class EchoGenerator:
         pass
 
 
+class GatedGenerator(EchoGenerator):
+    """첫 생성을 release 전까지 붙잡는다. ignore_cancel이면 취소를 무시하고 끝까지 만든다."""
+
+    def __init__(self, ignore_cancel: bool = False):
+        super().__init__()
+        self.ignore_cancel = ignore_cancel
+        self.entered = asyncio.Event()
+        self.release = asyncio.Event()
+        self._first = True
+
+    async def generate(self, payload: dict, feedback: str | None = None) -> GenerationResult:
+        if self._first:
+            self._first = False
+            self.entered.set()
+            while not self.release.is_set():
+                try:
+                    await self.release.wait()
+                except asyncio.CancelledError:
+                    if not self.ignore_cancel:
+                        raise
+        return await super().generate(payload, feedback)
+
+
+class RandomDelay:
+    """판별·생성에 정해진 난수 지연을 넣는다(빠른 정정 겹침 테스트)."""
+
+    def __init__(self, seed: int, max_ms: float):
+        import random
+        self.rng = random.Random(seed)
+        self.max_s = max_ms / 1000
+
+    async def sleep(self) -> None:
+        await asyncio.sleep(self.rng.uniform(0, self.max_s))
+
+
+class DelayedDecider(ScriptedDecider):
+    def __init__(self, delay: RandomDelay, **kw):
+        super().__init__(**kw)
+        self.delay = delay
+
+    async def decide(self, state: dict, questions: dict) -> DecisionResult:
+        await self.delay.sleep()
+        return await super().decide(state, questions)
+
+
+class DelayedGenerator(EchoGenerator):
+    def __init__(self, delay: RandomDelay):
+        super().__init__()
+        self.delay = delay
+
+    async def generate(self, payload: dict, feedback: str | None = None) -> GenerationResult:
+        await self.delay.sleep()
+        return await super().generate(payload, feedback)
+
+
 class NoBizApi:
     """호출되면 안 되는 업무 API."""
 

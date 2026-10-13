@@ -1,5 +1,7 @@
 from datetime import date
 
+import pytest
+
 from jikgam.engine import policy
 from jikgam.engine.bizapi import ToolResult
 from jikgam.engine.claims import extract
@@ -384,3 +386,138 @@ def test_handoff_without_customer_id_carries_phone_in_summary():
     p = decide(st, inp(), CFG, NOTICES)
     args = p.writes[0].args
     assert "customer_id" not in args and args["reason"] == "identity_failed" and "010-0000-0005" in args["summary"]
+
+
+# --- 2차: 시뮬레이터 실행(20261014T040727-C)에서 나온 실패 ---
+
+
+def _c008() -> SessionState:
+    pays = [{"payment_id": "P008a", "subscription_id": "S008", "date": "2026-09-15", "amount": 9900, "method": "mobile"},
+            {"payment_id": "P008b", "subscription_id": "S008", "date": "2026-09-15", "amount": 9900, "method": "mobile"}]
+    st = verified("C008", pays=pays, incidents=[])
+    st.facts.customer["name"] = "임태윤"
+    st.facts.quotes = {"duplicate": eligible("duplicate", pid="P008b", method="mobile", account_required=True,
+                                             articles=("A-10",))}
+    return st
+
+
+def test_s08_holder_mismatch_asks_own_account_without_registering():
+    """예금주가 회원과 다르면 등록을 부르지 않고 본인 명의 계좌를 다시 묻는다. 본인 계좌면 등록 → 환불 순서로 안내."""
+    st = _c008()
+    say(st, "u4", "별담은행 111-222-333 임소라로 넣어주세요.")
+    p = decide(st, inp("refund"), CFG, NOTICES)
+    assert (p.rule, p.ask, p.writes, p.proposal) == ("account_required", "own_account", (), None)
+    assert p.detail["account_holder_mismatch"] == {"holder": "임소라"}
+    say(st, "u5", "아 제 거로 할게요. 별담은행 444-555-666 임태윤입니다.")
+    p = decide(st, inp("refund"), CFG, NOTICES)
+    assert p.rule == "proposal" and [w.tool for w in p.proposal.writes] == ["register_refund_account",
+                                                                            "create_refund_request"]
+    assert p.proposal.writes[0].args == {"customer_id": "C008", "bank": "별담은행", "account": "444-555-666",
+                                         "holder": "임태윤"}
+    assert "cancel" not in p.proposal.summary  # 중복 결제 환불은 구독을 유지한다(제10조 제3항)
+
+
+@pytest.mark.parametrize("reason,cancels", [("withdrawal", True), ("incident", True), ("duplicate", False)])
+def test_refund_that_ends_period_also_cancels(reason, cancels):
+    """s07·s13: 환불만 요청해도 청약철회·장애 환불은 이용 기간을 끝내므로 해지를 함께 안내하고 접수한다."""
+    pays = None if reason != "duplicate" else [
+        {"payment_id": "P013", "subscription_id": "S013", "date": "2026-10-06", "amount": 9900, "method": "card"},
+        {"payment_id": "P013b", "subscription_id": "S013", "date": "2026-10-06", "amount": 9900, "method": "card"}]
+    st = verified("C013", pays=pays, incidents=[] if reason != "incident" else None)
+    st.facts.quotes = {r: not_eligible(r) for r in ("withdrawal", "incident", "duplicate")}
+    st.facts.quotes[reason] = eligible(reason, pid="P013", articles=("A-05",))
+    p = decide(st, inp("refund"), CFG, NOTICES)
+    tools = [w.tool for w in p.proposal.writes]
+    assert tools == (["create_refund_request", "create_cancellation"] if cancels else ["create_refund_request"])
+    if cancels:
+        assert p.proposal.kind == "refund_cancel" and p.proposal.summary["cancel"]["because_refund_ends_period"]
+        assert p.proposal.summary["cancel"]["last_usable_date"] == "2026-10-12"
+        w = decide(st, inp("refund", agreed=True, pending=p.proposal), CFG, NOTICES)
+        assert [c.tool for c in w.writes] == ["create_refund_request", "create_cancellation"]
+    # 해지를 요청한 경우의 안내에는 '환불에 따른 해지' 표시를 하지 않는다
+    p2 = decide(st, inp("cancel_refund"), CFG, NOTICES)
+    assert "because_refund_ends_period" not in (p2.proposal.summary.get("cancel") or {})
+
+
+def test_approval_required_adds_notice_article_and_mention():
+    """s03: 승인 기준을 넘는 견적이면 '상담사 승인 후 확정' 안내, 제19조, 문장 검사용 '승인'을 붙인다."""
+    st = verified("C003", plan="annual", incidents=[])
+    st.facts.quotes = {"withdrawal": not_eligible("withdrawal"),
+                       "annual_cancel": eligible("annual_cancel", 62370, pid="P003", articles=("A-08",))}
+    p = decide(st, inp("cancel_refund"), CFG, NOTICES)
+    assert p.rule == "proposal" and CFG.approval_notice in p.notices and set(NOTICES) <= set(p.notices)
+    assert "A-19" in p.articles and p.must_mention == ("승인",) and p.detail["approval_required"]
+    w = decide(st, inp("cancel_refund", agreed=True, pending=p.proposal), CFG, NOTICES)
+    assert w.rule == "writes" and w.must_mention == ("승인",)
+    st.facts.receipts["refund:P003"] = {"payment_id": "P003", "status": "pending_approval", "amount": 62370}
+    st.facts.receipts["cancel:S003"] = {"subscription_id": "S003"}
+    r = decide(st, inp("cancel_refund"), CFG, NOTICES)
+    assert r.rule == "received" and r.must_mention == ("승인",)
+    # 기준 이하면 붙이지 않는다
+    st2 = verified("C001", incidents=[])
+    st2.facts.quotes = {"withdrawal": eligible("withdrawal", pid="P001", articles=("A-05",)),
+                        "annual_cancel": not_eligible("annual_cancel")}
+    p2 = decide(st2, inp("cancel_refund"), CFG, NOTICES)
+    assert p2.must_mention == () and CFG.approval_notice not in p2.notices
+
+
+def test_compensation_hours_are_computed_from_incident_records():
+    """s27: 장애 보상 연장 시간은 장애 기록의 시간 × 배수(조직 설정)로 코드가 계산한다. 기준 미달 장애는 뺀다."""
+    st = verified("C016", incidents=[
+        {"incident_id": "INC-2026-1008", "start": "2026-10-08T13:00", "end": "2026-10-08T18:00", "hours": 5,
+         "cause": "company"},
+        {"incident_id": "INC-2026-0921", "start": "2026-09-21T02:00", "end": "2026-09-21T03:30", "hours": 1.5,
+         "cause": "company"}])
+    p = decide(st, inp("compensation"), CFG, NOTICES)
+    assert (p.rule, p.action, p.articles, p.must_mention) == ("compensation", "answer", ("A-09",), ("15시간",))
+    assert [(c["incident_id"], c["extension_hours"]) for c in p.detail["compensation"]] == [("INC-2026-1008", 15.0)]
+    assert p.detail["applied"] is False and p.quote_reasons == () and p.writes == ()
+    st.facts.incidents = [{"incident_id": "X", "hours": 6, "cause": "external"}]
+    p = decide(st, inp("compensation"), CFG, NOTICES)
+    assert (p.rule, p.must_mention, p.detail["compensation"]) == ("compensation_none", (), [])
+
+
+def test_repeated_failed_otp_from_earlier_utterance_holds():
+    """s25: 이전 발화에서 실패한 번호·인증번호를 다시 말하면 다시 보내지도 다시 묻지도 않고 보류한다."""
+    st = SessionState("org_a", TODAY)
+    say(st, "u1", "모르는 구독료가 찍혔어요. 돌려주세요")
+    say(st, "u2", "내 번호는 010-0000-0099요")
+    say(st, "u3", "문자로 0099라고 왔는데요")
+    p = decide(st, inp("refund"), CFG, NOTICES)
+    assert p.rule == "verify_identity"
+    pair = ("010-0000-0099", "0099")
+    st.identity.tried.add(pair)
+    st.identity.tried_utt[pair] = "u3"
+    st.identity.failed = 1
+    # 같은 발화로 다시 판단할 때(도구 결과 뒤)는 처음 실패이므로 다시 확인해 달라고 묻는다
+    assert decide(st, inp("refund"), CFG, NOTICES).ask == "otp_retry"
+    say(st, "u4", "문자에 0099라고 딱 적혀 있어요. 0099 맞아요")
+    p = decide(st, inp("refund"), CFG, NOTICES)
+    assert (p.rule, p.action, p.calls) == ("identity_unavailable", "hold", ())
+    assert p.detail["repeated_failed_otp"] is True
+    # 보류는 유지된다: 번호·인증번호 없는 다음 발화도 보류, 제3자로 바뀌어도 보류
+    st.identity.unavailable = True
+    say(st, "u5", "자식들이 했나... 모르겠네요")
+    assert decide(st, inp("refund"), CFG, NOTICES).rule == "identity_unavailable"
+    st.caller = "third_party"
+    assert decide(st, inp("refund"), CFG, NOTICES).rule == "identity_unavailable"
+    # 새 번호를 말하면 본인 확인을 다시 진행한다
+    st.caller = "owner"
+    say(st, "u6", "아 딸 번호로 했나 봐요. 010-0000-0012요")
+    assert decide(st, inp("refund"), CFG, NOTICES).ask == "otp"
+
+
+@pytest.mark.parametrize("caller,verified_", [("owner", True), ("third_party", False)])
+def test_decision_fallback_never_asks_identity_after_verification_or_from_third_party(caller, verified_):
+    """s14·s16: 본인 확인 뒤 판별 next_info=identity로 번호를 다시 묻지 않는다. 제3자에게도 본인 확인을 묻지 않는다."""
+    st = verified("C016") if verified_ else SessionState("org_a", TODAY)
+    st.caller = caller
+    if verified_:
+        st.facts.quotes = {"plan_change": eligible("plan_change", 6380, pid="P016", articles=("A-17",))}
+    p = decide(st, inp("plan_change" if verified_ else "other", "ask", "identity"), CFG, NOTICES)
+    assert (p.rule, p.action, p.ask, p.next_info) == ("decision", "answer", None, "none")
+    assert p.detail["overridden"] == {"action": "ask", "next_info": "identity"}
+    # 본인 확인 전 본인 고객의 일반 문의는 판별 결과를 그대로 쓴다
+    st0 = SessionState("org_a", TODAY)
+    p0 = decide(st0, inp("other", "ask", "identity"), CFG, NOTICES)
+    assert (p0.action, p0.ask) == ("ask", "identity")

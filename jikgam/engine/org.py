@@ -40,12 +40,29 @@ class RetrievalConfig:
 
 
 @dataclass(frozen=True)
+class CompensationConfig:
+    """장애 보상(이용 기간 연장) 계산 규칙. 장애 기록의 귀책·시간으로 코드가 계산한다."""
+
+    intents: frozenset[str]
+    causes: frozenset[str]
+    min_hours: float
+    multiplier: float
+    articles: tuple[str, ...]
+
+
+@dataclass(frozen=True)
 class PolicyConfig:
     records_intents: frozenset[str]
     refund_intents: frozenset[str]
     cancel_intents: frozenset[str]
     refundable_reasons: frozenset[str]
     cancel_refund_reasons: frozenset[str]
+    refund_ends_period_reasons: frozenset[str]  # 환불이 이용 기간을 끝내므로 해지를 함께 접수하는 사유
+    deduction_reasons: frozenset[str]  # 견적 금액이 환불이 아니라 차감액인 사유
+    approval_articles: tuple[str, ...]
+    approval_notice: str | None
+    approval_must_mention: tuple[str, ...]
+    compensation: CompensationConfig | None
     addon_plans: frozenset[str]
     addon_intents: frozenset[str]  # 부가 상품만 해지할 수 있는 요청
     addon_articles: tuple[str, ...]  # 부가 상품만 해지할 때의 근거 조항(환불 없음, 종료 시점)
@@ -103,10 +120,18 @@ def _policy(raw: dict[str, Any]) -> PolicyConfig:
     unknown = ({r for rs in reasons.values() for r in rs} | set(guardian)) - set(priority)
     if unknown:
         raise ValueError(f"quote_priority에 없는 견적 사유: {sorted(unknown)}")
+    comp = raw.get("compensation")
     return PolicyConfig(
         records_intents=frozenset(raw["records_intents"]), refund_intents=frozenset(raw["refund_intents"]),
         cancel_intents=frozenset(raw["cancel_intents"]), refundable_reasons=frozenset(raw["refundable_reasons"]),
         cancel_refund_reasons=frozenset(raw["cancel_refund_reasons"]),
+        refund_ends_period_reasons=frozenset(raw.get("refund_ends_period_reasons", ())),
+        deduction_reasons=frozenset(raw.get("deduction_reasons", ())),
+        approval_articles=tuple(raw.get("approval_articles", ())), approval_notice=raw.get("approval_notice"),
+        approval_must_mention=tuple(raw.get("approval_must_mention", ())),
+        compensation=CompensationConfig(frozenset(comp["intents"]), frozenset(comp["causes"]), float(comp["min_hours"]),
+                                        float(comp["multiplier"]), tuple(comp.get("articles", ())))
+        if comp else None,
         addon_plans=frozenset(raw.get("addon_plans", ())), addon_intents=frozenset(raw.get("addon_intents", ())),
         addon_articles=tuple(raw.get("addon_articles", ())),
         third_party_articles=tuple(raw.get("third_party_articles", ())), guardian_reasons=guardian,

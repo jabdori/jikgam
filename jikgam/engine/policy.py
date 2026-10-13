@@ -7,23 +7,27 @@ val 기준선에서 판별 모델이 가장 약했던 질문은 next_info와 act
     본인 확인을 묻지도 하지도 않는다(제3자에게 인증번호를 받아 확인하는 우회도 막는다).
  1. 업무 API가 인계 사유를 돌려줌 → handoff, create_handoff
  2. 업무 API 장애(재시도 예산 소진) → hold
- 3. 발화에 인증번호가 있고 전화번호를 앎 → verify_identity
- 4. 본인 확인 전이고 고객이 본인 확인을 마칠 수 없다고 말함 → hold
+ 3. 발화에 인증번호가 있고 전화번호를 앎 → verify_identity. 이전 발화에서 이미 실패한 번호·인증번호를 다시 말하면
+    다시 보내지 않고 4번(보류)으로 간다(가입되지 않은 번호는 업무 API가 인증번호 불일치와 구분하지 않는다)
+ 4. 본인 확인 전이고 고객이 본인 확인을 마칠 수 없다고 말함(또는 3번의 반복) → hold. 새 번호·인증번호가 오기 전까지 유지
  5. 본인 확인 전이고 요청 처리에 고객 기록이 필요함 → ask(본인 확인)
  6. 본인 확인 직후 → 조회 API 병렬 호출
  7. 통화자가 법정대리인 → 법정대리인이 요청할 수 있는 사유(미성년자)가 시스템 사실로 맞으면 그 사유만 견적
     (업무 API가 인계를 돌려주면 1번이 인계한다), 아니면 0번과 같이 거절
  8. 해지 대상이 부가 상품뿐 → 견적 없이 부가 상품 해지 안내(근거 조항은 조직 설정), 동의하면 해지 접수
- 9. 환불·해지 요청이고 계산 입력이 확인됨 → quote_refund(그럴듯한 사유를 병렬로 묻고 코드로 고른다)
-10. 계좌 환불이 필요한데 계좌가 없음 → ask(계좌)
-11. 접수 내용을 안내했고 고객이 동의함 → 쓰기 API
-12. 안내한 접수를 고객이 원하지 않음 → answer(접수하지 않는다고 확인, 다시 묻지 않음)
-13. 접수할 내용이 정해짐 → answer(안내하고 동의를 묻는다)
-14. 그 밖 → 판별 결과의 action과 next_info
+ 9. 장애 보상 요청 → 장애 기록으로 연장 시간을 코드가 계산해 안내(조직 설정의 귀책·최소 시간·배수)
+10. 환불·해지 요청이고 계산 입력이 확인됨 → quote_refund(그럴듯한 사유를 병렬로 묻고 코드로 고른다)
+11. 계좌 환불이 필요한데 계좌가 없거나 예금주가 회원이 아님 → ask(계좌)
+12. 접수 내용을 안내했고 고객이 동의함 → 쓰기 API
+13. 안내한 접수를 고객이 원하지 않음 → answer(접수하지 않는다고 확인, 다시 묻지 않음)
+14. 접수할 내용이 정해짐 → answer(안내하고 동의를 묻는다)
+15. 그 밖 → 판별 결과의 action과 next_info. 본인 확인을 마쳤거나 통화자가 제3자면 본인 확인을 묻지 않는다
 
 금액과 자격은 quote_refund 결과만 쓴다(ADR 0004). 이 모듈은 금액을 계산하지 않고, 견적 사유를 고를 때도
-업무 API가 낸 eligible과 조직 설정의 우선순위만 본다. 날짜 비교(결제 당시 나이)처럼 결정적인 일만 코드로 한다.
+업무 API가 낸 eligible과 조직 설정의 우선순위만 본다. 날짜 비교(결제 당시 나이), 예금주와 회원 이름 비교, 장애 보상 시간
+(업무 API에 도구가 없음)처럼 결정적인 일만 코드로 한다.
 Plan.articles는 규칙이 근거로 삼는 조항(조직 설정)이다. 판별의 applies와 관계없이 생성 입력에 넣는다.
+Plan.must_mention은 생성 문장에 반드시 들어가야 하는 말이다(승인 대상 환불의 "승인", 계산한 연장 시간). 생성 검사가 본다.
 """
 
 import hashlib
@@ -78,6 +82,7 @@ class Plan:
     proposal: Proposal | None = None
     notices: tuple[str, ...] = ()
     articles: tuple[str, ...] = ()  # 이 규칙의 근거 조항(조직 설정). 생성 입력에 반드시 넣는다
+    must_mention: tuple[str, ...] = ()  # 생성 문장에 반드시 들어가야 하는 말(생성 검사)
     detail: dict[str, Any] = field(default_factory=dict)  # 생성 입력과 로그에 남길 근거
 
     @property
@@ -89,7 +94,7 @@ class Plan:
                 "calls": [c.tool for c in self.calls], "lookups": self.lookups, "quote_reasons": list(self.quote_reasons),
                 "writes": [c.tool for c in self.writes],
                 "proposal": self.proposal.signature if self.proposal else None, "articles": list(self.articles),
-                "detail": self.detail}
+                "must_mention": list(self.must_mention), "detail": self.detail}
 
 
 # --- 시스템 사실 도우미 ------------------------------------------------------------------------
@@ -233,9 +238,16 @@ def _draft(intent: str | None, sub: dict | None, chosen: QuoteOutcome | None, re
                 holder = f.customer.get("name")
             rejected = acc is not None and any(r["account"] == acc.number and r["holder"] == holder
                                                for r in f.account_rejections)
+            name = (f.customer or {}).get("name")
+            # 예금주가 회원 이름과 다르면 등록을 시도하지 않고 본인 명의 계좌를 다시 묻는다(제14조 제3항, 이름 비교는 코드로).
+            # 업무 API도 거절하지만, 본인이 아닌 예금주로 등록을 부르는 것 자체를 하지 않는다(시나리오 s08 금지 항목).
+            mismatch = holder is not None and name is not None and \
+                "".join(holder.split()) != "".join(str(name).split())
             if acc is None or not acc.number or not acc.bank:
                 return _Draft([], summary, "own_account" if f.account_rejections else "account")
-            if rejected:
+            if rejected or mismatch:
+                if mismatch:
+                    summary["account_holder_mismatch"] = {"holder": holder}
                 return _Draft([], summary, "own_account")
             if holder is None:
                 return _Draft([], summary, "account_holder")
@@ -249,14 +261,55 @@ def _draft(intent: str | None, sub: dict | None, chosen: QuoteOutcome | None, re
                                    target=f"refund:{ln['payment_id']}"))
     elif chosen is None and reasons:
         summary["refund_unavailable"] = {r: f.quotes[r].message for r in reasons if r in f.quotes}
-    if intent in cfg.cancel_intents and sub is not None and f"cancel:{sub['subscription_id']}" not in f.receipts \
-            and sub.get("status", "active") == "active":
+    # 해지는 고객이 해지를 요청했거나, 환불이 그 결제의 이용 기간을 끝내는 사유일 때 넣는다(청약철회 제5조 제3항 등).
+    # 환불만 요청해도 이용 기간이 끝나므로 구독을 남겨 두면 다음 결제가 그대로 이루어진다(개발용 시나리오 s07, s13).
+    ends_period = refund and chosen.reason in cfg.refund_ends_period_reasons
+    if (intent in cfg.cancel_intents or ends_period) and sub is not None \
+            and f"cancel:{sub['subscription_id']}" not in f.receipts and sub.get("status", "active") == "active":
         writes.append(ToolCall("create_cancellation", {"customer_id": cid, "subscription_id": sub["subscription_id"]},
                                target=f"cancel:{sub['subscription_id']}"))
         summary["cancel"] = {"subscription_id": sub["subscription_id"], "plan": sub.get("plan"),
                              "next_billing": sub.get("next_billing"),
                              "last_usable_date": (chosen.quote or {}).get("last_usable_date") if refund else None}
+        if ends_period and intent not in cfg.cancel_intents:
+            summary["cancel"]["because_refund_ends_period"] = True
     return _Draft(writes, summary)
+
+
+def _approval(chosen: QuoteOutcome | None, state: SessionState, cfg: PolicyConfig) -> bool:
+    """대상 견적이 승인 기준을 넘었거나, 환불 접수 결과가 승인 대기인가(제19조 제2항)."""
+    if chosen is not None and (chosen.quote or {}).get("approval_required"):
+        return True
+    return any(k.startswith("refund:") and r.get("status") == "pending_approval" for k, r in state.facts.receipts.items())
+
+
+def _with_approval(plan: Plan, cfg: PolicyConfig) -> Plan:
+    """승인 대상 환불이면 안내 항목, 근거 조항, 반드시 들어갈 말을 더한다(조직 설정)."""
+    if cfg.approval_notice and cfg.approval_notice not in plan.notices:
+        plan.notices = plan.notices + (cfg.approval_notice,)
+    plan.articles = plan.articles + tuple(a for a in cfg.approval_articles if a not in plan.articles)
+    plan.must_mention = plan.must_mention + tuple(m for m in cfg.approval_must_mention if m not in plan.must_mention)
+    plan.detail = {**plan.detail, "approval_required": True}
+    return plan
+
+
+def compensation(state: SessionState, cfg: PolicyConfig) -> list[dict[str, Any]]:
+    """장애 기록 중 보상 대상(귀책·연속 시간)과 연장 시간. 계산은 코드로 한다(업무 API에 도구가 없음)."""
+    c = cfg.compensation
+    if c is None:
+        return []
+    out = []
+    for inc in state.facts.incidents or []:
+        hours = float(inc.get("hours") or 0)
+        if inc.get("cause") in c.causes and hours >= c.min_hours:
+            ext = hours * c.multiplier
+            out.append({"incident_id": inc.get("incident_id"), "start": inc.get("start"), "end": inc.get("end"),
+                        "hours": hours, "multiplier": c.multiplier, "extension_hours": ext})
+    return out
+
+
+def _hours(h: float) -> str:
+    return f"{h:g}시간"
 
 
 # --- 규칙 --------------------------------------------------------------------------------------
@@ -309,10 +362,14 @@ def decide(state: SessionState, inp: PolicyInput, cfg: PolicyConfig, required_no
     cur = state.current_claims()
 
     # 0. 제3자: 계정 처리 요청이거나 본인 확인 정보를 말하면 거절한다. 본인 확인 규칙(3~5)보다 앞선다.
+    #    본인 확인을 마칠 수 없어 보류한 뒤라면 보류를 유지한다. 보류 안내가 "가족이 가입했으면 계정 소유자가 직접
+    #    문의"를 포함하고, 통화자가 계정 소유자인지 알 수 없는 경우(s25 "자식들이 했나")를 거절로 바꾸지 않기 위해서다.
     if state.caller == THIRD_PARTY:
+        if ident.unavailable and not ident.verified and not (cur.otps or cur.phones):
+            return _unavailable_plan(state, repeated=False)
         if intent in cfg.records_intents or cur.otps or cur.phones:
             return _refusal(cfg, THIRD_PARTY)
-        return _decision_plan(inp)
+        return _decision_plan(inp, state)
 
     guardian = state.caller == GUARDIAN
     who_articles = cfg.guardian_articles if guardian else ()
@@ -340,23 +397,27 @@ def decide(state: SessionState, inp: PolicyInput, cfg: PolicyConfig, required_no
     if not ident.verified and cur.otps:
         if state.phone is None:
             return Plan("identity_required", "ask", "identity", ask="phone", articles=who_articles)
-        otp = cur.otps[-1]
-        if (state.phone, otp) not in ident.tried:
+        pair = (state.phone, cur.otps[-1])
+        if pair not in ident.tried:
             return Plan("verify_identity", "ask", "identity",
-                        calls=(ToolCall("verify_identity", {"phone": state.phone, "otp": otp}),))
+                        calls=(ToolCall("verify_identity", {"phone": pair[0], "otp": pair[1]}),))
+        # 이전 발화에서 실패한 번호·인증번호를 그대로 다시 말함: 같은 값을 다시 보내지 않는다. 업무 API는 가입되지 않은
+        # 번호와 틀린 인증번호를 구분해 주지 않으므로, 인증번호를 다시 묻는 대신 이 번호로는 확인할 수 없다고 보류한다(s25).
+        first = ident.tried_utt.get(pair)
+        if ident.failed and first is not None and first != state.last_customer_utt_id():
+            return _unavailable_plan(state, repeated=True)
 
     if not ident.verified and intent in cfg.records_intents:
         # 4. 본인 확인을 마칠 수 없다고 함(등록된 번호가 아님, 인증번호를 받을 수 없음): 계정을 확인할 수 없어 보류.
         #    이번 발화에 번호나 인증번호가 있으면 판별과 관계없이 본인 확인을 계속한다(s29 try1: 인증번호를 말한 발화에
-        #    identity_unavailable 0.53).
-        if inp.identity_unavailable and not (cur.otps or cur.phones):
-            return Plan("identity_unavailable", "hold", "identity",
-                        detail={"identity_failed_attempts": ident.failed, "phone_given": state.phone is not None})
-        # 5. 본인 확인 요청
+        #    identity_unavailable 0.53). 한 번 보류하면 새 번호나 인증번호가 오기 전까지 보류를 유지한다.
+        if (inp.identity_unavailable or ident.unavailable) and not (cur.otps or cur.phones):
+            return _unavailable_plan(state, repeated=False)
+        # 5. 본인 확인 요청. 다시 확인해 달라는 말(otp_retry)은 지금 번호로 실패한 적이 있을 때만 한다(새 번호면 otp)
         if state.phone is None:
             ask = "phone"
         else:
-            ask = "otp_retry" if ident.failed else "otp"
+            ask = "otp_retry" if ident.failed and any(p == state.phone for p, _ in ident.tried) else "otp"
         return Plan("identity_required", "ask", "identity", ask=ask, articles=who_articles)
 
     if ident.verified:
@@ -379,7 +440,18 @@ def decide(state: SessionState, inp: PolicyInput, cfg: PolicyConfig, required_no
         if addon is not None:
             return _addon_plan(addon, inp, state, cfg, required_notices)
 
-        # 9. 견적
+        # 9. 장애 보상: 연장 시간을 코드로 계산해 안내한다. 이 상담에서 연장을 적용하는 업무 API는 없다
+        if cfg.compensation is not None and intent in cfg.compensation.intents:
+            items = compensation(state, cfg)
+            detail = {"compensation": items, "applied": False,
+                      "rule": {"causes": sorted(cfg.compensation.causes), "min_hours": cfg.compensation.min_hours,
+                               "multiplier": cfg.compensation.multiplier}}
+            if items:
+                return Plan("compensation", "answer", articles=cfg.compensation.articles,
+                            must_mention=tuple(dict.fromkeys(_hours(i["extension_hours"]) for i in items)), detail=detail)
+            return Plan("compensation_none", "answer", articles=cfg.compensation.articles, detail=detail)
+
+        # 10. 견적
         sub, ambiguous = target_subscription(state, cfg)
         if intent in cfg.quote_reasons and ambiguous:
             return Plan("target_ambiguous", "ask", "plan_type", ask="plan_type")
@@ -392,7 +464,8 @@ def decide(state: SessionState, inp: PolicyInput, cfg: PolicyConfig, required_no
 
         if intent in (cfg.refund_intents | cfg.cancel_intents):
             draft = _draft(intent, sub, chosen, reasons, state, cfg)
-            # 10. 계좌
+            approval = _approval(chosen, state, cfg) and "refund" in draft.summary
+            # 11. 계좌
             if draft.ask:
                 return Plan("account_required", "ask", "account", ask=draft.ask, detail={**detail, **draft.summary})
             if draft.writes:
@@ -401,20 +474,37 @@ def decide(state: SessionState, inp: PolicyInput, cfg: PolicyConfig, required_no
                     "refund" if "create_refund_request" in kinds else "cancel"
                 proposal = Proposal(kind, tuple(draft.writes), _signature(draft.writes, draft.summary),
                                     chosen.reason if chosen else None, draft.summary)
-                # 11~13. 접수, 접수하지 않음, 안내
-                return _proposal_plan(proposal, inp, required_notices, (), detail)
+                # 12~14. 접수, 접수하지 않음, 안내
+                plan = _proposal_plan(proposal, inp, required_notices, (), detail)
+                return _with_approval(plan, cfg) if approval and plan.rule != "declined" else plan
             received = {k: v for k, v in f.receipts.items() if k.startswith(("refund:", "cancel:"))}
             if received:
-                return Plan("received", "answer", notices=required_notices, detail={**detail, "receipts": list(received)})
+                plan = Plan("received", "answer", notices=required_notices, detail={**detail, "receipts": list(received)})
+                return _with_approval(plan, cfg) if approval else plan
             if intent in cfg.refund_intents:
                 return Plan("not_eligible", "answer", detail={**detail, **draft.summary})
 
-    # 14. 판별 결과
-    return _decision_plan(inp)
+    # 15. 판별 결과
+    return _decision_plan(inp, state)
 
 
-def _decision_plan(inp: PolicyInput) -> Plan:
+def _unavailable_plan(state: SessionState, repeated: bool) -> Plan:
+    """본인 확인을 마칠 수 없어 계정을 찾거나 확인할 수 없음 → 보류. 다음 확인 방법은 생성이 안내한다."""
+    return Plan("identity_unavailable", "hold", "identity",
+                detail={"identity_failed_attempts": state.identity.failed, "phone_given": state.phone is not None,
+                        "repeated_failed_otp": repeated})
+
+
+def _decision_plan(inp: PolicyInput, state: SessionState) -> Plan:
+    """판별 결과의 행동. 본인 확인을 마쳤거나 통화자가 제3자면 본인 확인을 묻지 않는다(판별의 next_info가 identity여도).
+    개발용 시나리오 s14·s16에서 본인 확인 직후 판별 next_info=identity로 번호를 다시 물은 문제를 막는다."""
     if inp.action is None:
         return Plan("decision_unavailable", "hold")
-    return Plan("decision", inp.action, inp.next_info,
-                ask=inp.next_info if inp.action == "ask" else None)
+    action, next_info = inp.action, inp.next_info
+    detail: dict[str, Any] = {}
+    if next_info == "identity" and (state.identity.verified or state.caller == THIRD_PARTY):
+        detail["overridden"] = {"action": action, "next_info": next_info}
+        next_info = "none"
+        if action == "ask":
+            action = "answer"
+    return Plan("decision", action, next_info, ask=next_info if action == "ask" else None, detail=detail)

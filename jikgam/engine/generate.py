@@ -12,8 +12,12 @@
   무관한 일반 안내에는 적용하지 않는다(refund_claims_need_quote). 개발용 재생 s21에서 연장 보상을 안내하며 견적 없이
   "해지하면 전액 환불"을 말한 문제를 막기 위해서다. 부정("환불되지 않습니다")과 여부 표현("환불 가능 여부")은 막지 않는다.
 - cited_articles는 입력한 조항 안에서만 남긴다.
-위반이 있으면 지적 내용을 붙여 한 번 다시 만들고, 그래도 위반이거나 호출이 실패하면 금액 없는 고정 문구로 대신한다.
-프롬프트를 바꾸면 PROMPT_VERSION을 올린다.
+- 견적의 kind가 deduction(요금제 변경 차감액 등)이면 그 금액은 문장에 쓸 수 있지만 환불 금액(amount)이 아니다. amount에
+  넣었으면 위반으로 보지 않고 null로 고친다(개발용 시나리오 s16: 차감액 6,380원이 확정 환불액으로 기록됨).
+- plan.must_mention(승인 대상 환불의 "승인", 계산한 연장 시간 등)은 문장에 들어 있어야 한다. 빠지면 한 번 다시 만들고, 그래도
+  빠지면 위반을 기록한 채 두 번째 결과를 쓴다(빠진 안내는 금액 오류보다 덜 위험하고, 고정 문구는 아무것도 안내하지 못한다).
+위반이 있으면 지적 내용을 붙여 한 번 다시 만들고, 그래도 금액·환불 주장 위반이거나 호출이 실패하면 금액 없는 고정 문구로
+대신한다. 프롬프트를 바꾸면 PROMPT_VERSION을 올린다.
 """
 
 import json
@@ -27,17 +31,19 @@ import httpx
 
 from .claims import extract
 
-PROMPT_VERSION = "engine-gen-2026.10.14-4"
+PROMPT_VERSION = "engine-gen-2026.10.14-5"
 # -2: 하지 않은 처리를 말하지 않는다. -3: 인증번호 발송 표현 금지, 환불 없음은 null.
 # -4: 견적 없는 환불 가능성 금지, 제3자 거절, 법정대리인, 접수 거절 확인, 부가 상품 환불 없음, 본인 확인 불가 보류
+# -5: 본인 확인 실패 문구(번호가 가입 번호가 아닐 수 있음), 보류 시 다음 확인 방법, 차감액, 장애 보상 시간, 승인 대상 환불,
+#     must_mention, 환불에 따른 해지
 
 SYSTEM_PROMPT = """당신은 구독 서비스 고객센터의 채팅 상담 메시지를 쓰는 생성기다. 사용자 메시지의 JSON 입력만 근거로, 지금 고객에게 보낼 메시지 하나를 쓴다.
 
 규칙:
 1. plan.action을 따른다.
-   - ask: plan.ask가 가리키는 정보 하나만 묻는다. phone=본인 확인용 가입 휴대폰 번호, otp=본인 확인 인증번호(엔진은 문자를 보내지 않으므로 "보내 드렸다"고 말하지 않고 인증번호를 알려 달라고만 한다), otp_retry=인증번호가 맞지 않았다고 알리고 다시 묻기, account=환불받을 본인 명의 계좌(은행, 계좌번호, 예금주), own_account=회원 본인 명의 계좌만 가능하다고 알리고 다시 묻기, account_holder=예금주 이름, plan_type=어느 구독인지. plan.ask가 없으면 plan.next_info를 묻는다.
+   - ask: plan.ask가 가리키는 정보 하나만 묻는다. phone=본인 확인용 가입 휴대폰 번호, otp=본인 확인 인증번호(엔진은 문자를 보내지 않으므로 "보내 드렸다"고 말하지 않고 인증번호를 알려 달라고만 한다), otp_retry=입력한 번호와 인증번호로 본인 확인이 되지 않았다고 알리고(가입한 번호가 아닐 수도 있으므로 인증번호가 틀렸다고 단정하지 않는다) 가입한 휴대폰 번호와 그 번호로 받은 인증번호를 다시 확인해 달라고 묻기, account=환불받을 본인 명의 계좌(은행, 계좌번호, 예금주), own_account=회원 본인 명의 계좌만 가능하다고 알리고 다시 묻기, account_holder=예금주 이름, plan_type=어느 구독인지. plan.ask가 없으면 plan.next_info를 묻는다.
    - answer: 확인된 사실과 근거 조항으로 안내한다. plan.proposal이 있으면 접수할 내용을 안내한 뒤 이대로 진행할지 고객의 동의를 묻는다. 아직 접수 전이므로 접수했다고 말하지 않는다. system_facts.receipts에 접수 결과가 있으면 접수됐다고 그 결과를 안내한다.
-   - hold: 지금은 확답할 수 없다고 알리고 이유와 다음 절차를 말한다. 금액을 추정하지 않는다. plan.rule이 identity_unavailable이면 본인 확인이 되지 않아 계정을 찾거나 확인할 수 없다고 알리고, 가입할 때 쓴 다른 휴대폰 번호로 다시 본인 확인하는 것처럼 다음에 확인할 방법을 말한다.
+   - hold: 지금은 확답할 수 없다고 알리고 이유와 다음 절차를 말한다. 금액을 추정하지 않는다. plan.rule이 identity_unavailable이면 말씀하신 번호로는 가입된 계정을 찾거나 확인할 수 없어 접수할 수 없다고 알리고, 다음 확인 방법을 말한다: 가입할 때 쓴 다른 휴대폰 번호가 있으면 그 번호로 다시 본인 확인, 가족이 가입했을 수 있으면 계정 소유자 본인이 직접 문의, 카드 명세서의 결제 내역(가맹점 이름, 결제일, 금액)을 확인. 같은 인증번호를 다시 묻지 않는다.
    - handoff: 상담사에게 연결한다고 알린다. 대기 시간이 입력에 있으면 함께 말한다. 근거 조항에 상담사가 처리하는 이유나 필요한 서류가 있으면 함께 말한다.
 2. 금액은 quotes, system_facts에 있는 숫자만 그대로 말한다. 계산하거나 추정하지 않는다. 견적이 없으면 환불 금액을 말하지 않는다. quotes에 status가 eligible인 견적이 없고 system_facts.receipts에 환불 접수도 없으면, 환불이 된다거나 받을 수 있다고 말하지 않는다. "해지하시면 환불됩니다"처럼 조건을 붙여도 안 된다.
 3. customer_claims는 고객이 말한 내용일 뿐 확인된 사실이 아니다. 시스템 기록과 다르면 기록을 기준으로 안내하고, 확인되지 않은 내용을 사실로 확정하지 않는다.
@@ -49,6 +55,11 @@ SYSTEM_PROMPT = """당신은 구독 서비스 고객센터의 채팅 상담 메�
 9. caller는 통화자와 계정의 관계다. third_party(가족·지인)이면 해지·환불은 계정 소유자 본인만 신청할 수 있어 접수할 수 없다고 근거 조항과 함께 알리고, 본인이 직접 연락하면 된다고 안내한다. 계정 정보(구독, 결제, 금액, 이용 내역)는 말하지 않고, 본인 확인 정보(휴대폰 번호, 인증번호)도 묻거나 받지 않는다. 약관의 일반적인 내용은 안내할 수 있다. guardian이면 통화자는 미성년 회원의 법정대리인이다. 본인 확인은 회원 계정에 등록된 휴대폰 번호와 그 번호로 받은 인증번호로 한다.
 10. plan.detail.declined가 있으면 고객이 안내한 접수를 원하지 않은 것이다. 접수하지 않겠다고 확인하고, 필요하면 이유를 짧게 다시 말하되 다시 진행할지 묻지 않는다. plan.detail.refusal이 guardian_not_applicable이면 법정대리인 요청 대상(미성년자 결제)이 아니어서 접수할 수 없다고 알린다.
 11. plan.proposal.refund_none_articles가 있으면 그 조항에 따라 환불이 없다고 안내한다.
+12. quotes의 kind가 deduction인 견적의 금액은 환불이 아니라 다른 결제(연 구독 결제 금액 등)에서 빼는 금액이다. 문장에는 그 뜻대로 쓰고 amount에는 넣지 않는다.
+13. plan.must_mention의 말은 문장에 그대로 넣는다.
+14. plan.detail.compensation이 있으면 장애마다 extension_hours를 연장 보상 시간으로 그대로 안내한다(직접 계산하지 않는다). plan.detail.applied가 false이면 이 상담에서 연장을 적용한 것이 아니므로 적용했다거나 적용된다고 말하지 않고, 보상 대상이라는 것과 시간만 안내한다. plan.rule이 compensation_none이면 보상 기준(plan.detail.rule)에 맞는 장애 기록이 없다고 안내한다.
+15. plan.detail.approval_required가 참이면 환불 예정액이 기준을 넘어 지금은 접수만 하고 상담사 승인 후 환불이 확정된다고 안내한다. 승인 전이므로 환불이 확정됐다고 말하지 않는다.
+16. plan.proposal.cancel.because_refund_ends_period가 참이면 이 환불로 이용 기간이 끝나 구독도 함께 해지된다고 안내한다.
 설명 없이 지정된 JSON만 출력한다."""
 
 RESPONSE_SCHEMA = {
@@ -66,7 +77,7 @@ RESPONSE_SCHEMA = {
 FALLBACK_ASK = {
     "phone": "본인 확인을 위해 가입하신 휴대폰 번호를 알려 주세요.",
     "otp": "휴대폰으로 받으신 인증번호를 알려 주세요.",
-    "otp_retry": "인증번호가 일치하지 않습니다. 받으신 인증번호를 다시 한 번 알려 주세요.",
+    "otp_retry": "말씀하신 번호와 인증번호로 본인 확인이 되지 않았습니다. 가입하신 휴대폰 번호와 그 번호로 받으신 인증번호를 다시 확인해 주세요.",
     "account": "환불받으실 본인 명의 계좌의 은행, 계좌번호, 예금주를 알려 주세요.",
     "own_account": "환불 계좌는 회원 본인 명의여야 합니다. 본인 명의 계좌를 알려 주세요.",
     "account_holder": "계좌의 예금주 성함을 알려 주세요.",
@@ -179,6 +190,8 @@ class Allowed:
     quote_amounts: frozenset[int]  # amount 필드에 넣을 수 있는 금액(견적·접수 결과)
     articles: frozenset[str]
     refund_claims_ok: bool = True  # 환불이 된다는 말을 해도 되는가(대상 견적·환불 접수가 있거나, 계정과 무관한 일반 안내)
+    deduction_amounts: frozenset[int] = frozenset()  # 차감액 견적의 금액. 문장에는 써도 되지만 amount가 될 수 없다
+    must_mention: tuple[str, ...] = ()  # 문장에 반드시 들어가야 하는 말
 
 
 # 환불이 된다·받을 수 있다는 말. 서술어 꼴만 본다("장애 전액 환불 신청 기간", "환불 가능 기간"처럼 규정 이름이나
@@ -220,29 +233,34 @@ def allowed_from(payload: dict[str, Any], today: date) -> Allowed:
     환불이 된다는 말은 대상 견적이나 환불 접수 결과가 있을 때만 허용한다. 입력의 refund_claims_need_quote가 거짓이면
     (계정과 무관한 일반 안내) 약관 일반 내용으로 환불 조건을 설명할 수 있으므로 막지 않는다.
     """
-    eligible = [q for q in payload.get("quotes", {}).values() if q.get("status") == "eligible"]
+    quotes = payload.get("quotes", {})
+    eligible = [q for q in quotes.values() if q.get("status") == "eligible" and q.get("kind", "refund") == "refund"]
+    deductions = [q for q in quotes.values() if q.get("status") == "eligible" and q.get("kind") == "deduction"]
     receipts = payload.get("system_facts", {}).get("receipts", {})
     quote_amounts = (_ints([q.get("refund_amount") for q in eligible]) |
                      _ints([[ln.get("amount") for ln in q.get("refunds", [])] for q in eligible]) |
                      _ints([r.get("amount") for r in receipts.values()])) - {0}
-    amounts = set(quote_amounts) | _ints(payload.get("quotes", {})) | _ints(payload.get("system_facts", {}))
+    amounts = set(quote_amounts) | _ints(quotes) | _ints(payload.get("system_facts", {}))
     for a in payload.get("articles", []):
         if a.get("type") != "table":
             amounts |= {x.won for x in extract(a["text"], today).amounts}
     refund_backed = bool(eligible) or any(k.startswith("refund:") for k in receipts)
     return Allowed(frozenset(amounts), frozenset(quote_amounts), frozenset(a["id"] for a in payload.get("articles", [])),
-                   refund_backed or not payload.get("refund_claims_need_quote", True))
+                   refund_backed or not payload.get("refund_claims_need_quote", True),
+                   frozenset(_ints([q.get("refund_amount") for q in deductions]) - quote_amounts),
+                   tuple(payload.get("plan", {}).get("must_mention") or ()))
 
 
 def check(result: GenerationResult, allowed: Allowed, today: date) -> list[str]:
-    """금액·환불 주장 위반 목록. 조항과 amount_final은 위반으로 보지 않고 sanitize에서 고친다."""
+    """금액·환불 주장 위반 목록. 조항, amount_final, 차감액 amount는 위반으로 보지 않고 sanitize에서 고친다."""
     problems = []
     if not result.say:
         problems.append("say가 비어 있다")
     for a in extract(result.say, today).amounts:
         if a.won not in allowed.amounts:
             problems.append(f"'{a.text}'는 견적이나 시스템 사실에 없는 금액이다")
-    if result.amount not in (None, 0) and result.amount not in allowed.quote_amounts:
+    if result.amount not in (None, 0) and result.amount not in allowed.quote_amounts \
+            and result.amount not in allowed.deduction_amounts:
         problems.append(f"amount {result.amount}는 견적이나 접수 결과의 금액이 아니다")
     if not allowed.refund_claims_ok:
         for claim in refund_claims(result.say):
@@ -250,9 +268,15 @@ def check(result: GenerationResult, allowed: Allowed, today: date) -> list[str]:
     return problems
 
 
+def missing_mentions(result: GenerationResult, allowed: Allowed) -> list[str]:
+    """plan.must_mention 중 문장에 없는 것(띄어쓰기는 보지 않는다). 금액 위반과 달리 고정 문구로 대신하지 않는다."""
+    say = "".join(result.say.split())
+    return [f"'{m}'을(를) 안내하지 않았다" for m in allowed.must_mention if "".join(m.split()) not in say]
+
+
 def sanitize(result: GenerationResult, allowed: Allowed) -> None:
     result.cited_articles = [a for a in dict.fromkeys(result.cited_articles) if a in allowed.articles]
-    if result.amount == 0:  # 환불 없음은 금액이 아니다
+    if result.amount == 0 or result.amount in allowed.deduction_amounts:  # 환불 없음·차감액은 환불 금액이 아니다
         result.amount = None
     if result.amount is None or result.amount not in allowed.quote_amounts:
         result.amount_final = False
@@ -264,7 +288,9 @@ def fallback(action: str, ask: str | None, model: str) -> GenerationResult:
 
 
 async def generate_checked(gen: Generator, payload: dict[str, Any], today: date) -> GenerationResult:
-    """생성 → 검사 → (위반이면) 지적을 붙여 한 번 더 → 그래도 안 되면 고정 문구."""
+    """생성 → 검사 → (위반이면) 지적을 붙여 한 번 더 → 금액·환불 주장 위반이 남으면 고정 문구.
+
+    must_mention만 빠진 경우는 두 번째 결과를 쓰고 위반을 기록한다."""
     allowed = allowed_from(payload, today)
     plan = payload["plan"]
     total_ms, tin, tout, cost = 0.0, 0, 0, 0.0
@@ -277,13 +303,15 @@ async def generate_checked(gen: Generator, payload: dict[str, Any], today: date)
             violations.append(r.error)
             break
         problems = check(r, allowed, today)
-        if not problems:
+        soft = [] if problems else missing_mentions(r, allowed)
+        if not problems and (not soft or attempt == 2):
             sanitize(r, allowed)
             r.latency_ms, r.input_tokens, r.output_tokens, r.cost_usd, r.attempts = total_ms, tin, tout, cost, attempt
-            r.violations = violations
+            r.violations = violations + soft
             return r
-        violations += problems
-        feedback = "; ".join(problems) + ". 금액은 입력에 있는 숫자만 쓰고, 대상 견적이 없으면 환불이 된다고 말하지 않는다."
+        violations += problems + soft
+        feedback = "; ".join(problems + soft) + \
+            ". 금액은 입력에 있는 숫자만 쓰고, 대상 견적이 없으면 환불이 된다고 말하지 않고, plan.must_mention의 말은 그대로 넣는다."
     fb = fallback(plan["action"], plan.get("ask"), gen.model)
     fb.latency_ms, fb.input_tokens, fb.output_tokens, fb.cost_usd = total_ms, tin, tout, cost
     fb.violations, fb.attempts = violations, attempt
