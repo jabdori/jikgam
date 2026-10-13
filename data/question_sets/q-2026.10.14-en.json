@@ -1,0 +1,63 @@
+{
+  "_note": "q-2026.10.14-ko와 내용이 같고 질문 문구만 영어다. 상태(state)는 한국어 그대로 둔다. 질문 언어의 영향을 val에서 보기 위한 판이다.",
+  "version": "q-2026.10.14-en",
+  "questions": {
+    "intent": {
+      "type": "choice",
+      "instructions": "Considering the whole conversation, what does the customer want done now? A request the customer denied or withdrew does not count. An utterance with final=false is an unconfirmed live caption; if a confirmed utterance follows it, go by the confirmed one. If the customer wants both to cancel and to get money back, it is cancel_refund. If the customer wants to undo a payment right after paying (withdrawal) but did not separately ask to cancel the subscription, it is refund. If the customer has not yet asked for a refund or cancellation (e.g. only says a charge looks wrong), choose unclear or billing_inquiry, whichever fits the conversation.",
+      "criteria": {
+        "refund": "Wants money already paid returned, keeping the subscription or not mentioning it",
+        "cancel": "Wants to end the subscription or stop automatic billing, without asking for a refund",
+        "cancel_refund": "Wants both to cancel the subscription and to get a refund",
+        "plan_change": "Wants to change plans or remove only an add-on",
+        "billing_inquiry": "Wants to check payment history, amounts, or upcoming charges",
+        "compensation": "Wants compensation such as extended service time instead of a refund",
+        "other": "A question unrelated to existing payments or subscriptions, or none of the above",
+        "unclear": "It cannot yet be determined what the customer wants"
+      }
+    },
+    "condition_changed": {
+      "type": "noul",
+      "instructions": "Does the customer's last utterance assert something different from a fact or request already recorded in known_facts? Corrections, reversals, and withdrawing or changing a request count. Even if it contradicts system records, it counts if the assertion differs from what is recorded.",
+      "criteria": {
+        "true": "States something different from a recorded value or request (known_facts.request)",
+        "false": "Repeats the same thing, states a new unrecorded fact for the first time, or accepts a recorded system value"
+      }
+    },
+    "applies": {
+      "type": "noul",
+      "instructions": "Could handling the customer's current request go wrong without article {article_id} in state.articles? An article whose requirement is already confirmed false by the conversation and known_facts is not needed. An article whose requirement is still unconfirmed but cannot affect the outcome is not needed. An article whose unconfirmed requirement could change the outcome is needed. An article that only points to other articles, or the one of two articles giving the same result that does not directly govern this handling, is not needed. When known_facts contains system lookup results, judge requirements by those results rather than the customer's claims. Procedural articles: articles on refund method and on notification duties are needed when a refund or cancellation is being explained or accepted, or the customer asks about refund timing or method. The identity verification article is needed when a cancellation or refund is requested before identity verification or by a third party, and not needed once the account owner has been verified. The article on agent handling and approval is needed when a reason for agent handoff or a refund over the approval threshold is confirmed or still possible."
+    },
+    "sufficient": {
+      "type": "noul",
+      "instructions": "Can the outcome of the customer's request be determined using only the articles in state.articles and known_facts? The outcome means eligibility, the facts needed to calculate the amount, and the handling method. The system calculates amounts, so only check whether the facts needed for the calculation are confirmed. A value that is only collected when executing the handling (such as a bank account number) does not make the outcome undeterminable. A fact whose value is followed by '(고객 진술)' is a customer statement not confirmed by the system. If any fact that could change the outcome is unconfirmed, or an article that could change the outcome is missing from state.articles, the outcome cannot be determined."
+    },
+    "next_info": {
+      "type": "choice",
+      "instructions": "What is the most important information to confirm next in order to handle the customer's request? Before identity verification, if looking up the customer's records is needed, identity comes first. After verification, choose only what system lookups cannot provide or have not yet retrieved. If payment history has already been retrieved, do not ask the customer for the payment date again. If nothing more is needed, or the case is blocked because a needed article is missing from the candidates, choose none.",
+      "criteria": {
+        "plan_type": "It is ambiguous which subscription (monthly, annual, free trial, add-on) the customer means",
+        "payment_date": "The payment date or subscription start date of a payment the customer mentions, when payment history has not been retrieved",
+        "usage": "Usage after payment is unknown because it could not be retrieved",
+        "payment_method": "The payment method",
+        "identity": "Whether the caller is the account owner, or identity verification",
+        "account": "A bank account in the customer's own name for the refund (mobile payment refunded after its billing month, with no account on file)",
+        "none": "No further information is needed"
+      }
+    },
+    "suggestion_valid": {
+      "type": "noul",
+      "instructions": "state.previous_suggestion is a response the engine drafted earlier. Taking the last utterance into account, is the policy judgment in this suggestion still correct, so it can be delivered as is? If the last utterance changes the policy judgment, no. If only the wording is awkward, yes."
+    },
+    "action": {
+      "type": "choice",
+      "instructions": "What should the support engine do next at this point? When several conditions hold, pick the earliest in the order handoff, hold, ask, answer. Explaining a refusal under the terms (third-party request, not eligible) is answer. Accepting a refund above the approval threshold and waiting for agent approval is also answer.",
+      "criteria": {
+        "answer": "Explain or proceed using confirmed facts and evidence",
+        "ask": "Information that could change the outcome is unconfirmed, or a value needed to execute the handling (such as an account) must be obtained from the customer",
+        "handoff": "A reason requiring an agent under the terms is confirmed, such as a minor's payment cancellation, a payment dispute in progress, or two failed identity checks",
+        "hold": "Candidate articles conflict, an article that could change the outcome is missing while the customer demands a definite answer, or a business system outage prevents confirmation"
+      }
+    }
+  }
+}

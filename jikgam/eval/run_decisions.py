@@ -28,6 +28,7 @@ import httpx
 from jikgam.decision import llm
 from jikgam.decision.registry import ROOT, load_config, make_client
 from jikgam.decision.types import DecisionClient, DecisionResult
+from jikgam.eval.questions import load_bank, render
 
 KST = timezone(timedelta(hours=9))
 RETRYABLE = ("HTTP 429", "HTTP 500", "HTTP 502", "HTTP 503", "HTTP 504", "HTTP 529", "ConnectError", "ReadTimeout",
@@ -75,6 +76,8 @@ async def main() -> None:
     ap.add_argument("--llm-reps", type=int, default=3, help="생성형 LLM 반복 횟수")
     ap.add_argument("--limit", type=int, default=0, help="앞 N건만(점검용)")
     ap.add_argument("--out", default="results/decisions")
+    ap.add_argument("--questions", default="data/questions.json",
+                    help="질문 세트 파일. 빌드 파일의 질문 ID를 이 세트의 문구로 다시 만든다(문구 실험용)")
     args = ap.parse_args()
 
     if args.split == "test":
@@ -86,6 +89,7 @@ async def main() -> None:
     rows = [json.loads(line) for line in data_path.read_text(encoding="utf-8").splitlines()]
     if args.limit:
         rows = rows[: args.limit]
+    q_version, bank = load_bank(ROOT / args.questions)
     reps = {n: args.llm_reps if cfg_all[n]["kind"] == "gemini" else args.reps for n in names}
 
     started = datetime.now(KST)
@@ -100,7 +104,7 @@ async def main() -> None:
         "git_commit": git("rev-parse", "HEAD"), "git_dirty": bool(git("status", "--porcelain", "--untracked-files=no")),
         "data_file": str(data_path.relative_to(ROOT)).replace("\\", "/"),
         "data_sha256_16": hashlib.sha256(data_path.read_bytes()).hexdigest()[:16], "cases": len(rows),
-        "questions_version": json.loads((ROOT / "data/questions.json").read_text(encoding="utf-8"))["version"],
+        "questions_version": q_version, "questions_file": args.questions,
         "llm_prompt_version": llm.PROMPT_VERSION,
         "backends": {n: {k: v for k, v in cfg_all[n].items() if k != "api_key_env"} for n in names},
         "reps": reps, "concurrency": 1,
@@ -120,7 +124,8 @@ async def main() -> None:
     with raw_path.open("w", encoding="utf-8", newline="\n") as f:
         for rep in range(max(reps.values())):
             for row in rows:
-                state, questions = json.loads(row["state"]), json.loads(row["questions"])
+                state = json.loads(row["state"])
+                questions = render(list(json.loads(row["questions"])), bank)
                 for n in names:
                     if rep >= reps[n]:
                         continue
