@@ -1,0 +1,50 @@
+{
+  "run_id": "20261014T064235",
+  "split": "val",
+  "started_kst": "2026-10-14T06:42:35+09:00",
+  "git_commit": "e0068fd62371176cc40f062bbecad920884cc2c7",
+  "git_dirty": false,
+  "data_file": "data/build/val.jsonl",
+  "data_sha256_16": "a169861b4dc863da",
+  "cases": 21,
+  "questions_version": "q-2026.10.14-mix",
+  "questions_file": "data/question_sets/q-2026.10.14-mix.json",
+  "questions_file_sha256_16": "3ecdd027d930e6d4",
+  "llm_prompt_version": "llm-judge-2026.10.14",
+  "backends": {
+    "q35-2b-ko-direct": {
+      "kind": "systemone",
+      "url": "http://127.0.0.1:8893/v1/systemone",
+      "model": "direct-local",
+      "price_input_per_mtok": 0.0,
+      "price_output_per_mtok": 0.0,
+      "price_source": "로컬 서빙, 외부 과금 없음. 참고 비용은 docs/evaluation.md §2.6(jikgam/train/gpu_cost.py)",
+      "served": "WSL2 ~/jikgam-train/runs/q35-2b-d-mix/merged, jikgam/train/serve_direct.py(Studio와 같은 _clef_decide를 서버 프로세스에서 직접 호출, PyTorch 16비트)",
+      "weights_sha256_16": "3f9dcfe6df110822"
+    }
+  },
+  "reps": {
+    "q35-2b-ko-direct": 5
+  },
+  "concurrency": 1,
+  "client": {
+    "python": "3.12.11",
+    "httpx": "0.28.1",
+    "os": "Windows 11 10.0.22631"
+  },
+  "network_before": {
+    "cloudflare_colo": "ICN",
+    "cloudflare_loc": "KR",
+    "tcp_connect_ms_median": {
+      "127.0.0.1:8893": 14.9
+    }
+  },
+  "finished_kst": "2026-10-14T06:42:52+09:00",
+  "network_after": {
+    "cloudflare_colo": "ICN",
+    "cloudflare_loc": "KR",
+    "tcp_connect_ms_median": {
+      "127.0.0.1:8893": 15.5
+    }
+  }
+}

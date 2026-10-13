@@ -1,0 +1,50 @@
+{
+  "run_id": "20261014T063846",
+  "split": "val",
+  "started_kst": "2026-10-14T06:38:46+09:00",
+  "git_commit": "3f2e21b9e4839b4cf33f660c9c288ac7e47bf76f",
+  "git_dirty": false,
+  "data_file": "data/build/val.jsonl",
+  "data_sha256_16": "a169861b4dc863da",
+  "cases": 21,
+  "questions_version": "q-2026.10.14-mix",
+  "questions_file": "data/question_sets/q-2026.10.14-mix.json",
+  "questions_file_sha256_16": "3ecdd027d930e6d4",
+  "llm_prompt_version": "llm-judge-2026.10.14",
+  "backends": {
+    "q35-2b-ko-gguf-q4km": {
+      "kind": "systemone",
+      "url": "http://127.0.0.1:8892/v1/systemone",
+      "model": "laya-local",
+      "price_input_per_mtok": 0.0,
+      "price_output_per_mtok": 0.0,
+      "price_source": "로컬 서빙, 외부 과금 없음. 참고 비용은 docs/evaluation.md §2.6(jikgam/train/gpu_cost.py)",
+      "served": "WSL2 ~/jikgam-train/serve/q35-2b-d-mix-q4_k_m, q35-2b-d-mix 병합 모델의 GGUF Q4_K_M, Studio llama.cpp(unslothai/llama.cpp b11541)",
+      "weights_sha256_16": "3f9dcfe6df110822"
+    }
+  },
+  "reps": {
+    "q35-2b-ko-gguf-q4km": 5
+  },
+  "concurrency": 1,
+  "client": {
+    "python": "3.12.11",
+    "httpx": "0.28.1",
+    "os": "Windows 11 10.0.22631"
+  },
+  "network_before": {
+    "cloudflare_colo": "ICN",
+    "cloudflare_loc": "KR",
+    "tcp_connect_ms_median": {
+      "127.0.0.1:8892": 14.5
+    }
+  },
+  "finished_kst": "2026-10-14T06:39:21+09:00",
+  "network_after": {
+    "cloudflare_colo": "ICN",
+    "cloudflare_loc": "KR",
+    "tcp_connect_ms_median": {
+      "127.0.0.1:8892": 15.5
+    }
+  }
+}
