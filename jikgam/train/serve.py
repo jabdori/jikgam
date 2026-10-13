@@ -63,9 +63,11 @@ def stop(port: int) -> None:
     print(f"포트 {port}: 서버 종료")
 
 
-def wait_up(base: str, timeout_s: float = 600) -> None:
+def wait_up(base: str, proc: subprocess.Popen, timeout_s: float = 600) -> None:
     deadline = time.monotonic() + timeout_s
     while time.monotonic() < deadline:
+        if proc.poll() is not None:
+            raise SystemExit(f"Studio가 종료됐다(코드 {proc.returncode}). 로그: {HOME / 'logs'}")
         try:
             if httpx.get(f"{base}/api/health", timeout=5).status_code < 500:
                 return
@@ -86,21 +88,25 @@ def main() -> None:
         return
 
     runs = Path(os.environ.get("JIKGAM_RUNS", HOME / "runs"))
-    run_dir = Path(args.run) if Path(args.run).is_dir() else runs / args.run
+    run_dir = (Path(args.run) if Path(args.run).is_dir() else runs / args.run).resolve()
     merged = run_dir / "merged" if (run_dir / "merged").is_dir() else run_dir
     if not (merged / "joint_head.safetensors").is_file():
         raise SystemExit(f"병합 모델이 아니다: {merged}")
     stop(args.port)
 
+    # --password(UNSLOTH_STUDIO_PASSWORD)는 처음 한 번만 받는다. 이미 정한 뒤에 다시 주면 Studio가 시작을 거부한다.
+    first = not (SECRETS / "studio_admin_password").exists()
     password = secret_file("studio_admin_password", make=lambda: secrets.token_urlsafe(24))
-    env = {**os.environ, "UNSLOTH_SYSTEMONE_MODEL": str(merged), "UNSLOTH_SYSTEMONE_DEVICE": "gpu",
-           "UNSLOTH_STUDIO_PASSWORD": password}
+    env = {**os.environ, "UNSLOTH_SYSTEMONE_MODEL": str(merged), "UNSLOTH_SYSTEMONE_DEVICE": "gpu"}
+    env.pop("UNSLOTH_STUDIO_PASSWORD", None)
+    if first:
+        env["UNSLOTH_STUDIO_PASSWORD"] = password
     log = (HOME / "logs" / f"studio-{args.port}.log").open("w")
     proc = subprocess.Popen(["unsloth", "studio", "-H", "127.0.0.1", "-p", str(args.port)], env=env,
                             stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
     pid_file(args.port).write_text(str(proc.pid))
     base = f"http://127.0.0.1:{args.port}"
-    wait_up(base)
+    wait_up(base, proc)
 
     r = httpx.post(f"{base}/api/auth/login", json={"username": "unsloth", "password": password}, timeout=30)
     r.raise_for_status()
@@ -108,9 +114,11 @@ def main() -> None:
     if token.get("must_change_password"):
         raise SystemExit("관리자 비밀번호를 먼저 바꿔야 한다고 응답했다. UI에서 한 번 로그인해 바꾼 뒤 secrets 파일을 고친다.")
     admin = {"Authorization": f"Bearer {token['access_token']}"}
+    # 장치는 UNSLOTH_SYSTEMONE_DEVICE로 고정했으므로 설정으로 보내지 않는다(보내면 400).
     r = httpx.put(f"{base}/api/settings/systemone", headers=admin, timeout=30,
-                  json={"enabled": True, "backend": "pytorch", "device": "gpu"})
-    r.raise_for_status()
+                  json={"enabled": True, "backend": "pytorch"})
+    if r.status_code != 200:
+        raise SystemExit(f"Decision API 설정 실패 HTTP {r.status_code}: {r.text[:300]}")
 
     def mint() -> str:
         rr = httpx.post(f"{base}/api/auth/api-keys", headers=admin, json={"name": "jikgam-eval"}, timeout=30)
