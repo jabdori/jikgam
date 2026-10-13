@@ -25,6 +25,8 @@
 - 10은 세션에서 노출한 모든 제안의 인용 조항 합집합으로 판정한다(docs/evaluation.md §4.1 보완, 2026-10-14).
   마지막으로 노출한 제안 하나로 읽은 결과도 aux.item10_last로 따로 낸다. 근거 정밀도는 마지막 제안의 인용 조항 기준이다.
 - 빠른 정정(docs/evaluation.md §3.3 보완)으로 보내야 할 사건을 고객 AI가 한 메시지로 실행했으면 지시 위반으로 무효다.
+- 3·7의 금액 0원은 환불 없음으로 보고 refund_amount null과 같게 다룬다. 엔진은 0원을 null로 기록하고 정책 A는 0으로
+  기록하므로, 같은 안내를 정책에 따라 다르게 판정하지 않으려는 것이다.
 - 9(must_say)는 대화 중 한 번이라도 안내했는지 본다. 안내했지만 내용이 기대 결과와 어긋나면 안내하지 않은 것으로 본다.
 """
 
@@ -318,10 +320,17 @@ def check_item2(lv: LogView) -> ItemVerdict:
     return _verdict(problems)
 
 
+def _refund_amount(s: dict[str, Any]) -> int | None:
+    """제안이 안내한 환불액. 0원은 환불 없음이라 None으로 본다(엔진 generate.sanitize와 같은 규칙, 시나리오의
+    refund_amount null과 같은 뜻)."""
+    a = s.get("amount")
+    return None if a in (None, 0) else a
+
+
 def check_item3(scn: dict[str, Any], lv: LogView) -> ItemVerdict:
     want = scn["expected"].get("refund_amount")
     return _verdict([f"{s['suggestion_id']}: 확정 금액 {s.get('amount')}원 안내(기대 {want})"
-                     for _, s in lv.exposed_suggestions() if s.get("amount_final") and s.get("amount") != want])
+                     for _, s in lv.exposed_suggestions() if s.get("amount_final") and _refund_amount(s) != want])
 
 
 def check_item4(scn: dict[str, Any], lv: LogView) -> ItemVerdict:

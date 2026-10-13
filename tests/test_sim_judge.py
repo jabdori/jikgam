@@ -142,6 +142,12 @@ def test_item3_and_item7_use_structured_amounts():
     assert jd.check_item7(scn(), jd.LogView(b.events)).ok is True
     assert jd.check_item7(scn(refund_amount=None), jd.LogView(b.events)).ok is True
     assert jd.check_item3(scn(refund_amount=None), jd.LogView(b.events)).ok is False
+    # 0원 확정 안내는 환불 없음: refund_amount null이면 통과, 기대 금액이 있으면 실패
+    z = LogBuilder()
+    z.utt("환불")
+    z.suggest("x-s1", amount=0, amount_final=True)
+    assert jd.check_item3(scn(refund_amount=None), jd.LogView(z.events)).ok is True
+    assert jd.check_item3(scn(refund_amount=9900), jd.LogView(z.events)).ok is False
 
 
 def test_item4_key_args_and_item8_extra_writes():
