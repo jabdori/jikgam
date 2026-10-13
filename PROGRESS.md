@@ -93,7 +93,6 @@ val 기준선(판단 152개, 질문 세트 `q-2026.10.12`, 1차 실행, 검토 �
 진행 중:
 
 - 한국어 판별 모델 파인튜닝(별도 브랜치): Unsloth, 이 PC의 RTX 3090 Ti, Qwen3.5-0.8B·2B. train만, typed-decisions만, 둘을 섞은 구성으로 학습해 val에서 Jev·Clef-flash와 비교한다.
-- train 전용 보강 사례 작성(별도 브랜치): val 실패 유형 기준, val 사례는 보지 않고 새로 쓴다. 고정 분할과 val 파일은 바꾸지 않도록 별도 파일(`data/build/train_aug.jsonl`)로 빌드한다.
 
 ### 상담 엔진(채팅)
 
@@ -121,6 +120,19 @@ val 기준선(판단 152개, 질문 세트 `q-2026.10.12`, 1차 실행, 검토 �
 - 같은 발화로 판단을 다시 할 때(도구 결과로 버전이 오른 경우) intent, condition_changed, suggestion_valid, customer_agreed는 묻지 않는다. 마지막 발화에 대한 판단이라 첫 판단에서 끝났기 때문이다.
 - 업무 API 장애 표시는 새 고객 발화마다 지운다. 다음 발화에서 한 번 더 시도하고, 다시 실패하면 보류한다.
 
+### 학습 전용 보강 사례
+
+한 일:
+
+- val에서 확인된 실패 유형 9가지(유형 설명만 받고 val·test 사례는 열지 않음)와 부족했던 `partial_stt`, `stt_error`, `next_info`의 `payment_date`·`usage`, `hold`를 겨냥해 train 전용 사례 104건(대화 그룹 38개, `a001`~`a038`)을 `data/cases_aug/batch_a.jsonl`에 썼다. 요약과 분포는 `data/cases_aug/README.md`.
+- `scripts/build_dataset.py --aug`: 같은 검증기로 보강 사례를 검사하고 `data/build/train_aug.jsonl`(split `train_aug`)을 쓴다. 기본 실행 산출물과 `splits.json`은 바이트 단위로 그대로다(test sha256 `5251d7d814279bf4`).
+- 무작위 26건(25%)을 정답을 지운 채 별도 에이전트가 문서만 보고 재판정했다. 186/186 일치, 수정 없음. 같은 계열 모델이라 독립 검토를 대신하지 않는다.
+
+결정과 이유:
+
+- 보강 사례는 분할에 넣지 않고 별도 파일로 낸다. val·test 구성과 고정한 test 해시를 바꾸지 않고, 학습 효과는 val로만 재기 위해서다.
+- applies 정답이 true로 쏠리지 않게 헷갈리는 조항과 무관한 조항의 false 질문을 함께 넣었다(true 195 / false 180).
+
 ## 다음 할 일
 
 - Jev 확률 보정(val)과 noul 임계값 검토
@@ -132,5 +144,6 @@ val 기준선(판단 152개, 질문 세트 `q-2026.10.12`, 1차 실행, 검토 �
 - 엔진: 생성이 견적 없이 조건부 환불 가능성을 말한 사례(s21 연장 안내)의 처리 기준 정하기
 - test 20건 사용자 검토(`docs/evaluation.md` §8). 검토 화면은 `scripts/make_test_review.py`로 만들어 두었고 사용자 검토를 기다린다
 - 상담 실무 경험자에게 사례 일부와 시나리오 검토 받기
-- `partial_stt`, `next_info`의 `payment_date`·`usage`, `hold` 사례 보강(train/val로만 배정됨)
+- 보강 사례(`train_aug`) 독립 표본 검토(작성 측 재판정은 같은 계열 모델이라 대신하지 못한다)
+- 보강 사례에서 아직 적은 `next_info`(account·payment_date·usage·payment_method)와 `hold`·`handoff` 추가
 - 확인 필요: Jev 출력의 학습 이용 약관
