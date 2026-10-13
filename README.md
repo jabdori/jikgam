@@ -14,7 +14,19 @@
 
 ## 상태
 
-설계와 평가 데이터 준비 단계. 이 저장소의 수치는 측정한 것만 기재한다.
+판별 모델 기준선 측정(val)을 마치고 상담 엔진과 한국어 판별 모델 학습을 진행하는 단계. 평가 기준은 측정 전에 [평가 기준 문서](docs/evaluation.md)에 고정했고, 측정 결과와 결정은 [진행 기록](PROGRESS.md)과 [결정 기록](docs/adr/README.md)에 있다. test 분할은 설정을 고정한 뒤 한 번만 평가하며 아직 평가하지 않았다.
+
+이 저장소의 수치는 측정한 것만 기재하고, 원본 로그(`results/`)와 함께 둔다. 모든 데이터는 가상이며 합성 테스트 결과는 실제 운영 성과가 아니다.
+
+## 실행
+
+```sh
+uv sync                                   # Python 3.12 환경
+uv run pytest                             # 단위 테스트
+cd bizapi && go run ./cmd/bizapi          # 조직 A 모의 업무 API (127.0.0.1:8081)
+uv run python -m jikgam.eval.run_decisions --split val --backends jev,gemini-flash   # 판별 평가(.env에 API 키 필요)
+uv run python -m jikgam.eval.report results/decisions/val/<run_id>                  # 원본 로그로 표 생성
+```
 
 ## 구성
 
@@ -30,3 +42,13 @@
 | `data/splits.json` | 대화 그룹별 분할 배정 (test는 고정) |
 | `data/scenarios/org_a.jsonl` | AI 고객 시뮬레이션 시나리오 30개 |
 | `scripts/build_dataset.py` | 판별 데이터 검증, 조항 본문 채우기, 분할 |
+| `docs/evaluation.md` | 측정 전에 고정한 평가 기준과 성공 수치 |
+| `docs/engine.md` | 상담 엔진 구현 설계 |
+| `docs/adr/` | 결정 기록 |
+| `docs/research/` | 조사 기록(한국어 STT·TTS 등) |
+| `data/question_sets/` | 질문 문구 실험용 질문 세트(빌드 파일은 바꾸지 않는다) |
+| `config/decision_models.toml` | 판별 백엔드 설정(버전 고정, 단가와 출처) |
+| `jikgam/decision/` | 판별 모델 공통 인터페이스와 백엔드(Jev 형식 API, 생성형 LLM 판단, 규칙·다수 라벨 기준선) |
+| `jikgam/eval/` | 판별 평가 실행기와 보고서, 오답 목록 |
+| `bizapi/` | 조직 A 모의 업무 API (Go) |
+| `results/` | 측정 원본 로그와 보고서 |
