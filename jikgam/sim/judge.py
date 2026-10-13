@@ -610,19 +610,21 @@ def compliance(scn: dict[str, Any], ai: dict[str, Any] | None, sim_end: dict[str
                 "mid_call_events": {}}
     rules = _by_index(v.get("reveal_rules"))
     events = _by_index(v.get("mid_call_events"))
+    unknown = []
     for i, text in enumerate(scn.get("reveal_rules", [])):
         r = rules.get(i)
         if r is None:
-            reasons.append(f"reveal_rules#{i} 판정 없음")
+            unknown.append(f"reveal_rules#{i} 판정 없음")
         elif r["status"] == "violated":
             reasons.append(f"reveal_rules#{i} 어김: {r['reason']}")
     for i, _ in customer_events(scn):
         r = events.get(i)
         if r is None:
-            reasons.append(f"사건 #{i} 판정 없음")
+            unknown.append(f"사건 #{i} 판정 없음")
         elif r["status"] == "violated":
             reasons.append(f"사건 #{i} 어김: {r['reason']}")
-    return {"valid": not reasons, "reasons": reasons,
+    valid = False if reasons else (None if unknown else True)
+    return {"valid": valid, "reasons": reasons + unknown,
             "reveal_rules": {i: r["status"] for i, r in rules.items()},
             "mid_call_events": {i: r["status"] for i, r in events.items()}}
 

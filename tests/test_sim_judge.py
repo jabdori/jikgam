@@ -255,6 +255,8 @@ def test_evaluate_merges_code_and_ai_and_marks_invalid_runs():
     assert r["compliance"]["valid"] is False
     r = jd.evaluate(scn(), b.events, verdict(mid_call_events=[{"index": 0, "status": "no_opportunity", "reason": "-"}]))
     assert r["compliance"]["valid"] is True
+    r = jd.evaluate(scn(), b.events, verdict(mid_call_events=[]))  # AI가 빠뜨린 항목은 무효가 아니라 판정 불가
+    assert r["compliance"]["valid"] is None and r["compliance"]["reasons"] == ["사건 #0 판정 없음"]
     r = jd.evaluate(scn(), b.events, None)
     assert r["pass"] is None and r["compliance"]["valid"] is None
     r = jd.evaluate(scn(), b.events, None, {"reason": "customer_error", "error": "HTTP 500"})
