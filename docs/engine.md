@@ -158,6 +158,7 @@ required_notices = ["환불 예정액과 산정 근거", "환불 방법과 예�
 - **판별 결과의 본인 확인 질문**(s14, s16): 본인 확인을 마쳤거나 통화자가 제3자면 판별의 next_info=identity를 쓰지 않는다(ask면 answer로 바꾸고 `detail.overridden`에 남긴다).
 - **빠른 정정과 예열**(`docs/evaluation.md` §3.3 보완): 버전은 발화가 도착할 때 올리고 진행 중인 작업을 취소한다. 예열을 기다리던 발화는 예열 뒤에 가장 최근 발화만 진행한다. 앞 턴이 시작한 쓰기는 취소하지 않고, 새 발화의 파이프라인은 정책 단계 전에 쓰기가 끝나기를 기다린다(`writes.wait`). 쓰기 결과로 버전이 오르면 새 파이프라인은 취소되고 다시 진행한다. `tests/test_engine_concurrency.py`가 느린 가짜로 이 경우들과 "새 발화 뒤에 지난 버전 제안이 노출되지 않는다"는 조건을 확인한다.
 - 조직 설정에 더한 키: `[policy]`의 `refund_ends_period_reasons`, `deduction_reasons`, `approval_articles`, `approval_notice`, `approval_must_mention`, `[policy.compensation]`(`intents`, `causes`, `min_hours`, `multiplier`, `articles`).
+- **주장한 사유의 견적**(코디네이터 결정, s27): `window_days` 필터는 고객이 주장하지 않은 사유만 거른다. 고객 발화 하나가 `[[policy.claim_patterns]]`의 `all` 정규식에 모두 맞고 `none`에 하나도 맞지 않으면 그 사유를 주장한 것이다. 주장한 청약철회·장애 환불은 기간이 지나도 견적을 물어, 업무 API의 판단(NOT_ELIGIBLE과 근거 조항)으로 거절을 설명한다(ADR 0004). 판별 확률은 쓰지 않는다(흔들리면 견적 수가 늘어난다). 패턴은 train 분할과 개발용 시나리오·재생의 고객 발화로 맞췄다.
 
 ## 10. 정책 A(개선형 RAG) 구현
 
