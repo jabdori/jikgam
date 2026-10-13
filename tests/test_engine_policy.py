@@ -153,6 +153,22 @@ def test_duplicate_reason_from_same_day_payments_or_claim():
     assert "duplicate" in plausible_reasons("refund", st.facts.subscriptions[0], st, CFG)
 
 
+def test_duplicate_window_days_from_org_config():
+    """중복 결제 정의가 같은 이용 기간인 조직(조직 B)은 결제일이 달라도 중복 견적을 묻는다. 조직 A(기본 0)는 같은 날만."""
+    import dataclasses
+    pays = [{"payment_id": f"P006{x}", "subscription_id": "S006", "date": d, "amount": 9900, "method": "card"}
+            for x, d in (("a", "2026-09-02"), ("b", "2026-10-02"), ("c", "2026-10-03"))]
+    st = verified("C006", pays=pays, incidents=[])
+    sub = st.facts.subscriptions[0]
+    assert CFG.duplicate_window_days == 0
+    assert "duplicate" not in plausible_reasons("refund", sub, st, CFG)
+    same_period = dataclasses.replace(CFG, duplicate_window_days=27)
+    assert "duplicate" in plausible_reasons("refund", sub, st, same_period)
+    st.facts.payments = pays[:2]  # 한 달 간격의 정상 갱신 결제는 27일 기준으로도 중복 후보가 아니다
+    assert "duplicate" not in plausible_reasons("refund", sub, st, same_period)
+    assert load_org("org_b").policy.duplicate_window_days == 27
+
+
 def test_quote_calls_then_choice_eligible_first_then_priority():
     st = verified()
     p = decide(st, inp(), CFG, NOTICES)
