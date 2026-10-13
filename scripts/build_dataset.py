@@ -307,7 +307,7 @@ def main():
         group_sizes[c["group"]] += 1
     assignment, frozen_at = assign_splits(group_tags, group_sizes)
     SPLITS.write_text(json.dumps({"seed": SEED, "frozen_at": frozen_at, "groups": dict(sorted(assignment.items()))},
-                                 ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                                 ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
 
     BUILD_DIR.mkdir(parents=True, exist_ok=True)
     rows = []
@@ -316,8 +316,9 @@ def main():
     for sp in ("train", "val", "test"):
         part = [r for r in rows if r["split"] == sp]
         (BUILD_DIR / f"{sp}.jsonl").write_text(
-            "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in part), encoding="utf-8")
-    (BUILD_DIR / "summary.md").write_text(summary(rows, assignment), encoding="utf-8")
+            "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in part), encoding="utf-8", newline="\n")
+    # Windows에서도 줄바꿈을 LF로 써야 test 파일의 sha256이 플랫폼에 따라 달라지지 않는다.
+    (BUILD_DIR / "summary.md").write_text(summary(rows, assignment), encoding="utf-8", newline="\n")
     digest = hashlib.sha256((BUILD_DIR / "test.jsonl").read_bytes()).hexdigest()[:16]
     print(f"train {sum(r['split']=='train' for r in rows)} / val {sum(r['split']=='val' for r in rows)} "
           f"/ test {sum(r['split']=='test' for r in rows)}, test sha256 {digest}")

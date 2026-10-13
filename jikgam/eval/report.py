@@ -180,7 +180,7 @@ def main() -> None:
         cases = cases_d
     text = render(metas, cases, raw)
     out = Path(args.out) if args.out else Path(args.run_dirs[0]) / "report.md"
-    out.write_text(text, encoding="utf-8")
+    out.write_text(text, encoding="utf-8", newline="\n")
     print(text)
 
 

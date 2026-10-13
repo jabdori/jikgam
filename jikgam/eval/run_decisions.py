@@ -115,7 +115,7 @@ async def main() -> None:
         print(f"예열 {n}: {res.latency_ms:.0f} ms {res.error or ''}", flush=True)
 
     raw_path = out_dir / "raw.jsonl"
-    with raw_path.open("w", encoding="utf-8") as f:
+    with raw_path.open("w", encoding="utf-8", newline="\n") as f:
         for rep in range(max(reps.values())):
             for row in rows:
                 state, questions = json.loads(row["state"]), json.loads(row["questions"])
@@ -137,7 +137,8 @@ async def main() -> None:
 
     meta["finished_kst"] = datetime.now(KST).isoformat(timespec="seconds")
     meta["network_after"] = network_conditions(hosts)
-    (out_dir / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (out_dir / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
+                                       newline="\n")
     print(f"원본 로그: {raw_path}")
 
 
