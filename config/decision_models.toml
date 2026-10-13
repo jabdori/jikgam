@@ -77,7 +77,7 @@ price_source = "로컬 서빙, 외부 과금 없음. 참고 비용은 docs/evalu
 served = "WSL2 ~/jikgam-train/runs/q35-2b-d-mix/merged, unsloth/Qwen3.5-2B@fffbc0d8 + LoRA + Clef 헤드, 구성 (d), 질문 세트 q-2026.10.14-mix, Unsloth 2026.10.5, PyTorch 16비트"
 weights_sha256_16 = "3f9dcfe6df110822"
 
-# 2B (d)의 서빙 방식 비교(docs/training.md §11). 가중치는 q35-2b-ko와 같고, Studio의 llama.cpp 경로로 GGUF를 서빙한다.
+# 2B (d)의 서빙 방식 비교(docs/training.md §10). 가중치는 q35-2b-ko와 같고, Studio의 llama.cpp 경로로 GGUF를 서빙한다.
 # 서빙 폴더 ~/jikgam-train/serve/q35-2b-d-mix-<양자화>는 jikgam/train/export_gguf.py가 만든다(병합 파일은 링크).
 # serve.py --backend llama.cpp로 띄운다. 런타임 설정은 Studio 설치 전체에 걸리므로 한 번에 하나씩 잰다.
 ["q35-2b-ko-gguf-bf16"]

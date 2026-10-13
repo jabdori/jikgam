@@ -1,4 +1,4 @@
-"""서빙 방식별 지연·정확도 표(docs/training.md §11). 실행기 원본 로그와 선별 예측으로만 만든다.
+"""서빙 방식별 지연·정확도 표(docs/training.md §10). 실행기 원본 로그와 선별 예측으로만 만든다.
 
     uv run python -m jikgam.train.latency_table <run_dir>=<backend> ... --screening results/training/val-screening/q35-2b-d-mix__q-mix
 """

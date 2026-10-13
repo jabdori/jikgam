@@ -36,16 +36,32 @@ def main() -> None:
          "정확도·ECE는 저장소 정의(`jikgam.eval.metrics`)다. 보정 후 ECE는 val 전체로 맞춘 온도로 다시 예측한 표본 내 값이고, "
          "Unsloth 교차 적합 ECE는 `FastDecisionModel.calibrate`가 val 사례를 반씩 나눠 계산한 값(Unsloth 정의)이다. "
          "보정 전 지표는 저장된 예측으로 다시 계산하고, 보정 후·Unsloth ECE는 예측을 저장하지 않아 summary.json의 값(소수 넷째 자리 반올림)을 옮긴다.", "",
-         "| 선별 | 기반 모델 | 학습 구성 | 학습 문구 | 평가 문구 | 정확도 | ECE | 보정 후 ECE(표본 내) | Unsloth 교차 적합 ECE | 학습 분 | 최대 GPU GB |",
-         "|---|---|---|---|---|---|---|---|---|---|---|"]
+         "| 선별 | 기반 모델 | 학습 구성 | 시드 | 학습 문구 | 평가 문구 | 정확도 | ECE | 보정 후 ECE(표본 내) | Unsloth 교차 적합 ECE | 학습 분 | 최대 GPU GB |",
+         "|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for name, s, meta in rows:
         o = s["uncalibrated"]["overall"]
         data = meta.get("data", {})
         L.append(f"| {name} | {meta.get('base_model', '-')} | {data.get('composition', '-')} | "
+                 f"{meta.get('hyperparameters', {}).get('seed', '-')} | "
                  f"{data.get('questions_version', '-') if data.get('korean_cases') else '(한국어 없음)'} | "
                  f"{s['questions_version']} | {o['accuracy'] * 100:.1f}% ({o['correct']}/{o['n']}) | {o['ece']:.3f} | "
                  f"{s['calibrated_in_sample']['overall']['ece']:.3f} | {s['unsloth_calibrate_cross_fitted']['ece']:.3f} | "
                  f"{meta.get('train_seconds', 0) / 60:.1f} | {meta.get('peak_gpu_memory_reserved_gb', '-')} |")
+    # 같은 기반 모델·구성·문구를 시드만 바꿔 학습한 묶음의 정답 수 범위(시드 변동)
+    groups: dict[tuple, list] = {}
+    for name, s, meta in rows:
+        data = meta.get("data", {})
+        key = (meta.get("base_model"), data.get("composition"), data.get("questions_version"), s["questions_version"])
+        groups.setdefault(key, []).append((meta.get("hyperparameters", {}).get("seed"), s["uncalibrated"]["overall"]))
+    multi = {k: v for k, v in groups.items() if len(v) > 1}
+    if multi:
+        L += ["", "## 시드별 정확도", "", "같은 기반 모델·구성·문구를 시드만 바꿔 학습했다. 시드는 섞는 순서, LoRA·헤드 초기화, Trainer에 모두 쓴다.", "",
+              "| 기반 모델 | 구성 | 시드별 정답 수/152 | 최소~최대 | 평균 정확도 |", "|---|---|---|---|---|"]
+        for (base, comp, _, _), v in sorted(multi.items(), key=lambda kv: str(kv[0])):
+            v = sorted(v, key=lambda x: x[0])
+            cs = [o["correct"] for _, o in v]
+            L.append(f"| {base} | {comp} | " + ", ".join(f"{seed}: {o['correct']}" for seed, o in v) +
+                     f" | {min(cs)}~{max(cs)} | {sum(cs) / len(cs) / v[0][1]['n'] * 100:.1f}% |")
     L += ["", "## 질문 유형별 정확도(보정 전)", "", "| 선별 | " + " | ".join(QTYPES) + " |", "|---|" + "---|" * len(QTYPES)]
     for name, s, _ in rows:
         bt = s["uncalibrated"]["by_qtype"]

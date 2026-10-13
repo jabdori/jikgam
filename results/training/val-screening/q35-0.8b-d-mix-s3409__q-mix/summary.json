@@ -1,0 +1,237 @@
+{
+  "run": "q35-0.8b-d-mix-s3409",
+  "merged": "q35-0.8b-d-mix-s3409/merged",
+  "val_cases": 21,
+  "questions_version": "q-2026.10.14-mix",
+  "loaded_in_4bit": false,
+  "uncalibrated": {
+    "overall": {
+      "correct": 123,
+      "n": 152,
+      "accuracy": 0.8092105263157895,
+      "ece": 0.1247269736842106
+    },
+    "by_qtype": {
+      "action": {
+        "correct": 16,
+        "n": 18,
+        "accuracy": 0.8888888888888888,
+        "ece": 0.13224999999999995
+      },
+      "applies": {
+        "correct": 53,
+        "n": 67,
+        "accuracy": 0.7910447761194029,
+        "ece": 0.1684417910447761
+      },
+      "condition_changed": {
+        "correct": 14,
+        "n": 17,
+        "accuracy": 0.8235294117647058,
+        "ece": 0.16455294117647068
+      },
+      "intent": {
+        "correct": 12,
+        "n": 17,
+        "accuracy": 0.7058823529411765,
+        "ece": 0.15781764705882348
+      },
+      "next_info": {
+        "correct": 9,
+        "n": 10,
+        "accuracy": 0.9,
+        "ece": 0.10875999999999998
+      },
+      "sufficient": {
+        "correct": 16,
+        "n": 20,
+        "accuracy": 0.8,
+        "ece": 0.1389200000000001
+      },
+      "suggestion_valid": {
+        "correct": 3,
+        "n": 3,
+        "accuracy": 1.0,
+        "ece": 0.07410000000000005
+      }
+    },
+    "noul": {
+      "suggestion_valid": {
+        "balanced_accuracy": null,
+        "pred_true_ratio": 0.0
+      },
+      "condition_changed": {
+        "balanced_accuracy": 0.625,
+        "pred_true_ratio": 0.058823529411764705
+      },
+      "sufficient": {
+        "balanced_accuracy": 0.75,
+        "pred_true_ratio": 0.8
+      },
+      "applies": {
+        "balanced_accuracy": 0.7831215970961887,
+        "pred_true_ratio": 0.5970149253731343
+      }
+    },
+    "by_tag": {
+      "colloquial": {
+        "correct": 39,
+        "n": 49,
+        "accuracy": 0.7959183673469388
+      },
+      "correction": {
+        "correct": 21,
+        "n": 31,
+        "accuracy": 0.6774193548387096
+      },
+      "ellipsis": {
+        "correct": 6,
+        "n": 7,
+        "accuracy": 0.8571428571428571
+      },
+      "exception": {
+        "correct": 58,
+        "n": 72,
+        "accuracy": 0.8055555555555556
+      },
+      "handoff": {
+        "correct": 11,
+        "n": 14,
+        "accuracy": 0.7857142857142857
+      },
+      "insufficient_info": {
+        "correct": 15,
+        "n": 18,
+        "accuracy": 0.8333333333333334
+      },
+      "missing_evidence": {
+        "correct": 6,
+        "n": 7,
+        "accuracy": 0.8571428571428571
+      },
+      "multi_evidence": {
+        "correct": 61,
+        "n": 77,
+        "accuracy": 0.7922077922077922
+      },
+      "negation": {
+        "correct": 20,
+        "n": 24,
+        "accuracy": 0.8333333333333334
+      },
+      "number_date": {
+        "correct": 29,
+        "n": 38,
+        "accuracy": 0.7631578947368421
+      },
+      "partial_stt": {
+        "correct": 5,
+        "n": 6,
+        "accuracy": 0.8333333333333334
+      },
+      "similar_article": {
+        "correct": 32,
+        "n": 37,
+        "accuracy": 0.8648648648648649
+      },
+      "stale_suggestion": {
+        "correct": 20,
+        "n": 24,
+        "accuracy": 0.8333333333333334
+      },
+      "stt_error": {
+        "correct": 10,
+        "n": 12,
+        "accuracy": 0.8333333333333334
+      }
+    }
+  },
+  "calibrated_in_sample": {
+    "overall": {
+      "correct": 123,
+      "n": 152,
+      "accuracy": 0.8092105263157895,
+      "ece": 0.050280921052631614
+    },
+    "by_qtype": {
+      "action": {
+        "correct": 16,
+        "n": 18,
+        "accuracy": 0.8888888888888888,
+        "ece": 0.12170555555555558
+      },
+      "applies": {
+        "correct": 53,
+        "n": 67,
+        "accuracy": 0.7910447761194029,
+        "ece": 0.10114477611940294
+      },
+      "condition_changed": {
+        "correct": 14,
+        "n": 17,
+        "accuracy": 0.8235294117647058,
+        "ece": 0.1013058823529412
+      },
+      "intent": {
+        "correct": 12,
+        "n": 17,
+        "accuracy": 0.7058823529411765,
+        "ece": 0.12867058823529412
+      },
+      "next_info": {
+        "correct": 9,
+        "n": 10,
+        "accuracy": 0.9,
+        "ece": 0.13009000000000004
+      },
+      "sufficient": {
+        "correct": 16,
+        "n": 20,
+        "accuracy": 0.8,
+        "ece": 0.11292999999999997
+      },
+      "suggestion_valid": {
+        "correct": 3,
+        "n": 3,
+        "accuracy": 1.0,
+        "ece": 0.26326666666666665
+      }
+    },
+    "temperatures": {
+      "head_temperature": 2.182055950164795,
+      "temperature": [
+        0.8479148149490356,
+        1.0,
+        1.1587194204330444
+      ]
+    }
+  },
+  "unsloth_evaluate_uncalibrated": {
+    "accuracy": 0.8092105263157895,
+    "ece": 0.12497881035271442,
+    "loss": 0.6174111015991577,
+    "record_accuracy": 0.19047619047619047
+  },
+  "unsloth_calibrate_cross_fitted": {
+    "accuracy": 0.8092105263157895,
+    "ece": 0.100727637641524,
+    "loss": 0.46884927807044924,
+    "record_accuracy": 0.19047619047619047,
+    "fitted_types": [
+      0,
+      2
+    ]
+  },
+  "build_dataset_report": {
+    "total": 152,
+    "skipped": 0,
+    "reason": null,
+    "truncated": 0
+  },
+  "in_process_predict_ms": {
+    "p50": 77.3,
+    "p95": 89.3,
+    "note": "모델과 같은 프로세스에서 잰 predict 시간. 실행기 지연(HTTP 왕복)과 다르다."
+  },
+  "gpu": "NVIDIA GeForce RTX 3090 Ti"
+}

@@ -161,6 +161,7 @@ bash jikgam/train/run_wsl.sh serve --stop --port 8888
 - 요청 모델 이름은 `laya-local`을 쓴다. 별칭(`laya`, `default`, `jev-latest`)은 설정 화면에서 고른 모델로 바뀔 수 있지만 `laya-local`은 환경 변수로 띄운 폴더에만 연결된다. 응답의 `model`도 항상 `laya-local`이라, 설정(`config/decision_models.toml`)의 `served`와 `weights_sha256_16`으로 가중치를 식별한다: 0.8B `94f8e23735f64400`, 2B `3f9dcfe6df110822`.
 - 한 GPU에 두 Studio를 포트만 달리해 띄웠다(같은 `~/.unsloth/studio`). 같은 val 사례에 대한 서버 응답 확률은 선별 때 같은 프로세스에서 낸 확률과 소수 넷째 자리까지 같았다.
 - Windows의 실행기는 WSL2 localhost 전달로 접속한다. WSL 세션이 모두 끝나면 서버가 같이 내려갈 수 있어, 측정하는 동안 WSL 세션 하나를 열어 두었다.
+- 2B는 지연 때문에 나중에 Studio 대신 같은 프로세스 서버(`jikgam/train/serve_direct.py`, 설정 `q35-2b-ko-direct`)로 서빙하기로 했다(§10). 가중치와 답은 같다.
 
 ## 8. 실행기 비교 (val, 질문 세트 q-2026.10.14-mix)
 
@@ -227,9 +228,42 @@ uv run python -m jikgam.train.tag_compare results/decisions/val/20261014T060432 
 
 두 해석의 결론은 갈린다. 처리 시간 합 기준으로는 Jev(요청당 0.000120달러)와 Clef-flash(0.000089달러)보다 싸고, 측정 구간 기준으로는 두 모델 모두 0.000188달러로 더 비싸다. 그래서 둘 다 적는다(`docs/evaluation.md` §2.6 보완). 주장 3의 성공 수치에는 비용 조건이 없다.
 
-## 10. 남은 문제
+## 10. 2B 서빙 방식과 지연
 
-- 2B의 p95 지연이 200ms를 넘는다. 같은 프로세스 predict는 p95 179ms라 HTTP·작업 프로세스 경유와 GPU 클럭 변동의 몫이 있다. llama.cpp GGUF 서빙(Studio의 Clef GGUF 경로), GPU 클럭 고정, 입력 길이 축소를 따로 재 볼 수 있다.
+2B (d)의 가중치는 그대로 두고 서빙 방식만 바꿔 쟀다. 모든 측정은 로컬 백엔드 하나만 부르는 실행기 실행(원격 호출 없음, 5회 반복, 동시 실행 1, 예열 후, Windows 클라이언트 → WSL2 localhost)이고, 한 번에 서버 하나만 GPU에 올렸다. 서빙한 답은 선별 예측(`results/training/val-screening/q35-2b-d-mix__q-mix/predictions.jsonl`)과 판단마다 비교했다(`jikgam/train/compare_served.py`, 표는 `jikgam/train/latency_table.py`).
+
+| 방식 | 실행 | p50 ms | p95 ms | 최대 ms | 정답(회차 평균)/152 | 선별 예측과 라벨 일치 | 확률 차 중앙값 / 최대 |
+|---|---|---|---|---|---|---|---|
+| Studio PyTorch 16비트 | `20261014T063542` | 188 | 217 | 276 | 134.0 | 760/760 | 0 / 0 |
+| Studio llama.cpp GGUF BF16 | `20261014T063644` | 257 | 507 | 3,472 | 135.0 | 755/760 | 0.0001 / 0.1148 |
+| Studio llama.cpp GGUF Q8_0 | `20261014T063752` | 208 | 485 | 2,747 | 135.0 | 745/760 | 0.0002 / 0.2679 |
+| Studio llama.cpp GGUF Q4_K_M | `20261014T063846` | 212 | 486 | 2,591 | 132.0 | 695/760 | 0.0023 / 0.8597 |
+| 같은 프로세스 서버(`serve_direct.py`) | `20261014T064204` | 146 | 175 | 215 | 134.0 | 760/760 | 0 / 0 |
+| 같은 프로세스 서버, 반복 | `20261014T064235` | 145 | 173 | 196 | 134.0 | 760/760 | 0 / 0 |
+
+참고로 앞선 조건의 Studio PyTorch: 0.8B 서버와 함께 올리고 원격 백엔드와 번갈아 부른 실행 `20261014T060432` p50 220 / p95 448ms, 0.8B와 번갈아 부른 실행 `20261014T060738` p50 204 / p95 348ms. 한 GPU에 모델 하나만 올리고 그것만 부르면 꼬리가 줄었다.
+
+- **llama.cpp(GGUF):** Studio의 Clef GGUF 경로(`jikgam/train/export_gguf.py`로 내보내고 `serve.py --backend llama.cpp`로 서빙, unslothai/llama.cpp b11541). 세 양자화 모두 회차 0에서 5개 호출이 1.7~3.5초 걸렸다(1초 넘는 호출은 모두 회차 0). 회차 1~4의 중앙값도 BF16 244~270ms, Q8_0 196~216ms로 Studio PyTorch의 회차별 중앙값(187~197ms)보다 빠르지 않았다. 라벨이 선별 예측과 다른 판단은 BF16 1개(g033-1 intent, 확률 0.4979 → 0.5059로 정답 쪽으로 바뀌어 5회 모두 다름), Q8_0 3개(회차 합 15개), Q4_K_M 13개(회차 합 65개)였다.
+- **GPU 클럭 고정:** `nvidia-smi -lgc`가 "The current user does not have permission to change clocks"로 거부됐다(관리자 권한 필요). 측정하지 않았다. 유휴 상태는 P8, 210MHz였다.
+- **요청 경로:** Studio 로그의 서버 처리 시간(`process_time_ms`, 실행기 예열 요청 1개 포함 106~107건)은 PyTorch p50 172 / p95 205ms였다. 클라이언트 지연(188/217)과의 차이인 약 15ms가 Windows → WSL2 전달 몫이다. 선별 때 같은 프로세스에서 잰 `predict`는 p50 132 / p95 179ms라, Studio의 요청 경로(설정·키 확인, 스레드 풀, 별도 작업 프로세스와의 파이프)에 약 40ms가 든다.
+- **같은 프로세스 서버:** `jikgam/train/serve_direct.py`는 Studio와 같은 방식으로 병합 모델을 올리고(16비트, 최대 16,384토큰) Studio의 작업 프로세스가 부르는 함수(`unsloth.models.decision._clef_decide`)를 서버 프로세스에서 직접 부른다. 응답 형식도 Studio와 같다. 답은 선별 예측과 760개 모두 같았고 확률 차는 0이었다.
+
+선택: 2B는 같은 프로세스 서버로 서빙한다(설정 `q35-2b-ko-direct`). 두 번의 로컬 실행에서 p95 175ms, 173ms였다.
+
+```bash
+bash jikgam/train/run_wsl.sh serve_direct --run q35-2b-d-mix --port 8893   # 앞에서 실행. 종료는 Ctrl+C
+uv run python -m jikgam.eval.run_decisions --split val --questions data/question_sets/q-2026.10.14-mix.json \
+    --backends q35-2b-ko-direct
+```
+
+한계:
+
+- 이 측정은 로컬 백엔드만 이어서 부른 조건이다. 원격 백엔드와 번갈아 부를 때는 Studio PyTorch에서 꼬리가 길어졌다(위 참고). 같은 프로세스 서버를 그 조건에서는 재지 않았다.
+- 서버를 띄운 뒤 첫 요청은 4.1초 걸렸다(점검 요청에서 잼). 실행기의 예열 요청이 이를 흡수한다. 엔진도 세션 전에 예열해야 한다.
+- Studio의 관리 기능(설정, 키 관리, 모델 교체, 유휴 시 내리기)은 쓰지 않는다. 키는 Studio가 발급한 키 파일을 그대로 확인한다.
+
+## 12. 남은 문제
+
 - (d)의 이득에는 val 실패 유형을 보고 쓴 보강 사례의 선택 효과가 섞여 있다. 고정 절차의 test 평가 전에는 일반화 정도를 알 수 없다.
 - 학습 시드 하나로만 돌렸다. 0.8B (a)의 문구별 8개 차이처럼, 사례가 적은 구성은 시드 변동이 클 수 있다.
 - 모델 파일은 WSL2 가상 디스크(C:)에 약 34 GB(병합 모델 11개와 어댑터), Unsloth 설치 11 GB, Hugging Face 캐시 6 GB가 있다. 지우지 않았다.
