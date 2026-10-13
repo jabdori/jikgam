@@ -84,6 +84,7 @@ class Session:
         self._writes: set[asyncio.Task] = set()
         self._n_suggestions = 0
         self._n_agent = 0
+        self._n_calls = 0
         self.log.emit(ev.SESSION_START, 0, org=org.org, today=org.today.isoformat(), decision_backend=self.backend,
                       generator=getattr(self.generator, "model", None), question_sets=[base_version, extra_version],
                       generation_prompt=gen.PROMPT_VERSION, llm_judge_prompt=llm.PROMPT_VERSION,
@@ -296,7 +297,10 @@ class Session:
         attempts = 0
         while True:
             attempts += 1
-            res = await self.decider.decide(state, questions)
+            try:
+                res = await self.decider.decide(state, questions)
+            except Exception as e:  # 백엔드가 예외를 던져도 판별 실패로 다루고 코드 규칙은 계속 쓴다
+                res = DecisionResult(self.backend, "응답 없음", {}, error=f"{type(e).__name__}: {e}")
             if not (res.error and not res.answers and res.error.startswith(DECISION_RETRYABLE)) or attempts == 2:
                 break
         answers = {}
@@ -343,12 +347,15 @@ class Session:
     # --- 도구 --------------------------------------------------------------------------------
 
     async def _call(self, call: policy.ToolCall, my_v: int, out: list[dict[str, Any]]) -> ToolResult:
-        out.append(self.log.emit(ev.TOOL_CALL, self.state.version, request_version=my_v, tool=call.tool,
-                                 args=_mask_args(call.args), target=call.target))
+        self._n_calls += 1
+        call_id = f"c{self._n_calls}"  # 병렬 호출의 결과를 호출과 짝짓는다
+        out.append(self.log.emit(ev.TOOL_CALL, self.state.version, request_version=my_v, call_id=call_id,
+                                 tool=call.tool, args=_mask_args(call.args), target=call.target))
         r = await self.biz.call(call.tool, call.args, target=call.target)
         # 서버 상태를 바꾸는 호출(쓰기, 본인 확인)은 버전이 지나도 결과를 반영한다. 조회는 지난 버전이면 버린다.
         stale = self._stale(my_v) and call.tool not in WRITE_TOOLS and call.tool != "verify_identity"
-        out.append(self.log.emit(ev.TOOL_RESULT, self.state.version, request_version=my_v, tool=call.tool, ok=r.ok,
+        out.append(self.log.emit(ev.TOOL_RESULT, self.state.version, request_version=my_v, call_id=call_id,
+                                 tool=call.tool, ok=r.ok,
                                  status=r.status, error_code=r.error_code, attempts=r.attempts, latency_ms=r.latency_ms,
                                  idempotency_key=r.idempotency_key, data=r.data if r.ok else r.error))
         if stale:

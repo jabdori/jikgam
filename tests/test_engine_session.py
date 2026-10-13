@@ -7,6 +7,7 @@ from engine_fakes import EchoGenerator, GatedDecider, NoBizApi, ScriptedDecider,
 
 from jikgam.engine import events as ev
 from jikgam.engine.bizapi import BizApiClient
+from jikgam.engine.chat import report
 from jikgam.engine.org import load_org
 from jikgam.engine.session import Session
 
@@ -153,8 +154,36 @@ def test_s21_topic_change_invalidates_previous_suggestion(bizapi, tmp_path):
     q = types(outs[3], ev.QUOTE_SELECTED)[0]
     assert q["chosen"] == "incident" and q["tried"]["withdrawal"]["status"] == "not_eligible"
     assert tool_calls(outs[4]) == ["create_refund_request", "create_cancellation"]
-    refund = [e for e in outs[4] if e["type"] == ev.TOOL_CALL][0]
+    refund = next(e for e in outs[4] if e["type"] == ev.TOOL_CALL)
     assert refund["args"]["payment_id"] == "P010"
+    # 재생 보고서는 로그만으로 만든다
+    text = report(ev.read_log(tmp_path / "t-s21.jsonl"))
+    assert "[조건 변경 표시]" not in text  # 이 테스트 입력에는 표시가 없다
+    assert f"무효 {s3['suggestion_id']}" in text and "create_cancellation(customer_id=C010, subscription_id=S010)" in text
+    assert text.count("  u") >= 5 and "판별 " in text
+
+
+class _RaisingDecider(ScriptedDecider):
+    async def decide(self, state, questions):
+        raise RuntimeError("backend down")
+
+
+def test_decision_backend_failure_falls_back_to_code_rules(tmp_path):
+    async def go():
+        s = Session(ORG, "t-fail", tmp_path, decision_client=_RaisingDecider(), generator=EchoGenerator(),
+                    bizapi=NoBizApi())
+        s.state.request = "cancel_refund"  # 직전 판단이 있으면 그 요청으로 코드 규칙(본인 확인)을 적용한다
+        out = await s.handle(utt("u1", "해지해 주세요"))
+        out2 = await s.handle(utt("u2", "음"))
+        await s.aclose()
+        return out, out2
+
+    out, out2 = asyncio.run(go())
+    assert not types(out + out2, ev.ENGINE_ERROR)
+    resp = types(out, ev.DECISION_RESPONSE)[0]
+    assert resp["error"].startswith("RuntimeError") and resp["attempts"] == 1
+    assert types(out, ev.AGENT_SAY)[0]["text"] == "[identity_required:ask:phone]"
+    assert types(out2, ev.EVIDENCE_UPDATED)[0]["decision_error"].startswith("RuntimeError")
 
 
 def test_decision_state_shape_and_known_facts_exclude_last_utterance(tmp_path):
