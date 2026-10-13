@@ -1,0 +1,175 @@
+{
+  "_note": "보류용 평가 시나리오(data/scenarios/org_a_holdout.jsonl)의 가상 고객. 기준일 2026-10-12. 모든 날짜는 KST. customers.json과 함께 읽는다(bizapi -data 두 파일). 엔진 개발자는 엔진 설정을 고정하기 전에 이 파일을 읽지 않는다.",
+  "reference_date": "2026-10-12",
+  "incidents": [
+    {"id": "INC-2026-1009", "start": "2026-10-09T19:30", "end": "2026-10-09T23:00", "hours": 3.5, "cause": "company"}
+  ],
+  "customers": [
+    {"id": "C201", "name": "배수진", "phone": "010-0000-0201", "birth": "1992-04-18", "status": "active",
+     "subscriptions": [{"id": "S201", "plan": "monthly", "price": 9900, "trial": true, "trial_end": "2026-10-09", "start": "2026-09-25", "next_billing": "2026-11-09"}],
+     "payments": [{"id": "P201", "sub": "S201", "date": "2026-10-09", "amount": 9900, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-09-26", "type": "play", "_during_trial": true}, {"date": "2026-10-02", "type": "download", "_during_trial": true}, {"date": "2026-10-08", "type": "play", "_during_trial": true}],
+     "_case": "무료 체험(2026-09-25~10-08) 뒤 첫 결제 2026-10-09, 결제 3일차. 이용은 모두 체험 기간 중이라 이용 이력에서 빠진다(제12조 제2항) → 청약철회로 9,900원 전액 환불, 이용은 신청일 종료. 결제 당일 저녁 장애(INC-2026-1009)는 3.5시간이라 제9조 제2항 대상이 아니다"},
+
+    {"id": "C202", "name": "조은별", "phone": "010-0000-0202", "birth": "1988-11-02", "status": "active",
+     "subscriptions": [{"id": "S202", "plan": "annual", "price": 79000, "promo": true, "start": "2026-06-30", "next_billing": "2027-06-30"}],
+     "payments": [{"id": "P202", "sub": "S202", "date": "2026-06-30", "amount": 79000, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-07-04", "type": "play"}, {"date": "2026-08-15", "type": "download"}, {"date": "2026-09-27", "type": "play"}],
+     "_case": "프로모션 연 구독 2026-06-30 결제(부칙 경과 조치 대상) → 이용 4개월 차감 39,600원, 위약금 없음 → 39,400원, 승인 불필요, 신청일 종료"},
+
+    {"id": "C203", "name": "남현우", "phone": "010-0000-0203", "birth": "1979-01-25", "status": "active",
+     "subscriptions": [{"id": "S203", "plan": "annual", "price": 79000, "promo": true, "start": "2026-07-01", "next_billing": "2027-07-01"}],
+     "payments": [{"id": "P203", "sub": "S203", "date": "2026-07-01", "amount": 79000, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-07-03", "type": "play"}, {"date": "2026-09-02", "type": "play"}, {"date": "2026-10-03", "type": "play"}],
+     "_case": "프로모션 연 구독 2026-07-01 결제(경과 조치 대상 아님) → 이용 4개월 차감 39,600원, 위약금 3,940원 → 35,460원, 승인 불필요, 신청일 종료"},
+
+    {"id": "C204", "name": "진보람", "phone": "010-0000-0204", "birth": "1990-06-09", "status": "active",
+     "subscriptions": [{"id": "S204", "plan": "monthly", "price": 9900, "start": "2025-10-09", "next_billing": "2026-11-09"}],
+     "payments": [
+       {"id": "P204a", "sub": "S204", "date": "2025-10-09", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P204b", "sub": "S204", "date": "2025-10-09", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P204c", "sub": "S204", "date": "2025-11-09", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P204d", "sub": "S204", "date": "2025-12-09", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P204e", "sub": "S204", "date": "2026-01-09", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P204f", "sub": "S204", "date": "2026-02-09", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P204g", "sub": "S204", "date": "2026-03-09", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P204h", "sub": "S204", "date": "2026-04-09", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P204i", "sub": "S204", "date": "2026-05-09", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P204j", "sub": "S204", "date": "2026-06-09", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P204k", "sub": "S204", "date": "2026-07-09", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P204l", "sub": "S204", "date": "2026-08-09", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P204m", "sub": "S204", "date": "2026-09-09", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P204n", "sub": "S204", "date": "2026-09-09", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P204o", "sub": "S204", "date": "2026-10-09", "amount": 9900, "method": "card", "dispute": false}
+     ],
+     "usage": [{"date": "2026-09-12", "type": "play"}, {"date": "2026-10-10", "type": "play"}, {"date": "2026-10-11", "type": "download"}],
+     "_case": "같은 날 중복 결제가 두 번: 2025-10-09(신청 기한 2026-10-09 경과)와 2026-09-09(기한 안) → 2026-09-09 중복분 P204n 9,900원만 환불, 구독 유지(제10조). 10월 결제(10-09) 뒤 이용이 있어 해지해도 환불 없이 2026-11-08까지 이용"},
+
+    {"id": "C205", "name": "표민혁", "phone": "010-0000-0205", "birth": "1995-02-14", "status": "suspended",
+     "subscriptions": [{"id": "S205", "plan": "monthly", "price": 9900, "start": "2026-03-01", "next_billing": "2026-11-01"}],
+     "payments": [
+       {"id": "P205a", "sub": "S205", "date": "2026-03-01", "amount": 9900, "method": "easy_pay", "dispute": false},
+       {"id": "P205b", "sub": "S205", "date": "2026-04-01", "amount": 9900, "method": "easy_pay", "dispute": false},
+       {"id": "P205c", "sub": "S205", "date": "2026-05-01", "amount": 9900, "method": "easy_pay", "dispute": false},
+       {"id": "P205d", "sub": "S205", "date": "2026-06-01", "amount": 9900, "method": "easy_pay", "dispute": false},
+       {"id": "P205e", "sub": "S205", "date": "2026-07-01", "amount": 9900, "method": "easy_pay", "dispute": false},
+       {"id": "P205f", "sub": "S205", "date": "2026-08-01", "amount": 9900, "method": "easy_pay", "dispute": false},
+       {"id": "P205g", "sub": "S205", "date": "2026-09-01", "amount": 9900, "method": "easy_pay", "dispute": false},
+       {"id": "P205h", "sub": "S205", "date": "2026-10-01", "amount": 9900, "method": "easy_pay", "dispute": false},
+       {"id": "P205i", "sub": "S205", "date": "2026-10-01", "amount": 9900, "method": "easy_pay", "dispute": false}
+     ],
+     "usage": [{"date": "2026-09-18", "type": "play"}, {"date": "2026-09-22", "type": "play"}],
+     "_case": "이용 정지 계정, 2026-10-01 간편결제 중복 → 중복분 P205i 9,900원 환불(제10조, 제16조 단서), 간편결제 취소 절차. 청약철회·장애 환불 등은 제16조로 제외, 이미 낸 월 요금은 환불 없음"},
+
+    {"id": "C206", "name": "하유진", "phone": "010-0000-0206", "birth": "2007-09-20", "status": "active",
+     "subscriptions": [{"id": "S206", "plan": "annual", "price": 99000, "start": "2026-09-10", "next_billing": "2027-09-10"}],
+     "payments": [{"id": "P206", "sub": "S206", "date": "2026-09-10", "amount": 99000, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-09-11", "type": "play"}, {"date": "2026-09-25", "type": "download"}, {"date": "2026-10-09", "type": "play"}],
+     "_case": "2026-09-10 결제 당시 만 18세(2026-09-20 만 19세), 지금은 성인 → 미성년자 결제 취소는 상담사 인계(제13조, 제19조 제1항). 연 구독 중도 해지로 보면 2개월 차감·위약금 → 71,280원(승인 필요)"},
+
+    {"id": "C207", "name": "염소희", "phone": "010-0000-0207", "birth": "1986-12-30", "status": "active",
+     "subscriptions": [
+       {"id": "S207", "plan": "monthly", "price": 9900, "start": "2026-10-09", "next_billing": "2026-11-09"},
+       {"id": "S207F", "plan": "family_addon", "price": 3900, "start": "2026-10-09", "next_billing": "2026-11-09"}
+     ],
+     "payments": [
+       {"id": "P207", "sub": "S207", "date": "2026-10-09", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P207F", "sub": "S207F", "date": "2026-10-09", "amount": 3900, "method": "card", "dispute": false}
+     ],
+     "usage": [],
+     "_case": "본 구독과 가족 공유를 2026-10-09 함께 결제, 이용 없음 → 본 구독 청약철회 시 부가 상품 포함 13,800원 환불, 둘 다 신청일 종료(제5조, 제18조 제3항). 부가 상품만 해지하면 환불 없이 2026-11-08까지 이용(제18조 제2항)"},
+
+    {"id": "C208", "name": "우다인", "phone": "010-0000-0208", "birth": "2001-05-27", "status": "active",
+     "subscriptions": [{"id": "S208", "plan": "monthly", "price": 9900, "start": "2026-10-10", "next_billing": "2026-11-10"}],
+     "payments": [{"id": "P208", "sub": "S208", "date": "2026-10-10", "amount": 9900, "method": "mobile", "dispute": false}],
+     "usage": [],
+     "_case": "휴대폰 결제 2026-10-10, 결제 2일차, 이용 없음 → 청약철회로 9,900원 결제 취소(결제한 달 안), 신청일 종료. 환불 없이 해지만 하면 2026-11-09까지 이용"},
+
+    {"id": "C209", "name": "노승현", "phone": "010-0000-0209", "birth": "1983-08-08", "status": "active",
+     "subscriptions": [{"id": "S209", "plan": "annual", "price": 79000, "promo": true, "start": "2026-09-15", "next_billing": "2027-09-15"}],
+     "payments": [{"id": "P209", "sub": "S209", "date": "2026-09-15", "amount": 79000, "method": "mobile", "dispute": false}],
+     "usage": [{"date": "2026-09-16", "type": "play"}, {"date": "2026-10-01", "type": "play"}],
+     "_case": "프로모션 연 구독 휴대폰 결제 2026-09-15 → 1개월 차감 9,900원(정상 월 요금), 위약금 6,910원 → 62,190원(승인 필요). 결제한 달이 지나 회원 본인 명의 계좌로 환불, 신청일 종료"},
+
+    {"id": "C210", "name": "차예솔", "phone": "010-0000-0210", "birth": "2007-10-01", "status": "active",
+     "subscriptions": [{"id": "S210", "plan": "monthly", "price": 9900, "start": "2026-10-03", "next_billing": "2026-11-03"}],
+     "payments": [{"id": "P210", "sub": "S210", "date": "2026-10-03", "amount": 9900, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-10-04", "type": "play"}, {"date": "2026-10-08", "type": "download"}],
+     "_case": "2026-10-01 만 19세, 결제 2026-10-03은 만 19세 이후 → 미성년자 결제 취소 대상 아님. 청약철회 기한(2026-10-10) 경과·이용 있음 → 환불 없음. 해지하면 2026-11-02까지 이용"},
+
+    {"id": "C211", "name": "길영숙", "phone": "010-0000-0211", "birth": "1958-03-11", "status": "active",
+     "subscriptions": [{"id": "S211", "plan": "annual", "price": 99000, "start": "2026-05-20", "next_billing": "2027-05-20"}],
+     "payments": [{"id": "P211", "sub": "S211", "date": "2026-05-20", "amount": 99000, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-06-02", "type": "play"}, {"date": "2026-08-14", "type": "play"}, {"date": "2026-10-02", "type": "play"}],
+     "_case": "연 구독 2026-05-20 결제(부칙 경과 조치 대상) → 5개월 차감 49,500원, 위약금 없음 → 49,500원. 50,000원 이하라 승인 불필요. 해지하면 신청일 종료"},
+
+    {"id": "C212", "name": "탁준영", "phone": "010-0000-0212", "birth": "1991-07-30", "status": "active",
+     "subscriptions": [{"id": "S212", "plan": "annual", "price": 99000, "start": "2026-07-05", "next_billing": "2027-07-05"}],
+     "payments": [{"id": "P212", "sub": "S212", "date": "2026-07-05", "amount": 99000, "method": "easy_pay", "dispute": false}],
+     "usage": [{"date": "2026-07-06", "type": "play"}, {"date": "2026-09-30", "type": "play"}],
+     "_case": "연 구독 간편결제 2026-07-05 → 4개월 차감 39,600원, 위약금 5,940원 → 53,460원(승인 필요), 간편결제 취소 절차, 신청일 종료"},
+
+    {"id": "C213", "name": "봉지원", "phone": "010-0000-0213", "birth": "1997-01-19", "status": "active",
+     "subscriptions": [{"id": "S213", "plan": "monthly", "price": 9900, "start": "2026-10-09", "next_billing": "2026-11-09"}],
+     "payments": [{"id": "P213", "sub": "S213", "date": "2026-10-09", "amount": 9900, "method": "card", "dispute": true}],
+     "usage": [],
+     "_case": "월 구독 결제 3일차, 이용 없음(청약철회 요건은 갖춤)이지만 그 결제에 카드사 이의 제기가 진행 중 → 상담사 인계(제19조 제1항)"},
+
+    {"id": "C214", "name": "엄기순", "phone": "010-0000-0214", "birth": "1951-09-03", "status": "active",
+     "subscriptions": [{"id": "S214", "plan": "monthly", "price": 9900, "start": "2026-08-11", "next_billing": "2026-11-11"}],
+     "payments": [
+       {"id": "P214a", "sub": "S214", "date": "2026-08-11", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P214b", "sub": "S214", "date": "2026-09-11", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P214c", "sub": "S214", "date": "2026-10-11", "amount": 9900, "method": "card", "dispute": false}
+     ],
+     "usage": [{"date": "2026-08-20", "type": "play"}, {"date": "2026-09-15", "type": "play"}, {"date": "2026-10-11", "type": "play"}],
+     "_case": "월 구독 2026-10-11 결제, 결제 당일 이용 → 청약철회 불가, 해지하면 환불 없이 2026-11-10까지 이용. 본인 확인 2회 실패 시나리오용"},
+
+    {"id": "C215", "name": "방태오", "phone": "010-0000-0215", "birth": "1989-12-12", "status": "active",
+     "subscriptions": [{"id": "S215", "plan": "monthly", "price": 9900, "start": "2026-08-04", "next_billing": "2026-11-04"}],
+     "payments": [
+       {"id": "P215a", "sub": "S215", "date": "2026-08-04", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P215b", "sub": "S215", "date": "2026-09-04", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P215c", "sub": "S215", "date": "2026-10-04", "amount": 9900, "method": "card", "dispute": false}
+     ],
+     "usage": [{"date": "2026-08-10", "type": "play"}, {"date": "2026-09-20", "type": "play"}],
+     "_case": "월 구독 2026-10-04 결제, 결제 뒤 이용 없음. 기준일은 8일째라 청약철회 기한(2026-10-11)이 하루 지나 불가 → 해지하면 환불 없이 2026-11-03까지 이용(제7조)"},
+
+    {"id": "C216", "name": "국미란", "phone": "010-0000-0216", "birth": "1980-04-05", "status": "active",
+     "subscriptions": [{"id": "S216", "plan": "annual", "price": 99000, "start": "2026-08-20", "next_billing": "2027-08-20"}],
+     "payments": [{"id": "P216", "sub": "S216", "date": "2026-08-20", "amount": 99000, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-08-22", "type": "play"}, {"date": "2026-09-14", "type": "download"}, {"date": "2026-10-05", "type": "play"}],
+     "_case": "연 구독 2026-08-20 결제 → 2개월 차감 19,800원, 위약금 7,920원 → 71,280원(승인 필요), 신청일 종료"},
+
+    {"id": "C217", "name": "석하람", "phone": "010-0000-0217", "birth": "1999-03-22", "status": "active",
+     "subscriptions": [{"id": "S217", "plan": "annual", "price": 79000, "promo": true, "start": "2026-10-09", "next_billing": "2027-10-09"}],
+     "payments": [{"id": "P217", "sub": "S217", "date": "2026-10-09", "amount": 79000, "method": "card", "dispute": false}],
+     "usage": [],
+     "_case": "프로모션 연 구독 2026-10-09 결제, 3일차, 이용 없음 → 청약철회로 79,000원 전액(승인 필요), 신청일 종료. 연 구독 중도 해지로 계산하면 62,190원(잘못된 경로)"},
+
+    {"id": "C218", "name": "편도경", "phone": "010-0000-0218", "birth": "1993-06-17", "status": "active",
+     "subscriptions": [{"id": "S218", "plan": "monthly", "price": 9900, "start": "2026-10-10", "next_billing": "2026-11-10"}],
+     "payments": [{"id": "P218", "sub": "S218", "date": "2026-10-10", "amount": 9900, "method": "card", "dispute": false}],
+     "usage": [],
+     "_case": "월 구독 결제 2일차, 이용 없음 → 청약철회 9,900원, 신청일 종료(본인 확인 장애 시나리오용)"},
+
+    {"id": "C219", "name": "피서진", "phone": "010-0000-0219", "birth": "1996-02-08", "status": "active",
+     "subscriptions": [{"id": "S219", "plan": "monthly", "price": 9900, "start": "2026-07-15", "next_billing": "2026-10-15"}],
+     "payments": [
+       {"id": "P219a", "sub": "S219", "date": "2026-07-15", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P219b", "sub": "S219", "date": "2026-08-15", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P219c", "sub": "S219", "date": "2026-09-15", "amount": 9900, "method": "card", "dispute": false}
+     ],
+     "usage": [{"date": "2026-07-20", "type": "play"}, {"date": "2026-08-30", "type": "play"}, {"date": "2026-09-10", "type": "play"}],
+     "_case": "월 구독, 다음 결제일 2026-10-15. 마지막 결제(09-15)는 청약철회 기한 경과 → 환불 없음, 해지하면 2026-10-14까지 이용. 제3자(동생)가 대신 전화하는 시나리오용"},
+
+    {"id": "C220", "name": "맹성철", "phone": "010-0000-0220", "birth": "1975-10-28", "status": "active",
+     "subscriptions": [{"id": "S220", "plan": "annual", "price": 99000, "start": "2025-10-06", "next_billing": "2027-10-06"}],
+     "payments": [
+       {"id": "P220a", "sub": "S220", "date": "2025-10-06", "amount": 79000, "method": "card", "dispute": false},
+       {"id": "P220b", "sub": "S220", "date": "2026-10-06", "amount": 99000, "method": "card", "dispute": false}
+     ],
+     "usage": [{"date": "2026-03-01", "type": "play"}, {"date": "2026-10-07", "type": "play"}, {"date": "2026-10-10", "type": "play"}],
+     "_case": "프로모션 첫해(2025-10-06, 79,000원) 뒤 정상 요금 99,000원으로 자동 갱신(2026-10-06). 갱신 후 이용이 있어 청약철회는 불가지만, 갱신 결제 7일 이내 회사 귀책 5시간 장애(INC-2026-1008) → 제9조 제2항으로 99,000원 전액(승인 필요), 신청일 종료. 중도 해지로 보면 1개월 차감·위약금 → 80,190원"}
+  ]
+}

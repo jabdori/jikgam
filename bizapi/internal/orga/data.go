@@ -118,6 +118,48 @@ func Load(path string) (*Dataset, error) {
 	return ds, nil
 }
 
+// LoadAll은 여러 고객 데이터 파일을 읽어 하나로 합친다. 파일 하나면 Load와 같다.
+// 모든 파일의 reference_date가 같아야 한다. 장애는 전역 기록이라 모두 합치고, 장애 ID가 겹치면 오류다.
+// 고객·휴대폰 번호·구독·결제 ID가 파일 사이에서 겹치면 NewDataset이 오류를 낸다.
+func LoadAll(paths ...string) (*Dataset, error) {
+	switch len(paths) {
+	case 0:
+		return nil, fmt.Errorf("고객 데이터 파일이 없다")
+	case 1:
+		return Load(paths[0])
+	}
+	var (
+		ref       Date
+		incidents []Incident
+		customers []*Customer
+	)
+	incidentFrom := map[string]string{}
+	for i, path := range paths {
+		ds, err := Load(path)
+		if err != nil {
+			return nil, err
+		}
+		if i == 0 {
+			ref = ds.ReferenceDate
+		} else if ds.ReferenceDate.Compare(ref) != 0 {
+			return nil, fmt.Errorf("%s: reference_date %s가 %s의 %s와 다르다", path, ds.ReferenceDate, paths[0], ref)
+		}
+		for _, inc := range ds.Incidents {
+			if prev, dup := incidentFrom[inc.ID]; dup {
+				return nil, fmt.Errorf("%s: 장애 ID %s가 %s에도 있다", path, inc.ID, prev)
+			}
+			incidentFrom[inc.ID] = path
+		}
+		incidents = append(incidents, ds.Incidents...)
+		customers = append(customers, ds.Customers...)
+	}
+	ds, err := NewDataset(ref, incidents, customers)
+	if err != nil {
+		return nil, fmt.Errorf("%s 병합: %w", strings.Join(paths, ", "), err)
+	}
+	return ds, nil
+}
+
 type rawFile struct {
 	ReferenceDate string        `json:"reference_date"`
 	Incidents     []rawIncident `json:"incidents"`
