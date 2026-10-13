@@ -111,6 +111,8 @@ async def main() -> None:
 
     clients = {n: make_client(n) for n in names}
     for n, c in clients.items():
+        if cfg_all[n]["kind"] in ("rules", "majority"):  # 연결이 없는 로컬 기준선은 예열하지 않는다
+            continue
         res, _ = await call(c, WARMUP_STATE, WARMUP_QUESTIONS)
         print(f"예열 {n}: {res.latency_ms:.0f} ms {res.error or ''}", flush=True)
 

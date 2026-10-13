@@ -85,13 +85,19 @@ def stability(ds: list[dict]) -> float:
 
 def conditions(meta: dict) -> list[str]:
     net = meta["network_before"]
-    return [f"- 시각(KST): {meta['started_kst']} ~ {meta.get('finished_kst', '?')}",
+    rec = meta.get("reconstructed")
+    head = [f"- **meta.json 복원본**({rec['date']}): {rec['reason']} {rec['how']} "
+            f"없는 값: {', '.join(rec['missing'])}. 근삿값: "
+            + ", ".join(f"{k}({v})" for k, v in rec["approximate"].items())] if rec else []
+    network = ("기록 없음" if net is None else
+               f"Cloudflare 접속 지점 {net['cloudflare_colo']} ({net['cloudflare_loc']}), TCP 연결 중앙값 "
+               + (", ".join(f"{h} {ms}ms" for h, ms in net["tcp_connect_ms_median"].items()) or "-"))
+    return head + [f"- 시각(KST): {meta['started_kst']} ~ {meta.get('finished_kst', '?')}",
             f"- 코드: `{meta['git_commit'][:12]}`{' (커밋 안 된 변경 있음)' if meta['git_dirty'] else ''}",
             f"- 데이터: `{meta['data_file']}` sha256 앞 16자리 `{meta['data_sha256_16']}`, 사례 {meta['cases']}건",
             f"- 질문 세트 `{meta['questions_version']}`, LLM 프롬프트 `{meta['llm_prompt_version']}`",
             "- 반복: " + ", ".join(f"{b} {n}회" for b, n in meta["reps"].items()) + f", 동시 실행 {meta['concurrency']}",
-            f"- 네트워크: Cloudflare 접속 지점 {net['cloudflare_colo']} ({net['cloudflare_loc']}), TCP 연결 중앙값 "
-            + (", ".join(f"{h} {ms}ms" for h, ms in net["tcp_connect_ms_median"].items()) or "-"),
+            f"- 네트워크(측정 전): {network}",
             f"- 클라이언트: Python {meta['client']['python']}, httpx {meta['client']['httpx']}, {meta['client']['os']}"]
 
 
