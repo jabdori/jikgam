@@ -43,6 +43,7 @@ class PolicyConfig:
     refund_intents: frozenset[str]
     cancel_intents: frozenset[str]
     refundable_reasons: frozenset[str]
+    cancel_refund_reasons: frozenset[str]
     addon_plans: frozenset[str]
     minor_age: int
     quote_priority: tuple[str, ...]
@@ -91,6 +92,7 @@ def _policy(raw: dict[str, Any]) -> PolicyConfig:
     return PolicyConfig(
         records_intents=frozenset(raw["records_intents"]), refund_intents=frozenset(raw["refund_intents"]),
         cancel_intents=frozenset(raw["cancel_intents"]), refundable_reasons=frozenset(raw["refundable_reasons"]),
+        cancel_refund_reasons=frozenset(raw["cancel_refund_reasons"]),
         addon_plans=frozenset(raw.get("addon_plans", ())), minor_age=int(raw["minor_age"]),
         quote_priority=priority, quote_reasons=reasons,
     )

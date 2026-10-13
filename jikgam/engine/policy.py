@@ -156,8 +156,10 @@ def choose_quote(reasons: list[str], quotes: dict[str, QuoteOutcome], cfg: Polic
 
 
 def _signature(writes: list[ToolCall], summary: dict[str, Any]) -> str:
-    """쓰기 인자와 안내 내용(금액, 해지 대상 등)이 모두 같아야 같은 접수 내용이다."""
-    raw = json.dumps([[[w.tool, w.target, sorted(w.args.items())] for w in writes], summary], ensure_ascii=False,
+    """쓰기 인자와 안내한 환불 금액이 모두 같아야 같은 접수 내용이다. 설명용 필드(환불 불가 사유 등)는 넣지 않는다."""
+    refund = summary.get("refund") or {}
+    money = [refund.get("refund_amount"), [ln.get("amount") for ln in refund.get("lines", [])]]
+    raw = json.dumps([[[w.tool, w.target, sorted(w.args.items())] for w in writes], money], ensure_ascii=False,
                      sort_keys=True, default=str)
     return hashlib.sha256(raw.encode()).hexdigest()[:16]
 
@@ -181,8 +183,13 @@ def _draft(intent: str | None, sub: dict | None, chosen: QuoteOutcome | None, re
     cid = state.identity.customer_id
     writes: list[ToolCall] = []
     summary: dict[str, Any] = {}
+    # 환불 접수는 고객이 환불을 요청했거나, 해지 자체가 환불을 수반하는 사유(연 구독 중도 해지)일 때만 넣는다.
+    # 해지만 요청했는데 청약철회처럼 환불이 가능하면 안내만 한다(환불하면 이용 기간이 바로 끝나므로 고객이 정한다).
     refund = chosen is not None and chosen.reason in cfg.refundable_reasons and \
-        intent in (cfg.refund_intents | cfg.cancel_intents)
+        (intent in cfg.refund_intents or (intent in cfg.cancel_intents and chosen.reason in cfg.cancel_refund_reasons))
+    if chosen is not None and not refund:
+        summary["refund_available"] = {"reason": chosen.reason, "refund_amount": (chosen.quote or {}).get("refund_amount"),
+                                       "message": chosen.message}
     if refund:
         q = chosen.quote or {}
         lines = [ln for ln in q.get("refunds", []) if f"refund:{ln['payment_id']}" not in f.receipts]
@@ -214,7 +221,7 @@ def _draft(intent: str | None, sub: dict | None, chosen: QuoteOutcome | None, re
             writes.append(ToolCall("create_refund_request",
                                    {"customer_id": cid, "payment_id": ln["payment_id"], "quote_id": q["quote_id"]},
                                    target=f"refund:{ln['payment_id']}"))
-    elif intent in cfg.refund_intents and reasons:
+    elif chosen is None and reasons:
         summary["refund_unavailable"] = {r: f.quotes[r].message for r in reasons if r in f.quotes}
     if intent in cfg.cancel_intents and sub is not None and f"cancel:{sub['subscription_id']}" not in f.receipts \
             and sub.get("status", "active") == "active":

@@ -103,8 +103,37 @@ def test_plausible_reasons_from_system_facts():
     assert plausible_reasons("cancel_refund", sub, st, CFG) == ["withdrawal", "incident"]
     st.facts.incidents = []
     assert plausible_reasons("cancel_refund", sub, st, CFG) == ["withdrawal"]
-    assert plausible_reasons("cancel", sub, st, CFG) == []  # 월 구독 해지는 견적하지 않는다
+    assert plausible_reasons("cancel", sub, st, CFG) == ["withdrawal"]  # 해지만 해도 환불 여부를 안내해야 한다(제20조)
     assert plausible_reasons("compensation", sub, st, CFG) == []
+
+
+def test_cancel_only_request_informs_available_refund_without_writing_it():
+    st = verified("C001", usage=[], incidents=[])
+    st.facts.quotes = {"withdrawal": eligible("withdrawal", pid="P001", articles=("A-05",))}
+    p = decide(st, inp("cancel"), CFG, NOTICES)
+    assert p.rule == "proposal" and [w.tool for w in p.proposal.writes] == ["create_cancellation"]
+    assert p.proposal.summary["refund_available"]["refund_amount"] == 9900
+
+
+def test_annual_cancel_includes_refund_even_for_cancel_request():
+    st = verified("C003", plan="annual", incidents=[])
+    st.facts.quotes = {"withdrawal": not_eligible("withdrawal"),
+                       "annual_cancel": eligible("annual_cancel", 62370, pid="P003", articles=("A-08",))}
+    p = decide(st, inp("cancel"), CFG, NOTICES)
+    assert [w.tool for w in p.proposal.writes] == ["create_refund_request", "create_cancellation"]
+
+
+def test_signature_ignores_explanation_fields():
+    """s20: 환불 불가 안내 뒤 '그래도 해지해 주세요'로 요청 라벨이 cancel_refund→cancel로 바뀌어도 같은 접수 내용이다."""
+    st = verified("C016")
+    st.facts.quotes = {"withdrawal": not_eligible("withdrawal"), "incident": not_eligible("incident", ("A-09",))}
+    a = decide(st, inp("cancel_refund"), CFG, NOTICES).proposal
+    b = decide(st, inp("cancel"), CFG, NOTICES).proposal
+    assert a.signature == b.signature
+    # 금액이 바뀌면 서명도 바뀐다
+    assert policy._signature(list(a.writes), {"refund": {"refund_amount": 1}}) != a.signature
+    w = decide(st, inp("cancel", agreed=True, pending=a), CFG, NOTICES)
+    assert w.rule == "writes" and [c.tool for c in w.writes] == ["create_cancellation"]
 
 
 def test_minor_reason_uses_age_at_payment():

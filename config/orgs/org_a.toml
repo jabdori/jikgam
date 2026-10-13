@@ -138,6 +138,8 @@ refund_intents = ["refund", "cancel_refund"]
 cancel_intents = ["cancel", "cancel_refund"]
 # 견적 금액을 환불로 접수하는 사유. 미성년자는 인계, 체험 해지는 0원, 요금제 변경은 차감액이라 접수하지 않는다.
 refundable_reasons = ["withdrawal", "incident", "annual_cancel", "duplicate"]
+# 해지만 요청해도 환불을 함께 접수하는 사유. 연 구독 중도 해지는 해지 자체가 환불을 수반한다(제8조 제1항).
+cancel_refund_reasons = ["annual_cancel"]
 addon_plans = ["family_addon"]
 minor_age = 19                  # 제13조. 결제 당시 이 나이 미만이면 미성년자 사유를 견적한다.
 # 견적이 여럿 대상일 때 고르는 순서. 같은 금액이면 일반 규정(제5조)을 예외(제9조 제2항)보다 앞에 둔다.
@@ -145,8 +147,9 @@ minor_age = 19                  # 제13조. 결제 당시 이 나이 미만이�
 quote_priority = ["minor", "duplicate", "withdrawal", "incident", "annual_cancel", "trial_cancel", "plan_change"]
 
 # 요청별로 견적을 물어볼 사유. 실제로 물을지는 시스템 사실로 거른다(policy.plausible_reasons).
+# 해지만 요청해도 환불 예정액과 근거를 안내해야 하므로(제20조) 환불 가능 여부를 견적으로 확인한다.
 [policy.quote_reasons]
 refund = ["duplicate", "withdrawal", "incident", "minor", "annual_cancel"]
 cancel_refund = ["withdrawal", "incident", "annual_cancel", "duplicate", "minor", "trial_cancel"]
-cancel = ["annual_cancel", "trial_cancel"]
+cancel = ["withdrawal", "incident", "annual_cancel", "trial_cancel"]
 plan_change = ["plan_change"]

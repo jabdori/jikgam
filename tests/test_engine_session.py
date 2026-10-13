@@ -163,6 +163,30 @@ def test_s21_topic_change_invalidates_previous_suggestion(bizapi, tmp_path):
     assert text.count("  u") >= 5 and "판별 " in text
 
 
+def test_s20_agreement_counts_when_intent_label_shifts(bizapi, tmp_path):
+    """환불 불가 안내 뒤 '네, 그래도 해지해 주세요': 요청 라벨이 cancel로 바뀌고 suggestion_valid가 거짓이어도
+    조건 변경이 없고 접수 내용이 같으면 해지를 접수한다. 개발용 재생 s20(e2e-try2)에서 나온 실패의 회귀 테스트."""
+    dec = ScriptedDecider(intents=[("다음 결제", "billing_inquiry"), ("그냥 해지", "cancel"), ("환불 안", "cancel_refund"),
+                                   ("그래도 해지", "cancel")], changes=("그냥 해지",), invalid=("그래도",))
+
+    async def go():
+        s = Session(ORG, "t-s20", tmp_path, decision_client=dec, generator=EchoGenerator(),
+                    bizapi=BizApiClient(bizapi, "t-s20"))
+        outs = [await s.handle(utt(f"u{i}", t)) for i, t in enumerate([
+            "해지하려는 건 아니고요, 다음 결제가 언제 되는지만 알고 싶어서요.", "010-0000-0016이고 인증번호는 공공일육이에요.",
+            "아 그냥 해지할게요, 요즘 잘 안 봐서요.", "근데 이번 달 낸 건 환불 안 되나요?", "네, 그래도 해지해 주세요."], 1)]
+        await s.aclose()
+        return s, outs
+
+    s, outs = asyncio.run(go())
+    assert tool_calls(outs[2]) == ["quote_refund", "quote_refund"]  # 해지만 해도 환불 여부는 견적으로 확인한다
+    assert types(outs[2], ev.SUGGESTION_CREATED)[-1]["proposal"]["writes"] == ["create_cancellation"]
+    assert types(outs[4], ev.SUGGESTION_INVALIDATED)  # 라벨 변화와 suggestion_valid=false로 무효화는 된다
+    assert tool_calls(outs[4]) == ["create_cancellation"]
+    assert s.state.facts.receipts["cancel:S016"]["last_usable_date"] == "2026-11-01"
+    assert "refund:P016" not in s.state.facts.receipts
+
+
 class _RaisingDecider(ScriptedDecider):
     async def decide(self, state, questions):
         raise RuntimeError("backend down")

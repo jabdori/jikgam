@@ -22,13 +22,13 @@ import httpx
 
 from .claims import extract
 
-PROMPT_VERSION = "engine-gen-2026.10.14"
+PROMPT_VERSION = "engine-gen-2026.10.14-3"  # -2: 하지 않은 처리를 말하지 않는다. -3: 인증번호 발송 표현 금지, 환불 없음은 null
 
 SYSTEM_PROMPT = """당신은 구독 서비스 고객센터의 채팅 상담 메시지를 쓰는 생성기다. 사용자 메시지의 JSON 입력만 근거로, 지금 고객에게 보낼 메시지 하나를 쓴다.
 
 규칙:
 1. plan.action을 따른다.
-   - ask: plan.ask가 가리키는 정보 하나만 묻는다. phone=본인 확인용 가입 휴대폰 번호, otp=그 번호로 받은 인증번호, otp_retry=인증번호가 맞지 않았다고 알리고 다시 묻기, account=환불받을 본인 명의 계좌(은행, 계좌번호, 예금주), own_account=회원 본인 명의 계좌만 가능하다고 알리고 다시 묻기, account_holder=예금주 이름, plan_type=어느 구독인지. plan.ask가 없으면 plan.next_info를 묻는다.
+   - ask: plan.ask가 가리키는 정보 하나만 묻는다. phone=본인 확인용 가입 휴대폰 번호, otp=본인 확인 인증번호(엔진은 문자를 보내지 않으므로 "보내 드렸다"고 말하지 않고 인증번호를 알려 달라고만 한다), otp_retry=인증번호가 맞지 않았다고 알리고 다시 묻기, account=환불받을 본인 명의 계좌(은행, 계좌번호, 예금주), own_account=회원 본인 명의 계좌만 가능하다고 알리고 다시 묻기, account_holder=예금주 이름, plan_type=어느 구독인지. plan.ask가 없으면 plan.next_info를 묻는다.
    - answer: 확인된 사실과 근거 조항으로 안내한다. plan.proposal이 있으면 접수할 내용을 안내한 뒤 이대로 진행할지 고객의 동의를 묻는다. 아직 접수 전이므로 접수했다고 말하지 않는다. system_facts.receipts에 접수 결과가 있으면 접수됐다고 그 결과를 안내한다.
    - hold: 지금은 확답할 수 없다고 알리고 이유와 다음 절차를 말한다. 금액을 추정하지 않는다.
    - handoff: 상담사에게 연결한다고 알린다. 대기 시간이 입력에 있으면 함께 말한다.
@@ -36,8 +36,9 @@ SYSTEM_PROMPT = """당신은 구독 서비스 고객센터의 채팅 상담 메�
 3. customer_claims는 고객이 말한 내용일 뿐 확인된 사실이 아니다. 시스템 기록과 다르면 기록을 기준으로 안내하고, 확인되지 않은 내용을 사실로 확정하지 않는다.
 4. plan.notices의 항목은 입력에 그 정보가 있으면 모두 안내한다.
 5. 근거로 쓴 조항 ID를 cited_articles에 넣는다. articles에 없는 ID는 넣지 않는다.
-6. amount: 이 메시지에서 환불 예정액이나 환불액으로 안내한 금액(원, 정수). 없으면 null. amount_final: 그 금액을 견적으로 확정된 금액으로 안내했으면 true.
+6. amount: 이 메시지에서 환불 예정액이나 환불액으로 안내한 금액(원, 정수). 환불이 없거나 금액을 말하지 않았으면 null. amount_final: 그 금액을 견적으로 확정된 금액으로 안내했으면 true.
 7. 존댓말로 채팅 2~4문장. 내부 필드 이름, 견적 ID, 영어 코드 값(withdrawal, card 등)은 쓰지 않는다.
+8. 입력에 없는 처리(문자 발송, 연장 적용, 접수 등)를 했다고 말하지 않는다. 접수는 system_facts.receipts에 있을 때만 됐다고 말한다.
 설명 없이 지정된 JSON만 출력한다."""
 
 RESPONSE_SCHEMA = {
@@ -182,10 +183,11 @@ def _ints(x: Any) -> set[int]:
 
 
 def allowed_from(payload: dict[str, Any], today: date) -> Allowed:
-    """생성 입력에서 허용 금액과 조항을 모은다."""
-    quote_amounts = _ints([q.get("refund_amount") for q in payload.get("quotes", {}).values()]) | \
-        _ints([[ln.get("amount") for ln in q.get("refunds", [])] for q in payload.get("quotes", {}).values()]) | \
-        _ints([r.get("amount") for r in payload.get("system_facts", {}).get("receipts", {}).values()])
+    """생성 입력에서 허용 금액과 조항을 모은다. amount 필드에는 대상(eligible) 견적과 접수 결과의 금액만 넣을 수 있다."""
+    eligible = [q for q in payload.get("quotes", {}).values() if q.get("status") == "eligible"]
+    quote_amounts = (_ints([q.get("refund_amount") for q in eligible]) |
+                     _ints([[ln.get("amount") for ln in q.get("refunds", [])] for q in eligible]) |
+                     _ints([r.get("amount") for r in payload.get("system_facts", {}).get("receipts", {}).values()])) - {0}
     amounts = set(quote_amounts) | _ints(payload.get("quotes", {})) | _ints(payload.get("system_facts", {}))
     for a in payload.get("articles", []):
         if a.get("type") != "table":
@@ -201,13 +203,15 @@ def check(result: GenerationResult, allowed: Allowed, today: date) -> list[str]:
     for a in extract(result.say, today).amounts:
         if a.won not in allowed.amounts:
             problems.append(f"'{a.text}'는 견적이나 시스템 사실에 없는 금액이다")
-    if result.amount is not None and result.amount not in allowed.quote_amounts:
+    if result.amount not in (None, 0) and result.amount not in allowed.quote_amounts:
         problems.append(f"amount {result.amount}는 견적이나 접수 결과의 금액이 아니다")
     return problems
 
 
 def sanitize(result: GenerationResult, allowed: Allowed) -> None:
     result.cited_articles = [a for a in dict.fromkeys(result.cited_articles) if a in allowed.articles]
+    if result.amount == 0:  # 환불 없음은 금액이 아니다
+        result.amount = None
     if result.amount is None or result.amount not in allowed.quote_amounts:
         result.amount_final = False
 

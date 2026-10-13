@@ -22,9 +22,10 @@ class ScriptedDecider:
 
     name = "fake"
 
-    def __init__(self, intents=(), changes=(), agree=("네",), action="answer", next_info="none"):
+    def __init__(self, intents=(), changes=(), agree=("네",), action="answer", next_info="none", invalid=()):
         self.intents = list(intents)
         self.changes = tuple(changes)
+        self.invalid = tuple(invalid)  # 이 낱말이 있으면 condition_changed는 그대로 두고 suggestion_valid만 거짓
         self.agree = tuple(agree)
         self.action = action
         self.next_info = next_info
@@ -43,7 +44,7 @@ class ScriptedDecider:
             elif q == "condition_changed":
                 answers[q] = {"type": "noul", "noul": 0.9 if changed else 0.1}
             elif q == "suggestion_valid":
-                answers[q] = {"type": "noul", "noul": 0.1 if changed else 0.9}
+                answers[q] = {"type": "noul", "noul": 0.1 if changed or any(k in last for k in self.invalid) else 0.9}
             elif q == "customer_agreed":
                 answers[q] = {"type": "noul", "noul": 0.95 if any(k in last for k in self.agree) else 0.05}
             elif q == "next_info":

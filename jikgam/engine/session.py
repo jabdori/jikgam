@@ -18,6 +18,11 @@
 이전 제안 무효화 규칙(5단계): suggestion_valid가 거짓이거나 condition_changed가 참이면 무효화한다(docs/engine.md §4).
 여기에 코드 규칙 하나를 더한다: 이번 판단의 intent가 제안을 만들 때의 intent와 다르면 무효화한다. 요청이 바뀌면 정책
 판단이 바뀌므로 그 제안은 맞지 않는다(docs/data-format.md suggestion_valid 기준).
+
+고객 동의(8단계의 쓰기 조건)는 무효화와 따로 본다. 마지막으로 노출한 제안에 접수 내용이 있고, condition_changed가
+참이 아니고, customer_agreed가 임계값 이상이면 동의 후보다. 정책은 지금 만든 접수 내용의 서명(쓰기 인자와 금액)이
+노출한 것과 같을 때만 쓴다. "네, 그래도 해지해 주세요"처럼 동의하면서 요청 라벨이 cancel_refund에서 cancel로 바뀌어
+제안이 무효화되는 경우가 있어서다(개발용 재생 s20에서 확인).
 """
 
 import asyncio
@@ -194,7 +199,9 @@ class Session:
                 if first:
                     intent = labels.get("intent") or self.state.request
                     self._invalidate(latest, labels, intent, my_v, out)
-                    if latest is not None and latest.status == "active" and pending is not None:
+                    # 동의는 노출한 접수 내용에 대한 것이다. 제안이 suggestion_valid나 요청 라벨 변화로 무효가 되었어도
+                    # 조건 변경이 없고 정책이 지금 만드는 접수 내용(쓰기와 금액)이 같으면 동의로 본다(같은지는 정책이 본다).
+                    if pending is not None and labels.get("condition_changed") != "true":
                         agreed = probs.get("customer_agreed", 0.0) >= self.org.agreement_threshold
                     else:
                         pending, agreed = None, False

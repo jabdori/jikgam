@@ -115,8 +115,9 @@ PAYLOAD = {
     "plan": {"action": "answer", "ask": None},
     "articles": [{"id": "A-19", "type": "procedure", "text": "환불 예정액이 50,000원을 넘는 경우"},
                  {"id": "T-02", "type": "table", "text": "| 99,000원 | 3 | 29,700원 | 6,930원 | 62,370원 |"}],
-    "quotes": {"annual_cancel": {"refund_amount": 53280, "refunds": [{"amount": 53280}],
-                                 "breakdown": {"annual_cancel": {"deduction": 19800, "penalty": 5920}}}},
+    "quotes": {"annual_cancel": {"status": "eligible", "refund_amount": 53280, "refunds": [{"amount": 53280}],
+                                 "breakdown": {"annual_cancel": {"deduction": 19800, "penalty": 5920}}},
+               "withdrawal": {"status": "not_eligible", "refund_amount": 0}},
     "system_facts": {"payments": [{"amount": 79000}]},
 }
 
@@ -131,6 +132,10 @@ def test_allowed_amounts_exclude_table_examples():
     assert ok.cited_articles == ["A-19"] and ok.amount_final
     bad = GenerationResult("예시처럼 62,370원이 환불됩니다.", [], 62370, True, "m")
     assert len(check(bad, allowed, TODAY)) == 2
+    none = GenerationResult("환불 대상이 아니라 환불 예정액은 0원입니다.", [], 0, True, "m")
+    assert check(none, allowed, TODAY) == []
+    sanitize(none, allowed)
+    assert (none.amount, none.amount_final) == (None, False)  # 환불 없음은 확정 금액 안내가 아니다
 
 
 class _BadThenGood:
