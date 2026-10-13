@@ -43,13 +43,21 @@ def git(*args: str) -> str:
 
 
 def tcp_connect_ms(host: str, n: int = 5) -> float:
-    """TLS 없이 443 포트 TCP 연결 시간의 중앙값. 네트워크 조건 기록용."""
+    """TLS 없이 TCP 연결 시간의 중앙값. 네트워크 조건 기록용. host는 "이름"(443 포트) 또는 "이름:포트"."""
+    name, _, port = host.partition(":")
     samples = []
     for _ in range(n):
         t0 = time.perf_counter()
-        with socket.create_connection((host, 443), timeout=5):
+        with socket.create_connection((name, int(port or 443)), timeout=5):
             samples.append((time.perf_counter() - t0) * 1000)
     return round(statistics.median(samples), 1)
+
+
+def host_key(url: str) -> str:
+    """원격 API는 기존 기록과 같게 호스트 이름만, 443이 아닌 포트(로컬 서빙)는 "호스트:포트"."""
+    u = urlsplit(url)
+    port = u.port or (443 if u.scheme == "https" else 80)
+    return u.hostname if port == 443 else f"{u.hostname}:{port}"
 
 
 def network_conditions(hosts: list[str]) -> dict:
@@ -97,7 +105,7 @@ async def main() -> None:
     out_dir = ROOT / args.out / args.split / run_id
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    hosts = sorted({urlsplit(cfg_all[n]["url"]).hostname for n in names if cfg_all[n]["kind"] == "systemone"} |
+    hosts = sorted({host_key(cfg_all[n]["url"]) for n in names if cfg_all[n]["kind"] == "systemone"} |
                    {GEMINI_HOST for n in names if cfg_all[n]["kind"] == "gemini"})
     meta = {
         "run_id": run_id, "split": args.split, "started_kst": started.isoformat(timespec="seconds"),
