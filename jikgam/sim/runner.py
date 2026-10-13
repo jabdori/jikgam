@@ -236,9 +236,10 @@ async def run_scenario(scn: dict[str, Any], policy: Policy, org: OrgConfig, run_
 
 
 def git_commit() -> dict[str, Any]:
+    """실행 시점 커밋과 작업 사본 변경 여부. results/는 빼고 본다(앞선 실행의 커밋 전 결과 폴더가 변경으로 잡히지 않게)."""
     def git(*a: str) -> str:
         return subprocess.run(["git", *a], cwd=ROOT, capture_output=True, text=True, check=False).stdout.strip()
-    return {"commit": git("rev-parse", "HEAD"), "dirty": bool(git("status", "--porcelain"))}
+    return {"commit": git("rev-parse", "HEAD"), "dirty": bool(git("status", "--porcelain", "--", ".", ":(exclude)results"))}
 
 
 def select(scenarios: list[dict[str, Any]], spec: str) -> list[dict[str, Any]]:
