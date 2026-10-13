@@ -16,7 +16,8 @@
 | 생성 | `jikgam/engine/generate.py` | 선택한 근거와 확인된 사실만으로 응답 문구 생성 |
 | 세션 진행 | `jikgam/engine/session.py` | 한 턴의 처리 순서, 작업 취소와 결과 폐기 |
 | 조직 설정 | `config/orgs/<org>.toml` | 약관, 업무 API 주소, 판별 백엔드·질문 세트·임계값, 생성 모델, 필수 안내 |
-| 채팅 실행 | `jikgam/engine/chat.py` | 터미널 채팅과 고정 대화 재생 |
+| 채팅 실행 | `jikgam/engine/chat.py` | 터미널 채팅과 고정 대화 재생(`--policy A\|B\|C`) |
+| 정책 A 기준선 | `jikgam/baselines/rag.py` | 개선형 RAG(`docs/evaluation.md` §5.1). 엔진과 같은 입출력 이벤트(§10) |
 
 엔진은 음성 런타임, 웹 화면, 특정 판별 모델에 의존하지 않는다. 음성(Pipecat)과 AI 고객 시뮬레이터는 같은 입력 이벤트를 넣고 같은 출력 이벤트를 받는다.
 
@@ -124,3 +125,32 @@ required_notices = ["환불 예정액과 산정 근거", "환불 방법과 예�
 - 진행 중 작업이 취소되면 `task.cancelled`, 취소되지 않고 끝난 결과가 지난 버전이면 `result.discarded`를 남긴다. 단계별 지연을 보려고 `session.start`, `claims.extracted`, `retrieval.done`, `policy.decided`, `quote.selected`, `generation.request`, `generation.response`, `agent.say`, `engine.error`를 더했다.
 - 검색은 키워드(한국어 글자 바이그램 BM25)와 구조 확장만 쓴다. 임베딩은 아직 없다.
 - 조직 설정에 `extra_question_set`, `agreement_threshold`, `[retrieval]`(후보 수, 구어→약관 낱말, 절차 조항 규칙), `[policy]`(요청별 견적 사유, 견적 우선순위, 환불 접수 사유)를 더했다.
+
+## 9. 구현 메모 (2026-10-14, 정책 보강)
+
+§5 표와 §8에 더한 것이다. 정책 규칙의 전체 순서는 `jikgam/engine/policy.py` 머리말에 있다. 이유는 `PROGRESS.md` 2026-10-14 "상담 엔진: 정책 보강과 정책 A"에 있다.
+
+- **통화자 관계.** 엔진 전용 질문 `caller`(choice: owner, third_party, guardian)를 첫 판단마다 묻는다. 제3자·법정대리인으로 바꿀 때는 `caller_threshold`, 제3자로 본 뒤 본인으로 돌아갈 때는 더 높은 `owner_return_threshold`가 필요하다. 관계가 바뀌면 이전 제안을 무효화한다(`caller_changed`). 친족 낱말 정규식이 아니라 판별 질문으로 정한 이유: 관계는 계정 소유자와의 관계라서 "제 카드로"(카드 주인), "아내 명의 계좌로"(환불 계좌), "엄마 몰래"(미성년 본인), "딸이 회사에 있어서"(성인 자녀)처럼 같은 낱말이 다른 뜻이 되고, 전화를 바꾸는 경우(s29)는 대화 흐름으로만 알 수 있다. 코드는 비대칭 임계값, 법정대리인 권한의 결정적 확인(결제 당시 나이), 제3자에게 본인 확인 규칙을 막는 일을 맡는다.
+- **제3자**(정책 규칙 0): 계정 처리 요청이거나 번호·인증번호를 말하면 거절 안내(`third_party`). 본인 확인을 묻지도 하지도 않는다. 생성 입력에서 시스템 사실, 견적, 고객 진술을 빼고 근거 조항은 `third_party_articles`.
+- **법정대리인**(규칙 7): 미성년 회원 계정의 휴대폰으로 본인 확인(제15조 제1항 단서)과 조회를 한 뒤, `guardian_reasons`의 사유(minor)가 결제 당시 나이로 맞으면 그 사유만 견적한다. 업무 API가 `HANDOFF_REQUIRED`를 주면 규칙 1이 `create_handoff(customer_id, reason=minor)`를 부른다. 사유가 맞지 않으면 제3자와 같이 거절한다.
+- **부가 상품만 해지**(규칙 8): `addon_only`는 유효한 부가 상품 구독이 조회됐을 때만 묻는다. 참이면 견적 없이 부가 상품 해지만 안내하고(`addon_articles`, 환불 없음), 동의하면 그 구독만 해지한다. 이용 마지막 날은 해지 접수 결과(업무 API)의 값이다.
+- **접수 거절**(규칙 12): `customer_declined`가 임계값 이상이면 같은 접수 내용을 쓰지도 다시 묻지도 않는다(그 발화에서만). 동의와 거절이 함께 높으면 쓰지 않는다.
+- **본인 확인 불가**(규칙 4): `identity_unavailable`은 본인 확인을 물었거나 한 번 실패한 뒤에만 묻고, 참이면 보류한다. 그 발화에 번호나 인증번호가 있으면 판별과 관계없이 본인 확인을 계속한다.
+- **생성 제약.** 정책의 근거 조항(`Plan.articles`)을 생성 입력에 반드시 넣는다. 인계·보류에서는 견적을 빼고, 거절에서는 계정 정보를 뺀다. 고객 계정 일을 다루는 응답이면(본인 확인됨, 계정 처리 요청, 제3자·법정대리인) 대상 견적이나 환불 접수 없이 "환불이 된다·받을 수 있다"고 말하지 못하게 코드로 검사한다(`generate.refund_claims`, 서술어 꼴만, 뒤따르는 부정·여부·기한 경과 표현은 제외). 위반이면 다시 만들고, 그래도 위반이면 고정 문구다.
+- **업무 API 장애**는 세션 끝까지 기억한다. 같은 세션에서 그 도구를 다시 부르지 않는다(§8 이후의 "새 발화마다 다시 시도"를 바꿈).
+- **세션 시작 예열**: `Session.start()`가 판별 백엔드에 고정 요청을 한 번 보내고 `warmup` 이벤트로 지연과 비용을 남긴다. `decision.*` 이벤트로는 세지 않는다. 예열이 끝나기 전에 고객 발화가 오면 기다린다.
+- `agent.say`에도 `cited_articles`, `amount`, `amount_final`을 남긴다(`suggestion.created`와 같은 값).
+- 환경 변수 `JIKGAM_BIZAPI_URL`이 조직 설정의 `bizapi_url`보다 우선한다.
+- 재생 파일의 줄에 선택 필드 `faults`(모의 업무 API `/_admin/faults` 본문 목록)를 두면 그 줄을 보내기 직전에 장애를 넣고 `fault.injected` 이벤트를 남긴다(로컬 주소만). `--policy A|B|C`로 실행 정책을 고른다.
+- 조직 설정에 더한 키: `decline_threshold`, `caller_threshold`, `owner_return_threshold`, `addon_threshold`, `identity_unavailable_threshold`, `[policy]`의 `addon_intents`, `addon_articles`, `third_party_articles`, `guardian_reasons`, `guardian_articles`.
+
+## 10. 정책 A(개선형 RAG) 구현
+
+`jikgam/baselines/rag.py`. `docs/evaluation.md` §5.1을 구현한 방식과 다른 점은 모듈 머리말에 있다. 요약:
+
+- 엔진 Session과 같은 인터페이스(`start`, `handle`, `aclose`)와 같은 이벤트 로그 형식. 같은 재생 파일과 지표 코드를 쓴다.
+- 검색은 엔진과 같은 함수와 조직 설정이다. 판별 계층이 없어 검색 상태의 요청(intent)은 비우고, 업무 API 결과에서 바로 나오는 상태만 넣는다. §5.1의 임베딩 검색은 엔진과 마찬가지로 아직 없다.
+- 고객 확정 발화마다 Gemini 함수 호출 도구 루프를 한 번 돈다(엔진의 응답 생성 모델과 같은 설정). 업무 API 11개와 `final_answer`(say, cited_articles, amount, amount_final, action)를 함수로 주고 호출 방식은 ANY다. 대화 기록(이전 답, 도구 호출과 결과)을 이어 보낸다. 운영 규칙(본인 확인 먼저, 금액은 견적만, 동의 뒤 접수, 제3자 거절, 장애 시 보류, 인계, 안내 의무)은 시스템 프롬프트에 적는다. 엔진의 생성 검사는 하지 않는다.
+- 판별, 대화 버전, 무효화, 취소가 없다. 발화는 받은 순서대로 하나씩 답하고, 앞 답을 만드는 동안 새 발화가 와도 앞 답을 취소하지 않고 노출한다. 음성에서는 고객이 말하는 동안 이전 답이 계속 만들어져 재생되므로 지난 조건의 답이 나갈 수 있다.
+- `evidence.updated`는 답이 나온 시점에 남긴다(그 답이 근거로 든 조항, 버전은 그 답을 만들 때 본 고객 확정 발화 수). RAG에서 근거와 다음 행동이 정해지는 시점이 그때이기 때문이다.
+- 예열은 없다(판별 백엔드가 없고, 엔진도 생성 모델은 예열하지 않는다).
