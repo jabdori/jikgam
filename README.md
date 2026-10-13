@@ -26,6 +26,8 @@ uv run pytest                             # 단위 테스트
 cd bizapi && go run ./cmd/bizapi          # 조직 A 모의 업무 API (127.0.0.1:8081)
 uv run python -m jikgam.eval.run_decisions --split val --backends jev,gemini-flash   # 판별 평가(.env에 API 키 필요)
 uv run python -m jikgam.eval.report results/decisions/val/<run_id>                  # 원본 로그로 표 생성
+uv run python -m jikgam.sim.runner --org org_a --scenarios all --policy C           # AI 고객 시나리오 실행(모의 업무 API와 .env 키 필요)
+uv run python -m jikgam.sim.report results/engine/scenarios/<run_id>               # 시나리오 판정, 근거 갱신 시간, 무효 노출, 비용
 ```
 
 ## 구성
@@ -51,6 +53,7 @@ uv run python -m jikgam.eval.report results/decisions/val/<run_id>              
 | `jikgam/decision/` | 판별 모델 공통 인터페이스와 백엔드(Jev 형식 API, 생성형 LLM 판단, 규칙·다수 라벨 기준선) |
 | `jikgam/eval/` | 판별 평가 실행기와 보고서, 오답 목록 |
 | `jikgam/engine/` | 상담 엔진(채팅). `uv run python -m jikgam.engine.chat --org org_a`로 터미널 채팅, `--replay`로 고정 대화 재생 |
+| `jikgam/sim/` | AI 고객 시뮬레이터, 시나리오 실행기(정책 B·C), 엔진 지표(평가 기준 §3.2·§3.3), 시나리오 판정(§4, 코드 + AI 평가) |
 | `config/orgs/org_a.toml` | 조직 A 엔진 설정(약관, 업무 API 주소, 판별 백엔드·질문 세트, 검색·정책 설정) |
 | `data/replays/` | 엔진 개발용 고정 대화(고객 발화) |
 | `bizapi/` | 조직 A 모의 업무 API (Go) |
