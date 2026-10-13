@@ -50,6 +50,33 @@ price_input_per_mtok = 2.0
 price_output_per_mtok = 12.0
 price_source = "https://ai.google.dev/gemini-api/docs/pricing (2026-10-14 확인: 200k 토큰 이하 프롬프트, 출력에 사고 토큰 포함)"
 
+# 한국어 튜닝 모델(docs/training.md, ADR 0012). 이 PC(RTX 3090 Ti)의 WSL2에서 Unsloth Studio Decision API로 서빙한다.
+# jikgam/train/serve.py --run <실행> --port <포트>로 띄운 뒤 쓴다. 응답의 model은 항상 "laya-local"이라,
+# 어떤 가중치인지는 served와 weights_sha256_16(병합 모델의 백본 + 판별 헤드 파일 sha256 앞 16자리)으로 확인한다.
+# 외부 과금이 없어 단가는 0이다. 비용은 docs/evaluation.md §2.6대로 GPU 점유 시간 × 클라우드 GPU 시간당 단가로
+# jikgam/train/gpu_cost.py가 실행 원본 로그에서 따로 계산한다.
+["q35-0.8b-ko"]
+kind = "systemone"
+url = "http://127.0.0.1:8888/v1/systemone"
+model = "laya-local"
+api_key_env = "UNSLOTH_API_KEY"
+price_input_per_mtok = 0.0
+price_output_per_mtok = 0.0
+price_source = "로컬 서빙, 외부 과금 없음. 참고 비용은 docs/evaluation.md §2.6(jikgam/train/gpu_cost.py)"
+served = "WSL2 ~/jikgam-train/runs/q35-0.8b-d-mix/merged, unsloth/Qwen3.5-0.8B@23c69c53 + LoRA + Clef 헤드, 구성 (d), 질문 세트 q-2026.10.14-mix, Unsloth 2026.10.5, PyTorch 16비트"
+weights_sha256_16 = "94f8e23735f64400"
+
+["q35-2b-ko"]
+kind = "systemone"
+url = "http://127.0.0.1:8889/v1/systemone"
+model = "laya-local"
+api_key_env = "UNSLOTH_API_KEY"
+price_input_per_mtok = 0.0
+price_output_per_mtok = 0.0
+price_source = "로컬 서빙, 외부 과금 없음. 참고 비용은 docs/evaluation.md §2.6(jikgam/train/gpu_cost.py)"
+served = "WSL2 ~/jikgam-train/runs/q35-2b-d-mix/merged, unsloth/Qwen3.5-2B@fffbc0d8 + LoRA + Clef 헤드, 구성 (d), 질문 세트 q-2026.10.14-mix, Unsloth 2026.10.5, PyTorch 16비트"
+weights_sha256_16 = "3f9dcfe6df110822"
+
 [rules]
 kind = "rules"
 
