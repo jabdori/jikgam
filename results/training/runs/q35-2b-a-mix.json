@@ -1,0 +1,202 @@
+{
+  "name": "q35-2b-a-mix",
+  "started_kst": "2026-10-14T04:11:48+09:00",
+  "git_commit": "32efcf6026c2217d3e8d82bf973184a48b78f76d",
+  "base_model": "unsloth/Qwen3.5-2B",
+  "base_revision": "fffbc0d8711cf87df6d1f97938c5e50ef94aadc7",
+  "data": {
+    "composition": "a",
+    "korean_files": {
+      "data/build/train.jsonl": "3a57f58bb3f6d705"
+    },
+    "korean_cases": 64,
+    "korean_decisions": 461,
+    "korean_repeat": 1,
+    "typed_decisions": null,
+    "rows": 64,
+    "decisions": 461,
+    "seed": 3407,
+    "questions_file": "data/question_sets/q-2026.10.14-mix.json",
+    "questions_version": "q-2026.10.14-mix",
+    "composed_sha256_16": "07d064d9ecf5a7a6"
+  },
+  "build_dataset_report": {
+    "total": 461,
+    "skipped": 0,
+    "reason": null,
+    "truncated": 0
+  },
+  "items": 64,
+  "hyperparameters": {
+    "load_in_4bit": true,
+    "max_seq_length": 4096,
+    "lora_r": 16,
+    "lora_alpha": 16,
+    "lora_dropout": 0,
+    "target_modules": "Unsloth 기본값(언어 모델 선형층, 비전 탑 제외)",
+    "decision_head": "clef(Unsloth 기본, width 512)",
+    "learning_rate": 0.0002,
+    "head_learning_rate": 0.0001,
+    "epochs": 4,
+    "per_device_batch": 2,
+    "grad_accum": 4,
+    "steps": 32,
+    "warmup_steps": 1,
+    "lr_scheduler": "cosine",
+    "weight_decay": 0.01,
+    "precision": "bf16",
+    "optimizer": "adamw_torch_fused",
+    "seed": 3407
+  },
+  "train_seconds": 126.7,
+  "merge_save_seconds": 20.1,
+  "peak_gpu_memory_reserved_gb": 4.41,
+  "gpu": "NVIDIA GeForce RTX 3090 Ti",
+  "final_train_loss": 0.7153577199205756,
+  "loss_history": [
+    {
+      "step": 1,
+      "loss": 0.9683412909507751
+    },
+    {
+      "step": 2,
+      "loss": 1.0218678712844849
+    },
+    {
+      "step": 3,
+      "loss": 0.9301684498786926
+    },
+    {
+      "step": 4,
+      "loss": 1.0122601985931396
+    },
+    {
+      "step": 5,
+      "loss": 0.8990914821624756
+    },
+    {
+      "step": 6,
+      "loss": 0.7597453594207764
+    },
+    {
+      "step": 7,
+      "loss": 1.0518505573272705
+    },
+    {
+      "step": 8,
+      "loss": 0.8276963233947754
+    },
+    {
+      "step": 9,
+      "loss": 0.7942553758621216
+    },
+    {
+      "step": 10,
+      "loss": 0.7834190726280212
+    },
+    {
+      "step": 11,
+      "loss": 0.7020676136016846
+    },
+    {
+      "step": 12,
+      "loss": 0.7391025424003601
+    },
+    {
+      "step": 13,
+      "loss": 0.7892562747001648
+    },
+    {
+      "step": 14,
+      "loss": 0.7248319983482361
+    },
+    {
+      "step": 15,
+      "loss": 0.6570051908493042
+    },
+    {
+      "step": 16,
+      "loss": 0.852426290512085
+    },
+    {
+      "step": 17,
+      "loss": 0.682501494884491
+    },
+    {
+      "step": 18,
+      "loss": 0.5486088991165161
+    },
+    {
+      "step": 19,
+      "loss": 0.7083914279937744
+    },
+    {
+      "step": 20,
+      "loss": 0.474983811378479
+    },
+    {
+      "step": 21,
+      "loss": 0.6055783033370972
+    },
+    {
+      "step": 22,
+      "loss": 0.877443790435791
+    },
+    {
+      "step": 23,
+      "loss": 0.579155683517456
+    },
+    {
+      "step": 24,
+      "loss": 0.5527330040931702
+    },
+    {
+      "step": 25,
+      "loss": 0.5105836391448975
+    },
+    {
+      "step": 26,
+      "loss": 0.5884581804275513
+    },
+    {
+      "step": 27,
+      "loss": 0.36896321177482605
+    },
+    {
+      "step": 28,
+      "loss": 0.7484399080276489
+    },
+    {
+      "step": 29,
+      "loss": 0.6072873473167419
+    },
+    {
+      "step": 30,
+      "loss": 0.5322862267494202
+    },
+    {
+      "step": 31,
+      "loss": 0.5218203663825989
+    },
+    {
+      "step": 32,
+      "loss": 0.47082585096359253
+    }
+  ],
+  "versions": {
+    "python": "3.13.14",
+    "unsloth": "2026.10.5",
+    "unsloth_zoo": "2026.10.5",
+    "torch": "2.13.0+cu130",
+    "transformers": "5.5.0",
+    "peft": "0.18.1",
+    "trl": "0.23.1",
+    "datasets": "4.3.0",
+    "bitsandbytes": "0.50.2",
+    "accelerate": "1.15.0"
+  },
+  "outputs": {
+    "adapter": "/home/code/jikgam-train/runs/q35-2b-a-mix/adapter",
+    "merged": "/home/code/jikgam-train/runs/q35-2b-a-mix/merged"
+  }
+}

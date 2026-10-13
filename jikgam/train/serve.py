@@ -15,6 +15,7 @@
 """
 
 import argparse
+import hashlib
 import json
 import os
 import secrets
@@ -39,6 +40,16 @@ def secret_file(name: str, make=None) -> str:
         path.write_text(make(), encoding="utf-8")
         os.chmod(path, 0o600)
     return path.read_text(encoding="utf-8").strip() if path.exists() else ""
+
+
+def weights_sha16(merged: Path) -> str:
+    """병합 모델 식별용: 백본 가중치와 판별 헤드 파일을 이름순으로 이어 sha256 앞 16자리."""
+    h = hashlib.sha256()
+    for path in sorted(merged.glob("model*.safetensors")) + [merged / "joint_head.safetensors"]:
+        with path.open("rb") as f:
+            for chunk in iter(lambda: f.read(1 << 24), b""):
+                h.update(chunk)
+    return h.hexdigest()[:16]
 
 
 def pid_file(port: int) -> Path:
@@ -135,7 +146,8 @@ def main() -> None:
         if r.status_code not in (503, 529):
             raise SystemExit(f"예열 실패 HTTP {r.status_code}: {r.text[:300]}")
         time.sleep(5)
-    print(json.dumps({"port": args.port, "merged": str(merged), "pid": proc.pid,
+    print(json.dumps({"port": args.port, "merged": str(merged), "weights_sha256_16": weights_sha16(merged),
+                      "pid": proc.pid,
                       "warm_status": r.status_code, "load_seconds": round(time.perf_counter() - t0, 1),
                       "response_model": r.json().get("model") if r.status_code == 200 else None,
                       "backend_header": r.headers.get("x-unsloth-decision-backend")}, ensure_ascii=False))
