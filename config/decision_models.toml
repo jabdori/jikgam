@@ -113,6 +113,17 @@ price_source = "로컬 서빙, 외부 과금 없음. 참고 비용은 docs/evalu
 served = "WSL2 ~/jikgam-train/serve/q35-2b-d-mix-q4_k_m, q35-2b-d-mix 병합 모델의 GGUF Q4_K_M, Studio llama.cpp(unslothai/llama.cpp b11541)"
 weights_sha256_16 = "3f9dcfe6df110822"
 
+["q35-2b-ko-direct"]
+kind = "systemone"
+url = "http://127.0.0.1:8893/v1/systemone"
+model = "direct-local"
+api_key_env = "UNSLOTH_API_KEY"
+price_input_per_mtok = 0.0
+price_output_per_mtok = 0.0
+price_source = "로컬 서빙, 외부 과금 없음. 참고 비용은 docs/evaluation.md §2.6(jikgam/train/gpu_cost.py)"
+served = "WSL2 ~/jikgam-train/runs/q35-2b-d-mix/merged, jikgam/train/serve_direct.py(Studio와 같은 _clef_decide를 서버 프로세스에서 직접 호출, PyTorch 16비트)"
+weights_sha256_16 = "3f9dcfe6df110822"
+
 [rules]
 kind = "rules"
 
