@@ -8,6 +8,9 @@
 - 쓰기 API(해지, 환불, 계좌 등록)는 본인 확인을 마친 세션에서만, 고객이 내용을 확인한 뒤에만 호출한다.
 - 모든 쓰기 API는 `idempotency_key`를 받는다. 같은 키로 다시 호출하면 새 요청을 만들지 않고 처음 결과를 돌려준다.
 - 금액 계산과 자격 판단은 서버(`quote_refund`)가 약관 규칙으로 한다. 모델은 금액을 계산하지 않고, 서버가 준 금액과 근거 조항을 안내한다.
+- 모든 호출은 `X-Session-ID` 헤더로 상담 세션을 밝힌다. 본인 확인 상태는 세션별로 둔다.
+
+모의 서버 구현과 세부 필드는 [`bizapi/README.md`](../../bizapi/README.md)에 있다.
 
 ## 조회
 
@@ -19,7 +22,7 @@
 | `list_payments` | `customer_id` | 결제 목록(결제일, 금액, 수단, 이의 제기 여부) |
 | `get_usage` | `customer_id`, `since` | 이용 이력(날짜, 유형, 체험 기간 여부) |
 | `list_incidents` | `from`, `to` | 장애 기록(시작, 종료, 시간, 귀책) |
-| `quote_refund` | `customer_id`, `subscription_id`, `reason`, `request_date` | 환불 가능 여부, 환불액, 계산 내역, 근거 조항 ID, 승인 필요 여부, 인계 필요 여부 |
+| `quote_refund` | `customer_id`, `subscription_id`, `reason`, `request_date` | 견적 ID, 환불 가능 여부, 환불액, 결제별 환불 내역(환불 방법, 계좌 필요 여부, 예상 소요 기간), 계산 내역, 근거 조항 ID, 승인 필요 여부, 인계 필요 여부와 사유, 이용 가능 마지막 날 |
 
 `reason`은 `withdrawal`(청약철회), `annual_cancel`(연 구독 중도 해지), `duplicate`(중복 결제), `incident`(장애), `minor`(미성년자), `trial_cancel`(체험 해지), `plan_change`(월 구독에서 연 구독으로 변경 시 일할 차감액) 중 하나다.
 
@@ -41,3 +44,9 @@
 | `HANDOFF_REQUIRED` | 제19조 제1항 사유 | `create_handoff` 호출 |
 | `TIMEOUT`, `UNAVAILABLE` | 일시 장애 | 재시도 예산 내 1회 재시도 후 접수 보류 안내 |
 | `DUPLICATE_REQUEST` | 같은 대상에 다른 키로 중복 접수 | 기존 접수 내역 안내 |
+| `ACCOUNT_REQUIRED` | 계좌 환불 대상인데 등록된 계좌가 없음(휴대폰 결제, 결제한 달 경과) | 본인 명의 계좌를 묻고 `register_refund_account` 후 다시 접수 |
+| `INVALID_REQUEST` | 입력 형식 오류, 같은 멱등 키에 다른 내용 | 엔진 오류로 기록하고 상담사 인계 |
+| `NOT_FOUND` | 없는 고객·구독·결제 | 정보를 다시 확인 |
+| `INTERNAL` | 서버 내부 오류 | `UNAVAILABLE`과 같게 처리 |
+
+오류 본문은 `{"error": {"code": "...", "message": "..."}}`이며, 필요하면 `article_ids`(근거 조항), `quote`(견적 판단 내역), `receipt`(기존 접수 내역)가 붙는다.
