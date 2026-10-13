@@ -1,0 +1,97 @@
+{
+ "run_id": "20261014-smoke2-C",
+ "policy": "C",
+ "policy_description": "엔진 + 판별 모델(조직 설정 기본 백엔드), 확정 발화",
+ "decision_backend": "jev",
+ "decision_model": "jev-1.13.0",
+ "generator": "gemini-flash",
+ "generator_model": "gemini-3.8-flash",
+ "org": "org_a",
+ "bizapi_url": "http://127.0.0.1:8082",
+ "scenario_file": "data/scenarios/org_a.jsonl",
+ "scenario_sha256": "c4b1bff7a99630b38fcb3307c047f283a16aa7bb4ece788e8e996466406132cb",
+ "runs": 1,
+ "max_turns": 16,
+ "fast_delay_ms": 1000.0,
+ "customer_model": "gemini-3.8-flash",
+ "customer_prompt": "sim-customer-2026.10.14-3",
+ "judge_model": "gemini-3.1-pro-preview",
+ "judge_prompt": "sim-judge-2026.10.14-3",
+ "git": {
+  "commit": "bb60e70d6e7fab1e3c483dd1b8698e2ab435a8b1",
+  "dirty": false
+ },
+ "started": "2026-10-14T06:22:07+09:00",
+ "ended": "2026-10-14T06:24:35+09:00",
+ "note": "개발용 시나리오 결과(docs/evaluation.md §4.3). 합성 대화이며 운영 성과가 아니다.",
+ "sessions": [
+  {
+   "scenario": "s20",
+   "session": "s20-r1-20261014-smoke2-C",
+   "run": 1,
+   "customer_seed": 598757078,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 8,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [
+    {
+     "event": "s20#0",
+     "gap_ms": 1002.3,
+     "first_done_before_followup": false
+    }
+   ],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 41764.0,
+   "costs": {
+    "customer_usd": 0.00841425,
+    "decision_calls": 11,
+    "warmup_calls": 1,
+    "decision_usd": 0.0019966380000000002,
+    "generation_calls": 7,
+    "generation_usd": 0.01339125,
+    "engine_errors": 0,
+    "judge_usd": 0.016198
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "s21",
+   "session": "s21-r1-20261014-smoke2-C",
+   "run": 1,
+   "customer_seed": 2041428560,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 7,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [
+    {
+     "event": "s21#0",
+     "gap_ms": 1007.4,
+     "first_done_before_followup": false
+    }
+   ],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 36196.8,
+   "costs": {
+    "customer_usd": 0.007059,
+    "decision_calls": 11,
+    "warmup_calls": 1,
+    "decision_usd": 0.0021254100000000003,
+    "generation_calls": 6,
+    "generation_usd": 0.015608249999999999,
+    "engine_errors": 0,
+    "judge_usd": 0.023272
+   },
+   "judge_error": null
+  }
+ ]
+}
