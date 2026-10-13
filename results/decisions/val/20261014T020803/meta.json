@@ -1,0 +1,89 @@
+{
+  "run_id": "20261014T020803",
+  "split": "val",
+  "started_kst": "2026-10-14T02:08:03+09:00",
+  "git_commit": "31df74d311addb122d11e37f21f11a9df931bdce",
+  "git_dirty": false,
+  "data_file": "data/build/val.jsonl",
+  "data_sha256_16": "a169861b4dc863da",
+  "cases": 21,
+  "questions_version": "q-2026.10.12",
+  "llm_prompt_version": "llm-judge-2026.10.14",
+  "backends": {
+    "jev": {
+      "kind": "systemone",
+      "url": "https://api.typesafe.ai/v1/systemone",
+      "model": "jev-1.13.0",
+      "price_input_per_mtok": 0.042,
+      "price_output_per_mtok": 0.0,
+      "price_source": "https://docs.typesafe.ai/models.md (2026-10-14 확인: 입력만 과금)"
+    },
+    "clef": {
+      "kind": "systemone",
+      "url": "https://api.cloudflare.com/client/v4/accounts/{CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/cloudflare/clef",
+      "model": "clef",
+      "envelope": "cloudflare",
+      "price_input_per_mtok": 0.24,
+      "price_output_per_mtok": 0.0,
+      "price_source": "https://developers.cloudflare.com/workers-ai/models/clef/ (2026-10-14 확인)",
+      "note": "Workers AI 모델 ID에는 버전 고정 수단이 없다. 응답의 model 값과 측정 날짜를 기록한다."
+    },
+    "clef-flash": {
+      "kind": "systemone",
+      "url": "https://api.cloudflare.com/client/v4/accounts/{CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/cloudflare/clef-flash",
+      "model": "clef-flash",
+      "envelope": "cloudflare",
+      "price_input_per_mtok": 0.038,
+      "price_output_per_mtok": 0.0,
+      "price_source": "https://developers.cloudflare.com/workers-ai/models/clef-flash/ (2026-10-14 확인, 컨텍스트 24,576 토큰)",
+      "note": "Workers AI 모델 ID에는 버전 고정 수단이 없다. 응답의 model 값과 측정 날짜를 기록한다."
+    },
+    "gemini-flash": {
+      "kind": "gemini",
+      "model": "gemini-3.8-flash",
+      "thinking_level": "low",
+      "price_input_per_mtok": 0.75,
+      "price_output_per_mtok": 3.75,
+      "price_source": "https://ai.google.dev/gemini-api/docs/pricing (2026-10-14 확인: 2026-12-31까지 가격, 출력에 사고 토큰 포함)"
+    },
+    "gemini-pro": {
+      "kind": "gemini",
+      "model": "gemini-3.1-pro-preview",
+      "price_input_per_mtok": 2.0,
+      "price_output_per_mtok": 12.0,
+      "price_source": "https://ai.google.dev/gemini-api/docs/pricing (2026-10-14 확인: 200k 토큰 이하 프롬프트, 출력에 사고 토큰 포함)"
+    },
+    "majority": {
+      "kind": "majority"
+    }
+  },
+  "reps": {
+    "jev": 5,
+    "clef": 5,
+    "clef-flash": 5,
+    "gemini-flash": 3,
+    "gemini-pro": 3,
+    "majority": 5
+  },
+  "concurrency": 1,
+  "client": {
+    "python": "3.12.11",
+    "httpx": "0.28.1",
+    "os": "Windows 11 10.0.22631"
+  },
+  "network_before": null,
+  "finished_kst": "2026-10-14T02:35:26+09:00",
+  "network_after": null,
+  "reconstructed": {
+    "date": "2026-10-14",
+    "reason": "모든 호출(546회)을 마친 직후, meta.json을 쓰기 전에 세션 종료로 프로세스가 중단돼 meta.json이 남지 않았다.",
+    "how": "실행 시점 커밋 31df74d(02:07:58 커밋, 실행 ID 02:08:03)의 설정·질문 세트·프롬프트, 현재 val 파일 해시, 원본 로그의 백엔드·회차, 같은 PC의 클라이언트 버전으로 채웠다.",
+    "missing": [
+      "network_before",
+      "network_after"
+    ],
+    "approximate": {
+      "finished_kst": "마지막 호출의 시작 시각 + 지연"
+    }
+  }
+}

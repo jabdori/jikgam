@@ -1,0 +1,37 @@
+{
+  "run_id": "20261014T023845",
+  "split": "val",
+  "started_kst": "2026-10-14T02:38:45+09:00",
+  "git_commit": "35bf44f0da54fb6548720205a56e90ea9f0529fc",
+  "git_dirty": false,
+  "data_file": "data/build/val.jsonl",
+  "data_sha256_16": "a169861b4dc863da",
+  "cases": 21,
+  "questions_version": "q-2026.10.12",
+  "llm_prompt_version": "llm-judge-2026.10.14",
+  "backends": {
+    "rules": {
+      "kind": "rules"
+    }
+  },
+  "reps": {
+    "rules": 5
+  },
+  "concurrency": 1,
+  "client": {
+    "python": "3.12.11",
+    "httpx": "0.28.1",
+    "os": "Windows 11 10.0.22631"
+  },
+  "network_before": {
+    "cloudflare_colo": "ICN",
+    "cloudflare_loc": "KR",
+    "tcp_connect_ms_median": {}
+  },
+  "finished_kst": "2026-10-14T02:38:46+09:00",
+  "network_after": {
+    "cloudflare_colo": "ICN",
+    "cloudflare_loc": "KR",
+    "tcp_connect_ms_median": {}
+  }
+}
