@@ -1,0 +1,82 @@
+{
+  "run_id": "20261014T032548",
+  "split": "val",
+  "started_kst": "2026-10-14T03:25:48+09:00",
+  "git_commit": "545564599316acec4d0a5415464b4d1fce9ef2be",
+  "git_dirty": false,
+  "data_file": "data/build/val.jsonl",
+  "data_sha256_16": "a169861b4dc863da",
+  "cases": 21,
+  "questions_version": "q-2026.10.14-mix",
+  "questions_file": "data/question_sets/q-2026.10.14-mix.json",
+  "llm_prompt_version": "llm-judge-2026.10.14",
+  "backends": {
+    "jev": {
+      "kind": "systemone",
+      "url": "https://api.typesafe.ai/v1/systemone",
+      "model": "jev-1.13.0",
+      "price_input_per_mtok": 0.042,
+      "price_output_per_mtok": 0.0,
+      "price_source": "https://docs.typesafe.ai/models.md (2026-10-14 확인: 입력만 과금)"
+    },
+    "clef": {
+      "kind": "systemone",
+      "url": "https://api.cloudflare.com/client/v4/accounts/{CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/cloudflare/clef",
+      "model": "clef",
+      "envelope": "cloudflare",
+      "price_input_per_mtok": 0.24,
+      "price_output_per_mtok": 0.0,
+      "price_source": "https://developers.cloudflare.com/workers-ai/models/clef/ (2026-10-14 확인)",
+      "note": "Workers AI 모델 ID에는 버전 고정 수단이 없다. 응답의 model 값과 측정 날짜를 기록한다."
+    },
+    "clef-flash": {
+      "kind": "systemone",
+      "url": "https://api.cloudflare.com/client/v4/accounts/{CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/cloudflare/clef-flash",
+      "model": "clef-flash",
+      "envelope": "cloudflare",
+      "price_input_per_mtok": 0.038,
+      "price_output_per_mtok": 0.0,
+      "price_source": "https://developers.cloudflare.com/workers-ai/models/clef-flash/ (2026-10-14 확인, 컨텍스트 24,576 토큰)",
+      "note": "Workers AI 모델 ID에는 버전 고정 수단이 없다. 응답의 model 값과 측정 날짜를 기록한다."
+    },
+    "gemini-flash": {
+      "kind": "gemini",
+      "model": "gemini-3.8-flash",
+      "thinking_level": "low",
+      "price_input_per_mtok": 0.75,
+      "price_output_per_mtok": 3.75,
+      "price_source": "https://ai.google.dev/gemini-api/docs/pricing (2026-10-14 확인: 2026-12-31까지 가격, 출력에 사고 토큰 포함)"
+    }
+  },
+  "reps": {
+    "jev": 5,
+    "clef": 5,
+    "clef-flash": 5,
+    "gemini-flash": 3
+  },
+  "concurrency": 1,
+  "client": {
+    "python": "3.12.11",
+    "httpx": "0.28.1",
+    "os": "Windows 11 10.0.22631"
+  },
+  "network_before": {
+    "cloudflare_colo": "ICN",
+    "cloudflare_loc": "KR",
+    "tcp_connect_ms_median": {
+      "api.cloudflare.com": 16.0,
+      "api.typesafe.ai": 14.7,
+      "generativelanguage.googleapis.com": 62.7
+    }
+  },
+  "finished_kst": "2026-10-14T03:33:01+09:00",
+  "network_after": {
+    "cloudflare_colo": "ICN",
+    "cloudflare_loc": "KR",
+    "tcp_connect_ms_median": {
+      "api.cloudflare.com": 16.0,
+      "api.typesafe.ai": 15.5,
+      "generativelanguage.googleapis.com": 77.0
+    }
+  }
+}
