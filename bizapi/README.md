@@ -10,8 +10,14 @@ Go 표준 라이브러리만 쓴다. 상태(세션, 견적, 접수 내역, 멱�
 cd bizapi
 go run ./cmd/bizapi                       # 127.0.0.1:8081, ../domain/org_a/customers.json
 go run ./cmd/bizapi -addr 127.0.0.1:9000 -data ../domain/org_a/customers.json
+# 여러 데이터 파일을 합쳐 읽는다(-data를 여러 번 주거나 쉼표로 나눈다). 보류용 평가에 쓴다.
+go run ./cmd/bizapi -data ../domain/org_a/customers.json -data ../domain/org_a/customers_holdout.json
 go test ./...
 ```
+
+여러 파일을 주면 고객과 장애 기록을 합친다. 모든 파일의 `reference_date`가 같아야 하고, 고객·휴대폰 번호·구독·결제·장애 ID가 파일 사이에서 겹치면 시작하지 않는다. 장애 기록은 전역이라 새 파일의 장애가 기존 고객의 판단을 바꿀 수 있으므로, `TestMergeKeepsDevQuotes`가 병합 전후 개발용 고객의 견적이 같은지 확인한다. 파일 하나면 동작은 예전과 같다.
+
+`internal/orga/holdout_test.go`, `internal/server/holdout_test.go`는 보류용 평가 데이터의 기대 결과를 담고 있어, 엔진 개발자는 엔진 설정을 고정하기 전에 읽지 않는다([`data/scenarios/HOLDOUT.md`](../data/scenarios/HOLDOUT.md)).
 
 ## 호출 형식
 
@@ -109,6 +115,6 @@ curl -X POST localhost:8081/_admin/reset
 
 ## 구성
 
-- `cmd/bizapi`: 실행 파일
+- `cmd/bizapi`: 실행 파일(`-data` 반복 지정)
 - `internal/orga`: 조직 A 데이터 읽기와 약관 규칙(견적, 해지 후 이용 마지막 날, 환불 방법). 상태가 없다.
 - `internal/server`: HTTP, 세션, 멱등 키, 접수 내역, 장애 주입, 로그
