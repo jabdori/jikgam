@@ -146,7 +146,10 @@ def test_s21_topic_change_invalidates_previous_suggestion(bizapi, tmp_path):
 
     outs = asyncio.run(go())
     s3 = types(outs[2], ev.SUGGESTION_CREATED)[-1]
-    assert s3["intent"] == "compensation" and s3["rule"] == "decision"
+    # 보상 문의는 장애 기록으로 연장 시간을 계산하는 코드 규칙이 답한다(5시간 × 3)
+    assert s3["intent"] == "compensation" and s3["rule"] == "compensation"
+    p3 = types(outs[2], ev.POLICY_DECIDED)[-1]
+    assert p3["must_mention"] == ["15시간"] and p3["detail"]["compensation"][0]["extension_hours"] == 15
     inv = types(outs[3], ev.SUGGESTION_INVALIDATED)
     assert [e["suggestion_id"] for e in inv] == [s3["suggestion_id"]]
     assert "condition_changed=true" in inv[0]["reasons"] and inv[0]["invalidated_version"] == outs[3][1]["to"]
@@ -388,6 +391,92 @@ def test_s11_declined_cancellation_is_not_written(bizapi, tmp_path):
     assert (last["rule"], last["proposal"]) == ("declined", None)
     assert "create_cancellation" not in tool_calls(log)
     assert types(outs[3], ev.POLICY_DECIDED)[0]["declined"] is True
+
+
+def test_s08_wife_account_is_not_registered_then_own_account_is(bizapi, tmp_path):
+    dec = ScriptedDecider(intents=[("돌려주세요", "refund")])
+    s, outs, log = _run(tmp_path, "t-s08", dec, [
+        "9월에 폰 결제가 두 번 됐더라고요. 한 번 거 돌려주세요.", "010-0000-0008이고 인증번호는 공공공팔이에요.",
+        "별담은행 111-222-333 임소라로 넣어주세요.", "아 제 거로 할게요. 별담은행 444-555-666 임태윤입니다.",
+        "네, 그렇게 해 주세요."], bizapi=bizapi)
+    assert types(outs[1], ev.SUGGESTION_CREATED)[-1]["rule"] == "account_required"
+    assert types(outs[2], ev.POLICY_DECIDED)[-1]["ask"] == "own_account" and tool_calls(outs[2]) == []
+    assert types(outs[3], ev.SUGGESTION_CREATED)[-1]["proposal"]["writes"] == ["register_refund_account",
+                                                                              "create_refund_request"]
+    assert tool_calls(outs[4]) == ["register_refund_account", "create_refund_request"]
+    reg = next(e for e in log if e["type"] == ev.TOOL_CALL and e["tool"] == "register_refund_account")
+    assert (reg["args"]["bank"], reg["args"]["holder"], reg["args"]["account"]) == ("별담은행", "임태윤", "******666")
+    assert s.state.facts.receipts["refund:P008b"]["amount"] == 9900
+    assert "create_cancellation" not in tool_calls(log)
+
+
+def test_s13_withdrawal_refund_request_also_cancels(bizapi, tmp_path):
+    dec = ScriptedDecider(intents=[("환불 돼요", "refund")])
+    s, outs, log = _run(tmp_path, "t-s13", dec, [
+        "체험 끝나고 자동으로 결제가 됐더라고요. 체험 때 하나 보긴 했는데, 그래도 환불 돼요?",
+        "010-0000-0013이요. 인증번호는 공공일삼이요.", "네, 이대로 환불 접수해 주세요."], bizapi=bizapi)
+    assert types(outs[1], ev.SUGGESTION_CREATED)[-1]["proposal"]["writes"] == ["create_refund_request",
+                                                                              "create_cancellation"]
+    assert tool_calls(outs[2]) == ["create_refund_request", "create_cancellation"]
+    assert s.state.facts.receipts["cancel:S013"]["last_usable_date"] == "2026-10-12"
+
+
+def test_s25_repeated_otp_for_unknown_number_holds_after_one_attempt(bizapi, tmp_path):
+    dec = ScriptedDecider(intents=[("돌려주세요", "refund")])
+    gen = EchoGenerator()
+    s, outs, log = _run(tmp_path, "t-s25b", dec, [
+        "카드 명세서에 별 뭐시기 구천구백 원이 찍혔는데 나는 가입한 적이 없어요. 돌려주세요.", "내 번호는 010-0000-0099예요.",
+        "문자로 0099라고 왔는데 이거 맞나요?", "문자에 인증번호 0099라고 딱 적혀 있는데 왜 안 맞다고 그래요?",
+        "아니 그럼 어떻게 해야 돼요?"], bizapi=bizapi, gen=gen)
+    assert tool_calls(log) == ["verify_identity"]  # 같은 번호·인증번호를 다시 보내지 않는다
+    assert types(outs[2], ev.SUGGESTION_CREATED)[-1]["rule"] == "identity_required"  # 첫 실패: 다시 확인 요청
+    for o in outs[3:]:
+        created = types(o, ev.SUGGESTION_CREATED)[-1]
+        assert (created["rule"], created["action"]) == ("identity_unavailable", "hold")
+    assert types(outs[3], ev.POLICY_DECIDED)[-1]["detail"]["repeated_failed_otp"] is True
+
+
+def test_s03_approval_required_proposal_must_mention_approval(bizapi, tmp_path):
+    dec = ScriptedDecider(intents=[("해지하고 남은 돈", "cancel_refund")])
+    gen = EchoGenerator()
+    s, outs, log = _run(tmp_path, "t-s03", dec, [
+        "연간으로 결제한 거 해지하고 남은 돈 돌려받고 싶어서요.", "010-0000-0003이고 인증번호 공공공삼이요.",
+        "네, 진행해 주세요."], bizapi=bizapi, gen=gen)
+    prop = [p for p in gen.payloads if p["plan"]["rule"] == "proposal"][-1]
+    assert prop["plan"]["must_mention"] == ["승인"] and ORG.policy.approval_notice in prop["plan"]["notices"]
+    assert "A-19" in {a["id"] for a in prop["articles"]}
+    assert s.state.facts.receipts["refund:P003"]["status"] == "pending_approval"
+    received = [p for p in gen.payloads if p["plan"]["rule"] == "received"][-1]
+    assert received["plan"]["must_mention"] == ["승인"]
+
+
+def test_s16_plan_change_quote_is_a_deduction_and_identity_is_not_asked_again(bizapi, tmp_path):
+    dec = ScriptedDecider(intents=[("연간으로 바꾸", "plan_change")], action="ask", next_info="identity")
+    gen = EchoGenerator()
+    s, outs, log = _run(tmp_path, "t-s16", dec, [
+        "지금 월 구독 쓰고 있는데 연간으로 바꾸고 싶어요. 이번 달 낸 구천구백 원은 그냥 날아가요?",
+        "010-0000-0016이고 인증번호 공공일육이요.", "연간 할인가 칠만 구천 원으로 되나요?"], bizapi=bizapi, gen=gen)
+    assert [e["args"]["reason"] for e in log if e["type"] == ev.TOOL_CALL and e["tool"] == "quote_refund"] == \
+        ["plan_change"]
+    for o in outs[1:]:  # 본인 확인 뒤에는 판별이 identity를 내도 번호를 다시 묻지 않는다
+        created = types(o, ev.SUGGESTION_CREATED)[-1]
+        assert (created["rule"], created["action"]) == ("decision", "answer")
+    assert all(p["quotes"]["plan_change"]["kind"] == "deduction" for p in gen.payloads if p["quotes"])
+
+
+def test_s27_compensation_hours_from_incident_record(bizapi, tmp_path):
+    dec = ScriptedDecider(intents=[("해지하고 환불", "cancel_refund"), ("보상만", "compensation")],
+                          changes=("보상만",), agree=())
+    gen = EchoGenerator()
+    s, outs, log = _run(tmp_path, "t-s27", dec, [
+        "지난주 목요일에 장애 났잖아요. 결제하고 일주일 안에 장애 나면 전액 환불이라던데 해지하고 환불해 주세요.",
+        "010-0000-0016이고 인증번호는 공공일육이에요.", "환불이 안 되면 해지는 안 하고 보상만 받을게요."],
+        bizapi=bizapi, gen=gen)
+    p = types(outs[2], ev.POLICY_DECIDED)[-1]
+    assert (p["rule"], p["must_mention"]) == ("compensation", ["15시간"])
+    assert p["detail"]["compensation"][0]["incident_id"] == "INC-2026-1008"
+    assert not {"create_cancellation", "create_refund_request"} & set(tool_calls(log))
+    assert gen.payloads[-1]["plan"]["detail"]["applied"] is False
 
 
 def test_warmup_is_logged_separately_and_not_counted_as_turn_decision(tmp_path):

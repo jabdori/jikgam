@@ -144,6 +144,21 @@ required_notices = ["환불 예정액과 산정 근거", "환불 방법과 예�
 - 재생 파일의 줄에 선택 필드 `faults`(모의 업무 API `/_admin/faults` 본문 목록)를 두면 그 줄을 보내기 직전에 장애를 넣고 `fault.injected` 이벤트를 남긴다(로컬 주소만). `--policy A|B|C`로 실행 정책을 고른다.
 - 조직 설정에 더한 키: `decline_threshold`, `caller_threshold`, `owner_return_threshold`, `addon_threshold`, `identity_unavailable_threshold`, `[policy]`의 `addon_intents`, `addon_articles`, `third_party_articles`, `guardian_reasons`, `guardian_articles`.
 
+## 9.1 구현 메모 (2026-10-14, 시뮬레이터 실행 뒤 보강)
+
+시뮬레이터 실행 `results/engine/scenarios/20261014T040727-C`(보강 전 엔진)에서 나온 실패를 고친 것이다. 정책 규칙의 순서는 `jikgam/engine/policy.py` 머리말에 있다.
+
+- **계좌 진술**(s08): 목록에 없는 은행은 "…은행"으로 말한 이름 그대로 받는다(계좌번호나 '계좌'와 함께 말할 때만). 은행이나 '계좌'가 같은 발화에 있으면 9자리 계좌번호를 받는다(8자리는 날짜와 겹쳐 받지 않는다). 예금주 이름 뒤의 "로/으로"를 읽는다. 예금주 이름이 회원 이름(조회 결과)과 다르면 등록을 부르지 않고 본인 명의 계좌를 다시 묻는다.
+- **환불에 따른 해지**(s07, s13): 환불만 요청해도 그 환불이 이용 기간을 끝내는 사유(`refund_ends_period_reasons`: 청약철회 제5조 제3항, 장애 환불 제9조 제2항, 연 구독 중도 해지 제8조 제4항)면 해지를 함께 안내하고 접수한다. 이용 기간이 끝났는데 구독을 남겨 두면 다음 자동 결제가 이루어지기 때문이다. 고객 동의 전에 안내하므로 고객은 해지가 함께 된다는 것을 보고 동의한다. 중복 결제는 구독을 유지한다.
+- **차감액**(s16): `deduction_reasons`(plan_change)의 견적은 생성 입력에서 `kind: deduction`으로 표시한다. 그 금액은 환불 금액(`amount`)이 될 수 없고, 환불 주장의 근거도 아니다.
+- **본인 확인 반복 실패**(s25): 업무 API는 가입되지 않은 번호와 틀린 인증번호를 구분해 주지 않는다(실패 응답에 고객 ID도 없다). 그래서 실패 안내는 "인증번호 불일치"가 아니라 "그 번호와 인증번호로 확인되지 않음"으로 한다. 이전 발화에서 실패한 번호·인증번호를 다시 말하면 다시 보내지 않고 보류하며(계정을 찾을 수 없음, 다른 번호·가족 가입·카드 명세서 확인 안내), 새 번호나 인증번호가 오기 전까지 보류를 유지한다(통화자가 제3자로 바뀌어도).
+- **승인 대상 환불**(s03): 견적의 `approval_required`나 접수 결과 `pending_approval`이면 `approval_notice`, `approval_articles`(A-19), `approval_must_mention`("승인")을 붙인다.
+- **장애 보상 시간**(s27): `[policy.compensation]`(귀책, 최소 시간, 배수, 근거 조항)으로 장애 기록에서 코드가 연장 시간을 계산하고 `must_mention`에 넣는다(5시간 × 3 = "15시간"). 연장을 적용하는 업무 API가 없어 대상과 시간만 안내한다(`applied: false`).
+- **must_mention 검사**: 생성 문장에 빠지면 한 번 다시 만들고, 그래도 빠지면 위반을 기록한 채 두 번째 결과를 쓴다. 금액·환불 주장 위반과 달리 고정 문구로 바꾸지 않는다.
+- **판별 결과의 본인 확인 질문**(s14, s16): 본인 확인을 마쳤거나 통화자가 제3자면 판별의 next_info=identity를 쓰지 않는다(ask면 answer로 바꾸고 `detail.overridden`에 남긴다).
+- **빠른 정정과 예열**(`docs/evaluation.md` §3.3 보완): 버전은 발화가 도착할 때 올리고 진행 중인 작업을 취소한다. 예열을 기다리던 발화는 예열 뒤에 가장 최근 발화만 진행한다. 앞 턴이 시작한 쓰기는 취소하지 않고, 새 발화의 파이프라인은 정책 단계 전에 쓰기가 끝나기를 기다린다(`writes.wait`). 쓰기 결과로 버전이 오르면 새 파이프라인은 취소되고 다시 진행한다. `tests/test_engine_concurrency.py`가 느린 가짜로 이 경우들과 "새 발화 뒤에 지난 버전 제안이 노출되지 않는다"는 조건을 확인한다.
+- 조직 설정에 더한 키: `[policy]`의 `refund_ends_period_reasons`, `deduction_reasons`, `approval_articles`, `approval_notice`, `approval_must_mention`, `[policy.compensation]`(`intents`, `causes`, `min_hours`, `multiplier`, `articles`).
+
 ## 10. 정책 A(개선형 RAG) 구현
 
 `jikgam/baselines/rag.py`. `docs/evaluation.md` §5.1을 구현한 방식과 다른 점은 모듈 머리말에 있다. 요약:

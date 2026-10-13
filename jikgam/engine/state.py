@@ -51,6 +51,8 @@ class Identity:
     attempts: int = 0
     failed: int = 0
     tried: set[tuple[str, str]] = field(default_factory=set)  # 이미 보낸 (전화번호, 인증번호)
+    tried_utt: dict[tuple[str, str], str] = field(default_factory=dict)  # (전화번호, 인증번호) → 처음 보낸 발화
+    unavailable: bool = False  # 본인 확인을 마칠 수 없다고 판단해 보류함. 새 번호·인증번호가 오면 지운다
 
 
 @dataclass

@@ -278,12 +278,19 @@ _BANK = re.compile(
     r"국민|신한|우리|하나|농협|기업|카카오|토스|씨티|우체국|수협|부산|대구|광주|전북|경남|제주|산업)"
     r"(?=\s*(?:은행|계좌|\d)|(?<=뱅크)|(?<=금고))(\s*은행)?"
 )
-_ACCOUNT_NUMBER = re.compile(r"(?<![\d-])(\d[\d-]{8,20}\d)(?![\d-])")
+# 목록에 없는 은행("별담은행"): '…은행'으로 붙여 말한 이름. 계좌번호가 같은 발화에 있을 때만 쓴다(개발용 시나리오 s08).
+_BANK_ANY = re.compile(r"(?<![가-힣])([가-힣]{2,6})은행")
+_NOT_BANK = {"어느", "무슨", "다른", "같은", "주거래", "본인", "제", "그", "이", "저", "해당", "시중", "인터넷", "온라인"}
+_ACCOUNT_NUMBER = re.compile(r"(?<![\d-])(\d[\d-]{7,20}\d)(?![\d-])")
+# 계좌번호 자릿수. 은행 이름이 같은 발화에 있으면 9자리부터 받는다(가상 은행 계좌 444-555-666). 8자리는 날짜(2026-10-12)와
+# 겹치므로 받지 않는다.
+_ACCOUNT_DIGITS = (10, 16)
+_ACCOUNT_DIGITS_WITH_BANK = (9, 16)
 _SURNAMES = set("김이박최정강조윤장임한오서신권황안송류전홍고문양손배백허유남심노하곽성차주우구민진지엄채원천방공현함변염여추도소석선설마길연위표명기반왕금옥육인맹제모탁국어은편용예봉경사부")
 _HOLDER_LABEL = re.compile(r"(?:예금주|명의자|받는\s*분)\s*(?:는|은|가|이|:)?\s*([가-힣]{2,4}?)(?=이요|요|입니다|이에요|예요|님|씨|이고|고|\s|$|[.,!?])")
 _HOLDER_BEFORE = re.compile(r"([가-힣]{2,4}?)\s*(?:명의|이름으로|앞으로)")
 _AFTER_NUMBER_PREFIX = re.compile(r"^\s*(?:이고|이요|이에요|예요|요|,)?\s*(?:예금주\s*(?:는|은)?\s*)?")
-_HOLDER_AFTER_NUMBER = re.compile(r"^([가-힣]{2,4}?)(?=이요|요|입니다|이에요|예요|님|씨|이고|\s|$|[.,!?])")
+_HOLDER_AFTER_NUMBER = re.compile(r"^([가-힣]{2,4}?)(?=이요|요|입니다|이에요|예요|님|씨|이고|으로|로|\s|$|[.,!?])")
 _HOLDER_SELF = re.compile(r"(?<![가-힣])(?:제|저|본인|내)\s*(?:명의|거|꺼|계좌|이름)")  # '아내 명의'의 '내 명의'는 아니다
 _HOLDER_RELATION = re.compile(r"(?<![가-힣])(아내|와이프|남편|엄마|어머니|아빠|아버지|딸|아들|배우자|친구|동생|언니|누나|형|오빠)\s*(?:명의|거|꺼|계좌|이름)")
 _ACCOUNT_CONTEXT = re.compile(r"계좌|은행|뱅크|입금|예금주|명의")
@@ -296,18 +303,39 @@ def _is_name(s: str) -> bool:
     return 2 <= len(s) <= 4 and s[0] in _SURNAMES and s not in _NOT_NAMES and not re.search(r"은행|뱅크|계좌|명의|번호", s)
 
 
-def _accounts(text: str, phones_removed: str) -> list[tuple[int, AccountClaim]]:
-    has_number = any(10 <= len(re.sub(r"-", "", m.group(1))) <= 16 for m in _ACCOUNT_NUMBER.finditer(phones_removed))
-    if not _ACCOUNT_CONTEXT.search(text) and not has_number:
-        return []
-    bank_m = _BANK.search(text)
-    bank = re.sub(r"\s", "", bank_m.group(1)) if bank_m else None
-    number = None
-    num_m = None
+_NUMBER_CONTEXT = re.compile(r"계좌|예금주")
+
+
+def _bank(text: str) -> tuple[str | None, re.Match | None]:
+    """은행 이름과 위치. 목록의 은행은 '은행'을 뺀 이름('우리'), 목록에 없는 은행은 말한 그대로('별담은행')."""
+    m = _BANK.search(text)
+    if m:
+        return re.sub(r"\s", "", m.group(1)), m
+    for m in _BANK_ANY.finditer(text):
+        if m.group(1) not in _NOT_BANK:
+            return m.group(0), m
+    return None, None
+
+
+def _account_number(phones_removed: str, with_bank: bool) -> re.Match | None:
+    """계좌번호로 볼 수 있는 마지막 숫자 덩어리."""
+    lo, hi = _ACCOUNT_DIGITS_WITH_BANK if with_bank else _ACCOUNT_DIGITS
+    found = None
     for m in _ACCOUNT_NUMBER.finditer(phones_removed):
-        digits = re.sub(r"-", "", m.group(1))
-        if 10 <= len(digits) <= 16 and not _PHONE.fullmatch(m.group(1)):
-            number, num_m = m.group(1), m
+        if lo <= len(re.sub(r"-", "", m.group(1))) <= hi and not _PHONE.fullmatch(m.group(1)):
+            found = m
+    return found
+
+
+def _accounts(text: str, phones_removed: str) -> list[tuple[int, AccountClaim]]:
+    bank, bank_m = _bank(text)
+    context = _NUMBER_CONTEXT.search(text) is not None
+    if bank_m is not None and bank_m.re is _BANK_ANY and not context and _account_number(phones_removed, True) is None:
+        bank, bank_m = None, None  # 목록에 없는 '…은행'은 계좌번호나 '계좌'와 함께 말할 때만 은행으로 본다
+    num_m = _account_number(phones_removed, bank is not None or context)
+    if not _ACCOUNT_CONTEXT.search(text) and num_m is None:
+        return []
+    number = num_m.group(1) if num_m else None
     holder = None
     for pat in (_HOLDER_LABEL, _HOLDER_BEFORE):
         hm = pat.search(text)

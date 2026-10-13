@@ -33,6 +33,11 @@ caller_threshold, 제3자로 본 뒤 본인으로 돌아가는 것은 더 높은
 세션 시작 예열(start): 판별 백엔드에 측정 데이터가 아닌 고정 요청을 한 번 보내 연결을 미리 맺는다. warmup 이벤트로
 지연을 남기고 decision.* 이벤트로는 남기지 않는다. 실행기는 세션을 연 직후 start를 부른다.
 
+빠른 정정(앞 턴 진행 중 새 발화, docs/evaluation.md §3.3 보완): 버전은 발화가 도착할 때 바로 올리고 진행 중인 작업을
+취소한다(예열을 기다리는 중이어도). 예열 뒤에는 가장 최근 발화만 파이프라인을 돌리고 앞 발화는 양보한다(_drive). 앞 턴이
+시작한 쓰기는 취소하지 않으며, 새 발화의 파이프라인은 정책 단계 전에 그 쓰기가 끝나기를 기다린다(writes.wait). 쓰기가 끝나면
+결과로 버전이 올라 새 파이프라인이 취소되고 최신 발화로 다시 진행한다. 그래서 이미 접수 중인 내용을 다시 안내하지 않는다.
+
 업무 API 장애(재시도 예산 소진)는 세션이 끝날 때까지 기억한다. 같은 세션에서 그 도구를 다시 부르지 않고 보류한다
 (api.md "재시도 예산 내 1회 재시도 후 접수 보류 안내", 시나리오 s19 "2회를 넘는 quote_refund 호출" 금지).
 """
@@ -196,6 +201,8 @@ class Session:
 
     async def _drive(self, utt_id: str, out: list[dict[str, Any]]) -> None:
         while True:
+            if self._latest_utt != utt_id:  # 예열을 기다리는 사이 더 새로운 고객 발화가 왔다. 그 발화가 진행한다
+                return
             task = asyncio.create_task(self._pipeline(self.state.version, out))
             self._task = task
             await asyncio.wait({task})
@@ -263,12 +270,25 @@ class Session:
                                          sufficient=self.state.evidence.sufficient, next_info=labels.get("next_info"),
                                          action=labels.get("action"), intent=self.state.request, caller=self.state.caller,
                                          addon_only=self.state.addon_only, pass_no=n_pass, decision_error=res.error))
-                # 7. 정책
+                # 7. 정책. 앞 턴이 시작한 쓰기가 아직 진행 중이면 끝날 때까지 기다린다. 쓰기 결과 없이 정책을 정하면 이미
+                #    접수 중인 내용을 다시 안내하게 된다(빠른 정정 테스트). 쓰기가 끝나면 그 결과로 버전이 올라 이 작업은
+                #    취소되고 최신 발화로 다시 진행한다(_run_writes).
                 stage = "policy"
+                in_flight = [w for w in self._writes if not w.done()]
+                if in_flight:
+                    out.append(self.log.emit(ev.WRITES_WAIT, my_v, writes=len(in_flight)))
+                    await asyncio.wait(in_flight)
+                    if self._stale(my_v):  # 쓰기 결과로 버전이 올랐는데 아직 취소되지 않았으면 스스로 다시 시작한다
+                        raise asyncio.CancelledError
                 plan = policy.decide(self.state, policy.PolicyInput(self.state.request, labels.get("action"),
                                                                     labels.get("next_info"), agreed, pending,
                                                                     declined, identity_unavailable),
                                      self.org.policy, self.org.required_notices)
+                # 본인 확인 보류는 새 번호나 인증번호가 오기 전까지 유지한다(정책 규칙 4)
+                if plan.rule == "identity_unavailable":
+                    self.state.identity.unavailable = True
+                elif plan.rule == "verify_identity" or self.state.current_claims().phones:
+                    self.state.identity.unavailable = False
                 out.append(self.log.emit(ev.POLICY_DECIDED, my_v, agreed=agreed, declined=declined,
                                          identity_unavailable=identity_unavailable, caller=self.state.caller,
                                          **plan.log()))
@@ -445,7 +465,9 @@ class Session:
         if plan.calls:
             for c in plan.calls:
                 if c.tool == "verify_identity":
-                    self.state.identity.tried.add((c.args["phone"], c.args["otp"]))
+                    pair = (c.args["phone"], c.args["otp"])
+                    self.state.identity.tried.add(pair)
+                    self.state.identity.tried_utt.setdefault(pair, self.state.last_customer_utt_id() or "")
             await asyncio.gather(*(self._call(c, my_v, out) for c in plan.calls))
             names += [c.tool for c in plan.calls]
         if plan.lookups:
@@ -524,7 +546,9 @@ class Session:
             facts["refund_account_rejections"] = f.account_rejections
         if f.api_failures:
             facts["api_failures"] = f.api_failures
-        quotes = {r: quote_summary(q) for r, q in f.quotes.items()}
+        # 견적의 금액이 환불인지 차감액인지(조직 설정 deduction_reasons). 차감액은 생성의 환불 금액(amount)이 될 수 없다
+        quotes = {r: {**quote_summary(q), "kind": "deduction" if r in self.org.policy.deduction_reasons else "refund"}
+                  for r, q in f.quotes.items()}
         if plan.detail.get("refusal"):
             facts, quotes, claims = {}, {}, {}
         elif plan.action in ("handoff", "hold"):
@@ -533,7 +557,7 @@ class Session:
             "today": self.org.today.isoformat(),
             "plan": {"action": plan.action, "rule": plan.rule, "ask": plan.ask, "next_info": plan.next_info,
                      "notices": list(plan.notices), "proposal": plan.proposal.summary if plan.proposal else None,
-                     "detail": plan.detail},
+                     "must_mention": list(plan.must_mention), "detail": plan.detail},
             "intent": self.state.request,
             "caller": self.state.caller,
             "identity_verified": self.state.identity.verified,

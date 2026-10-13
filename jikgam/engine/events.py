@@ -45,6 +45,7 @@ ENGINE_ERROR = "engine.error"
 AGENT_SAY = "agent.say"
 WARMUP = "warmup"  # 세션 시작 예열 요청. 턴 판단(decision.*)으로 세지 않는다
 FAULT_INJECTED = "fault.injected"  # 재생 실행기가 모의 업무 API에 장애를 주입함(재생 파일의 faults)
+WRITES_WAIT = "writes.wait"  # 앞 턴이 시작한 쓰기가 끝나기를 기다린 뒤 정책을 정함(빠른 정정)
 
 SPEAKERS = ("customer", "agent")
 
