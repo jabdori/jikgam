@@ -62,7 +62,7 @@ state는 JSON 문자열 그대로 둔다. Unsloth는 학습(`_parsed` 후 `rende
 
 - 반복 4회는 (c)를 학습하기 전에 정했다. typed-decisions 1,200건 옆에서 한국어 64건이 묻히지 않게 하되(행 17.6%, 판단 23.5%. 입력 길이 중앙값이 한국어 2,402토큰, typed-decisions 876토큰이라 토큰으로는 중앙값 기준 추정 약 37%), 2 에폭 동안 한 사례를 8번 보는 정도로 제한했다. (d)는 사례당 노출을 (c)와 같게 같은 4회를 썼다(행 35.9%, 판단 45.2%). 반복 횟수는 val로 고르지 않았다.
 - train_aug(104건, 대화 그룹 a001~a038, 판단 777개)는 다른 작성자가 val 실패 유형을 기준으로 val 사례를 보지 않고 새로 썼다(`scripts/build_dataset.py --aug`). 어떤 유형을 보강할지는 val 결과에서 나왔으므로, (d)·(e)의 val 수치에는 그만큼 val 정보가 섞여 있다.
-- 섞는 순서는 시드 3407. 실제로 넣은 행은 `~/jikgam-train/runs/<실행>/train_rows.jsonl`에 남기고 sha256 앞 16자리를 학습 기록(`results/training/runs/<실행>.json`)에 적는다. 입력 파일 해시: `data/build/train.jsonl` `3a57f58bb3f6d705`, `data/build/train_aug.jsonl`은 학습 기록 참조.
+- 섞는 순서는 시드 3407. 실제로 넣은 행은 `~/jikgam-train/runs/<실행>/train_rows.jsonl`에 남기고 sha256 앞 16자리를 학습 기록(`results/training/runs/<실행>.json`)에 적는다. 입력 파일 해시: `data/build/train.jsonl` `3a57f58bb3f6d705`, `data/build/train_aug.jsonl` `f64e713e361676ef`. 구성별로 실제로 넣은 행의 해시: (a) mix `07d064d9ecf5a7a6`, (a) q-2026.10.12 `c891fc460653bcaf`, (b) `db80b2cd3bba5763`, (c) `9d5aeb8548e42b01`, (d) `b4147322c6fb2190`, (e) `d89f0afa924850e6`(0.8B와 2B가 같은 행을 썼다).
 
 ## 4. 토큰화 확인 (`jikgam/train/tokens.py`, `results/training/tokenizer.json`)
 
@@ -114,4 +114,121 @@ uv run python -m jikgam.train.screening_table                            # resul
 - 보정: 보정 전 정확도·ECE가 주 지표다. 보정은 `FastDecisionModel.calibrate`(온도 조정, 예측 라벨은 바뀌지 않음)를 val에 맞춘 것이라 표본 내 값이다. 두 값을 적는다. (1) val 전체로 맞춘 온도로 다시 예측해 저장소 정의로 계산한 ECE, (2) Unsloth가 돌려주는 값(val 사례를 반씩 나눠 서로의 절반으로 맞춘 온도, Unsloth의 ECE 정의). 보정한 모델은 저장하지 않고, 서빙하는 병합 모델은 보정 전이다.
 - val을 쓴 모든 선별 구성을 `results/training/val-screening/README.md`에 빠짐없이 적는다.
 
-<!-- 이하 결과에 따라 채운다 -->
+### 6.1 선별 결과(2026-10-14, val 판단 152개)
+
+val로 평가한 구성은 11개다(보정 변형은 같은 모델의 열로 적고 따로 세지 않았다). 하이퍼파라미터·반복 횟수·에폭은 val을 보고 바꾸지 않았다. 구성 (d)·(e)는 val 실패 유형을 기준으로 쓴 train_aug를 쓰므로 val 정보가 간접적으로 섞여 있다.
+
+| 선별 | 학습 문구 | 정확도 | ECE | 보정 후 ECE(표본 내) | Unsloth 교차 적합 ECE | 학습 분 | 최대 GPU GB |
+|---|---|---|---|---|---|---|---|
+| 0.8B (a) | q-2026.10.12 | 69.7% (106/152) | 0.061 | 0.045 | 0.048 | 2.6 | 2.42 |
+| 0.8B (a) | mix | 64.5% (98/152) | 0.082 | 0.080 | 0.056 | 2.2 | 2.69 |
+| 0.8B (b) | (한국어 없음) | 53.3% (81/152) | 0.136 | 0.020 | 0.075 | 8.4* | 2.03 |
+| 0.8B (c) | mix | 73.7% (112/152) | 0.160 | 0.069 | 0.087 | 10.4 | 2.54 |
+| 0.8B (d) | mix | **83.6% (127/152)** | 0.090 | 0.049 | 0.038 | 13.3 | 2.54 |
+| 0.8B (e) | mix | 67.8% (103/152) | 0.103 | 0.077 | 0.074 | 2.9 | 2.56 |
+| 2B (a) | mix | 71.7% (109/152) | 0.043 | 0.040 | 0.050 | 2.1 | 4.41 |
+| 2B (b) | (한국어 없음) | 55.3% (84/152) | 0.091 | 0.068 | 0.091 | 8.7 | 3.77 |
+| 2B (c) | mix | 83.6% (127/152) | 0.120 | 0.068 | 0.049 | 12.3 | 4.35 |
+| 2B (d) | mix | **88.2% (134/152)** | 0.077 | 0.015 | 0.051 | 18.2 | 4.37 |
+| 2B (e) | mix | 80.3% (122/152) | 0.046 | 0.082 | 0.106 | 5.0 | 4.32 |
+
+평가 문구는 학습 문구와 같다(0.8B (a) q-2026.10.12 행만 q-2026.10.12로 평가). \* 0.8B (b) 학습 중 약 3분 동안 서빙 점검이 같은 GPU를 썼다. 학습 시간은 모두 같은 GPU에서 다른 프로그램(약 5 GB)과 함께 쟀다. 학습 GPU 시간 합계 86.1분.
+
+- typed-decisions만(b)은 두 크기 모두 q-2026.10.12 기준 다수 라벨 기준선(60.5%)보다 낮다. applies에서 true를 0.8B 9.0%, 2B 20.9%만 예측했다(정답 true 56.7%).
+- train 64건만(a)은 두 크기 모두 sufficient를 모두 true, condition_changed를 모두 false로 냈다(균형 정확도 50%).
+- 둘을 섞으면(c) 둘 다 혼자일 때보다 높고, 보강 사례를 더하면(d) 더 높다. typed-decisions를 빼면(e) (d)보다 0.8B 24개, 2B 12개 낮다.
+- 질문 세트 변경 전 문구로 학습·평가한 0.8B (a)가 mix보다 8개 높았다. 학습 사례 64건에서의 차이라 문구 효과인지 학습 변동인지 가리지 않았다.
+
+### 6.2 크기별 최종 후보
+
+각 크기에서 val 정확도가 가장 높은 (d)를 골랐다. 고른 기준은 보정 전 val 정확도 하나다.
+
+### 6.3 학습 경로 점검(typed-decisions 공개 test)
+
+`jikgam/train/td_eval.py`로 (b) 모델을 typed-decisions의 공개 test(400건, 판단 2,000개)에 평가했다. 이 저장소의 test 분할과 무관하며 선택에 쓰지 않았다. Unsloth `evaluate` 정의로 0.8B 77.0%, 2B 78.8%였다(`results/training/typed-decisions-test/`). Unsloth 문서의 typed-decisions 수치(0.8B 73%, 2B 78%, 다른 데이터 12종을 더한 학습)와 같은 범위라 학습 경로가 정상으로 돈다고 봤다.
+
+## 7. 서빙 (`jikgam/train/serve.py`)
+
+```bash
+bash jikgam/train/run_wsl.sh serve --run q35-0.8b-d-mix --port 8888
+bash jikgam/train/run_wsl.sh serve --run q35-2b-d-mix   --port 8889
+bash jikgam/train/run_wsl.sh serve --stop --port 8888
+```
+
+- `UNSLOTH_SYSTEMONE_MODEL=<병합 폴더> UNSLOTH_SYSTEMONE_DEVICE=gpu unsloth studio -H 127.0.0.1 -p <포트>`로 띄운다. 엔드포인트는 `POST /v1/systemone`(Jev 형식).
+- Decision API는 환경 변수만으로 켜지지 않는다. 관리자 설정 `systemone_enabled`가 필요해서, 스크립트가 관리자 로그인(`/api/auth/login`) 뒤 `PUT /api/settings/systemone {"enabled": true, "backend": "pytorch"}`를 보내고 API 키를 발급한다(`POST /api/auth/api-keys`). 첫 실행의 관리자 비밀번호는 `UNSLOTH_STUDIO_PASSWORD`로 한 번만 정할 수 있고, 다시 주면 Studio가 시작을 거부한다. 비밀번호와 키는 WSL의 `~/jikgam-train/secrets/`(권한 600)에 두고, 평가 실행기는 저장소 `.env`(gitignore)의 `UNSLOTH_API_KEY`로 읽는다.
+- 병합 폴더에 GGUF가 없어 PyTorch로 서빙된다(응답 헤더 `x-unsloth-decision-backend: pytorch`). 메모리가 충분하면 16비트로 올린다. 모델을 처음 올리는 데 31~50초 걸렸다.
+- 요청 모델 이름은 `laya-local`을 쓴다. 별칭(`laya`, `default`, `jev-latest`)은 설정 화면에서 고른 모델로 바뀔 수 있지만 `laya-local`은 환경 변수로 띄운 폴더에만 연결된다. 응답의 `model`도 항상 `laya-local`이라, 설정(`config/decision_models.toml`)의 `served`와 `weights_sha256_16`으로 가중치를 식별한다: 0.8B `94f8e23735f64400`, 2B `3f9dcfe6df110822`.
+- 한 GPU에 두 Studio를 포트만 달리해 띄웠다(같은 `~/.unsloth/studio`). 같은 val 사례에 대한 서버 응답 확률은 선별 때 같은 프로세스에서 낸 확률과 소수 넷째 자리까지 같았다.
+- Windows의 실행기는 WSL2 localhost 전달로 접속한다. WSL 세션이 모두 끝나면 서버가 같이 내려갈 수 있어, 측정하는 동안 WSL 세션 하나를 열어 두었다.
+
+## 8. 실행기 비교 (val, 질문 세트 q-2026.10.14-mix)
+
+```bash
+uv run python -m jikgam.eval.run_decisions --split val --questions data/question_sets/q-2026.10.14-mix.json \
+    --backends q35-0.8b-ko,q35-2b-ko,jev,clef-flash
+uv run python -m jikgam.eval.report results/decisions/val/20261014T060432
+uv run python -m jikgam.train.tag_compare results/decisions/val/20261014T060432 --models q35-0.8b-ko,q35-2b-ko
+```
+
+실행 `20261014T060432`(코드 `b206f6a2e95b`, 5회 반복, 동시 실행 1, 서울, Cloudflare ICN):
+
+| 백엔드 | 서빙 위치 | 정확도 | ECE | p50 ms | p95 ms | 요청당 USD | 회차 간 라벨 일치 |
+|---|---|---|---|---|---|---|---|
+| q35-0.8b-ko | 이 PC, WSL2 localhost | 83.6% (127/152) | 0.090 | 128 | 197 | 참고 0.0000193 | 100.0% |
+| q35-2b-ko | 이 PC, WSL2 localhost | 88.2% (134/152) | 0.077 | 220 | 448 | 참고 0.0000358 | 100.0% |
+| jev | TypeSafe API | 92.4% (140~141/152) | 0.147 | 182 | 242 | 0.000120 | 92.8% |
+| clef-flash | Workers AI | 73.7% (112/152) | 0.080 | 686 | 981 | 0.000089 | 100.0% |
+
+- 로컬 모델의 정확도는 선별 결과와 같았다(127, 134).
+- 질문 유형별 2B 대 Jev: applies 58 대 61~64, sufficient 18 대 17~18, next_info 8 대 8~10, action 16 대 16, intent 15 대 15~16, condition_changed 16 대 16~17(판단 수 67, 20, 10, 18, 17, 17).
+- 지연 점검 실행 `20261014T060738`(로컬 두 모델만, 원격 호출 없이 이어서 호출): 0.8B p50 128 / p95 180ms, 2B p50 204 / p95 348ms. 원격 백엔드와 번갈아 부를 때 2B의 꼬리가 더 길었다(p95 448ms). 같은 프로세스에서 잰 predict 시간은 0.8B p95 101ms, 2B p95 179ms라 HTTP·Studio 작업 프로세스 경유에 수십 ms가 더 든다. GPU는 화면 출력·다른 프로그램과 함께 썼다.
+
+### 8.1 §7.2 기준에 비춘 val 결과(판정은 test에서만 한다)
+
+- 정확도(Jev보다 5%p 넘게 낮지 않음): 2B는 4.2%p 낮아 범위 안, 0.8B는 8.8%p 낮아 범위 밖.
+- 지연(이 PC p95 ≤ 200ms): 0.8B 197ms(점검 실행 180ms)로 범위 안, 2B 448ms(점검 실행 348ms)로 범위 밖.
+- 두 조건을 함께 만족하는 모델은 val에서 없다. 이 결과는 val로 고른 모델의 val 수치이고, (d)의 보강 사례는 val 실패 유형을 보고 썼으므로 test에서는 더 낮을 수 있다.
+
+### 8.2 실패 유형 태그별 비교
+
+판정 규칙: 회차별 정답 수 범위가 겹치면 같음. 판단 수가 7~77개라 1~2개 차이도 나아짐·나빠짐으로 나온다.
+
+| 태그 | 0.8B | 2B | clef-flash | jev | 0.8B 대 clef-flash | 0.8B 대 jev | 2B 대 clef-flash | 2B 대 jev |
+|---|---|---|---|---|---|---|---|---|
+| colloquial (7건) | 41/49 | 43/49 | 38/49 | 44~46/49 | 나아짐 | 나빠짐 | 나아짐 | 나빠짐 |
+| correction (4건) | 25/31 | 27/31 | 26/31 | 28~31/31 | 나빠짐 | 나빠짐 | 나아짐 | 나빠짐 |
+| ellipsis (1건) | 7/7 | 4/7 | 3/7 | 4~5/7 | 나아짐 | 나아짐 | 나아짐 | 같음 |
+| exception (10건) | 61/72 | 65/72 | 52/72 | 68~69/72 | 나아짐 | 나빠짐 | 나아짐 | 나빠짐 |
+| handoff (2건) | 10/14 | 12/14 | 8/14 | 13~14/14 | 나아짐 | 나빠짐 | 나아짐 | 나빠짐 |
+| insufficient_info (3건) | 14/18 | 12/18 | 9/18 | 14~15/18 | 나아짐 | 같음 | 나아짐 | 나빠짐 |
+| missing_evidence (1건) | 4/7 | 5/7 | 5/7 | 6~7/7 | 나빠짐 | 나빠짐 | 같음 | 나빠짐 |
+| multi_evidence (10건) | 68/77 | 72/77 | 61/77 | 73~74/77 | 나아짐 | 나빠짐 | 나아짐 | 나빠짐 |
+| negation (3건) | 18/24 | 23/24 | 20/24 | 21~23/24 | 나빠짐 | 나빠짐 | 나아짐 | 같음 |
+| number_date (5건) | 30/38 | 35/38 | 32/38 | 35~37/38 | 나빠짐 | 나빠짐 | 나아짐 | 같음 |
+| partial_stt (1건) | 6/6 | 5/6 | 4/6 | 6/6 | 나아짐 | 같음 | 나아짐 | 나빠짐 |
+| similar_article (5건) | 32/37 | 32/37 | 26/37 | 30~32/37 | 나아짐 | 같음 | 나아짐 | 같음 |
+| stale_suggestion (3건) | 21/24 | 23/24 | 21/24 | 23~24/24 | 같음 | 나빠짐 | 나아짐 | 같음 |
+| stt_error (2건) | 11/12 | 10/12 | 7/12 | 12/12 | 나아짐 | 나빠짐 | 나아짐 | 나빠짐 |
+
+- 2B는 clef-flash보다 14개 태그 중 13개에서 나아졌고 missing_evidence는 같았다. Jev보다 나아진 태그는 없다. 같음 5개(ellipsis, negation, number_date, similar_article, stale_suggestion), 나빠짐 9개(colloquial, correction, exception, handoff, insufficient_info, missing_evidence, multi_evidence, partial_stt, stt_error).
+- 0.8B는 clef-flash보다 나아짐 9개, 나빠짐 4개(correction, missing_evidence, negation, number_date), 같음 1개(stale_suggestion). Jev보다는 ellipsis 하나(판단 7개, 사례 1건)만 나아졌고 같음 3개(insufficient_info, partial_stt, similar_article), 나빠짐 10개.
+
+## 9. 참고 비용 (§2.6)
+
+`jikgam/train/gpu_cost.py`, `results/training/gpu-cost/`. 단가는 RunPod RTX 3090(3090 Ti는 목록에 없음) Secure Cloud $0.50/시간, Community Cloud $0.22/시간(https://www.runpod.io/pricing, 페이지 수정일 2026-10-08, 2026-10-14 확인).
+
+| 실행 | 백엔드 | 점유 시간 기준(지연 합) | 요청당 USD, Secure | 요청당 USD, Community | 측정 구간 기준 상한, Secure |
+|---|---|---|---|---|---|
+| 20261014T060432 | q35-0.8b-ko | 14.6초 / 105요청 | 0.0000193 | 0.0000085 | 0.000188 |
+| 20261014T060432 | q35-2b-ko | 27.1초 / 105요청 | 0.0000358 | 0.0000158 | 0.000188 |
+
+측정 구간 기준은 실행 전체 142초를 각 백엔드에 다 붙인 값이라(두 모델이 한 GPU를 같이 썼고, 원격 호출을 기다리는 동안에도 모델을 올려 두었다) 상한이다. 전기료와 장비비는 넣지 않았다.
+
+## 10. 남은 문제
+
+- 2B의 p95 지연이 200ms를 넘는다. 같은 프로세스 predict는 p95 179ms라 HTTP·작업 프로세스 경유와 GPU 클럭 변동의 몫이 있다. llama.cpp GGUF 서빙(Studio의 Clef GGUF 경로), GPU 클럭 고정, 입력 길이 축소를 따로 재 볼 수 있다.
+- (d)의 이득에는 val 실패 유형을 보고 쓴 보강 사례의 선택 효과가 섞여 있다. 고정 절차의 test 평가 전에는 일반화 정도를 알 수 없다.
+- 학습 시드 하나로만 돌렸다. 0.8B (a)의 문구별 8개 차이처럼, 사례가 적은 구성은 시드 변동이 클 수 있다.
+- 모델 파일은 WSL2 가상 디스크(C:)에 약 34 GB(병합 모델 11개와 어댑터), Unsloth 설치 11 GB, Hugging Face 캐시 6 GB가 있다. 지우지 않았다.
+- `q35-0.8b-a-v1`은 학습 스크립트를 처음 커밋하기 전에 돌려 학습 기록의 커밋이 비어 있다(학습 후 같은 코드를 `32efcf6`으로 커밋, 데이터와 하이퍼파라미터는 기록에 있다).
