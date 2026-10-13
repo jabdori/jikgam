@@ -1,0 +1,176 @@
+# 조직 B(책솔, 가상 전자책·오디오북 구독) 상담 엔진 설정. docs/engine.md §7, docs/org-b.md.
+# 조직 A 설정(org_a.toml)과 같은 키를 쓴다. 조직 B의 업무 시스템 계약 차이(필드, 인증, 오류 코드)는 엔진이 아니라
+# 업무 API 어댑터(bizapi/internal/orgbgw)가 흡수한다. 엔진이 부르는 주소는 어댑터다.
+
+org = "org_b"
+terms = "domain/org_b/terms.md"
+today = "2026-10-13"            # 가상 데이터 기준일(domain/org_b/customers.json의 as_of)
+bizapi_url = "http://127.0.0.1:8098"   # 어댑터(go run ./cmd/orgbgw). 조직 B 업무 시스템(8097)을 직접 부르지 않는다
+decision_backend = "jev"
+# 조직 A 질문 세트의 선택지 문구 일부에 조직 A 약관 내용(부가 상품, 미성년자, 본인 확인 2회)이 있어 조직 B용으로 바꾼 세트.
+# 질문 ID와 선택지 라벨은 같다. 조직 B 판별 데이터가 없어 val로 잰 적이 없다.
+question_set = "data/question_sets/q-2026.10.14-mix-orgb.json"
+extra_question_set = "data/question_sets/extra/engine-extra.json"   # 조직과 무관한 문구라 조직 A와 같이 쓴다
+applies_threshold = 0.5
+# 엔진 전용 질문의 임계값. 조직 B 데이터로 정한 값이 없어 조직 A와 같은 값을 쓴다.
+agreement_threshold = 0.5
+decline_threshold = 0.5
+caller_threshold = 0.5
+owner_return_threshold = 0.7
+addon_threshold = 0.5             # 조직 B에는 부가 상품이 없어 addon_only를 묻지 않는다(addon_plans 비어 있음)
+identity_unavailable_threshold = 0.5
+generator = "gemini-flash"
+# 제16조 안내 의무. 네 번째는 조직 B에만 있다.
+required_notices = ["환불 예정액과 계산 방식", "환불 방법과 예상 소요 기간", "이용이 끝나는 날",
+                    "이용이 끝나면 내려받은 도서도 열람할 수 없다는 점"]
+
+[retrieval]
+max_candidates = 8
+seed_top_k = 4
+query_turns = 3
+expansion_decay = 0.5
+k1 = 1.2
+b = 0.75
+
+[retrieval.intent_terms]
+refund = "환불 결제 금액"
+cancel = "해지 자동 결제 이용"
+cancel_refund = "해지 환불 결제"
+plan_change = "이용권 변경"
+billing_inquiry = "결제일 자동 갱신 결제 예정"
+compensation = "장애 보상 이용 기간 연장"
+
+# 고객 구어 → 조직 B 약관 낱말.
+[[retrieval.expansions]]
+pattern = "취소"
+terms = "청약철회 환불"
+[[retrieval.expansions]]
+pattern = "해제"
+terms = "해지"
+[[retrieval.expansions]]
+pattern = "한\\s*불"
+terms = "환불"
+[[retrieval.expansions]]
+pattern = "돌려\\s*(받|주|줘|달)|남은\\s*돈"
+terms = "환불"
+[[retrieval.expansions]]
+pattern = "안\\s*(됐|되|열리)|먹통|끊겼|장애|접속|오류"
+terms = "장애 이용할 수 없었던"
+[[retrieval.expansions]]
+pattern = "보상|연장"
+terms = "장애 보상 이용 기간 연장"
+[[retrieval.expansions]]
+pattern = "연간|연관|일\\s*년|1\\s*년|연\\s*(구독|이용권|권|회원)"
+terms = "연 이용권 중도 해지 일할 환불 상담사 승인"   # 연 이용권 일할 환불은 대부분 30,000원 이상(제15조 제2항)
+[[retrieval.expansions]]
+pattern = "월\\s*(구독|이용권|권)|한\\s*달|매달|월간"
+terms = "월 이용권"
+[[retrieval.expansions]]
+pattern = "두\\s*번|세\\s*번|중복|이중|2\\s*번|두\\s*(건|개)|또\\s*(결제|빠져|나갔)"
+terms = "중복 결제 같은 이용 기간"
+[[retrieval.expansions]]
+pattern = "폰|휴대폰|핸드폰|소액"
+terms = "휴대폰 결제 계좌"
+[[retrieval.expansions]]
+pattern = "포인트"
+terms = "책솔 포인트"
+[[retrieval.expansions]]
+pattern = "가족|구성원|초대|관리\\s*회원"
+terms = "가족 이용권 관리 회원 구성원"
+[[retrieval.expansions]]
+pattern = "아내|남편|와이프|대신|엄마|아빠|어머니|아버지|딸|아들|동생|언니|누나|오빠"
+terms = "본인 확인 제3자 구성원 관리 회원"
+[[retrieval.expansions]]
+pattern = "이의\\s*제기|카드사|차지백"
+terms = "이의 제기 상담사"
+[[retrieval.expansions]]
+pattern = "언제\\s*(들어|입금|돌아)|계좌|며칠|입금"
+terms = "환불 방법 기간"
+[[retrieval.expansions]]
+pattern = "다음\\s*결제|결제\\s*예정|언제\\s*결제"
+terms = "자동 갱신 결제일"
+[[retrieval.expansions]]
+pattern = "안\\s*(읽|봤|볼|들었|열어)|(한\\s*번도|하나도|한\\s*권도)\\s*안|열람|읽었|들었|오디오북|내려받|다운"
+terms = "열람 이력 청약철회"
+[[retrieval.expansions]]
+pattern = "바꾸|바꿔|변경|전환"
+terms = "이용권 변경"
+[[retrieval.expansions]]
+pattern = "구만\\s*구천|99,?000|요금\\s*(이|가)?\\s*(올|인상)|예전\\s*(요금|가격)"
+terms = "요금 개정 경과 조치 부칙 종전 요금"
+
+# 절차 조항은 상담 상태로 붙인다(조직 A와 같은 조건 이름, 조직 B 조항 ID).
+[[retrieval.rules]]
+when = "identity_unverified"
+intents = ["refund", "cancel", "cancel_refund"]
+add = ["B-14"]
+[[retrieval.rules]]
+when = "intent"
+intents = ["refund", "cancel_refund"]
+add = ["B-13", "B-16"]
+[[retrieval.rules]]
+when = "intent"
+intents = ["cancel"]
+add = ["B-16"]
+[[retrieval.rules]]
+when = "identity_failed"
+add = ["B-14", "B-15"]
+[[retrieval.rules]]
+when = "approval_required"
+add = ["B-15"]
+[[retrieval.rules]]
+when = "handoff_reason"
+add = ["B-15"]
+
+[policy]
+records_intents = ["refund", "cancel", "cancel_refund", "billing_inquiry", "plan_change", "compensation"]
+refund_intents = ["refund", "cancel_refund"]
+cancel_intents = ["cancel", "cancel_refund"]
+# 조직 B의 환불 사유는 셋뿐이다(어댑터가 공통 reason으로 바꾼다: COOLING_OFF=withdrawal, YEARLY_PRORATE=annual_cancel,
+# DOUBLE_CHARGE=duplicate). 장애 환불·미성년자 취소·무료 체험·요금제 변경 차감은 약관에 없다.
+refundable_reasons = ["withdrawal", "annual_cancel", "duplicate"]
+# 연 이용권 해지는 일할 환불을 수반한다(제8조 제1항).
+cancel_refund_reasons = ["annual_cancel"]
+# 청약철회는 이용권도 해지되고(제5조 제3항), 연 이용권 일할 환불은 해지 신청일에 이용이 끝난다(제8조 제4항).
+# 중복 결제는 이용권을 유지한다(제10조 제3항).
+refund_ends_period_reasons = ["withdrawal", "annual_cancel"]
+deduction_reasons = []          # 이용권 변경 때 차감액이 없다(제11조 제1항)
+approval_articles = ["B-15"]
+approval_notice = "환불 예정액이 30,000원 이상이라 지금은 접수만 하고, 상담사 승인 후 환불이 확정된다는 점"
+approval_must_mention = ["승인"]
+# 부가 상품이 없다. 가족 이용권은 본 이용권이다(관리 회원만 해지).
+addon_plans = []
+addon_intents = []
+addon_articles = []
+# 제3자(가족 이용권 구성원 포함)의 요청은 접수하지 않는다(제14조 제3항, 제12조 제1항).
+third_party_articles = ["B-14", "B-12"]
+# 조직 B 이용권은 만 19세 이상만 결제할 수 있어 법정대리인이 요청할 견적 사유가 없다(제3조 제1항).
+# 통화자가 법정대리인으로 판단되면 정책 규칙 7이 접수 대상이 아니라고 안내한다.
+guardian_reasons = []
+guardian_articles = ["B-03", "B-14"]
+minor_age = 19                  # 필수 키. 조직 B에서는 guardian_reasons·quote_reasons에 minor가 없어 쓰이지 않는다
+# 청약철회 기간(제2조 제8항: 결제일 다음 날이 1일째, 14일째까지). 조직 B에는 장애 전액 환불이 없다.
+window_days = 14
+quote_priority = ["duplicate", "withdrawal", "annual_cancel"]
+# 중복 결제는 같은 이용 기간의 두 번 이상 결제다(제10조 제1항, 결제일이 달라도 된다). 월 단위 이용 기간은 28일 이상이므로
+# 같은 구독의 두 결제일 간격이 27일 이하면 중복 결제 견적을 묻는다. 몇 달 간격인 연 이용권 중복은 이 값으로 잡지 못하고
+# 고객이 "두 번" 결제됐다고 말할 때만 묻는다. 조직 A는 같은 날 기준이라 이 키가 없다(기본 0).
+duplicate_window_days = 27
+
+[[policy.claim_patterns]]
+reason = "withdrawal"
+all = ["청약|(2\\s*주|이\\s*주|14\\s*일|십사\\s*일|보름)\\s*(안|이내|내)"]
+
+# 장애 보상(제9조 제1항): 회사 또는 외부 서비스 귀책으로 연속 2시간 이상 중단되면 중단 시간의 2배를 연장한다.
+# 어댑터가 조직 B 장애 기록의 minutes를 hours로, OURS·VENDOR를 company·vendor로 바꿔 준다.
+[policy.compensation]
+intents = ["compensation"]
+causes = ["company", "vendor"]
+min_hours = 2
+multiplier = 2
+articles = ["B-09"]
+
+[policy.quote_reasons]
+refund = ["duplicate", "withdrawal", "annual_cancel"]
+cancel_refund = ["withdrawal", "annual_cancel", "duplicate"]
+cancel = ["withdrawal", "annual_cancel"]
