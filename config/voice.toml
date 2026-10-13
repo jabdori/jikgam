@@ -1,0 +1,37 @@
+# 음성 런타임 설정(ADR 0008, docs/voice.md). 엔진 설정(config/orgs/*.toml)과 따로 둔다.
+# 외부 모델은 버전 ID를 고정한다. 가격은 비용 추정에만 쓰며 출처와 확인 날짜를 함께 적는다.
+
+[stt]
+model = "gemini-3.5-transcribe-live"
+mode = "VERBATIM"               # SMART는 정정 발화를 지운다(docs/research/korean-stt-tts.md). 바꾸지 않는다
+language = "ko-KR"              # 언어 힌트. 자동 감지 대신 쓴다
+api_key_env = "GCP_API_KEY"
+price_usd_per_min = 0.009
+price_source = "docs/research/korean-stt-tts.md (2026-10-14 확인, https://ai.google.dev/gemini-api/docs/pricing)"
+
+[tts]                            # 엔진 응답을 읽는 목소리
+model = "gemini-3.8-flash-lite-tts"
+voice = "Kore"
+language = "ko-KR"
+api_key_env = "GCP_API_KEY"
+price_input_per_mtok = 0.50
+price_audio_per_mtok = 6.0      # 오디오 출력 토큰. 2027-01-01부터 두 배
+price_source = "docs/research/korean-stt-tts.md (2026-10-14 확인, https://ai.google.dev/gemini-api/docs/pricing)"
+
+[customer_tts]                   # 개발용 재생의 고객 음성을 미리 만들 때만 쓴다(jikgam/voice/customer_audio.py)
+model = "gemini-3.8-flash-lite-tts"
+voice = "Puck"
+language = "ko-KR"
+api_key_env = "GCP_API_KEY"
+
+[vad]                            # Silero VAD(Pipecat 기본 모델). 끝점(stop_secs)이 STT 확정 요청 시점을 정한다
+confidence = 0.7
+start_secs = 0.2
+stop_secs = 0.5
+min_volume = 0.6
+
+[channel]
+# 고객 발화가 끝났는데 확정 자막이 아직 없을 때, 응답 재생을 이 시간까지만 미룬다(그 뒤에는 잡음으로 보고 재생한다)
+final_wait_ms = 3000
+# TTS 요청 뒤 재생이 이 시간 안에 시작되지 않으면 그 응답을 포기한다
+play_start_timeout_ms = 15000
