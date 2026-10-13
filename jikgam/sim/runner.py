@@ -358,7 +358,7 @@ async def run(args: argparse.Namespace) -> Path:
         "decision_backend": backend, "decision_model": (models.get(backend) or {}).get("model") if backend else None,
         "generator": org.generator, "generator_model": models[org.generator]["model"], "org": org.org,
         "bizapi_url": org.bizapi_url, "scenario_file": str(path.relative_to(ROOT)).replace("\\", "/"),
-        "scenario_sha256": file_sha256(path), "runs": args.runs, "max_turns": args.max_turns,
+        "scenario_sha256": file_sha256(path), "runs": args.runs, "run_start": args.run_start, "max_turns": args.max_turns,
         "fast_delay_ms": args.fast_delay_ms,
         "customer_model": models[args.customer_model]["model"], "customer_prompt": cust.PROMPT_VERSION,
         "judge_model": None if args.no_judge else models[args.judge_model]["model"],
@@ -370,7 +370,7 @@ async def run(args: argparse.Namespace) -> Path:
     write_summary(run_dir, summary)
     judge_client = None if args.no_judge else GeminiJson.from_config(args.judge_model)
     try:
-        for k in range(1, args.runs + 1):
+        for k in range(args.run_start, args.run_start + args.runs):
             for scn in chosen:
                 sid = f"{scn['id']}-r{k}-{run_id}"
                 seed = customer_seed(scn["id"], k)
@@ -407,6 +407,8 @@ def main() -> None:
     ap.add_argument("--scenarios", default="all", help="쉼표로 구분한 시나리오 ID 또는 all")
     ap.add_argument("--policy", required=True, choices=["A", "B", "C", "D"])
     ap.add_argument("--runs", type=int, default=1, help="시나리오별 반복 횟수(docs/evaluation.md §3.4 보완: 3)")
+    ap.add_argument("--run-start", type=int, default=1,
+                    help="첫 회차 번호. 회차를 나눠 실행할 때 고객 AI seed가 회차마다 달라지게 한다(예: --runs 1 --run-start 2)")
     ap.add_argument("--run-id")
     ap.add_argument("--out-dir", type=Path, default=OUT_DIR)
     ap.add_argument("--bizapi-url", help="모의 업무 API 주소(생략하면 조직 설정의 bizapi_url이나 JIKGAM_BIZAPI_URL)")
