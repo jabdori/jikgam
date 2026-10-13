@@ -50,5 +50,8 @@ uv run python -m jikgam.eval.report results/decisions/val/<run_id>              
 | `config/decision_models.toml` | 판별 백엔드 설정(버전 고정, 단가와 출처) |
 | `jikgam/decision/` | 판별 모델 공통 인터페이스와 백엔드(Jev 형식 API, 생성형 LLM 판단, 규칙·다수 라벨 기준선) |
 | `jikgam/eval/` | 판별 평가 실행기와 보고서, 오답 목록 |
+| `jikgam/engine/` | 상담 엔진(채팅). `uv run python -m jikgam.engine.chat --org org_a`로 터미널 채팅, `--replay`로 고정 대화 재생 |
+| `config/orgs/org_a.toml` | 조직 A 엔진 설정(약관, 업무 API 주소, 판별 백엔드·질문 세트, 검색·정책 설정) |
+| `data/replays/` | 엔진 개발용 고정 대화(고객 발화) |
 | `bizapi/` | 조직 A 모의 업무 API (Go) |
 | `results/` | 측정 원본 로그와 보고서 |

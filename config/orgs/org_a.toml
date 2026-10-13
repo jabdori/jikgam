@@ -1,0 +1,155 @@
+# 조직 A(별담) 상담 엔진 설정. docs/engine.md §7.
+# 엔진 코드는 조직별 조항 ID, 낱말, 업무 규칙 값을 모른다. 조직 B는 이 파일과 업무 API 어댑터만 더한다.
+
+org = "org_a"
+terms = "domain/org_a/terms.md"
+today = "2026-10-12"            # 가상 데이터 기준일
+bizapi_url = "http://127.0.0.1:8081"
+decision_backend = "jev"        # config/decision_models.toml의 이름. 정책 B는 gemini-flash로 바꿔 같은 엔진을 쓴다.
+question_set = "data/question_sets/q-2026.10.14-mix.json"   # ADR 0011
+# 엔진만 쓰는 추가 질문(고객 동의). 판별 데이터의 질문 세트와 섞지 않는다.
+extra_question_set = "data/question_sets/extra/engine-extra.json"
+applies_threshold = 0.5
+# 고객 동의 질문의 임계값. val로 잰 적이 없는 질문이라 noul 기본값 0.5를 쓴다.
+agreement_threshold = 0.5
+generator = "gemini-flash"      # config/decision_models.toml의 이름(모델 ID, 키, 단가를 그대로 쓴다)
+required_notices = ["환불 예정액과 산정 근거", "환불 방법과 예상 소요 기간", "이용 가능한 마지막 날"]
+
+[retrieval]
+max_candidates = 8              # 판별에 넘기는 후보 조항 수 상한
+seed_top_k = 4                  # BM25 상위 몇 개를 구조 확장의 출발점으로 쓸지
+query_turns = 3                 # 질의에 넣는 최근 고객 발화 수
+expansion_decay = 0.5           # 구조 확장으로 붙은 조항의 점수 = 출발 조항 점수 × 이 값
+k1 = 1.2
+b = 0.75
+
+# 현재 요청(직전 판단의 intent)을 질의 낱말로 바꾼다.
+[retrieval.intent_terms]
+refund = "환불 결제 금액"
+cancel = "해지 자동 결제 이용"
+cancel_refund = "해지 환불 결제"
+plan_change = "요금제 변경 부가 상품"
+billing_inquiry = "결제일 자동 갱신 결제 예정"
+compensation = "장애 보상 연장"
+
+# 고객 구어 → 약관 낱말. 정규식이 발화에 있으면 오른쪽 낱말을 질의에 더한다.
+[[retrieval.expansions]]
+pattern = "취소"
+terms = "청약철회 환불"
+[[retrieval.expansions]]
+pattern = "해제"                # 해지를 해제로 말하거나 STT가 그렇게 받아 적는 경우
+terms = "해지"
+[[retrieval.expansions]]
+pattern = "한\\s*불"             # STT 오인식(환불)
+terms = "환불"
+[[retrieval.expansions]]
+pattern = "돌려\\s*(받|주|줘|달)|남은\\s*돈"
+terms = "환불"
+[[retrieval.expansions]]
+pattern = "안\\s*(됐|되|열리)|먹통|끊겼|장애|접속"
+terms = "장애 서비스 중단"
+[[retrieval.expansions]]
+pattern = "보상|연장"
+terms = "장애 보상 이용 기간 연장"
+[[retrieval.expansions]]
+pattern = "연간|연관|일\\s*년|1\\s*년|연\\s*구독"
+terms = "연 구독 중도 해지 상담사 승인"     # 연 구독 환불은 50,000원을 넘을 수 있다(제19조 제2항)
+[[retrieval.expansions]]
+pattern = "월\\s*구독|한\\s*달|매달|월간"
+terms = "월 구독"
+[[retrieval.expansions]]
+pattern = "두\\s*번|세\\s*번|중복|이중|2\\s*번|두\\s*건"
+terms = "중복 결제"
+[[retrieval.expansions]]
+pattern = "폰|휴대폰|핸드폰|소액"
+terms = "휴대폰 소액결제 계좌"
+[[retrieval.expansions]]
+pattern = "딸|아들|고등학생|중학생|미성년|열\\s*[일이세네다여]"
+terms = "미성년자 법정대리인 상담사"
+[[retrieval.expansions]]
+pattern = "체험"
+terms = "무료 체험"
+[[retrieval.expansions]]
+pattern = "가족\\s*공유|부가"
+terms = "가족 공유 부가 상품"
+[[retrieval.expansions]]
+pattern = "정지"
+terms = "이용 정지 계정"
+[[retrieval.expansions]]
+pattern = "할인|프로모션|칠만\\s*구천|79,?000"
+terms = "프로모션 할인 요금"
+[[retrieval.expansions]]
+pattern = "바꾸|바꿔|변경|전환"
+terms = "요금제 변경"
+[[retrieval.expansions]]
+pattern = "아내|남편|와이프|대신|엄마|아빠|어머니|아버지"
+terms = "본인 확인 제3자"
+[[retrieval.expansions]]
+pattern = "이의\\s*제기|카드사"
+terms = "이의 제기 상담사"
+[[retrieval.expansions]]
+pattern = "언제\\s*(들어|입금|돌아)|계좌|며칠|입금"
+terms = "환불 방법 기간"
+[[retrieval.expansions]]
+pattern = "위약금"
+terms = "위약금 중도 해지"
+[[retrieval.expansions]]
+pattern = "다음\\s*결제|결제\\s*예정|언제\\s*결제"
+terms = "자동 갱신 결제일"
+[[retrieval.expansions]]
+pattern = "안\\s*(쓸|썼|봤|볼|틀)|(한\\s*번도|하나도)\\s*안|이용\\s*(안|한\\s*적)|재생|틀어|봤|썼"
+terms = "이용 이력 청약철회"               # 이용 여부는 청약철회(제5조·제6조)의 요건
+[[retrieval.expansions]]
+pattern = "(유월|6월|오월|5월|사월|4월|삼월|3월|봄)"
+terms = "경과 조치 부칙 시행일"
+
+# 절차 조항은 검색 점수가 아니라 상담 상태로 붙인다. when은 엔진이 아는 조건 이름이다.
+#   identity_unverified: 본인 확인 전(요청을 아직 모르거나 intents 중 하나)
+#   intent: 현재 요청이 intents 중 하나
+#   identity_failed: 본인 확인 실패가 1회 이상
+#   approval_required: 고른 견적이 승인 대상
+#   handoff_reason: 업무 API가 인계 사유를 돌려줌
+[[retrieval.rules]]
+when = "identity_unverified"
+intents = ["refund", "cancel", "cancel_refund"]
+add = ["A-15"]
+[[retrieval.rules]]
+when = "intent"
+intents = ["refund", "cancel_refund"]
+add = ["A-14", "A-20"]
+[[retrieval.rules]]
+when = "intent"
+intents = ["cancel"]
+add = ["A-20"]
+[[retrieval.rules]]
+when = "identity_failed"
+add = ["A-15", "A-19"]
+[[retrieval.rules]]
+when = "approval_required"
+add = ["A-19"]
+[[retrieval.rules]]
+when = "handoff_reason"
+add = ["A-19"]
+
+[policy]
+# 고객 기록이 있어야 처리할 수 있는 요청. 본인 확인 전이면 본인 확인을 먼저 묻는다.
+records_intents = ["refund", "cancel", "cancel_refund", "billing_inquiry", "plan_change", "compensation"]
+refund_intents = ["refund", "cancel_refund"]
+cancel_intents = ["cancel", "cancel_refund"]
+# 견적 금액을 환불로 접수하는 사유. 미성년자는 인계, 체험 해지는 0원, 요금제 변경은 차감액이라 접수하지 않는다.
+refundable_reasons = ["withdrawal", "incident", "annual_cancel", "duplicate"]
+# 해지만 요청해도 환불을 함께 접수하는 사유. 연 구독 중도 해지는 해지 자체가 환불을 수반한다(제8조 제1항).
+cancel_refund_reasons = ["annual_cancel"]
+addon_plans = ["family_addon"]
+minor_age = 19                  # 제13조. 결제 당시 이 나이 미만이면 미성년자 사유를 견적한다.
+# 견적이 여럿 대상일 때 고르는 순서. 같은 금액이면 일반 규정(제5조)을 예외(제9조 제2항)보다 앞에 둔다.
+# 중복 결제는 구독을 유지하므로(제10조 제3항) 해지를 수반하는 사유보다 앞에 둔다.
+quote_priority = ["minor", "duplicate", "withdrawal", "incident", "annual_cancel", "trial_cancel", "plan_change"]
+
+# 요청별로 견적을 물어볼 사유. 실제로 물을지는 시스템 사실로 거른다(policy.plausible_reasons).
+# 해지만 요청해도 환불 예정액과 근거를 안내해야 하므로(제20조) 환불 가능 여부를 견적으로 확인한다.
+[policy.quote_reasons]
+refund = ["duplicate", "withdrawal", "incident", "minor", "annual_cancel"]
+cancel_refund = ["withdrawal", "incident", "annual_cancel", "duplicate", "minor", "trial_cancel"]
+cancel = ["withdrawal", "incident", "annual_cancel", "trial_cancel"]
+plan_change = ["plan_change"]
