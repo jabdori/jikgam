@@ -521,3 +521,66 @@ def test_decision_fallback_never_asks_identity_after_verification_or_from_third_
     st0 = SessionState("org_a", TODAY)
     p0 = decide(st0, inp("other", "ask", "identity"), CFG, NOTICES)
     assert (p0.action, p0.ask) == ("ask", "identity")
+
+
+# --- 주장한 사유는 기간이 지나도 견적한다(코디네이터 결정, s27) ---
+
+
+@pytest.mark.parametrize("text,reasons", [
+    ("지난주 목요일에 장애 났잖아요. 결제하고 일주일 안에 장애 나면 전액 환불이라던데 해지하고 환불해 주세요.", {"incident"}),
+    ("목요일 오후 내내 앱이 아예 안 열리더라고요. 그냥 해지하고 돈 돌려받고 싶어요.", {"incident"}),
+    ("이번 주 목요일 오후에 별담이 몇 시간 동안 아예 안 됐잖아요. 해지하고 환불해 주세요.", {"incident"}),
+    ("그거 그 청약 처리인가 그거 해 달라고요. 칠 일 안에는 된다고 들어 가지고", {"withdrawal"}),
+    ("결제하고 7일 이내면 취소된다던데요", {"withdrawal"}),
+    # 주장이 아닌 것
+    ("결제한 지 얼마 안 됐는데 해지하고 환불해 주세요.", set()),       # '안 됐'이지만 장애가 아니다
+    ("근데 이번 달 낸 건 환불 안 되나요?", set()),
+    ("목요일에 서비스 몇 시간 안 됐잖아요. 그거 보상 같은 거 없어요?", set()),  # 장애지만 환불 요구가 없다
+    ("연간 할인으로 가입한 거 해지하고 환불받고 싶어요.", set()),
+    ("결제된 지 일주일 정도 됐는데 한 번도 안 썼어요. 해지하고 환불해 주세요.", set()),
+    ("해지하려는 건 아니고요, 다음 결제가 언제 되는지만 알고 싶어서요.", set()),
+])
+def test_claim_patterns(text, reasons):
+    st = SessionState("org_a", TODAY)
+    say(st, "u1", text)
+    assert policy.claimed_reasons(st, CFG) == reasons
+
+
+def _c016_outside_window() -> SessionState:
+    st = verified("C016", pays=[{"payment_id": "P016", "subscription_id": "S016", "date": "2026-10-02", "amount": 9900,
+                                 "method": "card", "dispute": False}])
+    st.facts.subscriptions[0]["next_billing"] = "2026-11-02"
+    return st
+
+
+def test_claimed_incident_is_quoted_outside_window_and_refusal_uses_api_verdict():
+    """s27: 결제 10-02, 기간은 10-09까지. 고객이 장애 환불을 주장하면 장애 사유만 견적하고, 업무 API의 대상 아님 판단을
+    근거로 안내한다. 주장하지 않은 청약철회는 여전히 묻지 않는다."""
+    st = _c016_outside_window()
+    say(st, "u1", "지난주 목요일에 장애 났잖아요. 결제하고 일주일 안에 장애 나면 전액 환불이라던데 해지하고 환불해 주세요.")
+    p = decide(st, inp("cancel_refund"), CFG, NOTICES)
+    assert (p.rule, p.quote_reasons, p.detail["claimed"]) == ("quote", ("incident",), ["incident"])
+    st.facts.quotes["incident"] = not_eligible("incident", ("A-09",))
+    p = decide(st, inp("cancel_refund"), CFG, NOTICES)
+    assert p.rule == "proposal" and [w.tool for w in p.proposal.writes] == ["create_cancellation"]
+    assert p.proposal.summary["refund_unavailable"] == {"incident": "대상 아님"}
+    # 같은 고객이 주장 없이 해지·환불만 요청하면 기간이 지난 사유는 견적하지 않는다
+    st2 = _c016_outside_window()
+    say(st2, "u1", "해지하고 환불해 주세요")
+    p2 = decide(st2, inp("cancel_refund"), CFG, NOTICES)
+    assert p2.rule == "proposal" and p2.quote_reasons == () and p2.detail["claimed"] == []
+
+
+def test_claimed_withdrawal_is_quoted_outside_window():
+    st = _c016_outside_window()
+    st.facts.incidents = []
+    say(st, "u1", "청약철회 해 주세요. 7일 안에는 된다면서요")
+    assert decide(st, inp("cancel_refund"), CFG, NOTICES).quote_reasons == ("withdrawal",)
+
+
+def test_annual_request_without_claims_quotes_only_annual():
+    """s19: 연 구독 해지·환불 요청에 주장이 없으면 기간이 지난 청약철회·장애 사유를 묻지 않는다(견적 1건)."""
+    st = verified("C004", plan="annual", pays=[{"payment_id": "P004", "subscription_id": "S004", "date": "2026-08-20",
+                                                "amount": 79000, "method": "card", "dispute": False}])
+    say(st, "u1", "연간 할인으로 가입한 거 해지하고 환불받고 싶어요.")
+    assert decide(st, inp("cancel_refund"), CFG, NOTICES).quote_reasons == ("annual_cancel",)

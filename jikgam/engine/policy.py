@@ -145,14 +145,24 @@ def _within_window(pay: dict, state: SessionState, cfg: PolicyConfig) -> bool:
     return state.today <= date.fromisoformat(pay["date"]) + timedelta(days=cfg.window_days)
 
 
+def claimed_reasons(state: SessionState, cfg: PolicyConfig) -> set[str]:
+    """고객 발화로 직접 주장한 견적 사유(조직 설정 claim_patterns, 발화 하나 단위의 정규식). 판별 확률은 쓰지 않는다."""
+    return {c.reason for text in state.customer_texts() for c in cfg.claim_patterns if c.matches(text)}
+
+
 def _plausible(reason: str, sub: dict, state: SessionState, cfg: PolicyConfig) -> bool:
     """이 견적 사유를 물어볼 만한가(시스템 사실로 거른다). 자격 판단은 하지 않는다(업무 API가 한다)."""
     pay = current_payment(state, sub["subscription_id"])
     if reason in ("withdrawal", "incident"):
         # 날짜로 이미 불가능한 사유는 묻지 않는다(설계 원칙: 날짜 비교는 코드로). 기간 판단만 하고 자격은 업무 API가 정한다.
-        if pay is None or not _within_window(pay, state, cfg):
+        # 다만 고객이 그 사유를 직접 주장했으면 기간이 지났어도 묻는다. 거절을 업무 API의 판단(NOT_ELIGIBLE과 근거 조항)으로
+        # 설명하기 위해서다(ADR 0004, 개발용 시나리오 s27). 장애 기록이 없어도 주장했으면 묻는다.
+        if pay is None:
             return False
-        return reason == "withdrawal" or bool(state.facts.incidents)
+        claimed = reason in claimed_reasons(state, cfg)
+        if not _within_window(pay, state, cfg) and not claimed:
+            return False
+        return reason == "withdrawal" or bool(state.facts.incidents) or claimed
     if reason == "annual_cancel":
         return pay is not None and sub.get("plan") == "annual"
     if reason == "duplicate":
@@ -456,11 +466,12 @@ def decide(state: SessionState, inp: PolicyInput, cfg: PolicyConfig, required_no
         if intent in cfg.quote_reasons and ambiguous:
             return Plan("target_ambiguous", "ask", "plan_type", ask="plan_type")
         reasons = plausible_reasons(intent, sub, state, cfg)
+        claimed = sorted(claimed_reasons(state, cfg) & set(reasons))
         missing = tuple(r for r in reasons if r not in f.quotes)
         if missing:
-            return Plan("quote", "answer", quote_reasons=missing, detail={"reasons": reasons})
+            return Plan("quote", "answer", quote_reasons=missing, detail={"reasons": reasons, "claimed": claimed})
         chosen = choose_quote(reasons, f.quotes, cfg)
-        detail = {"reasons": reasons, "chosen": chosen.reason if chosen else None}
+        detail = {"reasons": reasons, "chosen": chosen.reason if chosen else None, "claimed": claimed}
 
         if intent in (cfg.refund_intents | cfg.cancel_intents):
             draft = _draft(intent, sub, chosen, reasons, state, cfg)

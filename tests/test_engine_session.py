@@ -477,6 +477,22 @@ def test_s27_compensation_hours_from_incident_record(bizapi, tmp_path):
     assert p["detail"]["compensation"][0]["incident_id"] == "INC-2026-1008"
     assert not {"create_cancellation", "create_refund_request"} & set(tool_calls(log))
     assert gen.payloads[-1]["plan"]["detail"]["applied"] is False
+    # 주장한 장애 환불은 기간이 지났어도 한 번 견적하고, 업무 API가 대상 아님을 돌려준다
+    quotes = [e for e in log if e["type"] == ev.TOOL_RESULT and e["tool"] == "quote_refund"]
+    assert [(q["data"]["quote"]["reason"], q["error_code"]) for q in quotes] == [("incident", "NOT_ELIGIBLE")]
+    assert "A-09" in quotes[0]["data"]["article_ids"]
+
+
+def test_s19_annual_request_quotes_only_annual_cancel(bizapi, tmp_path):
+    inject_fault(bizapi, "quote_refund", "TIMEOUT", 50)
+    dec = ScriptedDecider(intents=[("해지하고 환불", "cancel_refund")])
+    s, outs, log = _run(tmp_path, "t-s19b", dec, [
+        "연간 할인으로 가입한 거 해지하고 환불받고 싶어요.", "010-0000-0004이고 인증번호는 공공공사요.",
+        "대충이라도 얼마인지 알 수 있어요?"], bizapi=bizapi)
+    quotes = [e for e in log if e["type"] == ev.TOOL_CALL and e["tool"] == "quote_refund"]
+    results = [e for e in log if e["type"] == ev.TOOL_RESULT and e["tool"] == "quote_refund"]
+    assert [q["args"]["reason"] for q in quotes] == ["annual_cancel"] and [r["attempts"] for r in results] == [2]
+    assert types(outs[2], ev.SUGGESTION_CREATED)[-1]["action"] == "hold"
 
 
 def test_warmup_is_logged_separately_and_not_counted_as_turn_decision(tmp_path):

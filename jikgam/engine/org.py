@@ -51,6 +51,18 @@ class CompensationConfig:
 
 
 @dataclass(frozen=True)
+class ClaimPattern:
+    """고객이 견적 사유를 직접 주장했는지 보는 규칙. 발화 하나가 all에 모두 맞고 none에 하나도 맞지 않으면 주장이다."""
+
+    reason: str
+    all: tuple[re.Pattern, ...]
+    none: tuple[re.Pattern, ...] = ()
+
+    def matches(self, text: str) -> bool:
+        return all(p.search(text) for p in self.all) and not any(p.search(text) for p in self.none)
+
+
+@dataclass(frozen=True)
 class PolicyConfig:
     records_intents: frozenset[str]
     refund_intents: frozenset[str]
@@ -71,6 +83,7 @@ class PolicyConfig:
     guardian_articles: tuple[str, ...]  # 법정대리인 요청의 근거 조항
     minor_age: int
     window_days: int | None  # 결제 후 기간 제한이 있는 사유(청약철회, 장애 환불)의 기간. 날짜로 불가능한 사유는 견적을 묻지 않는다
+    claim_patterns: tuple[ClaimPattern, ...]  # 고객이 직접 주장한 사유는 기간이 지나도 견적을 묻는다
     quote_priority: tuple[str, ...]
     quote_reasons: dict[str, tuple[str, ...]]
 
@@ -118,6 +131,9 @@ def _policy(raw: dict[str, Any]) -> PolicyConfig:
     reasons = {k: tuple(v) for k, v in raw.get("quote_reasons", {}).items()}
     guardian = tuple(raw.get("guardian_reasons", ()))
     unknown = ({r for rs in reasons.values() for r in rs} | set(guardian)) - set(priority)
+    claims = tuple(ClaimPattern(c["reason"], tuple(re.compile(p) for p in c["all"]),
+                                tuple(re.compile(p) for p in c.get("none", ()))) for c in raw.get("claim_patterns", []))
+    unknown |= {c.reason for c in claims} - set(priority)
     if unknown:
         raise ValueError(f"quote_priority에 없는 견적 사유: {sorted(unknown)}")
     comp = raw.get("compensation")
@@ -136,7 +152,7 @@ def _policy(raw: dict[str, Any]) -> PolicyConfig:
         addon_articles=tuple(raw.get("addon_articles", ())),
         third_party_articles=tuple(raw.get("third_party_articles", ())), guardian_reasons=guardian,
         guardian_articles=tuple(raw.get("guardian_articles", ())), minor_age=int(raw["minor_age"]),
-        window_days=int(raw["window_days"]) if "window_days" in raw else None,
+        window_days=int(raw["window_days"]) if "window_days" in raw else None, claim_patterns=claims,
         quote_priority=priority, quote_reasons=reasons,
     )
 
