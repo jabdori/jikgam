@@ -1,0 +1,57 @@
+# 판별 백엔드 설정. 엔진과 평가 스크립트가 이름으로 골라 쓴다.
+# 가격은 USD / 1M 토큰. 확인한 날짜와 출처를 함께 적고, 바뀌면 새 값으로 고친 뒤 이전 측정의 비용은 그 측정의 meta.json을 따른다.
+# 외부 모델은 버전 ID를 고정한다. 별칭(jev-latest, *-latest)은 쓰지 않는다.
+
+[jev]
+kind = "systemone"
+url = "https://api.typesafe.ai/v1/systemone"
+model = "jev-1.13.0"
+api_key_env = "TYPESAFE_API_KEY"
+price_input_per_mtok = 0.042
+price_output_per_mtok = 0.0
+price_source = "https://docs.typesafe.ai/models.md (2026-10-14 확인: 입력만 과금)"
+
+[clef]
+kind = "systemone"
+url = "https://api.cloudflare.com/client/v4/accounts/{CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/cloudflare/clef"
+model = "clef"
+envelope = "cloudflare"
+api_key_env = "CLOUDFLARE_API_TOKEN"
+price_input_per_mtok = 0.24
+price_output_per_mtok = 0.0
+price_source = "https://developers.cloudflare.com/workers-ai/models/clef/ (2026-10-14 확인)"
+note = "Workers AI 모델 ID에는 버전 고정 수단이 없다. 응답의 model 값과 측정 날짜를 기록한다."
+
+[clef-flash]
+kind = "systemone"
+url = "https://api.cloudflare.com/client/v4/accounts/{CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/cloudflare/clef-flash"
+model = "clef-flash"
+envelope = "cloudflare"
+api_key_env = "CLOUDFLARE_API_TOKEN"
+price_input_per_mtok = 0.038
+price_output_per_mtok = 0.0
+price_source = "https://developers.cloudflare.com/workers-ai/models/clef-flash/ (2026-10-14 확인, 컨텍스트 24,576 토큰)"
+note = "Workers AI 모델 ID에는 버전 고정 수단이 없다. 응답의 model 값과 측정 날짜를 기록한다."
+
+[gemini-flash]
+kind = "gemini"
+model = "gemini-3.8-flash"
+thinking_level = "low"
+api_key_env = "GCP_API_KEY"
+price_input_per_mtok = 0.75
+price_output_per_mtok = 3.75
+price_source = "https://ai.google.dev/gemini-api/docs/pricing (2026-10-14 확인: 2026-12-31까지 가격, 출력에 사고 토큰 포함)"
+
+[gemini-pro]
+kind = "gemini"
+model = "gemini-3.1-pro-preview"
+api_key_env = "GCP_API_KEY"
+price_input_per_mtok = 2.0
+price_output_per_mtok = 12.0
+price_source = "https://ai.google.dev/gemini-api/docs/pricing (2026-10-14 확인: 200k 토큰 이하 프롬프트, 출력에 사고 토큰 포함)"
+
+[rules]
+kind = "rules"
+
+[majority]
+kind = "majority"

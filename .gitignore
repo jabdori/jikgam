@@ -12,3 +12,4 @@ outputs/
 *.gguf
 recordings/
 .DS_Store
+.claude/worktrees/
