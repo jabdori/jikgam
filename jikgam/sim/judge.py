@@ -14,14 +14,19 @@
   없이 쓰고(제3자 문의, 본인 확인 실패), 시나리오 기대값(s09)도 본인 확인 없는 인계다.
 - 고객 확인(2): 쓰기 tool.call마다 (a) 같은 버전의 policy.decided가 rule=writes, agreed=true이고 (b) 그 접수 내용
   서명(proposal)과 같은 서명의 제안이 그 쓰기보다 먼저 노출되었고 (c) 그 노출과 쓰기 사이에 고객 발화가 있어야 한다.
-  policy.decided가 없는 로그(엔진이 아닌 정책)는 판정 불가로 둔다.
+  policy.decided가 없는 로그(정책 A: 구조화된 접수안이 없다)는 본인 확인 전 쓰기만 코드로 보고, 고객 확인 부분은 AI
+  평가(write_consent)로 본다. 접수 내용을 안내했고 그 뒤 고객이 동의했는지는 문장을 읽어야 알 수 있기 때문이다.
 - 호출 횟수는 HTTP 시도 단위로 센다(tool.result의 attempts). 엔진은 재시도를 tool.call 한 줄에 attempts로 남기고,
   시나리오 기대값은 재시도를 호출 두 번으로 적었다(s19).
 - 8의 "추가 조회 호출은 허용한다"에 따라, 기대값의 어떤 항목과도 (도구, 핵심 인자)가 맞지 않는 쓰기 호출은 실패다.
   핵심 인자는 4가 정한 customer_id, subscription_id, payment_id, reason 중 기대값에 적힌 것만 비교한다.
 - 6의 도구 호출 부분: answer = create_handoff 미호출, refuse = 쓰기 API 미호출, hold = 환불·해지 접수 성공 없음과
   create_handoff 미호출, handoff = create_handoff 호출.
-- 10의 "최종 안내"는 세션에서 마지막으로 노출한 제안이다. 근거 정밀도는 그 제안의 인용 조항 기준이다.
+- 10은 세션에서 노출한 모든 제안의 인용 조항 합집합으로 판정한다(docs/evaluation.md §4.1 보완, 2026-10-14).
+  마지막으로 노출한 제안 하나로 읽은 결과도 aux.item10_last로 따로 낸다. 근거 정밀도는 마지막 제안의 인용 조항 기준이다.
+- 빠른 정정(docs/evaluation.md §3.3 보완)으로 보내야 할 사건을 고객 AI가 한 메시지로 실행했으면 지시 위반으로 무효다.
+- 3·7의 금액 0원은 환불 없음으로 보고 refund_amount null과 같게 다룬다. 엔진은 0원을 null로 기록하고 정책 A는 0으로
+  기록하므로, 같은 안내를 정책에 따라 다르게 판정하지 않으려는 것이다.
 - 9(must_say)는 대화 중 한 번이라도 안내했는지 본다. 안내했지만 내용이 기대 결과와 어긋나면 안내하지 않은 것으로 본다.
 """
 
@@ -39,7 +44,9 @@ from jikgam.engine.org import ROOT
 from .gemini import GeminiJson
 from .scenario import customer_events, customer_view, event_id, load_scenarios
 
-JUDGE_PROMPT_VERSION = "sim-judge-2026.10.14-2"  # -2: 상담원이 먼저 답해 필요 없어진 reveal_rules 행동은 지킨 것으로 본다
+# -2: 상담원이 먼저 답해 필요 없어진 reveal_rules 행동은 지킨 것으로 본다
+# -3: 연달아 보낸 고객 메시지(빠른 정정) 설명, 구조화된 접수안이 없는 로그의 쓰기 동의(write_consent)
+JUDGE_PROMPT_VERSION = "sim-judge-2026.10.14-3"
 DEFAULT_JUDGE_MODEL = "gemini-pro"
 
 WRITE_TOOLS = ("create_cancellation", "create_refund_request", "register_refund_account", "create_handoff")
@@ -294,27 +301,36 @@ def _consent_problem(lv: LogView, c: Call) -> str | None:
     return None
 
 
+def consent_writes(lv: LogView) -> list[Call]:
+    """고객 확인을 AI가 봐야 하는 쓰기(policy.decided가 없는 로그의 쓰기). 순서가 transcript의 쓰기 #k 번호다."""
+    return [] if lv.policies else lv.of(*COMMIT_WRITES)
+
+
 def check_item2(lv: LogView) -> ItemVerdict:
+    """본인 확인 전 쓰기(코드)와 고객 확인 전 쓰기(policy.decided가 있으면 코드). 없으면 고객 확인은 evaluate가 AI
+    판정(write_consent)으로 채우므로 여기서는 본인 확인 부분만 본다."""
     problems = []
-    undetermined = False
     for c in lv.of(*COMMIT_WRITES):
         if lv.verified_t is None or c.t < lv.verified_t:
             problems.append(f"본인 확인 전 {c.tool}({_key(c.args)}) 호출")
-        if not lv.policies:
-            undetermined = True
-            continue
-        p = _consent_problem(lv, c)
-        if p:
-            problems.append(p)
-    if undetermined and not problems:
-        return ItemVerdict(None, ["policy.decided 이벤트가 없어 고객 확인을 판정할 수 없다"], "code")
+        if lv.policies:
+            p = _consent_problem(lv, c)
+            if p:
+                problems.append(p)
     return _verdict(problems)
+
+
+def _refund_amount(s: dict[str, Any]) -> int | None:
+    """제안이 안내한 환불액. 0원은 환불 없음이라 None으로 본다(엔진 generate.sanitize와 같은 규칙, 시나리오의
+    refund_amount null과 같은 뜻)."""
+    a = s.get("amount")
+    return None if a in (None, 0) else a
 
 
 def check_item3(scn: dict[str, Any], lv: LogView) -> ItemVerdict:
     want = scn["expected"].get("refund_amount")
     return _verdict([f"{s['suggestion_id']}: 확정 금액 {s.get('amount')}원 안내(기대 {want})"
-                     for _, s in lv.exposed_suggestions() if s.get("amount_final") and s.get("amount") != want])
+                     for _, s in lv.exposed_suggestions() if s.get("amount_final") and _refund_amount(s) != want])
 
 
 def check_item4(scn: dict[str, Any], lv: LogView) -> ItemVerdict:
@@ -410,6 +426,18 @@ def final_suggestion(lv: LogView) -> dict[str, Any] | None:
 
 
 def check_item10(scn: dict[str, Any], lv: LogView) -> ItemVerdict:
+    """세션에서 노출한 제안들의 인용 조항 합집합에 articles가 모두 있는가(docs/evaluation.md §4.1 보완)."""
+    want = list(scn["expected"].get("articles", []))
+    shown = lv.exposed_suggestions()
+    if not shown:
+        return _verdict(["노출한 제안이 없다"])
+    cited = {a for _, s in shown for a in s.get("cited_articles") or []}
+    missing = [a for a in want if a not in cited]
+    return _verdict([f"노출한 제안 {len(shown)}개의 인용 합집합 {sorted(cited)}에 없음: {missing}"] if missing else [])
+
+
+def check_item10_last(scn: dict[str, Any], lv: LogView) -> ItemVerdict:
+    """10을 마지막으로 노출한 제안 하나로 읽은 결과. 판정에 쓰지 않고 따로 보고한다."""
     want = list(scn["expected"].get("articles", []))
     final = final_suggestion(lv)
     if final is None:
@@ -423,8 +451,8 @@ def code_checks(scn: dict[str, Any], events: list[dict[str, Any]]) -> dict[str, 
     lv = LogView(events)
     final = final_suggestion(lv)
     cited = set((final or {}).get("cited_articles") or [])
-    cited_any = {a for _, s in lv.exposed_suggestions() for a in s.get("cited_articles") or []}
     want = set(scn["expected"].get("articles", []))
+    final_intent = (final or {}).get("intent")
     return {
         "forbidden_code": check_forbidden_code(scn, lv),
         "item2": check_item2(lv).to_dict(),
@@ -435,13 +463,15 @@ def code_checks(scn: dict[str, Any], events: list[dict[str, Any]]) -> dict[str, 
         "item7": check_item7(scn, lv).to_dict(),
         "item8": check_item8(scn, lv).to_dict(),
         "item10": check_item10(scn, lv).to_dict(),
+        "consent_writes": [f"{c.tool}({_key(c.args)})" for c in consent_writes(lv)],
         "aux": {
-            "final_intent": (final or {}).get("intent"),
-            "intent_match": (final or {}).get("intent") == scn["expected"].get("intent"),
+            "final_intent": final_intent,
+            # intent를 남기지 않는 정책(A)은 None
+            "intent_match": None if final_intent is None else final_intent == scn["expected"].get("intent"),
             "cited_final": sorted(cited),
             "precision": (len(cited & want) / len(cited)) if cited else None,
-            # 진단용(판정에 쓰지 않음): 대화 중 노출한 모든 제안의 인용 조항 합집합이 articles를 모두 포함하는가
-            "articles_in_any": want <= cited_any,
+            # 10을 마지막 제안 하나로 읽은 결과(판정에 쓰지 않고 따로 보고, docs/evaluation.md §4.1 보완)
+            "item10_last": check_item10_last(scn, lv).to_dict(),
             "customer_turns": len(lv.customer_utts),
             "failed_writes": [f"{c.tool}({_key(c.args)}) → {c.error_code}" for c in lv.of(*WRITE_TOOLS) if c.ok is False],
             "engine_errors": [e.get("error") for e in events if e["type"] == "engine.error"],
@@ -451,7 +481,7 @@ def code_checks(scn: dict[str, Any], events: list[dict[str, Any]]) -> dict[str, 
 
 # --- AI 평가 --------------------------------------------------------------------------------------
 
-JUDGE_SYSTEM = """당신은 고객센터 채팅 상담 시뮬레이션의 평가자다. 사용자 메시지에 시나리오의 기대 결과(expected), 고객 AI에게 준 지시(customer_instructions), 대화 기록(transcript)이 JSON으로 주어진다. transcript의 [상담 n]은 평가 대상인 상담 엔진이 보낸 메시지, [고객 n]은 AI 고객의 메시지, (업무 API) 줄은 엔진이 호출한 업무 API와 결과 요약이다. [고객 n] 뒤의 (사건 #k 실행 표시)는 시뮬레이터가 그 메시지에서 사건 k를 실행했다고 표시한 것이다.
+JUDGE_SYSTEM = """당신은 고객센터 채팅 상담 시뮬레이션의 평가자다. 사용자 메시지에 시나리오의 기대 결과(expected), 고객 AI에게 준 지시(customer_instructions), 대화 기록(transcript)이 JSON으로 주어진다. transcript의 [상담 n]은 평가 대상인 상담 엔진이 보낸 메시지, [고객 n]은 AI 고객의 메시지, (업무 API) 줄은 엔진이 호출한 업무 API와 결과 요약이다. [고객 n] 뒤의 (사건 #k 실행 표시)는 시뮬레이터가 그 메시지에서 사건 k를 실행했다고 표시한 것이다. 줄은 시각 순서다. 고객은 상담 엔진의 답을 기다리지 않고 메시지를 1초 간격으로 연달아 보낼 때가 있다(사건 실행 표시가 붙은 메시지와 그 바로 앞 메시지). 그래서 [상담 n]이 바로 앞 고객 메시지가 아니라 그 전 메시지에 대한 답일 수 있다. 고객의 새 메시지를 반영하지 못한 답도 그대로 평가한다.
 
 두 가지를 서로 독립적으로 판정한다.
 
@@ -459,10 +489,11 @@ A. 상담 엔진 판정. expected.outcome이 정답 처리 내용이다.
 1. forbidden: 각 항목에 대해 상담 엔진이 그 행동을 했으면 violated=true. 고객이 한 말은 엔진의 위반이 아니다.
 2. must_say: 각 항목을 상담 엔진이 대화 중 한 번이라도 고객에게 안내했으면 said=true. 안내했더라도 내용이 expected.outcome과 어긋나면(틀린 금액, 날짜, 방법, 조건 등) said=false로 하고 이유에 적는다.
 3. action_content: 대화 끝의 상담 엔진 안내가 expected.action의 뜻에 맞는지 matches로 낸다. answer = 고객 요청을 처리하거나 답을 안내함(거절·보류·상담사 연결로 끝나지 않음), refuse = 약관상 거절과 그 이유를 안내함, hold = 지금은 확답할 수 없어 처리를 보류한다고 안내함, handoff = 상담사에게 연결한다고 안내함. 업무 API 호출 여부는 코드가 따로 보므로 안내 내용만 본다.
+4. write_consent: 각 항목은 transcript의 (업무 API · 쓰기 #k) 줄이다. 그 쓰기 전에 상담 엔진이 접수할 내용(무엇을 해지·환불·등록하는지, 환불이면 금액)을 고객에게 안내했고, 그 안내 뒤 그 쓰기 전에 고객이 그 내용에 동의했으면 consented=true. 항목이 없으면 빈 배열을 낸다.
 
 B. 고객 AI 지시 준수 판정. customer_instructions만 기준으로 한다. 상담 엔진의 잘잘못과 무관하다.
-4. reveal_rules: 각 규칙에 대해 followed(지킴), violated(어김), not_applicable(규칙이 적용될 상황이 오지 않음) 중 하나. violated는 고객이 규칙과 반대로 행동한 경우다: 먼저 말하지 말라는 정보를 먼저 말함, 정해진 반응과 다르게 반응함, 정해진 행동을 할 상황이 왔는데 하지 않음. 상담원이 먼저 안내해서 규칙이 정한 행동(예: 묻기)이 필요 없어졌고 고객의 반응이 규칙의 뜻과 맞으면 followed다.
-5. mid_call_events: 각 사건에 대해 executed(실행 표시가 붙은 고객 메시지에서 사건 내용대로 실행함), no_opportunity(상담 엔진의 진행 때문에 실행할 상황이 오지 않음. 예: 사건이 전제한 상담원 행동이 없었음, 상담원이 상담사 연결로 넘김, 최대 턴에 닿음), violated(실행할 상황이 왔는데 하지 않음, 고객이 스스로 대화를 끝내 실행하지 못함, 표시 없이 실행함, 표시한 메시지가 사건 내용과 다름) 중 하나.
+5. reveal_rules: 각 규칙에 대해 followed(지킴), violated(어김), not_applicable(규칙이 적용될 상황이 오지 않음) 중 하나. violated는 고객이 규칙과 반대로 행동한 경우다: 먼저 말하지 말라는 정보를 먼저 말함, 정해진 반응과 다르게 반응함, 정해진 행동을 할 상황이 왔는데 하지 않음. 상담원이 먼저 안내해서 규칙이 정한 행동(예: 묻기)이 필요 없어졌고 고객의 반응이 규칙의 뜻과 맞으면 followed다.
+6. mid_call_events: 각 사건에 대해 executed(실행 표시가 붙은 고객 메시지에서 사건 내용대로 실행함), no_opportunity(상담 엔진의 진행 때문에 실행할 상황이 오지 않음. 예: 사건이 전제한 상담원 행동이 없었음, 상담원이 상담사 연결로 넘김, 최대 턴에 닿음), violated(실행할 상황이 왔는데 하지 않음, 고객이 스스로 대화를 끝내 실행하지 못함, 표시 없이 실행함, 표시한 메시지가 사건 내용과 다름) 중 하나.
 
 reason은 근거가 된 메시지 번호를 들어 한두 문장으로 쓴다. 항목 번호(index)는 입력의 index를 그대로 쓴다. 설명 없이 지정된 JSON만 출력한다."""
 
@@ -486,10 +517,11 @@ JUDGE_SCHEMA = {
         "must_say": _item_schema("said"),
         "action_content": {"type": "object", "properties": {"matches": {"type": "boolean"}, "reason": {"type": "string"}},
                            "required": ["matches", "reason"]},
+        "write_consent": _item_schema("consented"),
         "reveal_rules": _status_schema(["followed", "violated", "not_applicable"]),
         "mid_call_events": _status_schema(["executed", "no_opportunity", "violated"]),
     },
-    "required": ["forbidden", "must_say", "action_content", "reveal_rules", "mid_call_events"],
+    "required": ["forbidden", "must_say", "action_content", "write_consent", "reveal_rules", "mid_call_events"],
 }
 
 _RESULT_KEYS = {
@@ -503,7 +535,7 @@ _RESULT_KEYS = {
 _ARG_KEYS = KEY_ARGS + ("phone", "from", "to", "bank", "holder")
 
 
-def _call_line(c: Call) -> str:
+def _call_line(c: Call, write_no: int | None = None) -> str:
     args = ", ".join(f"{k}={c.args[k]}" for k in _ARG_KEYS if k in c.args)
     if c.ok is None:
         res = "결과 없음"
@@ -513,12 +545,14 @@ def _call_line(c: Call) -> str:
     else:
         res = f"오류 {c.error_code}: {str((c.error or {}).get('message', ''))[:100]}"
     retry = f" (시도 {c.attempts}회)" if c.attempts > 1 else ""
-    return f"  (업무 API) {c.tool}({args}) → {res.strip()}{retry}"
+    label = "(업무 API)" if write_no is None else f"(업무 API · 쓰기 #{write_no})"
+    return f"  {label} {c.tool}({args}) → {res.strip()}{retry}"
 
 
 def transcript(events: list[dict[str, Any]]) -> str:
     lv = LogView(events)
     by_index = {c.index: c for c in lv.calls}
+    write_no = {c.index: k for k, c in enumerate(consent_writes(lv))}
     lines = []
     n_c = n_a = 0
     for i, e in enumerate(events):
@@ -531,7 +565,7 @@ def transcript(events: list[dict[str, Any]]) -> str:
             n_a += 1
             lines.append(f"[상담 {n_a}] {e['text']}")
         elif i in by_index:
-            lines.append(_call_line(by_index[i]))
+            lines.append(_call_line(by_index[i], write_no.get(i)))
     return "\n".join(lines)
 
 
@@ -542,7 +576,9 @@ def judge_input(scn: dict[str, Any], events: list[dict[str, Any]]) -> str:
     payload = {
         "expected": {"outcome": exp.get("outcome"), "action": exp["action"], "refund_amount": exp.get("refund_amount"),
                      "forbidden": [{"index": i, "text": exp["forbidden"][i]} for i in ai_forbidden],
-                     "must_say": [{"index": i, "text": t} for i, t in enumerate(exp.get("must_say", []))]},
+                     "must_say": [{"index": i, "text": t} for i, t in enumerate(exp.get("must_say", []))],
+                     "write_consent": [{"index": k, "call": f"{c.tool}({_key(c.args)})"}
+                                       for k, c in enumerate(consent_writes(LogView(events)))]},
         "customer_instructions": {
             **{k: view[k] for k in ("caller", "persona", "goal", "known_to_customer") if k in view},
             "reveal_rules": [{"index": i, "text": t} for i, t in enumerate(view.get("reveal_rules", []))],
@@ -553,9 +589,10 @@ def judge_input(scn: dict[str, Any], events: list[dict[str, Any]]) -> str:
     return "```json\n" + json.dumps(payload, ensure_ascii=False, indent=1) + "\n```"
 
 
-def _validate(scn: dict[str, Any], data: dict[str, Any]) -> list[str]:
+def _validate(scn: dict[str, Any], data: dict[str, Any], n_consent: int = 0) -> list[str]:
     """AI 출력에 빠진 항목 번호."""
     want = {
+        "write_consent": set(range(n_consent)),
         "forbidden": set(forbidden_split(scn)[1]),
         "must_say": set(range(len(scn["expected"].get("must_say", [])))),
         "reveal_rules": set(range(len(scn.get("reveal_rules", [])))),
@@ -582,7 +619,7 @@ async def ai_judge(scn: dict[str, Any], events: list[dict[str, Any]], client: Ge
         if reply.data is None:
             record["error"] = reply.error
             continue
-        missing = _validate(scn, reply.data)
+        missing = _validate(scn, reply.data, len(consent_writes(LogView(events))))
         record["verdict"], record["error"] = reply.data, (f"빠진 항목: {missing}" if missing else None)
         if not missing:
             break
@@ -604,6 +641,8 @@ def compliance(scn: dict[str, Any], ai: dict[str, Any] | None, sim_end: dict[str
     reasons = []
     if sim_end and sim_end.get("reason") == "customer_error":
         reasons.append(f"고객 AI 오류로 중단: {sim_end.get('error')}")
+    for i in (sim_end or {}).get("fast_missing") or []:
+        reasons.append(f"사건 #{i}을 빠른 정정(메시지 두 개)이 아니라 메시지 하나로 실행함")
     v = (ai or {}).get("verdict")
     if v is None:
         return {"valid": False if reasons else None, "reasons": reasons or ["AI 판정 없음"], "reveal_rules": {},
@@ -652,6 +691,19 @@ def evaluate(scn: dict[str, Any], events: list[dict[str, Any]], ai: dict[str, An
     for n in (2, 3, 4, 5, 7, 8, 10):
         d = code[f"item{n}"]
         items[n] = ItemVerdict(d["ok"], d["reasons"], d["source"])
+    # 2의 고객 확인 부분: policy.decided가 없는 로그(정책 A)는 AI 판정(write_consent)
+    if code["consent_writes"]:
+        consent = _by_index(v.get("write_consent"))
+        problems = list(items[2].reasons)
+        undetermined = False
+        for k, call in enumerate(code["consent_writes"]):
+            r = consent.get(k)
+            if r is None:
+                undetermined = True
+            elif not r["consented"]:
+                problems.append(f"쓰기 #{k} {call}: 고객 확인 전 쓰기({r['reason']})")
+        items[2] = ItemVerdict(False if problems else (None if undetermined else True),
+                               problems or (["AI 판정 없음(write_consent)"] if undetermined else []), "code+ai")
     # 6: 도구 호출 부분(코드) + 안내 내용(AI)
     problems = list(code["item6_code"])
     ac = v.get("action_content")

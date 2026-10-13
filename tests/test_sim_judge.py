@@ -103,16 +103,31 @@ def test_item2_requires_exposed_same_proposal_then_customer_utterance():
     assert "고객 발화 없이" in jd.check_item2(jd.LogView(b2.events)).reasons[0]
 
 
-def test_item2_ignores_handoff_and_is_undetermined_without_policy_events():
+def test_item2_ignores_handoff_and_uses_ai_consent_without_policy_events():
     b = LogBuilder()
     b.utt("딸이 결제했어요")
     b.call("create_handoff", {"reason": "minor"}, data={"handoff_id": "H1"})
     assert jd.check_item2(jd.LogView(b.events)).ok is True
+    # policy.decided가 없는 로그(정책 A): 본인 확인은 코드, 고객 확인은 AI(write_consent)
     b2 = LogBuilder()
     b2.utt("환불")
     b2.verify()
+    b2.suggest("x-s1", text="해지를 접수할까요?")
+    b2.utt("네")
     b2.call("create_cancellation", {"customer_id": "C001", "subscription_id": "S001"}, data={"cancellation_id": "X1"})
-    assert jd.check_item2(jd.LogView(b2.events)).ok is None
+    lv = jd.LogView(b2.events)
+    assert jd.check_item2(lv).ok is True and [c.tool for c in jd.consent_writes(lv)] == ["create_cancellation"]
+    assert "(업무 API · 쓰기 #0) create_cancellation" in jd.transcript(b2.events)
+    assert '"write_consent": [\n   {\n    "index": 0' in jd.judge_input(scn(), b2.events)
+    yes = verdict(write_consent=[{"index": 0, "consented": True, "reason": "-"}])
+    no = verdict(write_consent=[{"index": 0, "consented": False, "reason": "안내 없음"}])
+    assert jd.evaluate(scn(), b2.events, yes)["items"][2]["ok"] is True
+    item = jd.evaluate(scn(), b2.events, no)["items"][2]
+    assert item["ok"] is False and "쓰기 #0" in item["reasons"][0]
+    assert jd.evaluate(scn(), b2.events, verdict())["items"][2]["ok"] is None  # AI가 빠뜨리면 판정 불가
+    # 엔진 로그(policy.decided 있음)는 AI에게 묻지 않는다
+    assert jd.consent_writes(jd.LogView(good_log().events)) == []
+    assert '"write_consent": []' in jd.judge_input(scn(), good_log().events)
 
 
 def test_item3_and_item7_use_structured_amounts():
@@ -127,6 +142,12 @@ def test_item3_and_item7_use_structured_amounts():
     assert jd.check_item7(scn(), jd.LogView(b.events)).ok is True
     assert jd.check_item7(scn(refund_amount=None), jd.LogView(b.events)).ok is True
     assert jd.check_item3(scn(refund_amount=None), jd.LogView(b.events)).ok is False
+    # 0원 확정 안내는 환불 없음: refund_amount null이면 통과, 기대 금액이 있으면 실패
+    z = LogBuilder()
+    z.utt("환불")
+    z.suggest("x-s1", amount=0, amount_final=True)
+    assert jd.check_item3(scn(refund_amount=None), jd.LogView(z.events)).ok is True
+    assert jd.check_item3(scn(refund_amount=9900), jd.LogView(z.events)).ok is False
 
 
 def test_item4_key_args_and_item8_extra_writes():
@@ -183,11 +204,24 @@ def test_item8_counts_retries_as_calls_and_checks_verify_order():
     assert any("기대 호출 없음: quote_refund" in r for r in item.reasons)
 
 
-def test_item10_uses_last_exposed_suggestion():
+def test_item10_uses_union_and_reports_last_suggestion_separately():
     b = good_log()
-    b.suggest("x-s4", cited=["A-20"])
-    item = jd.check_item10(scn(), jd.LogView(b.events))
-    assert item.ok is False and "['A-05']" in item.reasons[0]
+    b.suggest("x-s4", cited=["A-20"])  # 마지막 제안은 A-05를 인용하지 않지만 앞 제안이 인용했다
+    lv = jd.LogView(b.events)
+    assert jd.check_item10(scn(), lv).ok is True
+    last = jd.check_item10_last(scn(), lv)
+    assert last.ok is False and "['A-05']" in last.reasons[0]
+    c = jd.code_checks(scn(), b.events)
+    assert c["item10"]["ok"] is True and c["aux"]["item10_last"]["ok"] is False
+    item = jd.check_item10(scn(articles=["A-05", "A-99"]), lv)
+    assert item.ok is False and "['A-99']" in item.reasons[0]
+
+
+def test_intent_match_is_none_when_policy_records_no_intent():
+    b = LogBuilder()
+    b.utt("x")
+    b.suggest("x-s1", intent=None)
+    assert jd.code_checks(scn(), b.events)["aux"]["intent_match"] is None
 
 
 def test_every_code_forbidden_text_exists_in_scenario_file():
@@ -261,6 +295,9 @@ def test_evaluate_merges_code_and_ai_and_marks_invalid_runs():
     assert r["pass"] is None and r["compliance"]["valid"] is None
     r = jd.evaluate(scn(), b.events, None, {"reason": "customer_error", "error": "HTTP 500"})
     assert r["compliance"]["valid"] is False
+    # 빠른 정정이어야 할 사건을 메시지 하나로 실행하면 AI 판정과 관계없이 무효
+    r = jd.evaluate(scn(), b.events, verdict(), {"reason": "customer_done", "fast_missing": [0]})
+    assert r["compliance"]["valid"] is False and "빠른 정정" in r["compliance"]["reasons"][0]
 
 
 def test_judge_input_hides_code_forbidden_items_and_shows_markers_and_tools():
