@@ -338,8 +338,10 @@ def decide(state: SessionState, inp: PolicyInput, cfg: PolicyConfig, required_no
                         calls=(ToolCall("verify_identity", {"phone": state.phone, "otp": otp}),))
 
     if not ident.verified and intent in cfg.records_intents:
-        # 4. 본인 확인을 마칠 수 없다고 함(등록된 번호가 아님, 인증번호를 받을 수 없음): 계정을 확인할 수 없어 보류
-        if inp.identity_unavailable:
+        # 4. 본인 확인을 마칠 수 없다고 함(등록된 번호가 아님, 인증번호를 받을 수 없음): 계정을 확인할 수 없어 보류.
+        #    이번 발화에 번호나 인증번호가 있으면 판별과 관계없이 본인 확인을 계속한다(s29 try1: 인증번호를 말한 발화에
+        #    identity_unavailable 0.53).
+        if inp.identity_unavailable and not (cur.otps or cur.phones):
             return Plan("identity_unavailable", "hold", "identity",
                         detail={"identity_failed_attempts": ident.failed, "phone_given": state.phone is not None})
         # 5. 본인 확인 요청

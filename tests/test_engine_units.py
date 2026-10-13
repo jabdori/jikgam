@@ -163,13 +163,18 @@ def test_generate_checked_retries_with_feedback_then_falls_back():
 def test_refund_claims_detect_conditional_and_plain_claims_but_not_negations():
     claims = ["원하시면 해지하고 전액 환불받으실 수 있습니다.", "연장 보상을 원하지 않으시면 해지하고 환불받으실 수 있습니다.",
               "환불이 가능합니다.", "해지하시면 9,900원 전액 환불해 드립니다.", "청약철회로 환불됩니다.", "환불 대상입니다.",
-              "돌려받으실 수 있어요.", "환불받으실 수 있지만 위약금이 있습니다."]
-    not_claims = ["환불되지 않습니다.", "환불은 불가합니다.", "환불해 드릴 수 없습니다.", "환불이 어렵습니다.",
+              "돌려받으실 수 있어요.", "환불받으실 수 있지만 위약금이 있습니다.", "남은 금액은 돌려드립니다.",
+              "확인 후 환불해 드리겠습니다."]
+    not_claims =["환불되지 않습니다.", "환불은 불가합니다.", "환불해 드릴 수 없습니다.", "환불이 어렵습니다.",
                   "환불 가능 여부를 확인하기 위해 본인 확인이 필요합니다.", "환불이 가능한지 확인해 드리겠습니다.",
                   "해지·환불은 계정 소유자 본인만 신청하실 수 있습니다.", "환불 대상에 해당하지 않습니다.",
-                  "이미 결제한 부가 상품 요금은 환불되지 않습니다.", "환불은 원래 결제 수단으로 진행되며 3~7영업일이 걸립니다."]
-    assert all(refund_claims(s) for s in claims)
-    assert not any(refund_claims(s) for s in not_claims)
+                  "이미 결제한 부가 상품 요금은 환불되지 않습니다.", "환불은 원래 결제 수단으로 진행되며 3~7영업일이 걸립니다.",
+                  # 개발용 재생 s20(try1)에서 위반으로 잘못 잡은 문장: 규정 이름("장애 전액 환불")과 기한 경과
+                  "월 구독은 제7조 제3항에 따라 이미 결제된 요금이 환불되지 않으며, 제5조 제1항의 청약철회 기간과 제9조 "
+                  "제2항의 장애 전액 환불 신청 기간(2026-10-09까지)이 지나 이번 달 요금은 환불되지 않습니다.",
+                  "환불 가능 기간이 지났습니다.", "환불받을 수 있는 기간이 지났습니다.", "환불받는 방법은 결제 수단에 따라 다릅니다."]
+    assert all(refund_claims(s) for s in claims), [s for s in claims if not refund_claims(s)]
+    assert not any(refund_claims(s) for s in not_claims), [s for s in not_claims if refund_claims(s)]
 
 
 def test_refund_claim_without_quote_is_a_violation_only_for_account_cases():

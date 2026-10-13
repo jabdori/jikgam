@@ -358,6 +358,11 @@ def test_identity_unavailable_holds_but_new_otp_is_still_verified():
     say(st, "u4", "아 왔네요, 공공구구요")
     p = decide(st, inp("refund", identity_unavailable=True), CFG, NOTICES)
     assert p.rule == "verify_identity"
+    # 이미 보낸 인증번호를 다시 말해도(판별이 확인 불가로 잘못 봐도) 번호가 있는 발화는 보류하지 않는다
+    st.identity.tried.add(("010-0000-0099", "0099"))
+    say(st, "u5", "공공구구 맞다니까요")
+    p = decide(st, inp("refund", identity_unavailable=True), CFG, NOTICES)
+    assert (p.rule, p.ask) == ("identity_required", "otp_retry")
 
 
 def test_handoff_without_customer_id_carries_phone_in_summary():
