@@ -1,0 +1,17 @@
+{
+  "run": "20261014T060738",
+  "backend": "q35-0.8b-ko",
+  "requests": 105,
+  "busy_seconds": 14.1,
+  "window_seconds": 40.0,
+  "runpod-rtx3090-secure": {
+    "usd_per_hour": 0.5,
+    "usd_per_request_busy": 1.863e-05,
+    "usd_per_request_window_upper": 5.291e-05
+  },
+  "runpod-rtx3090-community": {
+    "usd_per_hour": 0.22,
+    "usd_per_request_busy": 8.2e-06,
+    "usd_per_request_window_upper": 2.328e-05
+  }
+}

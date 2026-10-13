@@ -1,0 +1,63 @@
+{
+  "run_id": "20261014T060738",
+  "split": "val",
+  "started_kst": "2026-10-14T06:07:38+09:00",
+  "git_commit": "b206f6a2e95b20ca3224da05243226583b701f2c",
+  "git_dirty": false,
+  "data_file": "data/build/val.jsonl",
+  "data_sha256_16": "a169861b4dc863da",
+  "cases": 21,
+  "questions_version": "q-2026.10.14-mix",
+  "questions_file": "data/question_sets/q-2026.10.14-mix.json",
+  "questions_file_sha256_16": "3ecdd027d930e6d4",
+  "llm_prompt_version": "llm-judge-2026.10.14",
+  "backends": {
+    "q35-0.8b-ko": {
+      "kind": "systemone",
+      "url": "http://127.0.0.1:8888/v1/systemone",
+      "model": "laya-local",
+      "price_input_per_mtok": 0.0,
+      "price_output_per_mtok": 0.0,
+      "price_source": "로컬 서빙, 외부 과금 없음. 참고 비용은 docs/evaluation.md §2.6(jikgam/train/gpu_cost.py)",
+      "served": "WSL2 ~/jikgam-train/runs/q35-0.8b-d-mix/merged, unsloth/Qwen3.5-0.8B@23c69c53 + LoRA + Clef 헤드, 구성 (d), 질문 세트 q-2026.10.14-mix, Unsloth 2026.10.5, PyTorch 16비트",
+      "weights_sha256_16": "94f8e23735f64400"
+    },
+    "q35-2b-ko": {
+      "kind": "systemone",
+      "url": "http://127.0.0.1:8889/v1/systemone",
+      "model": "laya-local",
+      "price_input_per_mtok": 0.0,
+      "price_output_per_mtok": 0.0,
+      "price_source": "로컬 서빙, 외부 과금 없음. 참고 비용은 docs/evaluation.md §2.6(jikgam/train/gpu_cost.py)",
+      "served": "WSL2 ~/jikgam-train/runs/q35-2b-d-mix/merged, unsloth/Qwen3.5-2B@fffbc0d8 + LoRA + Clef 헤드, 구성 (d), 질문 세트 q-2026.10.14-mix, Unsloth 2026.10.5, PyTorch 16비트",
+      "weights_sha256_16": "3f9dcfe6df110822"
+    }
+  },
+  "reps": {
+    "q35-0.8b-ko": 5,
+    "q35-2b-ko": 5
+  },
+  "concurrency": 1,
+  "client": {
+    "python": "3.12.11",
+    "httpx": "0.28.1",
+    "os": "Windows 11 10.0.22631"
+  },
+  "network_before": {
+    "cloudflare_colo": "ICN",
+    "cloudflare_loc": "KR",
+    "tcp_connect_ms_median": {
+      "127.0.0.1:8888": 15.3,
+      "127.0.0.1:8889": 14.8
+    }
+  },
+  "finished_kst": "2026-10-14T06:08:18+09:00",
+  "network_after": {
+    "cloudflare_colo": "ICN",
+    "cloudflare_loc": "KR",
+    "tcp_connect_ms_median": {
+      "127.0.0.1:8888": 0.5,
+      "127.0.0.1:8889": 15.0
+    }
+  }
+}

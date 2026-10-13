@@ -1,0 +1,73 @@
+{
+  "raw_build_file": {
+    "report": {
+      "total": 461,
+      "skipped": 0,
+      "reason": null,
+      "truncated": 0
+    },
+    "items": 64,
+    "decisions": 461,
+    "max_input_tokens": 3108,
+    "question_id_lines_first_row": [
+      "ID: intent",
+      "ID: condition_changed",
+      "ID: applies:A-08",
+      "ID: applies:A-21",
+      "ID: applies:A-05",
+      "ID: sufficient",
+      "ID: next_info",
+      "ID: action"
+    ],
+    "prompt_head_first_row": "<|im_start|>system\nRead the complete state and schema. Decide every field jointly. Each answer must be exactly one of that field's allowed options.<|im_end|>\n<|im_start|>user\nSTATE:\n{\"articles\":[{\"id\":\"A-05\",\"text\":\"1. 회원은 결제일로부터 7일 이내에 이용 이력이 없는 경우 청약을 철회할 수 있으며, 회사는 결제 금액 전액을 환불한다.\\n2. 제1항은 월 구독과 연 구독에 모두 적용되며, 자동 갱신으로 이루어진 결제에도 적용된다.\\n3. 제1항에 따라 청약을 철회하면 해당 결제의 이용 기간은 즉시 종료된다.\",\"title\":\"제5조 (청약"
+  },
+  "converted_keys_only": {
+    "report": {
+      "total": 461,
+      "skipped": 0,
+      "reason": null,
+      "truncated": 0
+    },
+    "items": 64,
+    "decisions": 461,
+    "max_input_tokens": 3112,
+    "question_id_lines_first_row": [
+      "ID: intent",
+      "ID: condition_changed",
+      "ID: applies__A-08",
+      "ID: applies__A-21",
+      "ID: applies__A-05",
+      "ID: sufficient",
+      "ID: next_info",
+      "ID: action"
+    ],
+    "prompt_head_first_row": "<|im_start|>system\nRead the complete state and schema. Decide every field jointly. Each answer must be exactly one of that field's allowed options.<|im_end|>\n<|im_start|>user\nSTATE:\n{\"articles\":[{\"id\":\"A-05\",\"text\":\"1. 회원은 결제일로부터 7일 이내에 이용 이력이 없는 경우 청약을 철회할 수 있으며, 회사는 결제 금액 전액을 환불한다.\\n2. 제1항은 월 구독과 연 구독에 모두 적용되며, 자동 갱신으로 이루어진 결제에도 적용된다.\\n3. 제1항에 따라 청약을 철회하면 해당 결제의 이용 기간은 즉시 종료된다.\",\"title\":\"제5조 (청약"
+  },
+  "converted_mix_wording": {
+    "report": {
+      "total": 461,
+      "skipped": 0,
+      "reason": null,
+      "truncated": 0
+    },
+    "items": 64,
+    "decisions": 461,
+    "max_input_tokens": 3324,
+    "question_id_lines_first_row": [
+      "ID: intent",
+      "ID: condition_changed",
+      "ID: applies__A-08",
+      "ID: applies__A-21",
+      "ID: applies__A-05",
+      "ID: sufficient",
+      "ID: next_info",
+      "ID: action"
+    ],
+    "prompt_head_first_row": "<|im_start|>system\nRead the complete state and schema. Decide every field jointly. Each answer must be exactly one of that field's allowed options.<|im_end|>\n<|im_start|>user\nSTATE:\n{\"articles\":[{\"id\":\"A-05\",\"text\":\"1. 회원은 결제일로부터 7일 이내에 이용 이력이 없는 경우 청약을 철회할 수 있으며, 회사는 결제 금액 전액을 환불한다.\\n2. 제1항은 월 구독과 연 구독에 모두 적용되며, 자동 갱신으로 이루어진 결제에도 적용된다.\\n3. 제1항에 따라 청약을 철회하면 해당 결제의 이용 기간은 즉시 종료된다.\",\"title\":\"제5조 (청약"
+  },
+  "raw_vs_keys_only": {
+    "rows": 64,
+    "identical_input_ids_rows": 0,
+    "rows_with_applies_question": 64
+  }
+}

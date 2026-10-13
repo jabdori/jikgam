@@ -1,0 +1,80 @@
+{
+  "tokenizer": {
+    "unsloth/Qwen3.5-0.8B": {
+      "revision": "23c69c53358a07516b5827588b3fdb12ae78fd65",
+      "vocab_size": 248077
+    },
+    "unsloth/Qwen3.5-2B": {
+      "revision": "fffbc0d8711cf87df6d1f97938c5e50ef94aadc7",
+      "vocab_size": 248077
+    }
+  },
+  "same_vocab_0.8b_2b": true,
+  "sample_cases": [
+    "g001-1",
+    "g001-2",
+    "g001-3",
+    "g003-1",
+    "g003-2"
+  ],
+  "rendered_state_has_unicode_escapes": 0,
+  "korean_utterances": {
+    "texts": 30,
+    "chars": 1639,
+    "hangul_chars": 1084,
+    "tokens": 920,
+    "tokens_per_char": 0.561,
+    "tokens_per_hangul_char": 0.849,
+    "byte_fragment_tokens": 27,
+    "byte_fragment_token_ratio": 0.0293,
+    "hangul_chars_split_over_tokens": 12,
+    "hangul_split_ratio": 0.0111
+  },
+  "rendered_state": {
+    "chars": [
+      2287,
+      2199,
+      3578,
+      2489,
+      3058
+    ],
+    "tokens": [
+      1171,
+      1040,
+      1749,
+      1279,
+      1522
+    ],
+    "tokens_per_char": 0.497
+  },
+  "record_tokens": {
+    "train_ko": {
+      "n": 64,
+      "min": 1907,
+      "p50": 2402,
+      "p95": 2930,
+      "max": 3324
+    },
+    "train_aug_ko": {
+      "n": 104,
+      "min": 1367,
+      "p50": 2519,
+      "p95": 2915,
+      "max": 3110
+    },
+    "val_ko": {
+      "n": 21,
+      "min": 1714,
+      "p50": 2401,
+      "p95": 2706,
+      "max": 2775
+    },
+    "typed_decisions_train": {
+      "n": 1200,
+      "min": 729,
+      "p50": 876,
+      "p95": 1058,
+      "max": 1222
+    }
+  }
+}

@@ -92,7 +92,7 @@ val 기준선(판단 152개, 질문 세트 `q-2026.10.12`, 1차 실행, 검토 �
 
 진행 중:
 
-- 한국어 판별 모델 파인튜닝(별도 브랜치): Unsloth, 이 PC의 RTX 3090 Ti, Qwen3.5-0.8B·2B. train만, typed-decisions만, 둘을 섞은 구성으로 학습해 val에서 Jev·Clef-flash와 비교한다.
+- 한국어 판별 모델 파인튜닝: 학습과 val 비교까지 마쳤다(아래 "한국어 판별 모델 학습"). 수치의 독립 대조가 남았다.
 
 ### 상담 엔진(채팅)
 
@@ -202,6 +202,28 @@ val 기준선(판단 152개, 질문 세트 `q-2026.10.12`, 1차 실행, 검토 �
 - s25: 등록되지 않은 번호에서 otp_retry만 반복하고 보류·계정 없음 안내로 가지 않는다.
 - s03(C): "상담사 승인 후 환불 확정" 미안내. s27(B): "15시간" 연장 시간 미안내. s07·s24: 끼어든 뒤 산정 근거를 처음부터 반복.
 
+### 한국어 판별 모델 학습
+
+한 일:
+
+- WSL2(Ubuntu 24.04)에 Unsloth Studio 설치(unsloth 2026.10.5, torch 2.13.0+cu130). 학습·선별·서빙 코드는 `jikgam/train/`, 재현 절차는 `docs/training.md`.
+- 학습 전 확인: Qwen3.5 토크나이저의 한국어 토큰 수와 바이트 조각 분할(`results/training/tokenizer.json`), `build_dataset`이 빌드 파일을 그대로 받는지(`results/training/dataset_check.json`).
+- Qwen3.5-0.8B·2B를 구성 (a) train, (b) typed-decisions, (c) 둘을 섞음, (d) typed-decisions + train + train_aug, (e) train + train_aug(진단용)로 학습. 0.8B (a)는 질문 세트 변경 전 문구로도 하나 있다. val 선별 구성 11개 전부를 `results/training/val-screening/README.md`에 적었다.
+- 크기별 val 최고인 (d)를 이 PC에서 Studio Decision API로 서빙해 실행기로 Jev·Clef-flash와 비교(`results/decisions/val/20261014T060432`, 질문 세트 mix). 원격 호출 없는 지연 점검 실행 `20261014T060738`. 참고 비용은 `results/training/gpu-cost/`.
+- 결정 초안 ADR 0012(제안). 수치는 `docs/training.md`와 ADR 0012에 있고, 독립 대조 뒤에 이 기록에 옮긴다.
+
+결정과 이유:
+
+- 학습 데이터의 질문 키를 요청용 키(`applies__A-05`)로 바꾼다. Unsloth가 질문 ID를 프롬프트에 그대로 넣어, 빌드 파일 그대로 학습하면 실행기가 보내는 입력과 train 64건 모두 달라진다.
+- 질문 문구는 엔진 질문 세트(ADR 0011)로 학습·평가한다. 하이퍼파라미터는 Unsloth 권장값으로 고정하고 val로 고르지 않았다. 한국어 반복 횟수(4회)도 (c) 학습 전에 정했다.
+- 서빙 모델 이름은 `laya-local`, 가중치는 설정의 `weights_sha256_16`으로 식별한다. 응답의 model 값으로는 구분되지 않는다.
+- 보정은 val 표본 내라 보조 지표로만 적고, 서빙 모델은 보정 전 상태로 둔다.
+
+발견한 것:
+
+- Studio Decision API는 환경 변수만으로 켜지지 않는다(관리자 설정 필요). 첫 관리자 비밀번호는 한 번만 환경 변수로 줄 수 있다.
+- 로컬 모델의 지연은 원격 백엔드와 번갈아 호출할 때 꼬리가 길어졌다. 같은 프로세스 predict와 HTTP 경유 사이에도 차이가 있다.
+
 ## 다음 할 일
 
 - Jev 확률 보정(val)과 noul 임계값 검토
@@ -220,3 +242,5 @@ val 기준선(판단 152개, 질문 세트 `q-2026.10.12`, 1차 실행, 검토 �
 - 시나리오 실행 결과(`results/engine/scenarios/20261014T040727-C`, `20261014T042942-B`)의 독립 검토, AI 판정 무작위 10건 이상 사람 확인과 일치율(docs/evaluation.md §4.2)
 - 정책별 반복 횟수를 정해 evaluation.md §3.4에 적은 뒤 반복 실행(이번은 1회). 정책 A(`jikgam/baselines/rag.py`)가 들어오면 같은 실행기로 실행
 - 시뮬레이터: 등록되지 않은 번호(s25)에도 인증 문자가 온 것으로 고객 AI에게 알려 준다. 등록 번호에만 문자를 주도록 바꿀지 정하기(바꾸면 고객 프롬프트 버전을 올린다)
+- 한국어 튜닝 결과(`docs/training.md`, ADR 0012, `results/decisions/val/20261014T060432`)의 독립 대조 후 이 기록에 수치 옮기기
+- 2B 서빙 지연 줄이기 측정(GGUF/llama.cpp 서빙, GPU 클럭 고정)과 학습 시드 반복
