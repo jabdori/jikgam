@@ -97,7 +97,7 @@ async def main() -> None:
                    {GEMINI_HOST for n in names if cfg_all[n]["kind"] == "gemini"})
     meta = {
         "run_id": run_id, "split": args.split, "started_kst": started.isoformat(timespec="seconds"),
-        "git_commit": git("rev-parse", "HEAD"), "git_dirty": bool(git("status", "--porcelain")),
+        "git_commit": git("rev-parse", "HEAD"), "git_dirty": bool(git("status", "--porcelain", "--untracked-files=no")),
         "data_file": str(data_path.relative_to(ROOT)).replace("\\", "/"),
         "data_sha256_16": hashlib.sha256(data_path.read_bytes()).hexdigest()[:16], "cases": len(rows),
         "questions_version": json.loads((ROOT / "data/questions.json").read_text(encoding="utf-8"))["version"],
