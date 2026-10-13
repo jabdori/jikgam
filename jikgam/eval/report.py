@@ -2,6 +2,7 @@
 같은 로그로 다시 돌리면 같은 표가 나온다.
 
     uv run python -m jikgam.eval.report results/decisions/val/<run_id>
+    uv run python -m jikgam.eval.report <run_dir> <run_dir> ... --out <report.md>   # 여러 실행을 한 표로
 """
 
 import argparse
@@ -82,24 +83,28 @@ def stability(ds: list[dict]) -> float:
     return sum(len(v) == 1 for v in labels.values()) / len(labels)
 
 
-def render(meta: dict, cases: dict, raw: list[dict]) -> str:
+def conditions(meta: dict) -> list[str]:
+    net = meta["network_before"]
+    return [f"- 시각(KST): {meta['started_kst']} ~ {meta.get('finished_kst', '?')}",
+            f"- 코드: `{meta['git_commit'][:12]}`{' (커밋 안 된 변경 있음)' if meta['git_dirty'] else ''}",
+            f"- 데이터: `{meta['data_file']}` sha256 앞 16자리 `{meta['data_sha256_16']}`, 사례 {meta['cases']}건",
+            f"- 질문 세트 `{meta['questions_version']}`, LLM 프롬프트 `{meta['llm_prompt_version']}`",
+            "- 반복: " + ", ".join(f"{b} {n}회" for b, n in meta["reps"].items()) + f", 동시 실행 {meta['concurrency']}",
+            f"- 네트워크: Cloudflare 접속 지점 {net['cloudflare_colo']} ({net['cloudflare_loc']}), TCP 연결 중앙값 "
+            + (", ".join(f"{h} {ms}ms" for h, ms in net["tcp_connect_ms_median"].items()) or "-"),
+            f"- 클라이언트: Python {meta['client']['python']}, httpx {meta['client']['httpx']}, {meta['client']['os']}"]
+
+
+def render(metas: list[dict], cases: dict, raw: list[dict]) -> str:
     ds = decisions(raw, cases)
-    backends = list(meta["backends"])
+    backends = [b for m in metas for b in m["backends"]]
     by_b = {b: [d for d in ds if d["backend"] == b] for b in backends}
     calls = {b: [r for r in raw if r["backend"] == b] for b in backends}
-    net = meta["network_before"]
-    L = [f"# 판별 평가 결과: {meta['split']} / {meta['run_id']}", "",
-         "`jikgam/eval/report.py`가 같은 폴더의 `raw.jsonl`, `meta.json`과 정답 파일로 만든다. 손으로 고치지 않는다.", "",
-         "## 실행 조건", "",
-         f"- 시각(KST): {meta['started_kst']} ~ {meta.get('finished_kst', '?')}",
-         f"- 코드: `{meta['git_commit'][:12]}`{' (커밋 안 된 변경 있음)' if meta['git_dirty'] else ''}",
-         f"- 데이터: `{meta['data_file']}` sha256 앞 16자리 `{meta['data_sha256_16']}`, 사례 {meta['cases']}건",
-         f"- 질문 세트 `{meta['questions_version']}`, LLM 프롬프트 `{meta['llm_prompt_version']}`",
-         f"- 반복: " + ", ".join(f"{b} {n}회" for b, n in meta["reps"].items()) + f", 동시 실행 {meta['concurrency']}",
-         f"- 네트워크: Cloudflare 접속 지점 {net['cloudflare_colo']} ({net['cloudflare_loc']}), TCP 연결 중앙값 "
-         + ", ".join(f"{h} {ms}ms" for h, ms in net["tcp_connect_ms_median"].items()),
-         f"- 클라이언트: Python {meta['client']['python']}, httpx {meta['client']['httpx']}, {meta['client']['os']}", "",
-         "## 요약", "",
+    L = [f"# 판별 평가 결과: {metas[0]['split']} / " + ", ".join(m["run_id"] for m in metas), "",
+         "`jikgam/eval/report.py`가 실행 폴더의 `raw.jsonl`, `meta.json`과 정답 파일로 만든다. 손으로 고치지 않는다.", ""]
+    for m in metas:
+        L += [f"## 실행 조건: {m['run_id']} ({', '.join(m['backends'])})", ""] + conditions(m) + [""]
+    L += ["## 요약", "",
          "정확도는 회차별 정확도의 평균이고, 괄호는 회차별 정답 수(회차마다 다르면 최소~최대)/판단 수다. "
          "지연은 클라이언트에서 잰 요청 전송부터 응답 수신까지이며 성공한 모든 호출로 계산한다. 비용은 성공한 호출의 평균이다.", "",
          "| 백엔드 | 응답 모델 | 정확도 | ECE | p50 ms | p95 ms | 평균 입력 토큰 | 요청당 비용 USD | 1,000건당 USD | 오류 | 재시도 | 회차 간 라벨 일치 |",
@@ -160,12 +165,22 @@ def render(meta: dict, cases: dict, raw: list[dict]) -> str:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("run_dir")
+    ap.add_argument("run_dirs", nargs="+")
+    ap.add_argument("--out", help="여러 실행을 합칠 때 쓸 보고서 경로. 하나면 실행 폴더의 report.md")
     args = ap.parse_args()
-    run_dir = Path(args.run_dir)
-    meta, cases, raw = load(run_dir)
-    text = render(meta, cases, raw)
-    (run_dir / "report.md").write_text(text, encoding="utf-8")
+    if len(args.run_dirs) > 1 and not args.out:
+        raise SystemExit("여러 실행을 합칠 때는 --out을 지정한다")
+    metas, raw, cases = [], [], None
+    for d in args.run_dirs:
+        meta, cases_d, raw_d = load(Path(d))
+        if metas and (meta["data_sha256_16"] != metas[0]["data_sha256_16"] or set(meta["backends"]) & {b for m in metas for b in m["backends"]}):
+            raise SystemExit(f"합칠 수 없는 실행: {d} (데이터가 다르거나 백엔드가 겹침)")
+        metas.append(meta)
+        raw += raw_d
+        cases = cases_d
+    text = render(metas, cases, raw)
+    out = Path(args.out) if args.out else Path(args.run_dirs[0]) / "report.md"
+    out.write_text(text, encoding="utf-8")
     print(text)
 
 
