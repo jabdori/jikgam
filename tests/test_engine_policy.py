@@ -19,8 +19,9 @@ def say(st: SessionState, uid: str, text: str) -> None:
     st.add_claims(uid, extract(text, TODAY))
 
 
-def inp(intent="cancel_refund", action="answer", next_info="none", agreed=False, pending=None) -> PolicyInput:
-    return PolicyInput(intent, action, next_info, agreed, pending)
+def inp(intent="cancel_refund", action="answer", next_info="none", agreed=False, pending=None, declined=False,
+        identity_unavailable=False) -> PolicyInput:
+    return PolicyInput(intent, action, next_info, agreed, pending, declined, identity_unavailable)
 
 
 def verified(cid="C010", plan="monthly", pays=None, usage=None, incidents=None, birth="1991-02-27") -> SessionState:
@@ -242,3 +243,133 @@ def test_falls_back_to_decision_or_hold():
 def test_incident_window_starts_at_current_payment():
     st = verified()
     assert policy.incident_window(st) == ("2026-10-06", "2026-10-12")
+
+
+# --- 제3자, 법정대리인, 부가 상품, 접수 거절, 본인 확인 불가 ---
+
+
+def test_third_party_refused_without_asking_or_verifying_identity():
+    """s17·s22: 제3자의 계정 처리 요청은 본인 확인을 묻지도 하지도 않고 거절한다(제15조 제3항)."""
+    st = SessionState("org_a", TODAY)
+    st.caller = "third_party"
+    say(st, "u1", "아내 계정으로 연간 결제한 거 대신 해지하려고요")
+    p = decide(st, inp("cancel_refund"), CFG, NOTICES)
+    assert (p.rule, p.action, p.calls, p.ask) == ("third_party", "answer", (), None)
+    assert p.articles == ("A-15",) and p.detail["refusal"] == "third_party"
+    # 번호와 인증번호를 대신 불러도 본인 확인을 하지 않는다(인증번호를 전달받는 우회)
+    say(st, "u2", "번호는 010-0000-0003이고 인증번호는 공공공삼이래요")
+    p = decide(st, inp("cancel_refund"), CFG, NOTICES)
+    assert p.rule == "third_party" and not p.calls
+    # 계정과 무관한 일반 문의는 판별 결과로 답하되 본인 확인 규칙을 타지 않는다
+    say(st, "u3", "환불 규정이 일반적으로 어떻게 돼요?")
+    assert decide(st, inp("other", "answer"), CFG, NOTICES).rule == "decision"
+
+
+def test_owner_is_not_affected_by_third_party_rule():
+    st = SessionState("org_a", TODAY)
+    say(st, "u1", "해지하고 환불받고 싶어요")
+    assert decide(st, inp(), CFG, NOTICES).rule == "identity_required"
+
+
+def test_guardian_verifies_minor_account_then_quotes_only_minor_reason():
+    """s09: 법정대리인은 미성년 회원 계정의 번호로 본인 확인을 하고, 결제 당시 미성년이면 minor 사유만 견적한다."""
+    st = SessionState("org_a", TODAY)
+    st.caller = "guardian"
+    say(st, "u1", "고등학생 딸이 몰래 연간 결제를 했어요. 취소해 주세요")
+    p = decide(st, inp("cancel_refund"), CFG, NOTICES)
+    assert (p.rule, p.ask) == ("identity_required", "phone") and p.articles == ("A-13", "A-15", "A-19")
+    st = verified("C009", plan="annual", birth="2009-06-01",
+                  pays=[{"payment_id": "P009", "subscription_id": "S009", "date": "2026-09-20", "amount": 99000,
+                         "method": "card", "dispute": False}])
+    st.caller = "guardian"
+    p = decide(st, inp("cancel_refund"), CFG, NOTICES)
+    assert (p.rule, p.quote_reasons) == ("quote", ("minor",))  # 연 구독 중도 해지 등 다른 사유는 묻지 않는다
+    st.apply_tool_result(ToolResult("quote_refund", {"reason": "minor"}, False, error_code="HANDOFF_REQUIRED",
+                                    error={"code": "HANDOFF_REQUIRED", "quote": {"handoff_reason": "minor"},
+                                           "article_ids": ["A-13", "A-19"]}))
+    p = decide(st, inp("cancel_refund"), CFG, NOTICES)
+    assert (p.rule, p.action) == ("handoff", "handoff")
+    args = p.writes[0].args
+    assert (args["customer_id"], args["reason"]) == ("C009", "minor") and "법정대리인" in args["summary"]
+
+
+def test_guardian_of_adult_member_is_refused_like_third_party():
+    st = verified("C012", birth="1996-10-03")
+    st.caller = "guardian"
+    p = decide(st, inp("cancel"), CFG, NOTICES)
+    assert (p.rule, p.detail["refusal"], p.quote_reasons, p.writes) == ("third_party", "guardian_not_applicable", (), ())
+
+
+def _c014() -> SessionState:
+    st = verified("C014", incidents=[], pays=[
+        {"payment_id": "P014", "subscription_id": "S014", "date": "2026-09-30", "amount": 9900, "method": "card",
+         "dispute": False},
+        {"payment_id": "P014F", "subscription_id": "S014F", "date": "2026-09-30", "amount": 3900, "method": "card",
+         "dispute": False}])
+    st.facts.subscriptions = [
+        {"subscription_id": "S014", "plan": "monthly", "price": 9900, "start": "2026-09-30", "next_billing": "2026-10-30",
+         "status": "active"},
+        {"subscription_id": "S014F", "plan": "family_addon", "price": 3900, "start": "2026-09-30",
+         "next_billing": "2026-10-30", "status": "active"}]
+    return st
+
+
+def test_addon_only_cancels_addon_without_quote_or_refund():
+    """s14: 부가 상품만 해지하면 견적 없이 부가 상품 해지만 안내하고(제18조 제2항), 동의하면 그 구독만 해지한다."""
+    st = _c014()
+    st.addon_only = True
+    p = decide(st, inp("cancel_refund"), CFG, NOTICES)  # 고객이 환불을 기대해도 부가 상품 요금은 환불하지 않는다
+    assert (p.rule, p.quote_reasons) == ("proposal", ()) and p.articles == ("A-18",)
+    assert [(w.tool, w.args["subscription_id"]) for w in p.proposal.writes] == [("create_cancellation", "S014F")]
+    assert p.proposal.summary["refund_none_articles"] == ["A-18"] and "refund" not in p.proposal.summary
+    w = decide(st, inp("plan_change", agreed=True, pending=p.proposal), CFG, NOTICES)  # 라벨이 흔들려도 같은 접수
+    assert w.rule == "writes" and w.writes[0].target == "cancel:S014F"
+    st.facts.receipts["cancel:S014F"] = {"subscription_id": "S014F", "last_usable_date": "2026-10-29"}
+    assert decide(st, inp("cancel"), CFG, NOTICES).rule == "received"
+    # 부가 상품만이 아니면 본 구독을 대상으로 견적한다
+    st = _c014()
+    p = decide(st, inp("cancel"), CFG, NOTICES)
+    assert p.rule == "quote" and "addon_only" not in p.detail
+
+
+def test_declined_proposal_is_not_asked_again_and_not_written():
+    """s11: 환불 불가 안내 뒤 '그럼 해지 안 해요'면 해지를 접수하지 않고 같은 내용을 다시 묻지 않는다."""
+    st = verified("C011", plan="annual", incidents=[])
+    st.facts.quotes = {"withdrawal": not_eligible("withdrawal"),
+                       "annual_cancel": not_eligible("annual_cancel", ("A-16", "A-08"))}
+    p = decide(st, inp("cancel_refund"), CFG, NOTICES)
+    assert p.rule == "proposal" and p.proposal.kind == "cancel"
+    d = decide(st, inp("cancel_refund", declined=True, pending=p.proposal), CFG, NOTICES)
+    assert (d.rule, d.writes, d.proposal) == ("declined", (), None) and d.detail["declined"] == "cancel"
+    assert "refund_unavailable" in d.detail
+    # 다음 발화에서 다시 요청하면(거절 표시 없음) 다시 안내한다
+    assert decide(st, inp("cancel_refund", pending=None), CFG, NOTICES).rule == "proposal"
+
+
+def test_identity_unavailable_holds_but_new_otp_is_still_verified():
+    """s25: 본인 확인에 실패한 뒤 더 확인할 방법이 없다고 하면 보류. 인증번호를 새로 말하면 그것부터 확인한다."""
+    st = SessionState("org_a", TODAY)
+    say(st, "u1", "모르는 구독료가 찍혔어요. 돌려주세요")
+    say(st, "u2", "010-0000-0099요")
+    st.identity.failed = 1
+    say(st, "u3", "문자가 안 와요. 이 번호밖에 없어요")
+    p = decide(st, inp("refund", identity_unavailable=True), CFG, NOTICES)
+    assert (p.rule, p.action, p.calls) == ("identity_unavailable", "hold", ())
+    say(st, "u4", "아 왔네요, 공공구구요")
+    p = decide(st, inp("refund", identity_unavailable=True), CFG, NOTICES)
+    assert p.rule == "verify_identity"
+    # 이미 보낸 인증번호를 다시 말해도(판별이 확인 불가로 잘못 봐도) 번호가 있는 발화는 보류하지 않는다
+    st.identity.tried.add(("010-0000-0099", "0099"))
+    say(st, "u5", "공공구구 맞다니까요")
+    p = decide(st, inp("refund", identity_unavailable=True), CFG, NOTICES)
+    assert (p.rule, p.ask) == ("identity_required", "otp_retry")
+
+
+def test_handoff_without_customer_id_carries_phone_in_summary():
+    """s18: 본인 확인 2회 실패면 업무 API가 고객 ID를 주지 않으므로 고객이 말한 번호를 인계 요약에 남긴다."""
+    st = SessionState("org_a", TODAY)
+    say(st, "u1", "010-0000-0005요")
+    st.facts.handoff_reason = "identity_failed"
+    p = decide(st, inp(), CFG, NOTICES)
+    args = p.writes[0].args
+    assert "customer_id" not in args and args["reason"] == "identity_failed" and "010-0000-0005" in args["summary"]

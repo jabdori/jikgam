@@ -1,8 +1,10 @@
 """조직 설정(config/orgs/<org>.toml) 읽기. docs/engine.md §7.
 
 엔진 코드는 조직별 조항 ID, 구어 낱말, 업무 규칙 값을 직접 갖지 않고 이 설정으로만 받는다.
+환경 변수 JIKGAM_BIZAPI_URL이 있으면 설정 파일의 bizapi_url 대신 쓴다(여러 실행이 모의 업무 API를 따로 띄울 때).
 """
 
+import os
 import re
 import tomllib
 from dataclasses import dataclass
@@ -45,6 +47,11 @@ class PolicyConfig:
     refundable_reasons: frozenset[str]
     cancel_refund_reasons: frozenset[str]
     addon_plans: frozenset[str]
+    addon_intents: frozenset[str]  # 부가 상품만 해지할 수 있는 요청
+    addon_articles: tuple[str, ...]  # 부가 상품만 해지할 때의 근거 조항(환불 없음, 종료 시점)
+    third_party_articles: tuple[str, ...]  # 제3자 요청을 거절할 때의 근거 조항
+    guardian_reasons: tuple[str, ...]  # 법정대리인이 요청할 수 있는 견적 사유
+    guardian_articles: tuple[str, ...]  # 법정대리인 요청의 근거 조항
     minor_age: int
     quote_priority: tuple[str, ...]
     quote_reasons: dict[str, tuple[str, ...]]
@@ -61,6 +68,11 @@ class OrgConfig:
     extra_question_set: Path
     applies_threshold: float
     agreement_threshold: float
+    decline_threshold: float
+    caller_threshold: float
+    owner_return_threshold: float
+    addon_threshold: float
+    identity_unavailable_threshold: float
     generator: str
     required_notices: tuple[str, ...]
     retrieval: RetrievalConfig
@@ -86,14 +98,18 @@ def _retrieval(raw: dict[str, Any]) -> RetrievalConfig:
 def _policy(raw: dict[str, Any]) -> PolicyConfig:
     priority = tuple(raw["quote_priority"])
     reasons = {k: tuple(v) for k, v in raw.get("quote_reasons", {}).items()}
-    unknown = {r for rs in reasons.values() for r in rs} - set(priority)
+    guardian = tuple(raw.get("guardian_reasons", ()))
+    unknown = ({r for rs in reasons.values() for r in rs} | set(guardian)) - set(priority)
     if unknown:
         raise ValueError(f"quote_priority에 없는 견적 사유: {sorted(unknown)}")
     return PolicyConfig(
         records_intents=frozenset(raw["records_intents"]), refund_intents=frozenset(raw["refund_intents"]),
         cancel_intents=frozenset(raw["cancel_intents"]), refundable_reasons=frozenset(raw["refundable_reasons"]),
         cancel_refund_reasons=frozenset(raw["cancel_refund_reasons"]),
-        addon_plans=frozenset(raw.get("addon_plans", ())), minor_age=int(raw["minor_age"]),
+        addon_plans=frozenset(raw.get("addon_plans", ())), addon_intents=frozenset(raw.get("addon_intents", ())),
+        addon_articles=tuple(raw.get("addon_articles", ())),
+        third_party_articles=tuple(raw.get("third_party_articles", ())), guardian_reasons=guardian,
+        guardian_articles=tuple(raw.get("guardian_articles", ())), minor_age=int(raw["minor_age"]),
         quote_priority=priority, quote_reasons=reasons,
     )
 
@@ -106,9 +122,13 @@ def load_org(name_or_path: str | Path) -> OrgConfig:
     raw = tomllib.loads(path.read_text(encoding="utf-8"))
     return OrgConfig(
         org=raw["org"], terms=ROOT / raw["terms"], today=date.fromisoformat(raw["today"]),
-        bizapi_url=raw["bizapi_url"].rstrip("/"), decision_backend=raw["decision_backend"],
+        bizapi_url=(os.environ.get("JIKGAM_BIZAPI_URL") or raw["bizapi_url"]).rstrip("/"),
+        decision_backend=raw["decision_backend"],
         question_set=ROOT / raw["question_set"], extra_question_set=ROOT / raw["extra_question_set"],
         applies_threshold=float(raw["applies_threshold"]), agreement_threshold=float(raw["agreement_threshold"]),
+        decline_threshold=float(raw["decline_threshold"]), caller_threshold=float(raw["caller_threshold"]),
+        owner_return_threshold=float(raw["owner_return_threshold"]), addon_threshold=float(raw["addon_threshold"]),
+        identity_unavailable_threshold=float(raw["identity_unavailable_threshold"]),
         generator=raw["generator"], required_notices=tuple(raw["required_notices"]),
         retrieval=_retrieval(raw["retrieval"]), policy=_policy(raw["policy"]),
     )

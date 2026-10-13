@@ -20,9 +20,21 @@
 판단이 바뀌므로 그 제안은 맞지 않는다(docs/data-format.md suggestion_valid 기준).
 
 고객 동의(8단계의 쓰기 조건)는 무효화와 따로 본다. 마지막으로 노출한 제안에 접수 내용이 있고, condition_changed가
-참이 아니고, customer_agreed가 임계값 이상이면 동의 후보다. 정책은 지금 만든 접수 내용의 서명(쓰기 인자와 금액)이
-노출한 것과 같을 때만 쓴다. "네, 그래도 해지해 주세요"처럼 동의하면서 요청 라벨이 cancel_refund에서 cancel로 바뀌어
-제안이 무효화되는 경우가 있어서다(개발용 재생 s20에서 확인).
+참이 아니고, customer_agreed가 임계값 이상이고 customer_declined가 임계값 미만이면 동의 후보다. 정책은 지금 만든 접수
+내용의 서명(쓰기 인자와 금액)이 노출한 것과 같을 때만 쓴다. "네, 그래도 해지해 주세요"처럼 동의하면서 요청 라벨이
+cancel_refund에서 cancel로 바뀌어 제안이 무효화되는 경우가 있어서다(개발용 재생 s20에서 확인). customer_declined가
+임계값 이상이면 같은 접수 내용을 이번 발화에서 다시 묻지 않는다(정책 규칙 12).
+
+통화자 관계(caller)는 첫 판단마다 묻고 코드 규칙으로 갱신한다(_update_caller). 제3자·법정대리인으로 바꾸는 것은
+caller_threshold, 제3자로 본 뒤 본인으로 돌아가는 것은 더 높은 owner_return_threshold가 필요하다. 잘못 본인으로
+돌아가면 제3자에게 본인 확인을 묻게 되고, 잘못 제3자로 보면 본인에게 거절 안내를 하는 데 그치기 때문이다. 통화자가
+바뀌면 이전 제안을 무효화한다(s29: 딸이 거절 안내를 받은 뒤 본인이 전화를 이어받음).
+
+세션 시작 예열(start): 판별 백엔드에 측정 데이터가 아닌 고정 요청을 한 번 보내 연결을 미리 맺는다. warmup 이벤트로
+지연을 남기고 decision.* 이벤트로는 남기지 않는다. 실행기는 세션을 연 직후 start를 부른다.
+
+업무 API 장애(재시도 예산 소진)는 세션이 끝날 때까지 기억한다. 같은 세션에서 그 도구를 다시 부르지 않고 보류한다
+(api.md "재시도 예산 내 1회 재시도 후 접수 보류 안내", 시나리오 s19 "2회를 넘는 quote_refund 호출" 금지).
 """
 
 import asyncio
@@ -39,29 +51,19 @@ from jikgam.eval.questions import load_bank, render
 from . import events as ev
 from . import generate as gen
 from . import policy
-from .bizapi import WRITE_TOOLS, BizApiClient, ToolResult
+from .bizapi import WRITE_TOOLS, BizApiClient, ToolResult, mask_args
 from .claims import extract
 from .events import EventLog, now_ms, parse_utterance
 from .org import OrgConfig
 from .retrieval import ArticleIndex, RetrievalContext, parse_terms
-from .state import Evidence, SessionState, Suggestion, quote_summary
+from .state import GUARDIAN, OWNER, THIRD_PARTY, Evidence, SessionState, Suggestion, quote_summary
 
 MAX_PASSES = 6  # 한 턴에서 도구 결과로 3단계부터 다시 하는 최대 횟수(무한 반복 방지)
 DECISION_RETRYABLE = ("HTTP 429", "HTTP 500", "HTTP 502", "HTTP 503", "HTTP 504", "ConnectError", "ReadTimeout",
                       "ConnectTimeout", "RemoteProtocolError", "ReadError")
 CHANNEL = "chat"
 CONVERSATION_FOR_GENERATION = 8  # 생성 입력에 넣는 최근 대화 수
-
-
-def _mask_args(args: dict[str, Any]) -> dict[str, Any]:
-    """로그용. 인증번호와 계좌번호를 가린다(가상 데이터라도 실제 운영과 같은 습관을 둔다)."""
-    out = dict(args)
-    if "otp" in out:
-        out["otp"] = "*" * len(str(out["otp"]))
-    if "account" in out:
-        digits = str(out["account"]).replace("-", "")
-        out["account"] = "*" * (len(digits) - 3) + digits[-3:]
-    return out
+WARMUP_TEXT = "안녕하세요"  # 예열 요청의 고정 발화(측정 데이터가 아니다)
 
 
 class Session:
@@ -87,6 +89,8 @@ class Session:
         self._task: asyncio.Task | None = None  # 현재 버전의 파이프라인
         self._latest_utt: str | None = None
         self._writes: set[asyncio.Task] = set()
+        self._warmup: asyncio.Future | None = None
+        self._addon_asked: str | None = None  # addon_only를 이미 물은 발화
         self._n_suggestions = 0
         self._n_agent = 0
         self._n_calls = 0
@@ -94,7 +98,40 @@ class Session:
                       generator=getattr(self.generator, "model", None), question_sets=[base_version, extra_version],
                       generation_prompt=gen.PROMPT_VERSION, llm_judge_prompt=llm.PROMPT_VERSION,
                       applies_threshold=org.applies_threshold, agreement_threshold=org.agreement_threshold,
+                      thresholds={"decline": org.decline_threshold, "caller": org.caller_threshold,
+                                  "owner_return": org.owner_return_threshold, "addon": org.addon_threshold,
+                                  "identity_unavailable": org.identity_unavailable_threshold},
                       max_candidates=org.retrieval.max_candidates, bizapi_url=org.bizapi_url, channel=CHANNEL)
+
+    @property
+    def version(self) -> int:
+        """현재 대화 버전(실행기가 자기 이벤트를 같은 로그에 남길 때 쓴다)."""
+        return self.state.version
+
+    # --- 예열 --------------------------------------------------------------------------------
+
+    async def start(self) -> None:
+        """세션을 연 직후 부른다. 판별 백엔드에 고정 요청을 한 번 보내 연결을 미리 맺는다.
+
+        첫 턴이 연결 수립(TLS 등) 비용을 내지 않게 하려는 것이다. 요청과 지연은 warmup 이벤트로 남기고 턴 판단으로 세지
+        않는다. 예열이 끝나기 전에 고객 발화가 오면 handle이 예열을 기다린다(새 연결을 따로 열지 않도록).
+        """
+        if self._warmup is None:
+            self._warmup = asyncio.ensure_future(self._send_warmup())
+        await asyncio.shield(self._warmup)
+
+    async def _send_warmup(self) -> None:
+        state = {"org": self.org.org, "today": self.org.today.isoformat(), "identity_verified": False,
+                 "conversation": [{"speaker": "customer", "text": WARMUP_TEXT, "final": True}], "known_facts": {},
+                 "articles": []}
+        t0 = now_ms()
+        try:
+            res = await self.decider.decide(state, render(["intent"], self.bank))
+        except Exception as e:  # 예열 실패는 세션을 막지 않는다
+            res = DecisionResult(self.backend, "응답 없음", {}, error=f"{type(e).__name__}: {e}")
+        self.log.emit(ev.WARMUP, self.state.version, backend=res.backend, model=res.model,
+                      latency_ms=round(res.latency_ms, 1), wall_ms=round(now_ms() - t0, 1), input_tokens=res.input_tokens,
+                      cost_usd=res.cost_usd, error=res.error)
 
     # --- 입력 --------------------------------------------------------------------------------
 
@@ -118,15 +155,18 @@ class Session:
         self.state.add_turn(utt.utt_id, "customer", utt.text)
         claims = extract(utt.text, self.org.today)
         self.state.add_claims(utt.utt_id, claims)
-        self.state.facts.api_failures.clear()  # 새 발화마다 장애 난 도구를 다시 시도할 기회를 준다
         out.append(self.log.emit(ev.CLAIMS_EXTRACTED, self.state.version, utt_id=utt.utt_id, keys=claims.keys,
                                  phones=list(claims.phones), otps=["*" * len(o) for o in claims.otps],
                                  accounts=len(claims.accounts)))
         self._latest_utt = utt.utt_id
+        if self._warmup is not None and not self._warmup.done():  # 예열 중이면 같은 연결을 쓰도록 기다린다
+            await asyncio.shield(self._warmup)
         await self._drive(utt.utt_id, out)
         return out
 
     async def aclose(self) -> None:
+        if self._warmup is not None and not self._warmup.done():
+            await asyncio.wait({self._warmup})
         if self._writes:
             await asyncio.gather(*self._writes, return_exceptions=True)
         if self._task and not self._task.done():
@@ -173,7 +213,7 @@ class Session:
         try:
             latest = self.state.latest_suggestion()
             pending = latest.proposal if latest else None
-            agreed = False
+            agreed = declined = identity_unavailable = False
             plan: policy.Plan | None = None
             for n_pass in range(MAX_PASSES):
                 first = n_pass == 0
@@ -196,15 +236,21 @@ class Session:
                 labels, probs = self._labels(res, qids)
                 # 5. 근거 선택과 이전 제안 무효화
                 selected = [a for a in result.candidates if probs.get(f"applies:{a}", 0.0) >= self.org.applies_threshold]
+                if "addon_only" in qids and "addon_only" in labels:
+                    self.state.addon_only = probs["addon_only"] >= self.org.addon_threshold
                 if first:
                     intent = labels.get("intent") or self.state.request
-                    self._invalidate(latest, labels, intent, my_v, out)
+                    old_caller = self.state.caller
+                    self._update_caller(labels.get("caller"), probs.get("caller", 0.0))
+                    self._invalidate(latest, labels, intent, old_caller, my_v, out)
                     # 동의는 노출한 접수 내용에 대한 것이다. 제안이 suggestion_valid나 요청 라벨 변화로 무효가 되었어도
                     # 조건 변경이 없고 정책이 지금 만드는 접수 내용(쓰기와 금액)이 같으면 동의로 본다(같은지는 정책이 본다).
-                    if pending is not None and labels.get("condition_changed") != "true":
-                        agreed = probs.get("customer_agreed", 0.0) >= self.org.agreement_threshold
-                    else:
-                        pending, agreed = None, False
+                    # 거절은 조건 변경과 함께 올 수 있으므로("환불이 안 되면 해지 안 해요") 조건 변경과 관계없이 본다.
+                    if pending is not None:
+                        declined = probs.get("customer_declined", 0.0) >= self.org.decline_threshold
+                        agreed = labels.get("condition_changed") != "true" and not declined and \
+                            probs.get("customer_agreed", 0.0) >= self.org.agreement_threshold
+                    identity_unavailable = probs.get("identity_unavailable", 0.0) >= self.org.identity_unavailable_threshold
                     self.state.request = intent
                 sufficient = labels.get("sufficient")
                 self.state.evidence = Evidence(my_v, result.candidates, selected,
@@ -215,14 +261,17 @@ class Session:
                 out.append(self.log.emit(ev.EVIDENCE_UPDATED, my_v, articles=selected, candidates=result.candidates,
                                          applies={a: round(p, 3) for a, p in self.state.evidence.applies.items()},
                                          sufficient=self.state.evidence.sufficient, next_info=labels.get("next_info"),
-                                         action=labels.get("action"), intent=self.state.request, pass_no=n_pass,
-                                         decision_error=res.error))
+                                         action=labels.get("action"), intent=self.state.request, caller=self.state.caller,
+                                         addon_only=self.state.addon_only, pass_no=n_pass, decision_error=res.error))
                 # 7. 정책
                 stage = "policy"
                 plan = policy.decide(self.state, policy.PolicyInput(self.state.request, labels.get("action"),
-                                                                    labels.get("next_info"), agreed, pending),
+                                                                    labels.get("next_info"), agreed, pending,
+                                                                    declined, identity_unavailable),
                                      self.org.policy, self.org.required_notices)
-                out.append(self.log.emit(ev.POLICY_DECIDED, my_v, agreed=agreed, **plan.log()))
+                out.append(self.log.emit(ev.POLICY_DECIDED, my_v, agreed=agreed, declined=declined,
+                                         identity_unavailable=identity_unavailable, caller=self.state.caller,
+                                         **plan.log()))
                 if not plan.has_tool_work:
                     break
                 stage = "tools"
@@ -233,6 +282,7 @@ class Session:
                 out.append(self._bump("tool", cancel=False, tools=tools))
                 my_v = self.state.version
                 agreed = False  # 동의는 쓰기 한 번에만 쓴다
+                identity_unavailable = False  # 도구를 부른 뒤에는(본인 확인 시도 등) 이번 발화의 판단을 다시 쓰지 않는다
             else:
                 plan = policy.Plan("pass_limit", "hold")
                 out.append(self.log.emit(ev.POLICY_DECIDED, my_v, agreed=False, **plan.log()))
@@ -280,7 +330,7 @@ class Session:
     def _question_ids(self, candidates: list[str], first: bool, latest: Suggestion | None) -> list[str]:
         qids: list[str] = []
         if first:
-            qids.append("intent")
+            qids += ["intent", "caller"]
             if self.state.known_facts():
                 qids.append("condition_changed")
         qids += [f"applies:{a}" for a in candidates]
@@ -290,8 +340,24 @@ class Session:
         if first and latest is not None:
             qids.append("suggestion_valid")
             if latest.proposal is not None:
-                qids.append("customer_agreed")
+                qids += ["customer_agreed", "customer_declined"]
+        # 고객이 본인 확인을 마칠 수 없다고 하는가: 본인 확인을 물었거나 한 번 실패한 뒤에만 묻는다
+        last_rule = self.state.suggestions[-1].rule if self.state.suggestions else None
+        if first and not self.state.identity.verified and (self.state.identity.failed or last_rule == "identity_required"):
+            qids.append("identity_unavailable")
+        # 해지 대상이 부가 상품뿐인가: 유효한 부가 상품 구독이 조회됐을 때만, 발화마다 한 번(조회 직후 패스에서도) 묻는다
+        if self._latest_utt != self._addon_asked and policy.addon_subscription(self.state, self.org.policy) is not None:
+            qids.append("addon_only")
+            self._addon_asked = self._latest_utt
         return qids
+
+    def _update_caller(self, label: str | None, p: float) -> None:
+        """통화자 관계를 갱신한다. 제3자·법정대리인으로는 caller_threshold, 제3자·법정대리인에서 본인으로는 더 높은
+        owner_return_threshold가 필요하다(잘못 본인으로 돌아가면 제3자에게 본인 확인을 묻게 된다)."""
+        if label in (THIRD_PARTY, GUARDIAN) and p >= self.org.caller_threshold:
+            self.state.caller = label
+        elif label == OWNER and self.state.caller != OWNER and p >= self.org.owner_return_threshold:
+            self.state.caller = OWNER
 
     async def _decide(self, candidates: list[str], first: bool, latest: Suggestion | None, my_v: int,
                       out: list[dict[str, Any]]) -> tuple[DecisionResult, list[str]]:
@@ -335,8 +401,8 @@ class Session:
                 labels[q], probs[q], _ = label_and_prob(a)
         return labels, probs
 
-    def _invalidate(self, latest: Suggestion | None, labels: dict[str, str], intent: str | None, my_v: int,
-                    out: list[dict[str, Any]]) -> None:
+    def _invalidate(self, latest: Suggestion | None, labels: dict[str, str], intent: str | None, old_caller: str,
+                    my_v: int, out: list[dict[str, Any]]) -> None:
         if latest is None or latest.status != "active":
             return
         reasons = []
@@ -346,6 +412,8 @@ class Session:
             reasons.append("condition_changed=true")
         if intent is not None and latest.intent is not None and intent != latest.intent:
             reasons.append(f"intent_changed:{latest.intent}->{intent}")
+        if self.state.caller != old_caller:
+            reasons.append(f"caller_changed:{old_caller}->{self.state.caller}")
         if reasons:
             latest.status = "invalidated"
             out.append(self.log.emit(ev.SUGGESTION_INVALIDATED, my_v, suggestion_id=latest.id,
@@ -357,7 +425,7 @@ class Session:
         self._n_calls += 1
         call_id = f"c{self._n_calls}"  # 병렬 호출의 결과를 호출과 짝짓는다
         out.append(self.log.emit(ev.TOOL_CALL, self.state.version, request_version=my_v, call_id=call_id,
-                                 tool=call.tool, args=_mask_args(call.args), target=call.target))
+                                 tool=call.tool, args=mask_args(call.args), target=call.target))
         r = await self.biz.call(call.tool, call.args, target=call.target)
         # 서버 상태를 바꾸는 호출(쓰기, 본인 확인)은 버전이 지나도 결과를 반영한다. 조회는 지난 버전이면 버린다.
         stale = self._stale(my_v) and call.tool not in WRITE_TOOLS and call.tool != "verify_identity"
@@ -431,8 +499,14 @@ class Session:
     # --- 생성과 노출 ----------------------------------------------------------------------------
 
     def _generation_payload(self, plan: policy.Plan) -> dict[str, Any]:
+        """생성 입력. 정책이 정한 근거 조항(plan.articles)은 판별의 applies와 관계없이 넣는다.
+
+        - 제3자 거절(plan.detail.refusal): 계정 정보를 알려 주지 않으므로(제15조 제3항) 시스템 사실, 견적, 고객 진술을 뺀다.
+        - 인계·보류: 금액을 확정하지 않으므로 견적을 뺀다(인계 사유는 plan.detail에 있다).
+        """
         f = self.state.facts
-        ids = list(self.state.evidence.selected) if self.state.evidence else []
+        ids = [a for a in plan.articles if a in self.articles]
+        ids += [a for a in (self.state.evidence.selected if self.state.evidence else []) if a not in ids]
         for q in sorted(f.quotes.values(), key=lambda q: q.status != "eligible"):
             ids += [a for a in q.article_ids if a not in ids and a in self.articles]
         for rec in f.receipts.values():
@@ -450,19 +524,28 @@ class Session:
             facts["refund_account_rejections"] = f.account_rejections
         if f.api_failures:
             facts["api_failures"] = f.api_failures
+        quotes = {r: quote_summary(q) for r, q in f.quotes.items()}
+        if plan.detail.get("refusal"):
+            facts, quotes, claims = {}, {}, {}
+        elif plan.action in ("handoff", "hold"):
+            quotes = {}
         return {
             "today": self.org.today.isoformat(),
             "plan": {"action": plan.action, "rule": plan.rule, "ask": plan.ask, "next_info": plan.next_info,
                      "notices": list(plan.notices), "proposal": plan.proposal.summary if plan.proposal else None,
                      "detail": plan.detail},
             "intent": self.state.request,
+            "caller": self.state.caller,
             "identity_verified": self.state.identity.verified,
             "sufficient": self.state.evidence.sufficient if self.state.evidence else None,
             "articles": [{"id": a, "title": self.articles[a].title, "type": self.articles[a].type,
                           "text": self.articles[a].text} for a in ids],
-            "quotes": {r: quote_summary(q) for r, q in f.quotes.items()},
+            "quotes": quotes,
             "system_facts": facts,
             "customer_claims": claims,
+            # 고객 계정 일을 다루는 응답이면 환불이 된다는 말에 대상 견적이 있어야 한다(generate.allowed_from)
+            "refund_claims_need_quote": self.state.identity.verified or self.state.caller != OWNER or
+            self.state.request in self.org.policy.records_intents,
             "conversation": [{"speaker": t.speaker, "text": t.text}
                              for t in self.state.conversation[-CONVERSATION_FOR_GENERATION:]],
         }
@@ -488,6 +571,7 @@ class Session:
         self.state.add_turn(f"a{self._n_agent}", "agent", g.say)  # 엔진 발화는 버전을 올리지 않는다
         s.exposed = True
         t = now_ms()
-        out.append(self.log.emit(ev.AGENT_SAY, my_v, t_ms=t, text=g.say, suggestion_id=sid))
+        out.append(self.log.emit(ev.AGENT_SAY, my_v, t_ms=t, text=g.say, suggestion_id=sid, cited_articles=g.cited_articles,
+                                 amount=g.amount, amount_final=g.amount_final))
         out.append(self.log.emit(ev.SUGGESTION_EXPOSED, my_v, t_ms=t, suggestion_id=sid, channel=CHANNEL,
                                  start_ms=t, end_ms=t))

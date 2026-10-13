@@ -17,23 +17,32 @@ class ScriptedDecider:
 
     intents: (낱말, intent) 목록. 맞는 낱말이 없으면 known_facts.request(직전 판단)를 유지한다.
     changes: 이 낱말이 있으면 condition_changed=참, suggestion_valid=거짓.
-    agree: 이 낱말이 있으면 customer_agreed=참.
+    agree: 이 낱말이 있으면 customer_agreed=참. decline: 이 낱말이 있으면 customer_declined=참.
+    callers: (낱말, 관계) 목록. 고객 발화 전체에서 마지막으로 맞은 낱말의 관계(없으면 owner)를 caller로 답한다.
+    addon: 고객 발화 중 하나에 이 낱말이 있으면 addon_only=참. unavailable: 마지막 발화에 있으면 identity_unavailable=참.
     """
 
     name = "fake"
 
-    def __init__(self, intents=(), changes=(), agree=("네",), action="answer", next_info="none", invalid=()):
+    def __init__(self, intents=(), changes=(), agree=("네",), action="answer", next_info="none", invalid=(),
+                 decline=(), callers=(), addon=(), unavailable=(), caller_p=0.9):
         self.intents = list(intents)
         self.changes = tuple(changes)
         self.invalid = tuple(invalid)  # 이 낱말이 있으면 condition_changed는 그대로 두고 suggestion_valid만 거짓
         self.agree = tuple(agree)
+        self.decline = tuple(decline)
+        self.callers = list(callers)
+        self.addon = tuple(addon)
+        self.unavailable = tuple(unavailable)
+        self.caller_p = caller_p
         self.action = action
         self.next_info = next_info
         self.calls: list[tuple[dict, list[str]]] = []
 
     async def decide(self, state: dict, questions: dict) -> DecisionResult:
         self.calls.append((state, list(questions)))
-        last = [u["text"] for u in state["conversation"] if u["speaker"] == "customer"][-1]
+        texts = [u["text"] for u in state["conversation"] if u["speaker"] == "customer"]
+        last = texts[-1]
         changed = any(k in last for k in self.changes)
         answers: dict[str, Any] = {}
         for q, d in questions.items():
@@ -41,6 +50,17 @@ class ScriptedDecider:
                 intent = next((i for k, i in self.intents if k in last), None) or \
                     state["known_facts"].get("request") or "unclear"
                 answers[q] = choice(d["criteria"], intent)
+            elif q == "caller":
+                who = "owner"
+                for t in texts:
+                    who = next((c for k, c in self.callers if k in t), who)
+                answers[q] = choice(d["criteria"], who, self.caller_p)
+            elif q == "addon_only":
+                answers[q] = {"type": "noul", "noul": 0.9 if any(k in t for t in texts for k in self.addon) else 0.1}
+            elif q == "identity_unavailable":
+                answers[q] = {"type": "noul", "noul": 0.9 if any(k in last for k in self.unavailable) else 0.1}
+            elif q == "customer_declined":
+                answers[q] = {"type": "noul", "noul": 0.9 if any(k in last for k in self.decline) else 0.05}
             elif q == "condition_changed":
                 answers[q] = {"type": "noul", "noul": 0.9 if changed else 0.1}
             elif q == "suggestion_valid":
