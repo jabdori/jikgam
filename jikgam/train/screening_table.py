@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 
 from jikgam.train.data import ROOT
+from jikgam.train.screen import metrics
 
 DIR = ROOT / "results/training/val-screening"
 RUNS = ROOT / "results/training/runs"
@@ -22,6 +23,10 @@ def main() -> None:
         run = s["run"]
         meta_path = RUNS / f"{run}.json"
         meta = json.loads(meta_path.read_text(encoding="utf-8")) if meta_path.is_file() else {}
+        # 보정 전 지표는 반올림해 저장한 summary 대신 저장된 예측(predictions.jsonl)으로 다시 계산한다.
+        # 반올림한 값을 다시 반올림하면 표의 마지막 자리가 틀린다(2026-10-14 독립 검토).
+        preds = [json.loads(line) for line in (d / "predictions.jsonl").read_text(encoding="utf-8").splitlines()]
+        s["uncalibrated"] = metrics(preds)
         rows.append((d.name, s, meta))
 
     L = ["# val 선별 결과", "",
@@ -29,7 +34,8 @@ def main() -> None:
          f"val을 쓴 선별 구성: {len(rows)}개(보정 변형은 아래 열로 함께 적고 따로 세지 않는다). "
          "모델은 서빙과 같은 방식(병합 모델, 16비트, 최대 16,384 토큰)으로 올려 `FastDecisionModel.predict`로 답했다. "
          "정확도·ECE는 저장소 정의(`jikgam.eval.metrics`)다. 보정 후 ECE는 val 전체로 맞춘 온도로 다시 예측한 표본 내 값이고, "
-         "Unsloth 교차 적합 ECE는 `FastDecisionModel.calibrate`가 val 사례를 반씩 나눠 계산한 값(Unsloth 정의)이다.", "",
+         "Unsloth 교차 적합 ECE는 `FastDecisionModel.calibrate`가 val 사례를 반씩 나눠 계산한 값(Unsloth 정의)이다. "
+         "보정 전 지표는 저장된 예측으로 다시 계산하고, 보정 후·Unsloth ECE는 예측을 저장하지 않아 summary.json의 값(소수 넷째 자리 반올림)을 옮긴다.", "",
          "| 선별 | 기반 모델 | 학습 구성 | 학습 문구 | 평가 문구 | 정확도 | ECE | 보정 후 ECE(표본 내) | Unsloth 교차 적합 ECE | 학습 분 | 최대 GPU GB |",
          "|---|---|---|---|---|---|---|---|---|---|---|"]
     for name, s, meta in rows:

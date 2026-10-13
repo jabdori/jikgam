@@ -52,6 +52,7 @@ def predict_all(model, processor, rows) -> list[dict]:
 
 
 def metrics(preds: list[dict]) -> dict:
+    """반올림하지 않은 값을 낸다. 표에 쓸 때 한 번만 반올림한다."""
     ds = []
     for p in preds:
         for qid, gold in p["gold"].items():
@@ -61,7 +62,7 @@ def metrics(preds: list[dict]) -> dict:
 
     def acc(sub):
         return {"correct": sum(d["correct"] for d in sub), "n": len(sub),
-                "accuracy": round(sum(d["correct"] for d in sub) / len(sub), 4) if sub else None}
+                "accuracy": sum(d["correct"] for d in sub) / len(sub) if sub else None}
 
     by_type = defaultdict(list)
     by_tag = defaultdict(list)
@@ -73,12 +74,12 @@ def metrics(preds: list[dict]) -> dict:
     for q in NOUL & set(by_type):
         sub = by_type[q]
         golds = {d["gold"] for d in sub}
-        noul[q] = {"balanced_accuracy": round(balanced_accuracy([d["pred"] for d in sub], [d["gold"] for d in sub]), 4)
+        noul[q] = {"balanced_accuracy": balanced_accuracy([d["pred"] for d in sub], [d["gold"] for d in sub])
                    if len(golds) == 2 else None,
-                   "pred_true_ratio": round(sum(d["pred"] == "true" for d in sub) / len(sub), 4)}
+                   "pred_true_ratio": sum(d["pred"] == "true" for d in sub) / len(sub)}
     return {
-        "overall": {**acc(ds), "ece": round(ece([d["prob"] for d in ds], [d["correct"] for d in ds]), 4)},
-        "by_qtype": {q: {**acc(sub), "ece": round(ece([d["prob"] for d in sub], [d["correct"] for d in sub]), 4)}
+        "overall": {**acc(ds), "ece": ece([d["prob"] for d in ds], [d["correct"] for d in ds])},
+        "by_qtype": {q: {**acc(sub), "ece": ece([d["prob"] for d in sub], [d["correct"] for d in sub])}
                      for q, sub in sorted(by_type.items())},
         "noul": noul,
         "by_tag": {t: acc(sub) for t, sub in sorted(by_tag.items())},

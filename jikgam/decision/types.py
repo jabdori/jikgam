@@ -50,7 +50,8 @@ def label_and_prob(answer: dict[str, Any]) -> tuple[str, float, dict[str, float]
     if answer["type"] == "noul":
         p = float(answer["noul"])
         dist = {"true": p, "false": 1.0 - p}
-    else:
-        dist = {k: float(v) for k, v in answer["probabilities"].items()}
+        label = "true" if p >= 0.5 else "false"  # 확률이 정확히 0.5면 true(docs/evaluation.md §2.3 보완)
+        return label, dist[label], dist
+    dist = {k: float(v) for k, v in answer["probabilities"].items()}
     label = max(dist, key=lambda k: (dist[k], k == answer.get("choice")))
     return label, dist[label], dist
