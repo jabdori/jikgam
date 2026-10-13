@@ -1,0 +1,14 @@
+{
+  "run": "q35-2b-b",
+  "dataset": "LocalLLaMA/typed-decisions all/test",
+  "report": {
+    "total": 2000,
+    "skipped": 0,
+    "reason": null,
+    "truncated": 0
+  },
+  "accuracy": 0.7875,
+  "ece": 0.16078875407576562,
+  "loss": 0.8472527112681418,
+  "record_accuracy": 0.37
+}
