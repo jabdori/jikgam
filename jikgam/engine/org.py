@@ -53,6 +53,7 @@ class PolicyConfig:
     guardian_reasons: tuple[str, ...]  # 법정대리인이 요청할 수 있는 견적 사유
     guardian_articles: tuple[str, ...]  # 법정대리인 요청의 근거 조항
     minor_age: int
+    window_days: int | None  # 결제 후 기간 제한이 있는 사유(청약철회, 장애 환불)의 기간. 날짜로 불가능한 사유는 견적을 묻지 않는다
     quote_priority: tuple[str, ...]
     quote_reasons: dict[str, tuple[str, ...]]
 
@@ -110,6 +111,7 @@ def _policy(raw: dict[str, Any]) -> PolicyConfig:
         addon_articles=tuple(raw.get("addon_articles", ())),
         third_party_articles=tuple(raw.get("third_party_articles", ())), guardian_reasons=guardian,
         guardian_articles=tuple(raw.get("guardian_articles", ())), minor_age=int(raw["minor_age"]),
+        window_days=int(raw["window_days"]) if "window_days" in raw else None,
         quote_priority=priority, quote_reasons=reasons,
     )
 

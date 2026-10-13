@@ -133,13 +133,21 @@ def addon_subscription(state: SessionState, cfg: PolicyConfig) -> dict | None:
     return addons[0] if len(addons) == 1 else None
 
 
+def _within_window(pay: dict, state: SessionState, cfg: PolicyConfig) -> bool:
+    """결제일 다음 날을 1일째로 세어 기간 마지막 날까지인가. 기간 설정이 없으면 거르지 않는다."""
+    if cfg.window_days is None:
+        return True
+    return state.today <= date.fromisoformat(pay["date"]) + timedelta(days=cfg.window_days)
+
+
 def _plausible(reason: str, sub: dict, state: SessionState, cfg: PolicyConfig) -> bool:
     """이 견적 사유를 물어볼 만한가(시스템 사실로 거른다). 자격 판단은 하지 않는다(업무 API가 한다)."""
     pay = current_payment(state, sub["subscription_id"])
-    if reason == "withdrawal":
-        return pay is not None
-    if reason == "incident":
-        return pay is not None and bool(state.facts.incidents)
+    if reason in ("withdrawal", "incident"):
+        # 날짜로 이미 불가능한 사유는 묻지 않는다(설계 원칙: 날짜 비교는 코드로). 기간 판단만 하고 자격은 업무 API가 정한다.
+        if pay is None or not _within_window(pay, state, cfg):
+            return False
+        return reason == "withdrawal" or bool(state.facts.incidents)
     if reason == "annual_cancel":
         return pay is not None and sub.get("plan") == "annual"
     if reason == "duplicate":

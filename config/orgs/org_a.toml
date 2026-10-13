@@ -158,6 +158,9 @@ third_party_articles = ["A-15"]
 guardian_reasons = ["minor"]
 guardian_articles = ["A-13", "A-15", "A-19"]
 minor_age = 19                  # 제13조. 결제 당시 이 나이 미만이면 미성년자 사유를 견적한다.
+# 청약철회(제5조)와 장애 전액 환불(제9조 제2항)의 결제 후 기간(제2조 제7항: 결제일 다음 날이 1일째).
+# 이 기간이 지났으면 두 사유는 견적을 묻지 않는다. 자격 판단은 여전히 업무 API가 한다.
+window_days = 7
 # 견적이 여럿 대상일 때 고르는 순서. 같은 금액이면 일반 규정(제5조)을 예외(제9조 제2항)보다 앞에 둔다.
 # 중복 결제는 구독을 유지하므로(제10조 제3항) 해지를 수반하는 사유보다 앞에 둔다.
 quote_priority = ["minor", "duplicate", "withdrawal", "incident", "annual_cancel", "trial_cancel", "plan_change"]

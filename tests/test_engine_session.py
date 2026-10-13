@@ -180,7 +180,7 @@ def test_s20_agreement_counts_when_intent_label_shifts(bizapi, tmp_path):
         return s, outs
 
     s, outs = asyncio.run(go())
-    assert tool_calls(outs[2]) == ["quote_refund", "quote_refund"]  # 해지만 해도 환불 여부는 견적으로 확인한다
+    assert tool_calls(outs[2]) == []  # 결제(10-02) 후 7일이 지나 기간 사유는 견적을 묻지 않는다(s20 expected에도 견적이 없다)
     assert types(outs[2], ev.SUGGESTION_CREATED)[-1]["proposal"]["writes"] == ["create_cancellation"]
     assert types(outs[4], ev.SUGGESTION_INVALIDATED)  # 라벨 변화와 suggestion_valid=false로 무효화는 된다
     assert tool_calls(outs[4]) == ["create_cancellation"]

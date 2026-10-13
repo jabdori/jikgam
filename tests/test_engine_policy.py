@@ -326,10 +326,21 @@ def test_addon_only_cancels_addon_without_quote_or_refund():
     assert w.rule == "writes" and w.writes[0].target == "cancel:S014F"
     st.facts.receipts["cancel:S014F"] = {"subscription_id": "S014F", "last_usable_date": "2026-10-29"}
     assert decide(st, inp("cancel"), CFG, NOTICES).rule == "received"
-    # 부가 상품만이 아니면 본 구독을 대상으로 견적한다
+    # 부가 상품만이 아니면 본 구독을 대상으로 한다. 결제(09-30) 후 7일이 지나 청약철회·장애 환불은 날짜로 불가능하므로
+    # 견적 없이 본 구독 해지를 안내한다.
     st = _c014()
     p = decide(st, inp("cancel"), CFG, NOTICES)
-    assert p.rule == "quote" and "addon_only" not in p.detail
+    assert p.rule == "proposal" and p.quote_reasons == () and "addon_only" not in p.detail
+
+
+def test_window_reasons_are_filtered_by_date():
+    """청약철회·장애 환불은 결제일 다음 날부터 7일째까지만 견적을 묻는다(날짜 비교는 코드로, 자격은 업무 API로)."""
+    from datetime import date
+    from jikgam.engine.policy import _within_window
+    from jikgam.engine.state import SessionState
+    st = SessionState("org_a", date(2026, 10, 12))
+    assert _within_window({"date": "2026-10-05"}, st, CFG)      # 10-12가 7일째
+    assert not _within_window({"date": "2026-10-04"}, st, CFG)  # 8일째
 
 
 def test_declined_proposal_is_not_asked_again_and_not_written():
