@@ -696,7 +696,8 @@ async def judge_session(scn: dict[str, Any], run_dir: Path, session_id: str, cli
     record = await ai_judge(scn, events, client)
     record["session"] = session_id
     record["scenario"] = scn["id"]
-    judge_path(run_dir, session_id).write_text(json.dumps(record, ensure_ascii=False, indent=1), encoding="utf-8")
+    judge_path(run_dir, session_id).write_text(json.dumps(record, ensure_ascii=False, indent=1), encoding="utf-8",
+                                               newline="\n")
     return record
 
 

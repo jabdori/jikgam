@@ -254,7 +254,8 @@ def select(scenarios: list[dict[str, Any]], spec: str) -> list[dict[str, Any]]:
 
 
 def write_summary(run_dir: Path, summary: dict[str, Any]) -> None:
-    (run_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding="utf-8")
+    (run_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding="utf-8",
+                                          newline="\n")
 
 
 async def run(args: argparse.Namespace) -> Path:
