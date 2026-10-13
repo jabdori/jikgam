@@ -91,8 +91,11 @@ class GeminiJudgeClient:
         usage = data.get("usageMetadata") or {}
         tin = int(usage.get("promptTokenCount", 0))
         thoughts = int(usage.get("thoughtsTokenCount", 0))
-        tout = int(usage.get("candidatesTokenCount", 0)) + thoughts
-        result = DecisionResult(self.name, str(data.get("modelVersion", self.model)), {}, input_tokens=tin,
+        # 출력 과금은 사고 토큰을 포함한다. 사고 토큰 필드가 빠져도 합계에서 빼서 구한다.
+        total = usage.get("totalTokenCount")
+        tout = int(total) - tin if total is not None else int(usage.get("candidatesTokenCount", 0)) + thoughts
+        model = data.get("modelVersion") or f"{self.model} (응답에 모델 없음)"
+        result = DecisionResult(self.name, str(model), {}, input_tokens=tin,
                                 output_tokens=tout, latency_ms=latency,
                                 cost_usd=(tin * self.price_in + tout * self.price_out) / 1e6,
                                 meta={"thoughts_tokens": thoughts, "response_id": data.get("responseId")})

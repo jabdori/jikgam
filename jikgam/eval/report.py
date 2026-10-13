@@ -144,7 +144,9 @@ def render(metas: list[dict], cases: dict, raw: list[dict]) -> str:
         if not sub:
             return "-"
         pred_true = sum(d["pred"] == "true" for d in sub) / len(sub)
-        return f"{pct(balanced_accuracy([d['pred'] for d in sub], [d['gold'] for d in sub]))} / 예측 true {pct(pred_true)}"
+        golds = {d["gold"] for d in sub}
+        bal = pct(balanced_accuracy([d['pred'] for d in sub], [d['gold'] for d in sub])) if len(golds) == 2 else "정의 안 됨(정답이 한 종류)"
+        return f"{bal} / 예측 true {pct(pred_true)}"
 
     gold_true = {q: [d for d in ds if d["qtype"] == q and d["backend"] == backends[0]] for q in NOUL}
     table("noul 질문: 균형 정확도 / 예측 true 비율", [(f"{q} (정답 true {pct(sum(d['gold'] == 'true' for d in gold_true[q]) / len(gold_true[q]))})", q)

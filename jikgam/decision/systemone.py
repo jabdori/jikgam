@@ -47,7 +47,7 @@ class SystemOneClient:
         answers = {back[k]: v for k, v in (data.get("answers") or {}).items() if k in back}
         missing = [q for q in questions if q not in answers]
         return DecisionResult(
-            backend=self.name, model=str(data.get("model", self.model)), answers=answers,
+            backend=self.name, model=str(data.get("model") or f"{self.model} (응답에 모델 없음)"), answers=answers,
             input_tokens=tin, output_tokens=tout, latency_ms=latency,
             cost_usd=(tin * self.price_in + tout * self.price_out) / 1e6,
             error=f"답 없음: {missing}" if missing else None, meta=meta,
