@@ -81,12 +81,25 @@ val 기준선(판단 152개, 질문 세트 `q-2026.10.12`, 1차 실행, 검토 �
 - 질문 문구 v2 실험(`data/question_sets/`): 라벨 기준 문서의 규칙을 질문 문구로 옮긴 한국어판과, 내용이 같은 영어판. 실험 전에 두 변형을 커밋해 고정했다(`4deb73f`).
 - 채팅 엔진 구현(별도 브랜치), 2차 val 실행의 독립 대조.
 
+### 학습 전용 보강 사례
+
+한 일:
+
+- val에서 확인된 실패 유형 9가지(유형 설명만 받고 val·test 사례는 열지 않음)와 부족했던 `partial_stt`, `stt_error`, `next_info`의 `payment_date`·`usage`, `hold`를 겨냥해 train 전용 사례 104건(대화 그룹 38개, `a001`~`a038`)을 `data/cases_aug/batch_a.jsonl`에 썼다. 요약과 분포는 `data/cases_aug/README.md`.
+- `scripts/build_dataset.py --aug`: 같은 검증기로 보강 사례를 검사하고 `data/build/train_aug.jsonl`(split `train_aug`)을 쓴다. 기본 실행 산출물과 `splits.json`은 바이트 단위로 그대로다(test sha256 `5251d7d814279bf4`).
+- 무작위 26건(25%)을 정답을 지운 채 별도 에이전트가 문서만 보고 재판정했다. 186/186 일치, 수정 없음. 같은 계열 모델이라 독립 검토를 대신하지 않는다.
+
+결정과 이유:
+
+- 보강 사례는 분할에 넣지 않고 별도 파일로 낸다. val·test 구성과 고정한 test 해시를 바꾸지 않고, 학습 효과는 val로만 재기 위해서다.
+- applies 정답이 true로 쏠리지 않게 헷갈리는 조항과 무관한 조항의 false 질문을 함께 넣었다(true 195 / false 180).
+
 ## 다음 할 일
 
 - 질문 문구 실험 결과로 판별 백엔드와 질문 세트를 정하고 ADR로 남기기
 - 채팅 엔진 확인·병합, 고정 대화 재생과 AI 고객 시뮬레이터, 정책 A~D 실행
 - test 20건 사용자 검토 자료 준비(`docs/evaluation.md` §8)
-- Jev 확률 보정(val), 한국어 튜닝 준비: train 사례 보강(실패 유형 기준), Unsloth 학습 형식 확인, 토큰화 확인
+- Jev 확률 보정(val), 한국어 튜닝 준비: 보강 사례(`train_aug`) 독립 표본 검토, Unsloth 학습 형식 확인, 토큰화 확인
 - 상담 실무 경험자에게 사례 일부와 시나리오 검토 받기
-- `partial_stt`, `next_info`의 `payment_date`·`usage`, `hold` 사례 보강(train/val로만 배정됨)
+- 보강 사례에서 아직 적은 `next_info`(account·payment_date·usage·payment_method)와 `hold`·`handoff` 추가
 - 확인 필요: Jev 출력의 학습 이용 약관
