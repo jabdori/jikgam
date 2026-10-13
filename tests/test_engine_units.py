@@ -9,7 +9,7 @@ import pytest
 
 from jikgam.engine import events as ev
 from jikgam.engine.bizapi import ToolResult
-from jikgam.engine.generate import GenerationResult, allowed_from, check, generate_checked, sanitize
+from jikgam.engine.generate import GenerationResult, allowed_from, check, generate_checked, refund_claims, sanitize
 from jikgam.engine.org import load_org
 from jikgam.engine.retrieval import Article, ArticleIndex, RetrievalContext, parse_terms, tokens
 from jikgam.engine.state import SessionState
@@ -160,6 +160,62 @@ def test_generate_checked_retries_with_feedback_then_falls_back():
     assert r.fallback and "원" not in r.say and r.amount is None and len(r.violations) == 2
 
 
+def test_refund_claims_detect_conditional_and_plain_claims_but_not_negations():
+    claims = ["원하시면 해지하고 전액 환불받으실 수 있습니다.", "연장 보상을 원하지 않으시면 해지하고 환불받으실 수 있습니다.",
+              "환불이 가능합니다.", "해지하시면 9,900원 전액 환불해 드립니다.", "청약철회로 환불됩니다.", "환불 대상입니다.",
+              "돌려받으실 수 있어요.", "환불받으실 수 있지만 위약금이 있습니다."]
+    not_claims = ["환불되지 않습니다.", "환불은 불가합니다.", "환불해 드릴 수 없습니다.", "환불이 어렵습니다.",
+                  "환불 가능 여부를 확인하기 위해 본인 확인이 필요합니다.", "환불이 가능한지 확인해 드리겠습니다.",
+                  "해지·환불은 계정 소유자 본인만 신청하실 수 있습니다.", "환불 대상에 해당하지 않습니다.",
+                  "이미 결제한 부가 상품 요금은 환불되지 않습니다.", "환불은 원래 결제 수단으로 진행되며 3~7영업일이 걸립니다."]
+    assert all(refund_claims(s) for s in claims)
+    assert not any(refund_claims(s) for s in not_claims)
+
+
+def test_refund_claim_without_quote_is_a_violation_only_for_account_cases():
+    """s21: 연장 보상을 안내하며 견적 없이 '해지하면 전액 환불'을 말하면 위반이다. 대상 견적이 있거나 계정과 무관한
+    일반 안내면 위반이 아니다."""
+    say = GenerationResult("연장 보상이 가능하며, 원하시면 해지하고 전액 환불받으실 수 있습니다.", [], None, False, "m")
+    no_quote = {"plan": {"action": "answer"}, "articles": [], "quotes": {}, "system_facts": {"payments": [{"amount": 9900}]},
+                "refund_claims_need_quote": True}
+    problems = check(say, allowed_from(no_quote, TODAY), TODAY)
+    assert len(problems) == 1 and "환불" in problems[0]
+    zero = dict(no_quote, quotes={"withdrawal": {"status": "not_eligible"}, "trial_cancel": {"status": "zero"}})
+    assert check(say, allowed_from(zero, TODAY), TODAY)  # 대상 아님·0원 견적은 근거가 아니다
+    assert check(say, allowed_from(PAYLOAD, TODAY), TODAY) == []  # 대상 견적이 있다
+    receipt = dict(no_quote, system_facts={"receipts": {"refund:P010": {"amount": 9900}}})
+    assert check(say, allowed_from(receipt, TODAY), TODAY) == []
+    general = dict(no_quote, refund_claims_need_quote=False)  # 가입 전 일반 문의: 약관 일반 내용으로 설명할 수 있다
+    assert check(say, allowed_from(general, TODAY), TODAY) == []
+    ok = GenerationResult("이용 기간 연장으로 보상해 드릴 수 있습니다. 환불 가능 여부는 따로 확인해야 합니다.", [], None, False, "m")
+    assert check(ok, allowed_from(no_quote, TODAY), TODAY) == []
+
+
+def test_generate_checked_regenerates_then_falls_back_on_unbacked_refund_claim():
+    payload = {"plan": {"action": "answer", "ask": None}, "articles": [], "quotes": {}, "system_facts": {},
+               "refund_claims_need_quote": True}
+    g = _BadThenGood(["해지하시면 전액 환불됩니다.", "연장 보상으로 처리할 수 있습니다."])
+    r = asyncio.run(generate_checked(g, payload, TODAY))
+    assert r.say == "연장 보상으로 처리할 수 있습니다." and r.attempts == 2 and "환불" in g.feedback[1]
+    g = _BadThenGood(["해지하시면 전액 환불됩니다.", "그래도 환불받으실 수 있어요."])
+    r = asyncio.run(generate_checked(g, payload, TODAY))
+    assert r.fallback and not refund_claims(r.say)
+
+
+def test_bizapi_url_env_override(monkeypatch):
+    monkeypatch.setenv("JIKGAM_BIZAPI_URL", "http://127.0.0.1:8083/")
+    assert load_org("org_a").bizapi_url == "http://127.0.0.1:8083"
+    monkeypatch.delenv("JIKGAM_BIZAPI_URL")
+    assert load_org("org_a").bizapi_url == "http://127.0.0.1:8081"
+
+
+def test_org_policy_config_for_caller_and_addon():
+    p = ORG.policy
+    assert p.third_party_articles == ("A-15",) and p.guardian_reasons == ("minor",)
+    assert p.addon_articles == ("A-18",) and "cancel" in p.addon_intents
+    assert ORG.caller_threshold < ORG.owner_return_threshold
+
+
 # --- 상태 ---
 
 def test_apply_tool_results_and_known_facts():
@@ -199,5 +255,8 @@ def test_extra_question_set_is_disjoint_and_renders():
     assert version.startswith("engine-extra-") and not set(base) & set(extra)
     q = render(["customer_agreed"], {**base, **extra})["customer_agreed"]
     assert q["type"] == "noul" and "previous_suggestion" in q["instructions"]
+    caller = render(["caller"], extra)["caller"]
+    assert caller["type"] == "choice" and set(caller["criteria"]) == {"owner", "third_party", "guardian"}
+    assert {"customer_declined", "addon_only", "identity_unavailable"} <= set(extra)
     raw = json.loads(ORG.extra_question_set.read_text(encoding="utf-8"))
     assert set(raw) == {"_note", "version", "questions"}

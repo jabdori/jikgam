@@ -1,10 +1,31 @@
 {
-  "_note": "상담 엔진만 쓰는 추가 질문. 판별 데이터(data/build)와 val 기준선에는 없는 질문이라 정확도를 잰 적이 없다. data/questions.json과 같은 형식이며 질문 ID가 겹치지 않는다. 문구를 바꾸면 버전을 올린다.",
-  "version": "engine-extra-2026.10.14",
+  "_note": "상담 엔진만 쓰는 추가 질문. 판별 데이터(data/build)와 val 기준선에는 없는 질문이라 정확도를 잰 적이 없다. data/questions.json과 같은 형식이며 질문 ID가 겹치지 않는다. 문구를 바꾸면 버전을 올린다. -2: caller, addon_only, identity_unavailable, customer_declined 추가(customer_agreed 문구는 그대로).",
+  "version": "engine-extra-2026.10.14-2",
   "questions": {
     "customer_agreed": {
       "type": "noul",
       "instructions": "state.previous_suggestion은 상담 엔진이 고객에게 접수할 내용을 안내하고 그대로 진행해도 되는지 물은 메시지다. 고객의 마지막 발화가 그 내용 그대로 진행하는 데 동의하는가? 조건을 바꾸거나, 다른 요청을 하거나, 되묻거나, 망설이거나, 거절하면 동의가 아니다."
+    },
+    "customer_declined": {
+      "type": "noul",
+      "instructions": "state.previous_suggestion은 상담 엔진이 고객에게 접수할 내용을 안내하고 그대로 진행해도 되는지 물은 메시지다. 고객의 마지막 발화가 그 접수를 진행하지 말라는 뜻인가? 되묻기나 망설임은 거절이 아니다."
+    },
+    "caller": {
+      "type": "choice",
+      "instructions": "마지막 고객 발화를 한 사람은 처리하려는 계정의 소유자와 어떤 관계인가? 통화 중에 전화를 바꿨으면 바꾼 뒤의 사람을 기준으로 한다.",
+      "criteria": {
+        "owner": "계정 소유자 본인이거나, 본인이 아니라는 단서가 없다",
+        "third_party": "가족이나 지인 등 다른 사람이 계정 소유자를 대신해 요청한다(성인 회원의 가족 포함)",
+        "guardian": "미성년자(만 19세 미만) 회원의 부모 등 법정대리인이 그 미성년자의 결제나 구독에 대해 요청한다"
+      }
+    },
+    "addon_only": {
+      "type": "noul",
+      "instructions": "고객이 해지하거나 정리하려는 대상이 본 구독이 아니라 부가 상품(가족 공유 등)뿐이고, 본 구독은 유지하려 하는가?"
+    },
+    "identity_unavailable": {
+      "type": "noul",
+      "instructions": "고객의 마지막 발화가 본인 확인을 마칠 수 없다는 뜻인가? 예: 인증번호를 받을 수 없다, 다른 번호가 없다, 가입한 적이 없다."
     }
   }
 }

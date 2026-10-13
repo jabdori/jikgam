@@ -43,6 +43,8 @@ GENERATION_RESPONSE = "generation.response"
 TASK_CANCELLED = "task.cancelled"
 ENGINE_ERROR = "engine.error"
 AGENT_SAY = "agent.say"
+WARMUP = "warmup"  # 세션 시작 예열 요청. 턴 판단(decision.*)으로 세지 않는다
+FAULT_INJECTED = "fault.injected"  # 재생 실행기가 모의 업무 API에 장애를 주입함(재생 파일의 faults)
 
 SPEAKERS = ("customer", "agent")
 

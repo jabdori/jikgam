@@ -10,8 +10,14 @@ question_set = "data/question_sets/q-2026.10.14-mix.json"   # ADR 0011
 # 엔진만 쓰는 추가 질문(고객 동의). 판별 데이터의 질문 세트와 섞지 않는다.
 extra_question_set = "data/question_sets/extra/engine-extra.json"
 applies_threshold = 0.5
-# 고객 동의 질문의 임계값. val로 잰 적이 없는 질문이라 noul 기본값 0.5를 쓴다.
-agreement_threshold = 0.5
+# 엔진 전용 질문(engine-extra)의 임계값. 모두 val로 잰 적이 없는 질문이라 기본값 0.5를 쓰고,
+# 잘못 넘어갔을 때 위험한 쪽(제3자에게 본인 확인을 묻게 되는 쪽)만 높게 둔다.
+agreement_threshold = 0.5             # customer_agreed: 안내한 접수 내용에 동의
+decline_threshold = 0.5               # customer_declined: 안내한 접수를 원하지 않음
+caller_threshold = 0.5                # caller: 통화자를 제3자나 법정대리인으로 볼 확률(choice의 그 선택지 확률)
+owner_return_threshold = 0.7          # caller: 제3자로 본 뒤 본인이 이어받았다고 볼 확률(s29처럼 전화를 바꾼 경우)
+addon_threshold = 0.5                 # addon_only: 해지 대상이 부가 상품뿐
+identity_unavailable_threshold = 0.5  # identity_unavailable: 고객이 본인 확인을 마칠 수 없다고 말함
 generator = "gemini-flash"      # config/decision_models.toml의 이름(모델 ID, 키, 단가를 그대로 쓴다)
 required_notices = ["환불 예정액과 산정 근거", "환불 방법과 예상 소요 기간", "이용 가능한 마지막 날"]
 
@@ -141,6 +147,16 @@ refundable_reasons = ["withdrawal", "incident", "annual_cancel", "duplicate"]
 # 해지만 요청해도 환불을 함께 접수하는 사유. 연 구독 중도 해지는 해지 자체가 환불을 수반한다(제8조 제1항).
 cancel_refund_reasons = ["annual_cancel"]
 addon_plans = ["family_addon"]
+# 부가 상품만 해지(제18조 제2항): 다음 결제일에 종료, 이미 결제한 부가 상품 요금은 환불하지 않는다. 견적 사유가 없으므로
+# 견적을 부르지 않고 이 조항을 근거로 해지만 안내한다. 이용 마지막 날은 해지 접수 결과(업무 API)로 안내한다.
+addon_intents = ["cancel", "cancel_refund", "refund", "plan_change"]
+addon_articles = ["A-18"]
+# 제3자(가족·지인)의 해지·환불 요청은 접수하지 않고 계정 정보도 알려 주지 않는다(제15조 제3항).
+third_party_articles = ["A-15"]
+# 법정대리인은 제13조의 미성년자 결제 취소만 요청할 수 있고(제15조 제1항 단서), 그 처리는 상담사가 한다(제19조).
+# 미성년 회원의 계정에 등록된 휴대폰으로 본인 확인을 한 뒤, 결제 당시 나이로 이 사유가 맞을 때만 견적해 인계를 받는다.
+guardian_reasons = ["minor"]
+guardian_articles = ["A-13", "A-15", "A-19"]
 minor_age = 19                  # 제13조. 결제 당시 이 나이 미만이면 미성년자 사유를 견적한다.
 # 견적이 여럿 대상일 때 고르는 순서. 같은 금액이면 일반 규정(제5조)을 예외(제9조 제2항)보다 앞에 둔다.
 # 중복 결제는 구독을 유지하므로(제10조 제3항) 해지를 수반하는 사유보다 앞에 둔다.

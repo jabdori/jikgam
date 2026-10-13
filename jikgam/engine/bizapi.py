@@ -25,6 +25,17 @@ def idempotency_key(session: str, tool: str, target: str) -> str:
     return "idem-" + hashlib.sha256(f"{session}|{tool}|{target}".encode()).hexdigest()[:32]
 
 
+def mask_args(args: dict[str, Any]) -> dict[str, Any]:
+    """로그용. 인증번호와 계좌번호를 가린다(가상 데이터라도 실제 운영과 같은 습관을 둔다)."""
+    out = dict(args)
+    if "otp" in out:
+        out["otp"] = "*" * len(str(out["otp"]))
+    if "account" in out:
+        digits = str(out["account"]).replace("-", "")
+        out["account"] = "*" * (len(digits) - 3) + digits[-3:]
+    return out
+
+
 @dataclass
 class ToolResult:
     tool: str

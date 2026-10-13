@@ -3,19 +3,27 @@
 val 기준선에서 판별 모델이 가장 약했던 질문은 next_info와 action이었다. 두 질문의 정답은 대부분 정해진 우선순위
 규칙이므로, 아래 규칙을 위에서부터 적용하고 아무 규칙도 정하지 못할 때만 판별 결과의 action과 next_info를 쓴다.
 
+ 0. 통화자가 제3자(가족·지인)이고 계정 처리 요청이거나 본인 확인 정보를 말함 → answer(거절과 일반 안내).
+    본인 확인을 묻지도 하지도 않는다(제3자에게 인증번호를 받아 확인하는 우회도 막는다).
  1. 업무 API가 인계 사유를 돌려줌 → handoff, create_handoff
  2. 업무 API 장애(재시도 예산 소진) → hold
  3. 발화에 인증번호가 있고 전화번호를 앎 → verify_identity
- 4. 본인 확인 전이고 요청 처리에 고객 기록이 필요함 → ask(본인 확인)
- 5. 본인 확인 직후 → 조회 API 병렬 호출
- 6. 환불·해지 요청이고 계산 입력이 확인됨 → quote_refund(그럴듯한 사유를 병렬로 묻고 코드로 고른다)
- 7. 계좌 환불이 필요한데 계좌가 없음 → ask(계좌)
- 8. 접수 내용을 안내했고 고객이 동의함 → 쓰기 API
- 9. 접수할 내용이 정해짐 → answer(안내하고 동의를 묻는다)
-10. 그 밖 → 판별 결과의 action과 next_info
+ 4. 본인 확인 전이고 고객이 본인 확인을 마칠 수 없다고 말함 → hold
+ 5. 본인 확인 전이고 요청 처리에 고객 기록이 필요함 → ask(본인 확인)
+ 6. 본인 확인 직후 → 조회 API 병렬 호출
+ 7. 통화자가 법정대리인 → 법정대리인이 요청할 수 있는 사유(미성년자)가 시스템 사실로 맞으면 그 사유만 견적
+    (업무 API가 인계를 돌려주면 1번이 인계한다), 아니면 0번과 같이 거절
+ 8. 해지 대상이 부가 상품뿐 → 견적 없이 부가 상품 해지 안내(근거 조항은 조직 설정), 동의하면 해지 접수
+ 9. 환불·해지 요청이고 계산 입력이 확인됨 → quote_refund(그럴듯한 사유를 병렬로 묻고 코드로 고른다)
+10. 계좌 환불이 필요한데 계좌가 없음 → ask(계좌)
+11. 접수 내용을 안내했고 고객이 동의함 → 쓰기 API
+12. 안내한 접수를 고객이 원하지 않음 → answer(접수하지 않는다고 확인, 다시 묻지 않음)
+13. 접수할 내용이 정해짐 → answer(안내하고 동의를 묻는다)
+14. 그 밖 → 판별 결과의 action과 next_info
 
 금액과 자격은 quote_refund 결과만 쓴다(ADR 0004). 이 모듈은 금액을 계산하지 않고, 견적 사유를 고를 때도
 업무 API가 낸 eligible과 조직 설정의 우선순위만 본다. 날짜 비교(결제 당시 나이)처럼 결정적인 일만 코드로 한다.
+Plan.articles는 규칙이 근거로 삼는 조항(조직 설정)이다. 판별의 applies와 관계없이 생성 입력에 넣는다.
 """
 
 import hashlib
@@ -25,7 +33,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from .org import PolicyConfig
-from .state import QuoteOutcome, SessionState
+from .state import GUARDIAN, THIRD_PARTY, QuoteOutcome, SessionState
 
 
 @dataclass(frozen=True)
@@ -53,6 +61,8 @@ class PolicyInput:
     next_info: str | None  # 판별 결과
     agreed: bool  # 이번 발화가 안내한 접수 내용에 대한 동의인가(판별, 임계값 적용 후)
     pending: Proposal | None  # 유효한 마지막 제안에 붙은 접수 내용
+    declined: bool = False  # 이번 발화가 안내한 접수를 원하지 않는다는 뜻인가(판별, 임계값 적용 후)
+    identity_unavailable: bool = False  # 고객이 본인 확인을 마칠 수 없다고 말했는가(판별, 임계값 적용 후)
 
 
 @dataclass
@@ -67,6 +77,7 @@ class Plan:
     writes: tuple[ToolCall, ...] = ()  # 순서대로 실행하고 취소하지 않는다
     proposal: Proposal | None = None
     notices: tuple[str, ...] = ()
+    articles: tuple[str, ...] = ()  # 이 규칙의 근거 조항(조직 설정). 생성 입력에 반드시 넣는다
     detail: dict[str, Any] = field(default_factory=dict)  # 생성 입력과 로그에 남길 근거
 
     @property
@@ -77,7 +88,8 @@ class Plan:
         return {"rule": self.rule, "action": self.action, "next_info": self.next_info, "ask": self.ask,
                 "calls": [c.tool for c in self.calls], "lookups": self.lookups, "quote_reasons": list(self.quote_reasons),
                 "writes": [c.tool for c in self.writes],
-                "proposal": self.proposal.signature if self.proposal else None, "detail": self.detail}
+                "proposal": self.proposal.signature if self.proposal else None, "articles": list(self.articles),
+                "detail": self.detail}
 
 
 # --- 시스템 사실 도우미 ------------------------------------------------------------------------
@@ -114,37 +126,43 @@ def incident_window(state: SessionState) -> tuple[str, str]:
     return start, state.today.isoformat()
 
 
+def addon_subscription(state: SessionState, cfg: PolicyConfig) -> dict | None:
+    """유효한 부가 상품 구독이 하나면 그것."""
+    addons = [s for s in state.facts.subscriptions or []
+              if s.get("plan") in cfg.addon_plans and s.get("status", "active") == "active"]
+    return addons[0] if len(addons) == 1 else None
+
+
+def _plausible(reason: str, sub: dict, state: SessionState, cfg: PolicyConfig) -> bool:
+    """이 견적 사유를 물어볼 만한가(시스템 사실로 거른다). 자격 판단은 하지 않는다(업무 API가 한다)."""
+    pay = current_payment(state, sub["subscription_id"])
+    if reason == "withdrawal":
+        return pay is not None
+    if reason == "incident":
+        return pay is not None and bool(state.facts.incidents)
+    if reason == "annual_cancel":
+        return pay is not None and sub.get("plan") == "annual"
+    if reason == "duplicate":
+        pays = [p for p in state.facts.payments or [] if p.get("subscription_id") == sub["subscription_id"]]
+        same_day = len({p["date"] for p in pays}) < len(pays)
+        claimed_many = any(int(r.value.rstrip("회")) >= 2 for r in state.claims.get("payment_count", []))
+        return same_day or (claimed_many and bool(pays))
+    if reason == "minor":
+        birth = (state.facts.customer or {}).get("birth")
+        return pay is not None and birth is not None and \
+            age_on(date.fromisoformat(birth), date.fromisoformat(pay["date"])) < cfg.minor_age
+    if reason == "trial_cancel":
+        return bool(sub.get("trial"))
+    if reason == "plan_change":
+        return pay is not None and sub.get("plan") == "monthly"
+    return False
+
+
 def plausible_reasons(intent: str | None, sub: dict | None, state: SessionState, cfg: PolicyConfig) -> list[str]:
-    """조직 설정의 요청별 견적 사유 중 시스템 사실로 보아 물어볼 만한 것. 자격 판단은 하지 않는다(업무 API가 한다)."""
+    """조직 설정의 요청별 견적 사유 중 시스템 사실로 보아 물어볼 만한 것."""
     if sub is None or intent not in cfg.quote_reasons:
         return []
-    pay = current_payment(state, sub["subscription_id"])
-    pays = [p for p in state.facts.payments or [] if p.get("subscription_id") == sub["subscription_id"]]
-    same_day = len({p["date"] for p in pays}) < len(pays)
-    claimed_many = any(int(r.value.rstrip("회")) >= 2 for r in state.claims.get("payment_count", []))
-    birth = (state.facts.customer or {}).get("birth")
-    out = []
-    for reason in cfg.quote_reasons[intent]:
-        if reason == "withdrawal":
-            ok = pay is not None
-        elif reason == "incident":
-            ok = pay is not None and bool(state.facts.incidents)
-        elif reason == "annual_cancel":
-            ok = pay is not None and sub.get("plan") == "annual"
-        elif reason == "duplicate":
-            ok = same_day or (claimed_many and bool(pays))
-        elif reason == "minor":
-            ok = pay is not None and birth is not None and \
-                age_on(date.fromisoformat(birth), date.fromisoformat(pay["date"])) < cfg.minor_age
-        elif reason == "trial_cancel":
-            ok = bool(sub.get("trial"))
-        elif reason == "plan_change":
-            ok = pay is not None and sub.get("plan") == "monthly"
-        else:
-            ok = False
-        if ok:
-            out.append(reason)
-    return out
+    return [r for r in cfg.quote_reasons[intent] if _plausible(r, sub, state, cfg)]
 
 
 def choose_quote(reasons: list[str], quotes: dict[str, QuoteOutcome], cfg: PolicyConfig) -> QuoteOutcome | None:
@@ -236,49 +254,122 @@ def _draft(intent: str | None, sub: dict | None, chosen: QuoteOutcome | None, re
 # --- 규칙 --------------------------------------------------------------------------------------
 
 
+def _proposal_plan(proposal: Proposal, inp: PolicyInput, required_notices: tuple[str, ...], articles: tuple[str, ...],
+                   detail: dict[str, Any]) -> Plan:
+    """접수 내용이 정해졌을 때: 동의했으면 쓰기, 원하지 않았으면 접수하지 않음, 아니면 안내하고 동의를 묻는다."""
+    same = inp.pending is not None and inp.pending.signature == proposal.signature
+    # 11. 동의한 내용 그대로면 접수
+    if inp.agreed and same:
+        return Plan("writes", "answer", writes=proposal.writes, proposal=proposal, notices=required_notices,
+                    articles=articles, detail=detail)
+    # 12. 안내한 접수를 원하지 않음: 접수하지 않고, 이번 발화에서는 같은 내용을 다시 묻지 않는다
+    if inp.declined and same:
+        return Plan("declined", "answer", articles=articles,
+                    detail={**detail, **proposal.summary, "declined": proposal.kind})
+    # 13. 안내하고 동의를 묻는다
+    return Plan("proposal", "answer", proposal=proposal, notices=required_notices, articles=articles, detail=detail)
+
+
+def _refusal(cfg: PolicyConfig, reason: str) -> Plan:
+    """제3자 요청 거절(제15조 제3항). 계정 정보는 생성 입력에서 뺀다(session._generation_payload)."""
+    return Plan("third_party", "answer", articles=cfg.third_party_articles, detail={"refusal": reason})
+
+
+def _addon_plan(addon: dict, inp: PolicyInput, state: SessionState, cfg: PolicyConfig,
+                required_notices: tuple[str, ...]) -> Plan:
+    """부가 상품만 해지. 견적 사유가 없으므로 견적을 부르지 않고 조직 설정의 근거 조항(환불 없음, 다음 결제일 종료)으로
+    안내한다. 이용 마지막 날은 해지 접수 결과(업무 API)의 값을 쓴다."""
+    sid = addon["subscription_id"]
+    key = f"cancel:{sid}"
+    detail = {"addon_only": True}
+    if key in state.facts.receipts:
+        return Plan("received", "answer", notices=required_notices, articles=cfg.addon_articles,
+                    detail={**detail, "receipts": [key]})
+    writes = [ToolCall("create_cancellation", {"customer_id": state.identity.customer_id, "subscription_id": sid},
+                       target=key)]
+    summary = {"cancel": {"subscription_id": sid, "plan": addon.get("plan"), "price": addon.get("price"),
+                          "next_billing": addon.get("next_billing"), "addon_only": True},
+               "refund_none_articles": list(cfg.addon_articles)}
+    proposal = Proposal("cancel", tuple(writes), _signature(writes, summary), None, summary)
+    return _proposal_plan(proposal, inp, required_notices, cfg.addon_articles, detail)
+
+
 def decide(state: SessionState, inp: PolicyInput, cfg: PolicyConfig, required_notices: tuple[str, ...]) -> Plan:
     f = state.facts
     ident = state.identity
     intent = inp.intent
+    cur = state.current_claims()
+
+    # 0. 제3자: 계정 처리 요청이거나 본인 확인 정보를 말하면 거절한다. 본인 확인 규칙(3~5)보다 앞선다.
+    if state.caller == THIRD_PARTY:
+        if intent in cfg.records_intents or cur.otps or cur.phones:
+            return _refusal(cfg, THIRD_PARTY)
+        return _decision_plan(inp)
+
+    guardian = state.caller == GUARDIAN
+    who_articles = cfg.guardian_articles if guardian else ()
 
     # 1. 인계
     if f.handoff_reason:
         if "handoff" not in f.receipts:
-            args = {"reason": f.handoff_reason, "summary": f"요청 {intent or '미정'}, 인계 사유 {f.handoff_reason}"}
+            summary = f"요청 {intent or '미정'}, 인계 사유 {f.handoff_reason}"
+            if guardian:
+                summary += ", 통화자 법정대리인"
+            if not ident.customer_id and state.phone:  # 본인 확인에 실패하면 업무 API가 고객 ID를 주지 않는다
+                summary += f", 고객이 말한 번호 {state.phone}"
+            args = {"reason": f.handoff_reason, "summary": summary}
             if ident.customer_id:
                 args["customer_id"] = ident.customer_id
             return Plan("handoff", "handoff", writes=(ToolCall("create_handoff", args, target=f"handoff:{f.handoff_reason}"),),
-                        detail={"handoff_reason": f.handoff_reason})
-        return Plan("handoff", "handoff", detail={"handoff_reason": f.handoff_reason})
+                        articles=who_articles, detail={"handoff_reason": f.handoff_reason})
+        return Plan("handoff", "handoff", articles=who_articles, detail={"handoff_reason": f.handoff_reason})
 
     # 2. 업무 API 장애
     if f.api_failures:
         return Plan("api_failure", "hold", detail={"api_failures": dict(f.api_failures)})
 
     # 3. 본인 확인 호출
-    cur = state.current_claims()
     if not ident.verified and cur.otps:
         if state.phone is None:
-            return Plan("identity_required", "ask", "identity", ask="phone")
+            return Plan("identity_required", "ask", "identity", ask="phone", articles=who_articles)
         otp = cur.otps[-1]
         if (state.phone, otp) not in ident.tried:
             return Plan("verify_identity", "ask", "identity",
                         calls=(ToolCall("verify_identity", {"phone": state.phone, "otp": otp}),))
 
-    # 4. 본인 확인 요청
     if not ident.verified and intent in cfg.records_intents:
+        # 4. 본인 확인을 마칠 수 없다고 함(등록된 번호가 아님, 인증번호를 받을 수 없음): 계정을 확인할 수 없어 보류
+        if inp.identity_unavailable:
+            return Plan("identity_unavailable", "hold", "identity",
+                        detail={"identity_failed_attempts": ident.failed, "phone_given": state.phone is not None})
+        # 5. 본인 확인 요청
         if state.phone is None:
             ask = "phone"
         else:
             ask = "otp_retry" if ident.failed else "otp"
-        return Plan("identity_required", "ask", "identity", ask=ask)
+        return Plan("identity_required", "ask", "identity", ask=ask, articles=who_articles)
 
     if ident.verified:
-        # 5. 조회
+        # 6. 조회
         if not f.records_loaded:
             return Plan("lookups", "ask", lookups=True)
 
-        # 6. 견적
+        # 7. 법정대리인: 제13조 사유만 요청할 수 있다. 사유가 맞으면 견적(업무 API가 인계를 돌려준다), 아니면 거절
+        if guardian:
+            sub, _ = target_subscription(state, cfg)
+            reasons = [r for r in cfg.guardian_reasons if sub is not None and _plausible(r, sub, state, cfg)]
+            missing = tuple(r for r in reasons if r not in f.quotes)
+            if missing:
+                return Plan("quote", "answer", quote_reasons=missing, articles=who_articles,
+                            detail={"reasons": reasons})
+            return _refusal(cfg, "guardian_not_applicable")
+
+        # 8. 부가 상품만 해지
+        addon = addon_subscription(state, cfg) if state.addon_only and intent in cfg.addon_intents else None
+        if addon is not None:
+            return _addon_plan(addon, inp, state, cfg, required_notices)
+
+        # 9. 견적
         sub, ambiguous = target_subscription(state, cfg)
         if intent in cfg.quote_reasons and ambiguous:
             return Plan("target_ambiguous", "ask", "plan_type", ask="plan_type")
@@ -291,7 +382,7 @@ def decide(state: SessionState, inp: PolicyInput, cfg: PolicyConfig, required_no
 
         if intent in (cfg.refund_intents | cfg.cancel_intents):
             draft = _draft(intent, sub, chosen, reasons, state, cfg)
-            # 7. 계좌
+            # 10. 계좌
             if draft.ask:
                 return Plan("account_required", "ask", "account", ask=draft.ask, detail={**detail, **draft.summary})
             if draft.writes:
@@ -300,19 +391,19 @@ def decide(state: SessionState, inp: PolicyInput, cfg: PolicyConfig, required_no
                     "refund" if "create_refund_request" in kinds else "cancel"
                 proposal = Proposal(kind, tuple(draft.writes), _signature(draft.writes, draft.summary),
                                     chosen.reason if chosen else None, draft.summary)
-                # 8. 동의한 내용 그대로면 접수
-                if inp.agreed and inp.pending is not None and inp.pending.signature == proposal.signature:
-                    return Plan("writes", "answer", writes=proposal.writes, proposal=proposal,
-                                notices=required_notices, detail=detail)
-                # 9. 안내하고 동의를 묻는다
-                return Plan("proposal", "answer", proposal=proposal, notices=required_notices, detail=detail)
+                # 11~13. 접수, 접수하지 않음, 안내
+                return _proposal_plan(proposal, inp, required_notices, (), detail)
             received = {k: v for k, v in f.receipts.items() if k.startswith(("refund:", "cancel:"))}
             if received:
                 return Plan("received", "answer", notices=required_notices, detail={**detail, "receipts": list(received)})
             if intent in cfg.refund_intents:
                 return Plan("not_eligible", "answer", detail={**detail, **draft.summary})
 
-    # 10. 판별 결과
+    # 14. 판별 결과
+    return _decision_plan(inp)
+
+
+def _decision_plan(inp: PolicyInput) -> Plan:
     if inp.action is None:
         return Plan("decision_unavailable", "hold")
     return Plan("decision", inp.action, inp.next_info,

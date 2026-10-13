@@ -5,6 +5,9 @@
   마지막 고객 발화에서 나온 진술을 뺀다. 그래서 같은 발화로 판단을 다시 돌려도(도구 결과로 버전이 올라 3단계부터 다시 할 때)
   마지막 발화의 진술은 known_facts에 들어가지 않는다.
 - request에는 직전 판단의 intent 라벨을 둔다.
+- caller는 통화자와 계정의 관계다(engine-extra 질문 caller에 코드 규칙을 더한 값, session._update_caller).
+  owner(본인이거나 아니라는 단서 없음), third_party(가족·지인), guardian(미성년 회원의 법정대리인).
+- addon_only는 해지 대상이 부가 상품뿐이라는 마지막 판단이다(부가 상품 구독이 조회됐을 때만 묻는다).
 """
 
 from dataclasses import dataclass, field
@@ -19,6 +22,9 @@ if TYPE_CHECKING:
     from .policy import Proposal
 
 CLAIM_MARK = "(고객 진술)"
+
+# 통화자와 계정의 관계(engine-extra 질문 caller의 선택지)
+OWNER, THIRD_PARTY, GUARDIAN = "owner", "third_party", "guardian"
 
 
 @dataclass
@@ -119,6 +125,8 @@ class SessionState:
         self.identity = Identity()
         self.facts = SystemFacts()
         self.request: str | None = None
+        self.caller: str = OWNER
+        self.addon_only: bool = False
         self.evidence: Evidence | None = None
         self.suggestions: list[Suggestion] = []
 
