@@ -39,7 +39,8 @@ def load_run(run_dir: Path) -> dict[str, Any]:
         jp = jd.judge_path(run_dir, sid)
         ai = json.loads(jp.read_text(encoding="utf-8")) if jp.exists() else None
         result = jd.evaluate(scenarios[sess["scenario"]], events, ai, jd.sim_end_of(run_dir, sid))
-        sessions.append({**sess, "result": result, "metrics": mt.session_metrics(events), "ai": ai})
+        counts = {t: sum(e["type"] == t for e in events) for t in ("task.cancelled", "result.discarded")}
+        sessions.append({**sess, "result": result, "metrics": mt.session_metrics(events), "ai": ai, "counts": counts})
     return {"summary": summary, "sessions": sessions}
 
 
@@ -85,11 +86,35 @@ def render(run: dict[str, Any]) -> str:
     out.append("항목별 실패 수(유효 실행): " + ", ".join(f"{n}.{jd.ITEM_NAMES[n]} {item_fail[n]}" for n in jd.ITEMS))
     aux = [x["result"]["aux"] for x in valid]
     precisions = [a["precision"] for a in aux if a["precision"] is not None]
-    out.append(f"보조: intent 일치 {sum(a['intent_match'] for a in aux)}/{len(aux)}, 최종 안내 근거 정밀도 평균 "
+    intents = [a["intent_match"] for a in aux if a["intent_match"] is not None]
+    out.append("보조: intent 일치 " + (f"{sum(intents)}/{len(intents)}" if intents else "-(intent를 남기지 않는 정책)")
+               + ", 최종 안내 근거 정밀도 평균 "
                + (f"{sum(precisions) / len(precisions):.2f}({len(precisions)}개)" if precisions else "-")
                + f", 고객 턴 평균 {sum(a['customer_turns'] for a in aux) / max(len(aux), 1):.1f}")
-    out.append(f"진단(판정 아님): 대화 전체 인용 합집합이 articles를 모두 포함 {sum(a['articles_in_any'] for a in aux)}"
-               f"/{len(aux)} (10번은 최종 안내 하나만 본다)")
+    last_fail = [x for x in valid if x["result"]["aux"]["item10_last"]["ok"] is False]
+    out.append(f"10번을 마지막 제안 하나로 읽은 결과(판정에 쓰지 않음, docs/evaluation.md §4.1 보완): 유효 실행 "
+               f"{len(valid)}개 중 {len(last_fail)}개 실패 {sorted({x['scenario'] for x in last_fail})}")
+    if any(x.get("run", 1) > 1 for x in sessions):
+        by_scn: dict[str, list[str]] = {}
+        for x in sessions:
+            r = x["result"]
+            mark = "무효" if r["compliance"]["valid"] is False else {True: "통과", False: "실패", None: "불가"}[r["pass"]]
+            by_scn.setdefault(x["scenario"], []).append(mark)
+        out.append("시나리오별 회차 결과: " + ", ".join(f"{k} {'/'.join(v)}" for k, v in by_scn.items()))
+
+    fast = [f for x in sessions for f in x.get("fast_corrections") or []]
+    missing = [(x["scenario"], i) for x in sessions for i in x.get("fast_missing") or []]
+    out.append("")
+    if s.get("fast_delay_ms") is None:
+        out.append("빠른 정정: 이 실행은 기다리는 방식(고객이 응답을 받은 뒤에 말함)이다(docs/evaluation.md §3.3 보완 이전)")
+    else:
+        gaps = sorted(f["gap_ms"] for f in fast)
+        out.append(f"빠른 정정(설정 {s['fast_delay_ms']:.0f} ms): {len(fast)}건"
+                   + (f", 실제 간격 {gaps[0]:,.0f}~{gaps[-1]:,.0f} ms" if gaps else "")
+                   + f", 첫 메시지 응답이 정정 전에 끝난 경우 {sum(f['first_done_before_followup'] for f in fast)}건"
+                   + (f", 미적용(메시지 하나로 실행) {missing}" if missing else ""))
+    out.append(f"엔진 작업 취소·결과 폐기: task.cancelled {sum(x['counts']['task.cancelled'] for x in sessions)}, "
+               f"result.discarded {sum(x['counts']['result.discarded'] for x in sessions)}")
 
     out.append("")
     out.append("조건 변경부터 근거 갱신까지(docs/evaluation.md §3.2, ms, 미갱신은 +∞로 계산)")

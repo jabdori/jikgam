@@ -1,24 +1,31 @@
 """AI 고객 시나리오 실행기.
 
     uv run python -m jikgam.sim.runner --org org_a --scenarios s01,s20 --policy C --runs 1
-    uv run python -m jikgam.sim.runner --org org_a --scenarios all --policy C --bizapi-url http://127.0.0.1:8082
+    uv run python -m jikgam.sim.runner --org org_a --scenarios all --policy A --runs 3 --bizapi-url http://127.0.0.1:8082
 
 정책(docs/evaluation.md §3.4)은 세션을 만드는 함수다. 세션은 엔진 Session과 같은 꼴이면 된다:
-`factory(org, session_id, log_dir)` → `await handle(event) -> list[dict]`, `await aclose()`, 이벤트 로그는
-`<log_dir>/<session_id>.jsonl`.
+`factory(org, session_id, log_dir)` → `await start()`(있으면), `await handle(event) -> list[dict]`, `await aclose()`,
+이벤트 로그는 `<log_dir>/<session_id>.jsonl`.
+- A: 개선형 RAG 기준선(jikgam.baselines.rag.RagSession)
 - B: 엔진 + LLM 판단(판별 백엔드 gemini-flash)
 - C: 엔진 + 조직 기본 판별 모델(org_a는 jev), 확정 발화
-- A: 개선형 RAG. jikgam.baselines.rag의 Session(org, session_id, log_dir)을 같은 꼴로 쓴다(별도 작업).
 - D: 미확정 자막 선판단은 음성 런타임이 필요해 이 채팅 실행기에서는 돌리지 않는다.
 
 시나리오마다:
 1. 모의 업무 API를 초기화하고(/_admin/reset), 시나리오의 장애 주입(mid_call_events의 inject)을 시작 시점에 건다.
    주입은 도구의 동작에 대한 사건이라 고객 발화 시점과 무관하다(s19: 본인 확인 전에는 quote_refund를 부르지 않는다).
-2. 첫 고객 메시지는 시나리오 opening 그대로, 이후는 AI 고객이 한 턴에 하나씩 쓴다. 사건을 실행한 메시지에는
-   시나리오 파일의 표시(condition_change, invalidates_prior, event)를 marker로 붙인다(docs/engine.md §2).
-3. 고객이 done을 내면 그 메시지까지 보내고 끝낸다. 엔진이 상담사에게 넘기거나(handoff) 최대 턴에 닿아도 끝낸다.
-4. 고객이 엔진 응답을 받은 뒤에만 다음 메시지를 보낸다(엄격한 번갈아 말하기). 그래서 채팅에서는 응답 도중 새 발화가
-   들어오는 경우가 없다.
+2. 세션을 열고 start()(엔진의 판별 백엔드 예열)를 마친 뒤 첫 메시지를 보낸다.
+3. 첫 고객 메시지는 시나리오 opening 그대로, 이후는 AI 고객이 쓴다. 사건을 실행한 메시지에는 시나리오 파일의
+   표시(condition_change, invalidates_prior, event)를 marker로 붙인다(docs/engine.md §2).
+4. 보통은 고객이 엔진 응답을 받은 뒤에 다음 메시지를 보낸다. condition_change 사건은 빠른 정정으로 보낸다
+   (docs/evaluation.md §3.3 보완, 2026-10-14): 고객 AI가 직전 메시지와 사건 메시지를 한 번에 쓰고, 실행기는 직전
+   메시지를 보낸 뒤 fast_delay_ms(1,000ms) 뒤에 엔진 응답을 기다리지 않고 사건 메시지를 보낸다. 두 handle()은
+   동시에 도는 asyncio 작업이고, 그 사이 엔진이 내는 응답은 엔진이 노출로 기록한다. 두 응답이 모두 끝난 뒤 고객 AI가
+   다음 메시지를 쓴다.
+5. 고객이 done을 내면 그 메시지까지 보내고 끝낸다. 엔진이 상담사에게 넘기거나(handoff) 최대 메시지 수에 닿아도 끝낸다.
+
+반복: --runs N이면 시나리오마다 N회 돈다. 회차 번호는 세션 ID(`<시나리오>-r<회차>-<run_id>`), 시뮬레이터 기록,
+summary.json에 남긴다. 고객 AI의 seed는 (시나리오, 회차)에서 정해진다(기록용, 같은 출력을 보장하지 않는다).
 
 결과: <out-dir>/<run_id>/<세션>.jsonl(엔진 이벤트), <세션>.sim.jsonl(시뮬레이터 기록), <세션>.judge.json(AI 판정),
 summary.json. 보고서는 `uv run python -m jikgam.sim.report <run_dir>`.
@@ -26,10 +33,11 @@ summary.json. 보고서는 `uv run python -m jikgam.sim.report <run_dir>`.
 
 import argparse
 import asyncio
+import hashlib
 import json
 import subprocess
 import sys
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Protocol
@@ -44,9 +52,11 @@ from jikgam.engine.org import ROOT, OrgConfig, load_org
 from . import customer as cust
 from . import judge
 from .gemini import GeminiJson
-from .scenario import customer_events, file_sha256, injections, load_scenarios, marker, scenario_path
+from .scenario import (customer_events, file_sha256, followup_events, injections, load_scenarios, marker,
+                       registered_phones, scenario_path)
 
-DEFAULT_MAX_TURNS = 16  # 고객 메시지 수 상한(opening 포함)
+DEFAULT_MAX_TURNS = 16  # 고객 메시지 수 상한(opening 포함). 빠른 정정 두 메시지는 상한을 하나 넘을 수 있다
+FAST_DELAY_MS = 1000.0  # 빠른 정정: 직전 메시지를 보낸 뒤 사건 메시지를 보낼 때까지(docs/evaluation.md §3.3 보완)
 OUT_DIR = ROOT / "results/engine/scenarios"
 
 
@@ -74,15 +84,12 @@ def engine_policy(backend: str | None) -> PolicyFactory:
 
 
 def rag_policy(org: OrgConfig, session_id: str, log_dir: Path) -> SessionLike:
-    try:
-        from jikgam.baselines import rag
-    except ImportError as e:
-        raise SystemExit(f"정책 A는 jikgam.baselines.rag가 필요하다: {e}") from e
-    return rag.Session(org, session_id, log_dir)
+    from jikgam.baselines.rag import RagSession
+    return RagSession(org, session_id, log_dir)
 
 
 POLICIES = {
-    "A": Policy("A", "개선형 RAG(jikgam.baselines.rag.Session)", rag_policy),
+    "A": Policy("A", "개선형 RAG 기준선(jikgam.baselines.rag.RagSession)", rag_policy),
     "B": Policy("B", "엔진 + LLM 판단(판별 백엔드 gemini-flash)", engine_policy("gemini-flash")),
     "C": Policy("C", "엔진 + 판별 모델(조직 설정 기본 백엔드), 확정 발화", engine_policy(None)),
 }
@@ -138,21 +145,102 @@ def handed_off(out: list[dict[str, Any]]) -> bool:
 
 
 def engine_costs(log_path: Path) -> dict[str, Any]:
+    """판별(예열 포함)·생성 호출 수와 비용. 정책 A는 판별이 없고 생성이 도구 루프 단계마다 남는다."""
     events = ev.read_log(log_path) if log_path.exists() else []
-    dec = [e for e in events if e["type"] == "decision.response"]
-    gen = [e for e in events if e["type"] == "generation.response"]
-    return {"decision_calls": len(dec), "decision_usd": sum(e.get("cost_usd") or 0 for e in dec),
+    dec = [e for e in events if e["type"] in (ev.DECISION_RESPONSE, ev.WARMUP)]
+    gen = [e for e in events if e["type"] == ev.GENERATION_RESPONSE]
+    return {"decision_calls": sum(e["type"] == ev.DECISION_RESPONSE for e in dec),
+            "warmup_calls": sum(e["type"] == ev.WARMUP for e in dec),
+            "decision_usd": sum(e.get("cost_usd") or 0 for e in dec),
             "generation_calls": len(gen), "generation_usd": sum(e.get("cost_usd") or 0 for e in gen),
-            "engine_errors": sum(e["type"] == "engine.error" for e in events)}
+            "engine_errors": sum(e["type"] == ev.ENGINE_ERROR for e in events)}
+
+
+def customer_seed(scenario_id: str, run: int) -> int:
+    """(시나리오, 회차)에서 정하는 고객 AI seed(31비트)."""
+    return int(hashlib.sha256(f"{scenario_id}|{run}".encode()).hexdigest()[:8], 16) & 0x7FFFFFFF
+
+
+@dataclass
+class Message:
+    text: str
+    event: int | None = None  # 이 메시지로 실행한 사건 번호
+
+
+@dataclass
+class _Run:
+    """한 세션의 진행 상태."""
+
+    conversation: list[tuple[float, int, dict[str, str]]] = field(default_factory=list)  # (시각, 순번, 메시지)
+    executed: set[int] = field(default_factory=set)
+    fast: list[dict[str, Any]] = field(default_factory=list)  # 빠른 정정 기록
+    fast_missing: list[int] = field(default_factory=list)
+    turn: int = 0
+
+    def add(self, t: float, speaker: str, text: str) -> None:
+        self.conversation.append((t, len(self.conversation), {"speaker": speaker, "text": text}))
+
+    def ordered(self) -> list[dict[str, str]]:
+        return [m for _, _, m in sorted(self.conversation)]
+
+
+async def _send(scn: dict[str, Any], session: SessionLike, log: SimLog, st: _Run, msgs: list[Message], done: bool,
+                info: dict[str, Any], fast_delay_ms: float) -> tuple[list[list[dict[str, Any]]], str | None]:
+    """메시지 하나는 응답까지 기다리고, 둘이면 빠른 정정으로 보낸다. (handle 결과 목록, 엔진 예외)."""
+    tasks: list[asyncio.Task] = []
+    sent: list[float] = []
+    for k, m in enumerate(msgs):
+        # 간격은 엔진과 같은 시계(now_ms)로 잰다. asyncio의 시계는 Windows에서 해상도가 거칠어(약 15ms) 한 번의 sleep이
+        # 기한보다 일찍 끝날 수 있으므로 기한에 닿을 때까지 다시 잔다.
+        while k > 0 and (remain := sent[0] + fast_delay_ms - ev.now_ms()) > 0:
+            await asyncio.sleep(remain / 1000)
+        st.turn += 1
+        utt_id = f"u{st.turn}"
+        event: dict[str, Any] = {"type": "utterance", "utt_id": utt_id, "speaker": "customer", "text": m.text,
+                                 "final": True}
+        mark = None
+        if m.event is not None:
+            mark = marker(scn, m.event)
+            event["marker"] = mark
+            st.executed.add(m.event)
+        t = ev.now_ms()
+        sent.append(t)
+        log.emit("customer.turn", turn=st.turn, utt_id=utt_id, text=m.text, executed_event=m.event, marker=mark,
+                 done=done and k == len(msgs) - 1, fast_followup=k > 0, pair_size=len(msgs), **(info if k == 0 else {}))
+        st.add(t, "customer", m.text)
+        tasks.append(asyncio.create_task(session.handle(event)))
+    if len(msgs) > 1:
+        st.fast.append({"event": f"{scn['id']}#{msgs[-1].event}", "gap_ms": round(sent[1] - sent[0], 1),
+                        "first_done_before_followup": tasks[0].done()})
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    outs: list[list[dict[str, Any]]] = []
+    error = None
+    for k, r in enumerate(results):
+        if isinstance(r, BaseException):
+            error = f"{type(r).__name__}: {r}"
+            log.emit("engine.exception", utt_id=f"u{st.turn - len(msgs) + k + 1}", error=error)
+            outs.append([])
+            continue
+        outs.append(r)
+        says = [e for e in r if e["type"] == "agent.say"]
+        log.emit("engine.reply", utt_id=f"u{st.turn - len(msgs) + k + 1}", returned_ms=ev.now_ms(),
+                 says=[e["text"] for e in says], actions=[e.get("action") for e in r if e["type"] == "suggestion.created"],
+                 cancelled=sum(e["type"] == "task.cancelled" for e in r),
+                 discarded=sum(e["type"] == "result.discarded" for e in r))
+        for e in says:
+            st.add(float(e["t_ms"]), "agent", e["text"])
+    return outs, error
 
 
 async def run_scenario(scn: dict[str, Any], policy: Policy, org: OrgConfig, run_dir: Path, session_id: str,
-                       customer: cust.Customer, max_turns: int = DEFAULT_MAX_TURNS) -> dict[str, Any]:
+                       customer: cust.Customer, max_turns: int = DEFAULT_MAX_TURNS, run: int = 1,
+                       seed: int | None = None, fast_delay_ms: float = FAST_DELAY_MS) -> dict[str, Any]:
     """시나리오 하나를 한 번 돌린다. 세션 요약을 돌려준다."""
     reset_bizapi(org.bizapi_url)
     log = SimLog(run_dir / f"{session_id}.sim.jsonl", session_id)
-    log.emit("sim.start", scenario=scn["id"], policy=policy.name, customer_model=customer.model,
-             customer_prompt=customer.prompt_version, max_turns=max_turns, bizapi_url=org.bizapi_url)
+    log.emit("sim.start", scenario=scn["id"], policy=policy.name, run=run, customer_model=customer.model,
+             customer_prompt=customer.prompt_version, customer_seed=seed, max_turns=max_turns,
+             fast_delay_ms=fast_delay_ms, followup_events=sorted(followup_events(scn)), bizapi_url=org.bizapi_url)
     injected = []
     for idx, inj in injections(scn):
         resp = inject_fault(org.bizapi_url, inj)
@@ -160,74 +248,61 @@ async def run_scenario(scn: dict[str, Any], policy: Policy, org: OrgConfig, run_
         log.emit("sim.inject", event=f"{scn['id']}#{idx}", applied="start", response=resp, **inj)
     t_start = ev.now_ms()
     session = policy.factory(org, session_id, run_dir)
-    conversation: list[dict[str, str]] = []
-    executed: set[int] = set()
+    st = _Run()
     customer_usd = 0.0
-    turn = 1
     end_reason, error = "runner_error", None
-    say, event_idx, done = scn["opening"], None, False
-    usage: dict[str, Any] = {"source": "opening"}
-    rejected: dict[str, Any] | None = None
+    msgs, done = [Message(scn["opening"])], False
+    info: dict[str, Any] = {"llm": {"source": "opening"}}
     try:
+        start = getattr(session, "start", None)
+        if start is not None:
+            await start()
         while True:
-            utt_id = f"u{turn}"
-            event: dict[str, Any] = {"type": "utterance", "utt_id": utt_id, "speaker": "customer", "text": say,
-                                     "final": True}
-            mark = None
-            if event_idx is not None:
-                mark = marker(scn, event_idx)
-                event["marker"] = mark
-                executed.add(event_idx)
-            log.emit("customer.turn", turn=turn, utt_id=utt_id, text=say, executed_event=event_idx, marker=mark,
-                     done=done, llm=usage, rejected_event=rejected)
-            conversation.append({"speaker": "customer", "text": say})
-            sent = ev.now_ms()
-            try:
-                out = await session.handle(event)
-            except Exception as e:  # 엔진 예외는 엔진 실패로 기록하고 세션을 끝낸다
-                end_reason, error = "engine_exception", f"{type(e).__name__}: {e}"
-                log.emit("engine.exception", utt_id=utt_id, error=error)
+            outs, error = await _send(scn, session, log, st, msgs, done, info, fast_delay_ms)
+            if error:
+                end_reason = "engine_exception"
                 break
-            says = [e for e in out if e["type"] == "agent.say"]
-            log.emit("engine.reply", utt_id=utt_id, sent_ms=sent, returned_ms=ev.now_ms(),
-                     duration_ms=round(ev.now_ms() - sent, 1), says=[e["text"] for e in says],
-                     actions=[e.get("action") for e in out if e["type"] == "suggestion.created"])
-            conversation += [{"speaker": "agent", "text": e["text"]} for e in says]
             if done:
                 end_reason = "customer_done"
                 break
-            if handed_off(out):
+            if any(handed_off(o) for o in outs):
                 end_reason = "handoff"
                 break
-            if turn >= max_turns:
+            if st.turn >= max_turns:
                 end_reason = "max_turns"
                 break
-            turn += 1
-            ct = await customer.next_turn(conversation, turn, executed)
+            ct = await customer.next_turn(st.ordered(), st.turn + 1, st.executed)
             customer_usd += ct.usage.get("cost_usd") or 0
             if ct.error:
                 end_reason, error = "customer_error", ct.error
-                log.emit("customer.error", turn=turn, error=ct.error, llm=ct.usage)
-                turn -= 1
+                log.emit("customer.error", turn=st.turn + 1, error=ct.error, llm=ct.usage)
                 break
+            if ct.fast_missing is not None:
+                st.fast_missing.append(ct.fast_missing)
             if not ct.say:
                 if ct.done:
-                    log.emit("customer.done", turn=turn, llm=ct.usage, rejected_event=ct.rejected_event)
+                    log.emit("customer.done", turn=st.turn + 1, llm=ct.usage, rejected_event=ct.rejected_event)
                     end_reason = "customer_done"
                 else:
                     end_reason, error = "customer_error", "빈 메시지"
-                    log.emit("customer.error", turn=turn, error=error, llm=ct.usage)
-                turn -= 1
+                    log.emit("customer.error", turn=st.turn + 1, error=error, llm=ct.usage)
                 break
-            say, event_idx, done, usage, rejected = ct.say, ct.executed_event, ct.done, ct.usage, ct.rejected_event
+            if ct.followup_say:
+                msgs = [Message(ct.say), Message(ct.followup_say, ct.executed_event)]
+            else:
+                msgs = [Message(ct.say, ct.executed_event)]
+            done = ct.done
+            info = {"llm": ct.usage, "rejected_event": ct.rejected_event, "notes": ct.notes}
     finally:
         await session.aclose()
-        missing = [i for i, _ in customer_events(scn) if i not in executed]
-        log.emit("sim.end", reason=end_reason, error=error, customer_turns=turn, executed_events=sorted(executed),
-                 missing_events=missing, customer_usd=customer_usd, duration_ms=round(ev.now_ms() - t_start, 1))
+        missing = [i for i, _ in customer_events(scn) if i not in st.executed]
+        log.emit("sim.end", reason=end_reason, error=error, customer_turns=st.turn, executed_events=sorted(st.executed),
+                 missing_events=missing, fast_corrections=st.fast, fast_missing=st.fast_missing,
+                 customer_usd=customer_usd, duration_ms=round(ev.now_ms() - t_start, 1))
         log.close()
-    return {"scenario": scn["id"], "session": session_id, "end_reason": end_reason, "error": error,
-            "customer_turns": turn, "executed_events": sorted(executed), "missing_events": missing,
+    return {"scenario": scn["id"], "session": session_id, "run": run, "customer_seed": seed, "end_reason": end_reason,
+            "error": error, "customer_turns": st.turn, "executed_events": sorted(st.executed),
+            "missing_events": missing, "fast_corrections": st.fast, "fast_missing": st.fast_missing,
             "injections": injected, "duration_ms": round(ev.now_ms() - t_start, 1),
             "costs": {"customer_usd": customer_usd, **engine_costs(run_dir / f"{session_id}.jsonl")}}
 
@@ -258,6 +333,11 @@ def write_summary(run_dir: Path, summary: dict[str, Any]) -> None:
                                           newline="\n")
 
 
+def customers_file(org: OrgConfig) -> Path:
+    """모의 업무 API 고객 데이터. 조직 약관 파일과 같은 폴더의 customers.json이다(domain/<org>/)."""
+    return org.terms.parent / "customers.json"
+
+
 async def run(args: argparse.Namespace) -> Path:
     if args.policy == "D":
         raise SystemExit("정책 D(미확정 자막 선판단)는 음성 런타임이 필요해 채팅 실행기에서 돌리지 않는다")
@@ -267,17 +347,19 @@ async def run(args: argparse.Namespace) -> Path:
         org = replace(org, bizapi_url=args.bizapi_url.rstrip("/"))
     path = scenario_path(org.org)
     chosen = select(load_scenarios(path), args.scenarios)
+    registered = registered_phones(customers_file(org))
     run_id = args.run_id or f"{datetime.now(ev.KST):%Y%m%dT%H%M%S}-{policy.name}"
     run_dir = args.out_dir / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
     models = load_config()
-    backend = "gemini-flash" if policy.name == "B" else org.decision_backend if policy.name == "C" else None
+    backend = {"B": "gemini-flash", "C": org.decision_backend}.get(policy.name)
     summary: dict[str, Any] = {
         "run_id": run_id, "policy": policy.name, "policy_description": policy.description,
         "decision_backend": backend, "decision_model": (models.get(backend) or {}).get("model") if backend else None,
         "generator": org.generator, "generator_model": models[org.generator]["model"], "org": org.org,
         "bizapi_url": org.bizapi_url, "scenario_file": str(path.relative_to(ROOT)).replace("\\", "/"),
         "scenario_sha256": file_sha256(path), "runs": args.runs, "max_turns": args.max_turns,
+        "fast_delay_ms": args.fast_delay_ms,
         "customer_model": models[args.customer_model]["model"], "customer_prompt": cust.PROMPT_VERSION,
         "judge_model": None if args.no_judge else models[args.judge_model]["model"],
         "judge_prompt": None if args.no_judge else judge.JUDGE_PROMPT_VERSION,
@@ -291,12 +373,13 @@ async def run(args: argparse.Namespace) -> Path:
         for k in range(1, args.runs + 1):
             for scn in chosen:
                 sid = f"{scn['id']}-r{k}-{run_id}"
-                customer = cust.make_customer(scn, args.customer_model)
+                seed = customer_seed(scn["id"], k)
+                customer = cust.make_customer(scn, registered, args.customer_model, seed)
                 try:
-                    sess = await run_scenario(scn, policy, org, run_dir, sid, customer, args.max_turns)
+                    sess = await run_scenario(scn, policy, org, run_dir, sid, customer, args.max_turns, k, seed,
+                                              args.fast_delay_ms)
                 finally:
                     await customer.aclose()
-                sess["run"] = k
                 if judge_client is not None:
                     rec = await judge.judge_session(scn, run_dir, sid, judge_client)
                     sess["costs"]["judge_usd"] = rec["cost_usd"]
@@ -304,9 +387,12 @@ async def run(args: argparse.Namespace) -> Path:
                 summary["sessions"].append(sess)
                 write_summary(run_dir, summary)
                 c = sess["costs"]
+                fast = ", ".join(f"{f['event']} {f['gap_ms']:.0f}ms" for f in sess["fast_corrections"])
                 print(f"{sid}: {sess['end_reason']}, 고객 {sess['customer_turns']}턴, 사건 {sess['executed_events']}"
-                      f"(미실행 {sess['missing_events']}), 고객 ${c['customer_usd']:.4f} 판별 ${c['decision_usd']:.4f} "
-                      f"생성 ${c['generation_usd']:.4f} 판정 ${c.get('judge_usd', 0):.4f}", flush=True)
+                      f"(미실행 {sess['missing_events']}), 빠른 정정 [{fast}]"
+                      + (f" 미적용 {sess['fast_missing']}" if sess["fast_missing"] else "")
+                      + f", 고객 ${c['customer_usd']:.4f} 판별 ${c['decision_usd']:.4f} 생성 ${c['generation_usd']:.4f}"
+                        f" 판정 ${c.get('judge_usd', 0):.4f}", flush=True)
     finally:
         if judge_client is not None:
             await judge_client.aclose()
@@ -320,15 +406,19 @@ def main() -> None:
     ap.add_argument("--org", default="org_a")
     ap.add_argument("--scenarios", default="all", help="쉼표로 구분한 시나리오 ID 또는 all")
     ap.add_argument("--policy", required=True, choices=["A", "B", "C", "D"])
-    ap.add_argument("--runs", type=int, default=1)
+    ap.add_argument("--runs", type=int, default=1, help="시나리오별 반복 횟수(docs/evaluation.md §3.4 보완: 3)")
     ap.add_argument("--run-id")
     ap.add_argument("--out-dir", type=Path, default=OUT_DIR)
-    ap.add_argument("--bizapi-url", help="모의 업무 API 주소(생략하면 조직 설정의 bizapi_url)")
+    ap.add_argument("--bizapi-url", help="모의 업무 API 주소(생략하면 조직 설정의 bizapi_url이나 JIKGAM_BIZAPI_URL)")
     ap.add_argument("--max-turns", type=int, default=DEFAULT_MAX_TURNS)
+    ap.add_argument("--fast-delay-ms", type=float, default=FAST_DELAY_MS,
+                    help="빠른 정정 간격(ms). docs/evaluation.md §3.3 보완의 값은 1,000이다")
     ap.add_argument("--customer-model", default=cust.DEFAULT_MODEL)
     ap.add_argument("--judge-model", default=judge.DEFAULT_JUDGE_MODEL)
     ap.add_argument("--no-judge", action="store_true", help="AI 판정을 건너뛴다(나중에 jikgam.sim.judge로 한다)")
     args = ap.parse_args()
+    if args.runs < 1:
+        raise SystemExit("--runs는 1 이상이어야 한다")
     sys.stdout.reconfigure(encoding="utf-8")
     run_dir = asyncio.run(run(args))
     print(f"실행 폴더: {run_dir}\n보고서: uv run python -m jikgam.sim.report {run_dir}")

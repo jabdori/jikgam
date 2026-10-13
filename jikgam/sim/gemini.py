@@ -59,8 +59,11 @@ class GeminiJson:
         return cls(name, cfg["model"], secrets()[cfg["api_key_env"]], cfg["price_input_per_mtok"],
                    cfg["price_output_per_mtok"], thinking_level=cfg.get("thinking_level"), **kw)
 
-    async def ask(self, system: str, user: str, schema: dict[str, Any]) -> JsonReply:
+    async def ask(self, system: str, user: str, schema: dict[str, Any], seed: int | None = None) -> JsonReply:
+        """seed는 generationConfig.seed로 보낸다. 같은 seed라도 출력이 같다는 보장은 없다(재현을 돕는 기록용)."""
         gen: dict[str, Any] = {"responseMimeType": "application/json", "responseJsonSchema": schema}
+        if seed is not None:
+            gen["seed"] = seed
         if self.thinking_level:
             gen["thinkingConfig"] = {"thinkingLevel": self.thinking_level}
         body = {"systemInstruction": {"parts": [{"text": system}]},
