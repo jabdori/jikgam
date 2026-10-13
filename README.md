@@ -30,3 +30,8 @@
 | `data/splits.json` | 대화 그룹별 분할 배정 (test는 고정) |
 | `data/scenarios/org_a.jsonl` | AI 고객 시뮬레이션 시나리오 30개 |
 | `scripts/build_dataset.py` | 판별 데이터 검증, 조항 본문 채우기, 분할 |
+| `docs/engine.md` | 상담 엔진 구현 설계(이벤트, 버전, 턴 순서, 코드 정책) |
+| `jikgam/engine/` | 상담 엔진(채팅). `uv run python -m jikgam.engine.chat --org org_a`로 터미널 채팅, `--replay`로 고정 대화 재생 |
+| `config/orgs/org_a.toml` | 조직 A 엔진 설정(약관, 업무 API 주소, 판별 백엔드, 검색·정책 설정) |
+| `data/replays/` | 엔진 개발용 고정 대화(고객 발화) |
+| `bizapi/` | 조직 A 모의 업무 API(Go). `cd bizapi && go run ./cmd/bizapi` |
