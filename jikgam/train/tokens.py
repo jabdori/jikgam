@@ -14,7 +14,8 @@ import re
 import statistics
 from pathlib import Path
 
-from jikgam.train.data import BASE_MODELS as MODELS, ROOT, TRAIN, load_korean, load_typed_decisions, load_val
+from jikgam.train.data import (BASE_MODELS as MODELS, ROOT, TRAIN, TRAIN_AUG, load_korean, load_typed_decisions,
+                               load_val)
 
 HANGUL = re.compile(r"[가-힣]")
 
@@ -99,6 +100,7 @@ def main() -> None:
                            "tokens_per_char": round(sum(state_tokens) / sum(state_chars), 3)},
         "record_tokens": {
             "train_ko": summary(record_lengths(tok, train)),
+            **({"train_aug_ko": summary(record_lengths(tok, load_korean(TRAIN_AUG)))} if TRAIN_AUG.is_file() else {}),
             "val_ko": summary(record_lengths(tok, val_rows)),
             "typed_decisions_train": summary(record_lengths(tok, td)),
         },

@@ -42,12 +42,17 @@ TD_REVISION = "c806f6c69d734f29436f25536138547031a673d6"  # 2026-10-13 수정본
 SEED = 3407
 
 # 구성별 (한국어 파일 목록, typed-decisions 사용 여부, 한국어 반복 횟수)
+# 반복 4회는 (c)를 처음 학습하기 전에 정했다: typed-decisions 1,200건 옆에서 한국어 64건이 묻히지 않게 하되,
+# 2 에폭 동안 한 사례를 8번 보는 정도로 둔다. (d)는 사례당 노출을 (c)와 같게 하려고 같은 4회를 쓴다.
+# (e)는 진단용(typed-decisions 없이 한국어만, 사례가 늘면 나아지는지).
 COMPOSITIONS: dict[str, tuple[tuple[Path, ...], bool, int]] = {
     "a": ((TRAIN,), False, 1),
     "b": ((), True, 0),
     "c": ((TRAIN,), True, 4),
     "d": ((TRAIN, TRAIN_AUG), True, 4),
+    "e": ((TRAIN, TRAIN_AUG), False, 1),
 }
+TRAIN_SPLITS = {"train", "train_aug"}  # train_aug: 보강 사례(a001~a038), 고정 분할 밖에서 train에만 쓴다
 
 
 def sha16(path: Path) -> str:
@@ -74,13 +79,13 @@ def to_unsloth_row(r: dict[str, Any], bank: dict[str, dict[str, Any]]) -> dict[s
 
 
 def load_korean(path: Path, questions_path: Path = QUESTIONS) -> list[dict[str, Any]]:
-    """학습용 빌드 파일 → Unsloth 행. train 분할이 아닌 행이나 val·test 그룹의 행이 있으면 멈춘다."""
+    """학습용 빌드 파일 → Unsloth 행. train·train_aug가 아닌 행이나 val·test 그룹의 행이 있으면 멈춘다."""
     _, bank = load_bank(questions_path)
     blocked = non_train_groups()
     rows = []
     for line in path.read_text(encoding="utf-8").splitlines():
         r = json.loads(line)
-        if r.get("split") != "train" or r["group"] in blocked:
+        if r.get("split") not in TRAIN_SPLITS or r["group"] in blocked:
             raise SystemExit(f"{path.name}: train이 아닌 행 {r['id']} (split={r.get('split')}, group={r['group']})")
         rows.append(to_unsloth_row(r, bank))
     return rows

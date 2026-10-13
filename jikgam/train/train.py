@@ -26,7 +26,8 @@ from jikgam.train.data import BASE_MODELS, QUESTION_SETS, ROOT, compose, write_j
 
 KST = timezone(timedelta(hours=9))
 SHORT = {"unsloth/Qwen3.5-0.8B": "q35-0.8b", "unsloth/Qwen3.5-2B": "q35-2b"}
-DEFAULT_EPOCHS = {"a": 4, "b": 2, "c": 2, "d": 2}  # (a)는 64건뿐이라 문서의 "데이터가 적으면 3~4"에서 4
+# (a)·(e)는 한국어 64건·168건뿐이라 문서의 "데이터가 적으면 3~4"에서 4
+DEFAULT_EPOCHS = {"a": 4, "b": 2, "c": 2, "d": 2, "e": 4}
 # results/training/tokenizer.json: 학습 입력 최대 3,324 토큰(train, mix 문구; q-2026.10.12 문구는 3,112),
 # typed-decisions 최대 1,222. 4,096이면 잘리는 입력이 없고, Unsloth Clef 기본값과 같다.
 MAX_SEQ = 4096
