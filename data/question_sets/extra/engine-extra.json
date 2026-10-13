@@ -1,0 +1,10 @@
+{
+  "_note": "상담 엔진만 쓰는 추가 질문. 판별 데이터(data/build)와 val 기준선에는 없는 질문이라 정확도를 잰 적이 없다. data/questions.json과 같은 형식이며 질문 ID가 겹치지 않는다. 문구를 바꾸면 버전을 올린다.",
+  "version": "engine-extra-2026.10.14",
+  "questions": {
+    "customer_agreed": {
+      "type": "noul",
+      "instructions": "state.previous_suggestion은 상담 엔진이 고객에게 접수할 내용을 안내하고 그대로 진행해도 되는지 물은 메시지다. 고객의 마지막 발화가 그 내용 그대로 진행하는 데 동의하는가? 조건을 바꾸거나, 다른 요청을 하거나, 되묻거나, 망설이거나, 거절하면 동의가 아니다."
+    }
+  }
+}

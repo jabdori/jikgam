@@ -3,8 +3,11 @@
 사용법:
     python scripts/build_dataset.py            # 검증 + 빌드
     python scripts/build_dataset.py --check    # 검증만
+    python scripts/build_dataset.py --aug      # 학습 전용 보강 사례(data/cases_aug) 검증 + train_aug.jsonl
+    python scripts/build_dataset.py --aug --check
 
-형식과 규칙은 docs/data-format.md를 따른다.
+형식과 규칙은 docs/data-format.md를 따른다. 보강 사례는 분할(data/splits.json)과 train/val/test
+산출물에 들어가지 않고 data/build/train_aug.jsonl에만 split "train_aug"로 쓴다.
 """
 
 import argparse
@@ -21,6 +24,7 @@ ROOT = Path(__file__).resolve().parent.parent
 TERMS = {"org_a": ROOT / "domain/org_a/terms.md"}
 QUESTIONS = ROOT / "data/questions.json"
 CASES_DIR = ROOT / "data/cases"
+AUG_DIR = ROOT / "data/cases_aug"
 SPLITS = ROOT / "data/splits.json"
 BUILD_DIR = ROOT / "data/build"
 SEED = 20261012
@@ -67,9 +71,9 @@ def parse_terms(path):
     return articles
 
 
-def load_cases():
+def load_cases(cases_dir=CASES_DIR):
     cases = []
-    for path in sorted(CASES_DIR.glob("*.jsonl")):
+    for path in sorted(cases_dir.glob("*.jsonl")):
         for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
             if not line.strip():
                 continue
@@ -279,9 +283,45 @@ def summary(rows, assignment):
     return "\n".join(lines) + "\n"
 
 
+def build_aug(articles_by_org, bank, base_cases, check_only):
+    """학습 전용 보강 사례를 같은 검증기로 검사하고 train_aug.jsonl을 쓴다.
+
+    보강 사례는 분할에 넣지 않으므로 data/splits.json과 train/val/test/summary 산출물은 건드리지 않는다.
+    """
+    aug = load_cases(AUG_DIR)
+    errors = validate(aug, articles_by_org, bank)
+    base_ids = {c["id"] for c in base_cases if "id" in c}
+    base_groups = {c["group"] for c in base_cases if "group" in c}
+    for c in aug:
+        if "_error" in c:
+            continue
+        w = f"{c['_where']} ({c.get('id', '?')})"
+        if c.get("id") in base_ids:
+            errors.append(f"{w}: id가 data/cases와 겹침")
+        if c.get("group") in base_groups:
+            errors.append(f"{w}: group이 data/cases와 겹침")
+
+    print(f"보강 사례 {len(aug)}건")
+    if errors:
+        for e in errors:
+            print("  -", e)
+        print(f"보강 형식 오류 {len(errors)}건")
+        sys.exit(1)
+    print("보강 형식 오류 0건")
+    if check_only:
+        return
+    BUILD_DIR.mkdir(parents=True, exist_ok=True)
+    rows = [export_row(c, articles_by_org[c["state"]["org"]], bank, "train_aug") for c in aug]
+    (BUILD_DIR / "train_aug.jsonl").write_text(
+        "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8", newline="\n")
+    print(f"train_aug {len(rows)} ({len({r['group'] for r in rows})}개 그룹)")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--check", action="store_true", help="검증만 하고 파일을 쓰지 않는다")
+    ap.add_argument("--aug", action="store_true",
+                    help="data/cases_aug의 학습 전용 보강 사례만 빌드한다(분할·기존 산출물은 바꾸지 않음)")
     args = ap.parse_args()
 
     articles_by_org = {org: parse_terms(p) for org, p in TERMS.items()}
@@ -296,6 +336,9 @@ def main():
         print(f"형식 오류 {len(errors)}건")
         sys.exit(1)
     print("형식 오류 0건")
+    if args.aug:
+        build_aug(articles_by_org, bank, cases, args.check)
+        return
     if args.check:
         return
 

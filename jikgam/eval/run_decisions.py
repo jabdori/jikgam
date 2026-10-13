@@ -113,6 +113,7 @@ async def main() -> None:
         "data_file": str(data_path.relative_to(ROOT)).replace("\\", "/"),
         "data_sha256_16": hashlib.sha256(data_path.read_bytes()).hexdigest()[:16], "cases": len(rows),
         "questions_version": q_version, "questions_file": args.questions,
+        "questions_file_sha256_16": hashlib.sha256((ROOT / args.questions).read_bytes()).hexdigest()[:16],
         "llm_prompt_version": llm.PROMPT_VERSION,
         "backends": {n: {k: v for k, v in cfg_all[n].items() if k != "api_key_env"} for n in names},
         "reps": reps, "concurrency": 1,

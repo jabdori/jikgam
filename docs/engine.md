@@ -112,3 +112,15 @@ required_notices = ["환불 예정액과 산정 근거", "환불 방법과 예�
 ```
 
 조직 B는 이 파일과 업무 API 어댑터만 추가한다. 엔진 코드를 고쳐야 했다면 무엇을 왜 고쳤는지 기록한다.
+
+## 8. 구현 메모 (2026-10-14, 채팅판 첫 구현)
+
+위 설계와 다르거나 더한 부분이다. 이유는 `PROGRESS.md` 2026-10-14에 있다.
+
+- 멱등 키는 (세션, 도구, 대상)에서 만든다(§5 표의 "세션·대상·버전" 대신). 버전은 `tool.call` 로그에 남긴다.
+- 동의 판단(§5 "고객이 동의함")은 엔진 전용 질문 `customer_agreed`(`data/question_sets/extra/engine-extra.json`)와 접수 내용 서명(쓰기 인자와 환불 금액)으로 한다. 노출한 제안이 무효화되었어도 `condition_changed`가 참이 아니고 서명이 같으면 동의로 본다.
+- 이전 제안 무효화(§4 5단계)에 코드 규칙을 더했다: 판단한 intent가 제안을 만들 때의 intent와 다르면 무효화한다.
+- 같은 발화로 3단계부터 다시 할 때는 applies, sufficient, next_info, action만 묻는다.
+- 진행 중 작업이 취소되면 `task.cancelled`, 취소되지 않고 끝난 결과가 지난 버전이면 `result.discarded`를 남긴다. 단계별 지연을 보려고 `session.start`, `claims.extracted`, `retrieval.done`, `policy.decided`, `quote.selected`, `generation.request`, `generation.response`, `agent.say`, `engine.error`를 더했다.
+- 검색은 키워드(한국어 글자 바이그램 BM25)와 구조 확장만 쓴다. 임베딩은 아직 없다.
+- 조직 설정에 `extra_question_set`, `agreement_threshold`, `[retrieval]`(후보 수, 구어→약관 낱말, 절차 조항 규칙), `[policy]`(요청별 견적 사유, 견적 우선순위, 환불 접수 사유)를 더했다.
