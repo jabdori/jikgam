@@ -1,0 +1,50 @@
+{
+  "run_id": "20261014T184152",
+  "split": "test",
+  "started_kst": "2026-10-14T18:41:52+09:00",
+  "git_commit": "5ff6aa5c4fffaac5f4db3619b6e907932ba59494",
+  "git_dirty": false,
+  "data_file": "data/build/test.jsonl",
+  "data_sha256_16": "5251d7d814279bf4",
+  "cases": 20,
+  "questions_version": "q-2026.10.14-en",
+  "questions_file": "data/question_sets/q-2026.10.14-en.json",
+  "questions_file_sha256_16": "ec223cbe89a671ac",
+  "llm_prompt_version": "llm-judge-2026.10.14",
+  "frozen_adr": "docs/adr/0014-엔진과-평가-설정-고정.md",
+  "frozen_adr_sha256_16": "e941d69f59074189",
+  "backends": {
+    "gemini-flash": {
+      "kind": "gemini",
+      "model": "gemini-3.8-flash",
+      "thinking_level": "low",
+      "price_input_per_mtok": 0.75,
+      "price_output_per_mtok": 3.75,
+      "price_source": "https://ai.google.dev/gemini-api/docs/pricing (2026-10-14 확인: 2026-12-31까지 가격, 출력에 사고 토큰 포함)"
+    }
+  },
+  "reps": {
+    "gemini-flash": 3
+  },
+  "concurrency": 1,
+  "client": {
+    "python": "3.12.11",
+    "httpx": "0.28.1",
+    "os": "Windows 11 10.0.22631"
+  },
+  "network_before": {
+    "cloudflare_colo": "ICN",
+    "cloudflare_loc": "KR",
+    "tcp_connect_ms_median": {
+      "generativelanguage.googleapis.com": 58.3
+    }
+  },
+  "finished_kst": "2026-10-14T18:46:00+09:00",
+  "network_after": {
+    "cloudflare_colo": "ICN",
+    "cloudflare_loc": "KR",
+    "tcp_connect_ms_median": {
+      "generativelanguage.googleapis.com": 63.1
+    }
+  }
+}

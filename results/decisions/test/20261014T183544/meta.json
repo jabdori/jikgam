@@ -1,0 +1,87 @@
+{
+  "run_id": "20261014T183544",
+  "split": "test",
+  "started_kst": "2026-10-14T18:35:44+09:00",
+  "git_commit": "2f79cadb12f52ea3d16f28c8588ba1c259a93932",
+  "git_dirty": false,
+  "data_file": "data/build/test.jsonl",
+  "data_sha256_16": "5251d7d814279bf4",
+  "cases": 20,
+  "questions_version": "q-2026.10.14-mix",
+  "questions_file": "data/question_sets/q-2026.10.14-mix.json",
+  "questions_file_sha256_16": "3ecdd027d930e6d4",
+  "llm_prompt_version": "llm-judge-2026.10.14",
+  "frozen_adr": "docs/adr/0014-엔진과-평가-설정-고정.md",
+  "frozen_adr_sha256_16": "e941d69f59074189",
+  "backends": {
+    "jev": {
+      "kind": "systemone",
+      "url": "https://api.typesafe.ai/v1/systemone",
+      "model": "jev-1.13.0",
+      "price_input_per_mtok": 0.042,
+      "price_output_per_mtok": 0.0,
+      "price_source": "https://docs.typesafe.ai/models.md (2026-10-14 확인: 입력만 과금)"
+    },
+    "gemini-flash": {
+      "kind": "gemini",
+      "model": "gemini-3.8-flash",
+      "thinking_level": "low",
+      "price_input_per_mtok": 0.75,
+      "price_output_per_mtok": 3.75,
+      "price_source": "https://ai.google.dev/gemini-api/docs/pricing (2026-10-14 확인: 2026-12-31까지 가격, 출력에 사고 토큰 포함)"
+    },
+    "clef-flash": {
+      "kind": "systemone",
+      "url": "https://api.cloudflare.com/client/v4/accounts/{CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/cloudflare/clef-flash",
+      "model": "clef-flash",
+      "envelope": "cloudflare",
+      "price_input_per_mtok": 0.038,
+      "price_output_per_mtok": 0.0,
+      "price_source": "https://developers.cloudflare.com/workers-ai/models/clef-flash/ (2026-10-14 확인, 컨텍스트 24,576 토큰)",
+      "note": "Workers AI 모델 ID에는 버전 고정 수단이 없다. 응답의 model 값과 측정 날짜를 기록한다."
+    },
+    "q35-2b-ko-direct": {
+      "kind": "systemone",
+      "url": "http://127.0.0.1:8893/v1/systemone",
+      "model": "direct-local",
+      "price_input_per_mtok": 0.0,
+      "price_output_per_mtok": 0.0,
+      "price_source": "로컬 서빙, 외부 과금 없음. 참고 비용은 docs/evaluation.md §2.6(jikgam/train/gpu_cost.py)",
+      "served": "WSL2 ~/jikgam-train/runs/q35-2b-d-mix/merged, jikgam/train/serve_direct.py(Studio와 같은 _clef_decide를 서버 프로세스에서 직접 호출, PyTorch 16비트)",
+      "weights_sha256_16": "3f9dcfe6df110822"
+    }
+  },
+  "reps": {
+    "jev": 5,
+    "gemini-flash": 3,
+    "clef-flash": 5,
+    "q35-2b-ko-direct": 5
+  },
+  "concurrency": 1,
+  "client": {
+    "python": "3.12.11",
+    "httpx": "0.28.1",
+    "os": "Windows 11 10.0.22631"
+  },
+  "network_before": {
+    "cloudflare_colo": "ICN",
+    "cloudflare_loc": "KR",
+    "tcp_connect_ms_median": {
+      "127.0.0.1:8893": 15.3,
+      "api.cloudflare.com": 16.1,
+      "api.typesafe.ai": 15.8,
+      "generativelanguage.googleapis.com": 58.0
+    }
+  },
+  "finished_kst": "2026-10-14T18:41:37+09:00",
+  "network_after": {
+    "cloudflare_colo": "ICN",
+    "cloudflare_loc": "KR",
+    "tcp_connect_ms_median": {
+      "127.0.0.1:8893": 14.9,
+      "api.cloudflare.com": 15.5,
+      "api.typesafe.ai": 15.6,
+      "generativelanguage.googleapis.com": 64.3
+    }
+  }
+}
