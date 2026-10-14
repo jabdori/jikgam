@@ -13,3 +13,4 @@ outputs/
 recordings/
 .DS_Store
 .claude/worktrees/
+results/engine/console/
