@@ -166,10 +166,13 @@ def _plausible(reason: str, sub: dict, state: SessionState, cfg: PolicyConfig) -
     if reason == "annual_cancel":
         return pay is not None and sub.get("plan") == "annual"
     if reason == "duplicate":
+        # 중복 결제의 정의는 조직마다 다르다(조직 A: 같은 날, 조직 B: 같은 이용 기간). 두 결제일 간격이 조직 설정
+        # duplicate_window_days 이하면 묻는다(기본 0 = 같은 날). 고객이 두 번 이상 결제됐다고 말해도 묻는다.
         pays = [p for p in state.facts.payments or [] if p.get("subscription_id") == sub["subscription_id"]]
-        same_day = len({p["date"] for p in pays}) < len(pays)
+        days = sorted(date.fromisoformat(p["date"]) for p in pays)
+        close = any((b - a).days <= cfg.duplicate_window_days for a, b in zip(days, days[1:]))
         claimed_many = any(int(r.value.rstrip("회")) >= 2 for r in state.claims.get("payment_count", []))
-        return same_day or (claimed_many and bool(pays))
+        return close or (claimed_many and bool(pays))
     if reason == "minor":
         birth = (state.facts.customer or {}).get("birth")
         return pay is not None and birth is not None and \

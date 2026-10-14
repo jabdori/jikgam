@@ -86,6 +86,9 @@ class PolicyConfig:
     claim_patterns: tuple[ClaimPattern, ...]  # 고객이 직접 주장한 사유는 기간이 지나도 견적을 묻는다
     quote_priority: tuple[str, ...]
     quote_reasons: dict[str, tuple[str, ...]]
+    # 같은 구독의 두 결제일 간격이 이 일 수 이하면 중복 결제 견적을 물어볼 만하다고 본다. 0은 같은 날(조직 A 제10조 제4항).
+    # 같은 이용 기간을 중복으로 보는 조직(조직 B 제10조 제1항)은 가장 짧은 이용 기간보다 짧은 값을 둔다. 자격은 업무 API가 정한다.
+    duplicate_window_days: int = 0
 
 
 @dataclass(frozen=True)
@@ -137,6 +140,9 @@ def _policy(raw: dict[str, Any]) -> PolicyConfig:
     if unknown:
         raise ValueError(f"quote_priority에 없는 견적 사유: {sorted(unknown)}")
     comp = raw.get("compensation")
+    duplicate_window = int(raw.get("duplicate_window_days", 0))
+    if duplicate_window < 0:
+        raise ValueError(f"duplicate_window_days는 0 이상이어야 한다: {duplicate_window}")
     return PolicyConfig(
         records_intents=frozenset(raw["records_intents"]), refund_intents=frozenset(raw["refund_intents"]),
         cancel_intents=frozenset(raw["cancel_intents"]), refundable_reasons=frozenset(raw["refundable_reasons"]),
@@ -153,7 +159,7 @@ def _policy(raw: dict[str, Any]) -> PolicyConfig:
         third_party_articles=tuple(raw.get("third_party_articles", ())), guardian_reasons=guardian,
         guardian_articles=tuple(raw.get("guardian_articles", ())), minor_age=int(raw["minor_age"]),
         window_days=int(raw["window_days"]) if "window_days" in raw else None, claim_patterns=claims,
-        quote_priority=priority, quote_reasons=reasons,
+        quote_priority=priority, quote_reasons=reasons, duplicate_window_days=duplicate_window,
     )
 
 

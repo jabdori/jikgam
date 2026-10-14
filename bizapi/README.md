@@ -118,3 +118,16 @@ curl -X POST localhost:8081/_admin/reset
 - `cmd/bizapi`: 실행 파일(`-data` 반복 지정)
 - `internal/orga`: 조직 A 데이터 읽기와 약관 규칙(견적, 해지 후 이용 마지막 날, 환불 방법). 상태가 없다.
 - `internal/server`: HTTP, 세션, 멱등 키, 접수 내역, 장애 주입, 로그
+
+## 조직 B
+
+가상 조직 B(책솔)는 계약이 다른 자체 업무 시스템과, 그 앞에서 위의 공통 계약을 제공하는 어댑터로 나뉜다. 계약과 변환표는 [`domain/org_b/api.md`](../domain/org_b/api.md), 붙인 기록은 [`docs/org-b.md`](../docs/org-b.md)에 있다.
+
+```sh
+go run ./cmd/orgb   -addr 127.0.0.1:8097 -data ../domain/org_b/customers.json   # 조직 B 업무 시스템
+go run ./cmd/orgbgw -addr 127.0.0.1:8098 -backend http://127.0.0.1:8097          # 어댑터(엔진이 부르는 주소)
+```
+
+- `internal/orgb`: 조직 B 데이터와 약관 규칙(14일 청약철회, 연 이용권 일할 환불, 같은 이용 기간 중복 결제 등). 상태가 없다.
+- `internal/orgbsrv`: 조직 B 업무 시스템 HTTP(시스템 키, 회원 토큰, `Idempotency-Key` 헤더, 자체 오류 코드, `/_mock/*`)
+- `internal/orgbgw`: 어댑터. 공통 계약 → 조직 B 계약(필드, 인증, 오류 코드 변환, `/_admin/*`를 조직 B `/_mock/*`로 전달)

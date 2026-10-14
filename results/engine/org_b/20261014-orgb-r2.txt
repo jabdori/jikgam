@@ -1,0 +1,203 @@
+=== b01.jsonl (세션 b01-C-20261014-orgb-r2, 정책 C, 판별 jev)
+대화:
+  고객(u1)> 안녕하세요, 지난 5일에 결제된 이번 달 이용권 환불받고 싶어요. 결제하고 나서 한 권도 안 읽었어요.
+  상담(s1)> 환불 접수를 진행하기 위해 먼저 계정 소유자 본인 확인이 필요합니다. 가입하신 휴대폰 번호를 입력해 주시겠습니까?
+  고객(u2)> 010-5000-0101이요.
+  상담(s2)> 본인 확인을 위해 휴대폰 번호로 받으신 6자리 인증번호를 알려 주시겠습니까?
+  고객(u3)> 인증번호는 공공공일공일이에요.
+  상담(s3)> 결제일로부터 14일 이내이며 열람 이력이 없어 제5조에 따라 결제 금액 전액인 11,900원의 청약철회 환불이 가능합니다. 환불은 접수일로부터 3~5영업일 안에 카드 승인 취소로 진행되며, 환불 접수 시 오늘(2026년 10월 13일)로 이용 기간이 종료되어 구독이 함께 해지되고 내려받은 도서도 열람하실 수 없습니다. 안내해 드린 내용대로 환불 접수를 진행할까요?
+  고객(u4)> 네, 그렇게 진행해 주세요.
+  상담(s4)> 결제 후 열람 이력이 없어 청약철회에 따른 결제 금액 전액인 11,900원의 환불과 이용권 해지 접수가 완료되었습니다. 환불은 원래 결제하신 카드로 접수일로부터 3~5영업일 안에 승인 취소될 예정입니다. 이용 기간은 신청일인 오늘(2026년 10월 13일)로 종료되며, 이후에는 기존에 내려받은 도서도 더 이상 열람하실 수 없습니다.
+도구 호출:
+  u3 verify_identity(phone=010-5000-0101) → ok [112 ms, 시도 1]
+  u3 get_customer(customer_id=M1001) → ok [59 ms, 시도 1]
+  u3 list_payments(customer_id=M1001) → ok [59 ms, 시도 1]
+  u3 get_usage(customer_id=M1001) → ok [60 ms, 시도 1]
+  u3 list_subscriptions(customer_id=M1001) → ok [64 ms, 시도 1]
+  u3 list_incidents(from=2026-10-05, to=2026-10-13) → ok [9 ms, 시도 1]
+  u3 quote_refund(customer_id=M1001, subscription_id=PS1001, reason=withdrawal) → ok [10 ms, 시도 1]
+  u4 create_refund_request(customer_id=M1001, payment_id=CH1001-2) → ok [10 ms, 시도 1]
+  u4 create_cancellation(customer_id=M1001, subscription_id=PS1001) → ok [9 ms, 시도 1]
+제안:
+  생성 b01-C-20261014-orgb-r2-s1 v1 identity_required/ask intent=refund 근거=['B-14']
+  무효 b01-C-20261014-orgb-r2-s1 (기준 v1 → v2) ['suggestion_valid=false']
+  생성 b01-C-20261014-orgb-r2-s2 v2 identity_required/ask intent=refund 근거=['B-14']
+  무효 b01-C-20261014-orgb-r2-s2 (기준 v2 → v3) ['suggestion_valid=false']
+  생성 b01-C-20261014-orgb-r2-s3 v6 proposal/answer intent=refund 근거=['B-05', 'B-13', 'B-16'] 금액=11900(확정=True) 접수안=['create_refund_request', 'create_cancellation']
+  무효 b01-C-20261014-orgb-r2-s3 (기준 v6 → v7) ['intent_changed:refund->cancel_refund']
+  생성 b01-C-20261014-orgb-r2-s4 v8 received/answer intent=cancel_refund 근거=['B-05', 'B-13', 'B-16'] 금액=11900(확정=True)
+턴별 지연(ms, utterance.end 기준):
+  발화  표시  근거갱신  응답   검색   판별(회별)                 도구(개수,합)  생성(회별)   폐기/취소
+  u1             190.6  2022.0    0.2  190                                 0,0  1830         0/0
+  u2             184.3  1972.9    0.2  183                                 0,0  1787         0/0
+  u3             183.0  3901.5    1.2  182,180,177,181                   7,372  2979         0/0
+  u4             196.0  3075.4    0.3  195,187                            2,19  2671         0/0
+예열: jev 254 ms, $0.000027
+호출: 판별 8회(+예열 1회) $0.00156, 생성 4회 $0.01230
+
+=== b02.jsonl (세션 b02-C-20261014-orgb-r2, 정책 C, 판별 jev)
+대화:
+  고객(u1)> 연 이용권 쓰고 있는데 지금 해지하면 남은 기간 돈은 돌려받을 수 있나요?
+  상담(s1)> 해지 및 환불 처리를 위해 먼저 본인 확인이 필요합니다. 회원 계정에 등록된 가입 휴대폰 번호를 입력해 주시기 바랍니다.
+  고객(u2)> 네 본인이고요, 번호는 010-5000-0103이에요.
+  상담(s2)> 해지 및 환불 신청을 위한 본인 확인 단계입니다. 입력하신 휴대폰 번호로 받으신 인증번호 6자리를 알려 주시기 바랍니다.
+  고객(u3)> 인증번호 공공공일공삼.
+  상담(s3)> 연 이용권 중도 해지 시 결제 금액 119,000원에 대해 남은 331일을 일할 계산하여 환불 예정액은 107,910원입니다. 환불은 결제하신 카드로 처리되며, 환불 예정액이 30,000원 이상이므로 지금은 접수만 진행되고 상담사 승인 후 환불 접수일로부터 3~5영업일 안에 카드 승인이 취소됩니다. 서비스 이용은 오늘(2026-10-13) 종료되며 종료 후에는 내려받은 도서도 열람하실 수 없는데, 이대로 접수를 진행해 드릴까요?
+  고객(u4)> 네, 해지하고 환불 접수해 주세요.
+  상담(s4)> 연 이용권 해지와 일할 환불 접수가 정상적으로 완료되었습니다. 결제 금액 119,000원에 대해 남은 331일을 일할 계산한 환불 예정액은 107,910원이며, 30,000원 이상에 해당하여 상담사 승인 후 환불이 확정됩니다. 승인 후 접수일로부터 3~5영업일 안에 결제하신 카드의 승인이 취소될 예정입니다. 서비스 이용은 오늘(2026-10-13)로 종료되어 기존에 내려받은 도서는 더 이상 열람하실 수 없습니다.
+도구 호출:
+  u3 verify_identity(phone=010-5000-0103) → ok [63 ms, 시도 1]
+  u3 get_customer(customer_id=M1003) → ok [58 ms, 시도 1]
+  u3 get_usage(customer_id=M1003) → ok [55 ms, 시도 1]
+  u3 list_payments(customer_id=M1003) → ok [58 ms, 시도 1]
+  u3 list_subscriptions(customer_id=M1003) → ok [60 ms, 시도 1]
+  u3 list_incidents(from=2026-09-10, to=2026-10-13) → ok [8 ms, 시도 1]
+  u3 quote_refund(customer_id=M1003, subscription_id=PS1003, reason=annual_cancel) → ok [9 ms, 시도 1]
+  u4 create_refund_request(customer_id=M1003, payment_id=CH1003-1) → ok [11 ms, 시도 1]
+  u4 create_cancellation(customer_id=M1003, subscription_id=PS1003) → ok [10 ms, 시도 1]
+제안:
+  생성 b02-C-20261014-orgb-r2-s1 v1 identity_required/ask intent=cancel_refund 근거=['B-14']
+  무효 b02-C-20261014-orgb-r2-s1 (기준 v1 → v2) ['suggestion_valid=false']
+  생성 b02-C-20261014-orgb-r2-s2 v2 identity_required/ask intent=cancel_refund 근거=['B-14']
+  무효 b02-C-20261014-orgb-r2-s2 (기준 v2 → v3) ['suggestion_valid=false']
+  생성 b02-C-20261014-orgb-r2-s3 v6 proposal/answer intent=cancel_refund 근거=['B-08', 'B-13', 'B-15', 'B-16'] 금액=107910(확정=False) 접수안=['create_refund_request', 'create_cancellation']
+  무효 b02-C-20261014-orgb-r2-s3 (기준 v6 → v7) ['suggestion_valid=false']
+  생성 b02-C-20261014-orgb-r2-s4 v8 received/answer intent=cancel_refund 근거=['B-08', 'B-13', 'B-15', 'B-16'] 금액=107910(확정=False)
+턴별 지연(ms, utterance.end 기준):
+  발화  표시  근거갱신  응답   검색   판별(회별)                 도구(개수,합)  생성(회별)   폐기/취소
+  u1             180.0  2508.2    0.2  179                                 0,0  2327         0/0
+  u2             183.0  2171.6    0.2  182                                 0,0  1987         0/0
+  u3             182.4  3591.6    1.1  182,175,184,189                   7,310  2714         0/0
+  u4             192.5  2976.4    0.5  192,198                            2,21  2562         0/0
+예열: jev 185 ms, $0.000027
+호출: 판별 8회(+예열 1회) $0.00153, 생성 4회 $0.01339
+
+=== b03.jsonl (세션 b03-C-20261014-orgb-r2, 정책 C, 판별 jev)
+대화:
+  고객(u1)> 이번 달 이용권 요금이 중복으로 결제된 것 같아요. 환불해 주세요.
+  상담(s1)> 중복 결제 확인 및 환불 처리를 위해 본인 확인이 필요합니다. 가입하신 휴대폰 번호를 알려주시기 바랍니다.
+  고객(u2)> 010-5000-0106입니다.
+  상담(s2)> 제14조에 따라 환불 신청 및 처리를 위해 본인 확인 절차가 필요합니다. 휴대폰으로 받으신 6자리 인증번호를 입력해 주시기 바랍니다.
+  고객(u3)> 인증번호 공공공일공육이요.
+  상담(s3)> 제10조에 따라 같은 이용 기간에 결제된 중복 결제 건에 대해 열람 이력과 관계없이 11900원 전액 환불이 가능합니다. 제13조에 따라 환불 접수일로부터 3~5영업일 안에 카드 승인 취소로 진행되며, 중복 결제 환불은 이용권이 해지되지 않고 유지됩니다. 이대로 환불 접수를 진행해 드릴까요?
+  고객(u4)> 네, 중복된 것만 환불해 주세요. 이용권은 계속 쓸 거예요.
+  상담(s4)> 제10조에 따라 중복 결제 건에 대한 전액 환불 11900원 접수가 완료되었습니다. 제13조에 따라 환불 접수일로부터 3~5영업일 안에 카드 승인이 취소될 예정입니다. 제10조 제3항에 따라 중복 결제 환불은 이용권 해지를 수반하지 않으므로 기존 구독은 유지됩니다.
+도구 호출:
+  u3 verify_identity(phone=010-5000-0106) → ok [70 ms, 시도 1]
+  u3 get_customer(customer_id=M1006) → ok [59 ms, 시도 1]
+  u3 get_usage(customer_id=M1006) → ok [56 ms, 시도 1]
+  u3 list_payments(customer_id=M1006) → ok [59 ms, 시도 1]
+  u3 list_subscriptions(customer_id=M1006) → ok [61 ms, 시도 1]
+  u3 list_incidents(from=2026-10-03, to=2026-10-13) → ok [8 ms, 시도 1]
+  u3 quote_refund(customer_id=M1006, subscription_id=PS1006, reason=duplicate) → ok [14 ms, 시도 1]
+  u3 quote_refund(customer_id=M1006, subscription_id=PS1006, reason=withdrawal) → NOT_ELIGIBLE [15 ms, 시도 1]
+  u4 create_refund_request(customer_id=M1006, payment_id=CH1006-4) → ok [10 ms, 시도 1]
+제안:
+  생성 b03-C-20261014-orgb-r2-s1 v1 identity_required/ask intent=refund 근거=['B-14']
+  무효 b03-C-20261014-orgb-r2-s1 (기준 v1 → v2) ['suggestion_valid=false']
+  생성 b03-C-20261014-orgb-r2-s2 v2 identity_required/ask intent=refund 근거=['B-14']
+  무효 b03-C-20261014-orgb-r2-s2 (기준 v2 → v3) ['suggestion_valid=false']
+  생성 b03-C-20261014-orgb-r2-s3 v6 proposal/answer intent=refund 근거=['B-10', 'B-13'] 금액=11900(확정=True) 접수안=['create_refund_request']
+  생성 b03-C-20261014-orgb-r2-s4 v8 received/answer intent=refund 근거=['B-10', 'B-13', 'B-16'] 금액=11900(확정=True)
+턴별 지연(ms, utterance.end 기준):
+  발화  표시  근거갱신  응답   검색   판별(회별)                 도구(개수,합)  생성(회별)   폐기/취소
+  u1             190.3  2788.7    0.2  190                                 0,0  2597         0/0
+  u2             181.3  2186.9    0.2  180                                 0,0  2005         0/0
+  u3             183.7  3137.7    0.9  183,191,181,187                   8,342  2234         0/0
+  u4             192.4  2763.9    0.4  192,183                            1,10  2376         0/0
+예열: jev 184 ms, $0.000027
+호출: 판별 8회(+예열 1회) $0.00159, 생성 4회 $0.01239
+
+=== b04.jsonl (세션 b04-C-20261014-orgb-r2, 정책 C, 판별 jev)
+대화:
+  고객(u1)> 지난주에 앱이 몇 시간 동안 안 열렸어요. 이번 달 요금 환불받고 싶어요.
+  상담(s1)> 해지 및 환불 문의 확인을 위해서는 먼저 본인 확인 절차가 필요합니다. 가입하신 계정의 본인 확인용 휴대폰 번호를 입력해 주시겠습니까?
+  고객(u2)> 010-5000-0110이요.
+  상담(s2)> 본인 확인을 위해 해당 휴대폰 번호로 받으신 인증번호 6자리를 알려 주시겠습니까? 확인이 완료되면 문의하신 내용을 자세히 안내해 드리겠습니다.
+  고객(u3)> 인증번호는 공공공일일공이요.
+  상담(s3)> 본인 확인이 완료되었습니다. 결제일 이후인 2026-10-04와 2026-10-09에 열람 이력이 확인되어, 제6조에 따라 청약철회를 통한 환불은 불가합니다.
+  고객(u4)> 아 환불이 안 되면 그냥 이용 기간 연장으로 보상받을게요.  [조건 변경 표시]
+  상담(s4)> 제9조에 따라 외부 서비스 및 회사 장애로 2시간 이상 중단된 건에 대해 중단 시간의 2배만큼 이용 기간 연장 보상 대상이 됩니다. 확인 결과 2026년 10월 8일 장애에 대해 6시간, 2026년 10월 10일 장애에 대해 5시간의 연장 보상 대상인 것으로 확인됩니다. 장애 보상은 이용 기간 연장으로 진행되며 금전 환불은 불가합니다.
+  고객(u5)> 네 알겠습니다. 감사합니다.
+  상담(s5)> 제9조에 따라 연속 2시간 이상 발생한 장애 건에 대해 중단 시간의 2배가 연장 보상 대상이 됩니다. 고객님의 계정은 2026년 10월 8일 장애에 대해 6시간, 10월 10일 장애에 대해 5시간 연장 보상 대상인 것으로 확인됩니다. 해당 보상은 이용 기간 연장 대상 안내이며 금전으로 환불되지 않습니다.
+도구 호출:
+  u3 verify_identity(phone=010-5000-0110) → ok [98 ms, 시도 1]
+  u3 get_customer(customer_id=M1010) → ok [58 ms, 시도 1]
+  u3 list_payments(customer_id=M1010) → ok [60 ms, 시도 1]
+  u3 get_usage(customer_id=M1010) → ok [60 ms, 시도 1]
+  u3 list_subscriptions(customer_id=M1010) → ok [65 ms, 시도 1]
+  u3 list_incidents(from=2026-10-03, to=2026-10-13) → ok [9 ms, 시도 1]
+  u3 quote_refund(customer_id=M1010, subscription_id=PS1010, reason=withdrawal) → NOT_ELIGIBLE [10 ms, 시도 1]
+제안:
+  생성 b04-C-20261014-orgb-r2-s1 v1 identity_required/ask intent=refund 근거=['B-14']
+  무효 b04-C-20261014-orgb-r2-s1 (기준 v1 → v2) ['suggestion_valid=false']
+  생성 b04-C-20261014-orgb-r2-s2 v2 identity_required/ask intent=refund 근거=['B-14']
+  무효 b04-C-20261014-orgb-r2-s2 (기준 v2 → v3) ['suggestion_valid=false']
+  생성 b04-C-20261014-orgb-r2-s3 v6 not_eligible/answer intent=refund 근거=['B-06']
+  무효 b04-C-20261014-orgb-r2-s3 (기준 v6 → v7) ['suggestion_valid=false', 'intent_changed:refund->compensation']
+  생성 b04-C-20261014-orgb-r2-s4 v7 compensation/answer intent=compensation 근거=['B-09']
+  생성 b04-C-20261014-orgb-r2-s5 v8 compensation/answer intent=compensation 근거=['B-09']
+턴별 지연(ms, utterance.end 기준):
+  발화  표시  근거갱신  응답   검색   판별(회별)                 도구(개수,합)  생성(회별)   폐기/취소
+  u1             235.4  2567.8    0.2  234                                 0,0  2332         0/0
+  u2             184.3  2220.8    0.2  184                                 0,0  2036         0/0
+  u3             184.7  2882.9    0.8  184,195,218,185                   7,360  1914         0/0
+  u4    변경     186.9  2725.7    0.2  186                                 0,0  2538         0/0
+  u5             192.7  2655.7    0.2  192                                 0,0  2462         0/0
+예열: jev 241 ms, $0.000027
+호출: 판별 8회(+예열 1회) $0.00152, 생성 5회 $0.01385
+
+=== b05.jsonl (세션 b05-C-20261014-orgb-r2, 정책 C, 판별 jev)
+대화:
+  고객(u1)> 안녕하세요, 저희 아빠가 가족 이용권 관리 회원이고 저는 구성원인데요, 가족 이용권 해지하고 싶어요.
+  상담(s1)> 가족 이용권의 해지와 환불은 제12조 및 제14조에 따라 관리 회원인 계정 소유자 본인만 신청하실 수 있어, 구성원 분의 요청으로는 접수가 불가합니다. 해지를 원하실 경우 관리 회원 본인께서 직접 고객센터로 문의해 주셔야 합니다. 도움을 드리지 못해 양해 부탁드립니다.
+  고객(u2)> 아빠 번호는 010-5000-0105예요. 인증번호도 제가 받아서 알려 드릴 수 있어요.
+  상담(s2)> 제12조 및 제14조에 따라 가족 이용권의 해지와 환불은 관리 회원 본인만 직접 신청하실 수 있어, 제3자나 구성원을 통해서는 인증번호 확인 및 해지 접수가 불가합니다. 따라서 알려주신 번호로는 본인 확인을 진행할 수 없으며, 관리 회원 본인께서 직접 고객센터로 문의해 주셔야 합니다. 원활한 처리를 도와드리지 못해 양해 부탁드립니다.
+  고객(u3)> 그럼 저는 그냥 가족 이용권에서 나가는 건 할 수 있어요?
+  상담(s3)> 제12조에 따라 구성원은 언제든지 가족 이용권에서 나갈 수 있습니다. 다만 이는 가족 이용권 전체의 해지가 아니며, 이용권 요금 또한 바뀌지 않습니다. 전체 해지나 환불을 원하실 경우에는 관리 회원 본인께서 직접 문의해 주셔야 합니다.
+도구 호출:
+제안:
+  생성 b05-C-20261014-orgb-r2-s1 v1 third_party/answer intent=cancel 근거=['B-12', 'B-14']
+  생성 b05-C-20261014-orgb-r2-s2 v2 third_party/answer intent=cancel 근거=['B-12', 'B-14']
+  무효 b05-C-20261014-orgb-r2-s2 (기준 v2 → v3) ['suggestion_valid=false']
+  생성 b05-C-20261014-orgb-r2-s3 v3 third_party/answer intent=cancel 근거=['B-12']
+턴별 지연(ms, utterance.end 기준):
+  발화  표시  근거갱신  응답   검색   판별(회별)                 도구(개수,합)  생성(회별)   폐기/취소
+  u1             182.2  2933.6    0.2  181                                 0,0  2751         0/0
+  u2             186.8  2568.6    0.3  186                                 0,0  2381         0/0
+  u3             184.1  2624.2    0.3  183                                 0,0  2439         0/0
+예열: jev 198 ms, $0.000027
+호출: 판별 3회(+예열 1회) $0.00057, 생성 3회 $0.00601
+
+=== b06.jsonl (세션 b06-C-20261014-orgb-r2, 정책 C, 판별 jev)
+대화:
+  고객(u1)> 가입한 지 일주일 됐는데 책을 하나도 안 읽어서 청약철회하고 싶어요.
+  상담(s1)> 해지 및 환불 신청을 진행하기 위해 먼저 본인 확인이 필요합니다. 가입하신 휴대폰 번호를 입력해 주시기 바랍니다. 번호를 알려주시면 다음 단계로 안내해 드리겠습니다.
+  고객(u2)> 번호는 010-5000-0109이고 인증번호는 공공공일공구예요.
+  상담(s2)> 제15조에 따라 최근 12개월 안에 환불을 2회 이상 받으신 이력이 있어 자동 처리가 어려워 상담사에게 연결해 드립니다. 현재 예상 대기 시간은 약 7분입니다. 잠시만 기다려 주시면 전문 상담사가 확인 후 안내해 드리겠습니다.
+  고객(u3)> 상담사 연결까지 얼마나 걸려요?
+  상담(s3)> 제15조에 따라 최근 12개월 내 환불 이력으로 인해 상담사 연결을 진행 중입니다. 현재 상담사 연결 예상 대기 시간은 약 7분입니다. 잠시만 기다려 주시면 상담사가 연결되어 처리를 도와드리겠습니다.
+도구 호출:
+  u2 verify_identity(phone=010-5000-0109) → ok [67 ms, 시도 1]
+  u2 get_customer(customer_id=M1009) → ok [56 ms, 시도 1]
+  u2 list_payments(customer_id=M1009) → ok [57 ms, 시도 1]
+  u2 list_subscriptions(customer_id=M1009) → ok [62 ms, 시도 1]
+  u2 get_usage(customer_id=M1009) → ok [62 ms, 시도 1]
+  u2 list_incidents(from=2026-10-06, to=2026-10-13) → ok [13 ms, 시도 1]
+  u2 quote_refund(customer_id=M1009, subscription_id=PS1009, reason=withdrawal) → HANDOFF_REQUIRED [9 ms, 시도 1]
+  u2 create_handoff(customer_id=M1009, reason=repeat_refund) → ok [10 ms, 시도 1]
+제안:
+  생성 b06-C-20261014-orgb-r2-s1 v1 identity_required/ask intent=cancel_refund 근거=['B-14']
+  무효 b06-C-20261014-orgb-r2-s1 (기준 v1 → v2) ['suggestion_valid=false']
+  생성 b06-C-20261014-orgb-r2-s2 v6 handoff/handoff intent=cancel_refund 근거=['B-15']
+  생성 b06-C-20261014-orgb-r2-s3 v7 handoff/handoff intent=cancel_refund 근거=['B-15']
+턴별 지연(ms, utterance.end 기준):
+  발화  표시  근거갱신  응답   검색   판별(회별)                 도구(개수,합)  생성(회별)   폐기/취소
+  u1             190.5  2417.6    0.2  190                                 0,0  2226         0/0
+  u2             207.4  3509.3    1.6  206,185,189,181,191               8,336  2384         0/0
+  u3             241.7  2706.1    0.2  241                                 0,0  2464         0/0
+예열: jev 187 ms, $0.000027
+호출: 판별 7회(+예열 1회) $0.00122, 생성 3회 $0.00759
+
+이벤트 로그: results\engine\org_b\20261014-orgb-r2
+호출 비용 합: $0.07351
