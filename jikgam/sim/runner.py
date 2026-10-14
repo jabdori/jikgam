@@ -345,9 +345,11 @@ async def run(args: argparse.Namespace) -> Path:
     org = load_org(args.org)
     if args.bizapi_url:
         org = replace(org, bizapi_url=args.bizapi_url.rstrip("/"))
-    path = scenario_path(org.org)
+    path = (ROOT / args.scenario_file) if args.scenario_file else scenario_path(org.org)
     chosen = select(load_scenarios(path), args.scenarios)
-    registered = registered_phones(customers_file(org))
+    # 보류용 평가는 보류용 고객 데이터도 모의 업무 API에 올리므로, 인증 문자 대상 번호도 그 파일까지 본다.
+    customer_files = [ROOT / c for c in args.customers] if args.customers else [customers_file(org)]
+    registered = frozenset().union(*(registered_phones(c) for c in customer_files))
     run_id = args.run_id or f"{datetime.now(ev.KST):%Y%m%dT%H%M%S}-{policy.name}"
     run_dir = args.out_dir / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -364,7 +366,8 @@ async def run(args: argparse.Namespace) -> Path:
         "judge_model": None if args.no_judge else models[args.judge_model]["model"],
         "judge_prompt": None if args.no_judge else judge.JUDGE_PROMPT_VERSION,
         "git": git_commit(), "started": datetime.now(ev.KST).isoformat(timespec="seconds"), "ended": None,
-        "note": "개발용 시나리오 결과(docs/evaluation.md §4.3). 합성 대화이며 운영 성과가 아니다.",
+        "note": ("보류용" if "holdout" in path.name else "개발용") + " 시나리오 결과(docs/evaluation.md §4.3). 합성 대화이며 운영 성과가 아니다.",
+        "customer_files": [str(c.relative_to(ROOT)).replace("\\", "/") for c in customer_files],
         "sessions": [],
     }
     write_summary(run_dir, summary)
@@ -407,6 +410,9 @@ def main() -> None:
     ap.add_argument("--scenarios", default="all", help="쉼표로 구분한 시나리오 ID 또는 all")
     ap.add_argument("--policy", required=True, choices=["A", "B", "C", "D"])
     ap.add_argument("--runs", type=int, default=1, help="시나리오별 반복 횟수(docs/evaluation.md §3.4 보완: 3)")
+    ap.add_argument("--scenario-file", help="시나리오 파일(저장소 기준 경로). 생략하면 data/scenarios/<org>.jsonl")
+    ap.add_argument("--customers", action="append",
+                    help="인증 문자를 줄 등록 번호를 읽을 고객 데이터(저장소 기준 경로, 여러 번 줄 수 있다). 생략하면 domain/<org>/customers.json")
     ap.add_argument("--run-start", type=int, default=1,
                     help="첫 회차 번호. 회차를 나눠 실행할 때 고객 AI seed가 회차마다 달라지게 한다(예: --runs 1 --run-start 2)")
     ap.add_argument("--run-id")

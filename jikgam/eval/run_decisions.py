@@ -84,12 +84,15 @@ async def main() -> None:
     ap.add_argument("--llm-reps", type=int, default=3, help="생성형 LLM 반복 횟수")
     ap.add_argument("--limit", type=int, default=0, help="앞 N건만(점검용)")
     ap.add_argument("--out", default="results/decisions")
+    ap.add_argument("--frozen", help="test 평가 때 설정을 고정한 ADR 경로. meta.json에 경로와 해시를 남긴다")
     ap.add_argument("--questions", default="data/questions.json",
                     help="질문 세트 파일. 빌드 파일의 질문 ID를 이 세트의 문구로 다시 만든다(문구 실험용)")
     args = ap.parse_args()
 
     if args.split == "test":
-        sys.exit("test 분할은 docs/evaluation.md의 고정 절차로만 평가한다. 이 스크립트로는 돌리지 않는다.")
+        # docs/evaluation.md §8: 설정을 ADR로 고정한 뒤 한 번만 평가한다. 고정 ADR이 없으면 돌리지 않는다.
+        if not args.frozen or not (ROOT / args.frozen).is_file() or "/adr/" not in args.frozen.replace("\\", "/"):
+            sys.exit("test 분할은 설정 고정 ADR(--frozen docs/adr/<번호>.md)을 줄 때만 평가한다(docs/evaluation.md §8).")
 
     cfg_all = load_config()
     names = args.backends.split(",")
@@ -115,6 +118,8 @@ async def main() -> None:
         "questions_version": q_version, "questions_file": args.questions,
         "questions_file_sha256_16": hashlib.sha256((ROOT / args.questions).read_bytes()).hexdigest()[:16],
         "llm_prompt_version": llm.PROMPT_VERSION,
+        "frozen_adr": args.frozen, "frozen_adr_sha256_16": (hashlib.sha256((ROOT / args.frozen).read_bytes()).hexdigest()[:16]
+                                                            if args.frozen else None),
         "backends": {n: {k: v for k, v in cfg_all[n].items() if k != "api_key_env"} for n in names},
         "reps": reps, "concurrency": 1,
         "client": {"python": platform.python_version(), "httpx": metadata.version("httpx"),
