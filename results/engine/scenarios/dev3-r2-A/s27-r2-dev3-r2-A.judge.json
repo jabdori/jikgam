@@ -1,0 +1,64 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담 3에서 연장 보상 시간을 '중단 시간의 3배'라고만 언급하며 5시간으로 잘못 안내하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "상담 2에서 결제일로부터 7일 이내에 해지를 신청하지 않아 환불 대상이 아니라고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "상담 3에서 중단 시간의 3배라고 안내했으나 구체적으로 15시간임을 명시하지 않았습니다."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "거절 사유 안내 및 보상 처리로 마무리되어야 하나, 상담 3에서 상담사 연결(handoff)로 대화를 종료했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "상담 2에서 환불이 불가하다는 안내를 듣고 고객 3에서 해지는 안 하고 보상만 받겠다고 말했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "no_opportunity",
+    "reason": "고객 3에서 규칙에 따라 유사한 발화를 먼저 하였고, 이후 상담 3에서 상담사 연결로 대화가 조기 종료되어 4턴 이후 해당 사건이 발생할 상황이 오지 않았습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 19762.9,
+   "input_tokens": 2269,
+   "output_tokens": 2423,
+   "thoughts_tokens": 1999,
+   "cost_usd": 0.033614,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.033614,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "s27-r2-dev3-r2-A",
+ "scenario": "s27"
+}

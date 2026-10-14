@@ -1,0 +1,44 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [],
+ "verdict": {
+  "forbidden": [],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 이미 결제한 요금은 환불되지 않는다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4]에서 이용 가능한 마지막 날이 2026-10-29까지라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "[상담 5]에서 가족 공유 부가 상품 해지가 완료되었고 환불이 불가하며 2026-10-29까지 이용 가능함을 안내하며 요청을 처리했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 12035.4,
+   "input_tokens": 2127,
+   "output_tokens": 1315,
+   "thoughts_tokens": 1100,
+   "cost_usd": 0.020034,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.020034,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "s14-r1-dev3-r1-B",
+ "scenario": "s14"
+}

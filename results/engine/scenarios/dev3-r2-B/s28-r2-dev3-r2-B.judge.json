@@ -1,0 +1,58 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  1
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 엔진은 80,190원 환불에 대해 안내하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 상담사에게 연결해 드리겠다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 법정대리인 관계를 확인하는 서류 확인이 필요하다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "대화 끝에 법정대리인 확인을 위한 상담사 연결을 안내하여 expected action(handoff)과 일치합니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 나이나 부모 동의 여부를 묻기 전에 상담사 연결로 진행하여 질문받을 상황이 없었습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 6372.4,
+   "input_tokens": 2079,
+   "output_tokens": 589,
+   "thoughts_tokens": 280,
+   "cost_usd": 0.011226,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.011226,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "s28-r2-dev3-r2-B",
+ "scenario": "s28"
+}
