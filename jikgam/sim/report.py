@@ -86,14 +86,23 @@ def render(run: dict[str, Any]) -> str:
     out.append("항목별 실패 수(유효 실행): " + ", ".join(f"{n}.{jd.ITEM_NAMES[n]} {item_fail[n]}" for n in jd.ITEMS))
     aux = [x["result"]["aux"] for x in valid]
     precisions = [a["precision"] for a in aux if a["precision"] is not None]
+    gen_precisions = [a["precision_generator"] for a in aux if a.get("precision_generator") is not None]
     intents = [a["intent_match"] for a in aux if a["intent_match"] is not None]
     out.append("보조: intent 일치 " + (f"{sum(intents)}/{len(intents)}" if intents else "-(intent를 남기지 않는 정책)")
                + ", 최종 안내 근거 정밀도 평균 "
                + (f"{sum(precisions) / len(precisions):.2f}({len(precisions)}개)" if precisions else "-")
+               + (f"(생성기가 든 조항 기준 {sum(gen_precisions) / len(gen_precisions):.2f}, {len(gen_precisions)}개)"
+                  if gen_precisions else "")
                + f", 고객 턴 평균 {sum(a['customer_turns'] for a in aux) / max(len(aux), 1):.1f}")
     last_fail = [x for x in valid if x["result"]["aux"]["item10_last"]["ok"] is False]
     out.append(f"10번을 마지막 제안 하나로 읽은 결과(판정에 쓰지 않음, docs/evaluation.md §4.1 보완): 유효 실행 "
                f"{len(valid)}개 중 {len(last_fail)}개 실패 {sorted({x['scenario'] for x in last_fail})}")
+    gen10 = [x for x in valid if x["result"]["aux"].get("item10_generator") is not None]
+    if gen10:
+        gen_fail = [x for x in gen10 if x["result"]["aux"]["item10_generator"]["ok"] is False]
+        out.append(f"10번을 생성기가 든 조항의 합집합으로 읽은 결과(판정에 쓰지 않음, 근거 집합 정의 이전과 비교용, "
+                   f"docs/engine.md §12): 유효 실행 {len(gen10)}개 중 {len(gen_fail)}개 실패 "
+                   f"{sorted({x['scenario'] for x in gen_fail})}")
     if any(x.get("run", 1) > 1 for x in sessions):
         by_scn: dict[str, list[str]] = {}
         for x in sessions:

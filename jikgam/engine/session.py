@@ -12,8 +12,13 @@
  9. 제안 생성(suggestion.created)과 노출(agent.say, suggestion.exposed).
 
 한 버전의 3~9단계는 asyncio 작업 하나(파이프라인)로 돈다. 새 고객 발화가 오면 그 작업을 취소하고(task.cancelled),
-취소되지 않고 끝난 단계의 결과가 지난 버전이면 쓰지 않는다(result.discarded). 쓰기 API 묶음은 shield로 감싸 취소하지
-않는다. 쓰기가 끝났을 때 그것을 시작한 파이프라인이 이미 없으면, 쓰기 결과로 버전을 올리고 최신 발화로 다시 진행한다.
+취소되지 않고 끝난 단계의 결과가 지난 버전이면 쓰지 않는다(result.discarded). 서버 상태를 바꾸는 호출 묶음(쓰기 API,
+본인 확인)은 shield로 감싸 취소하지 않는다. 묶음이 끝났을 때 그것을 시작한 파이프라인이 이미 없으면, 그 결과로 버전을
+올리고 최신 발화로 다시 진행한다.
+
+응답의 근거 조항(cited_articles)은 그 응답을 만들 때 엔진이 실제로 쓴 근거 집합이다: 정책 규칙의 조항, 상담 상태로 붙인
+절차 조항, 판별이 고른 조항, 업무 API가 돌려준 근거 조항. 생성 입력에 이 조항을 모두 넣는다. 생성기가 문장의 근거로 든
+조항은 generator_cited로 따로 남긴다(docs/engine.md §12).
 
 이전 제안 무효화 규칙(5단계): suggestion_valid가 거짓이거나 condition_changed가 참이면 무효화한다(docs/engine.md §4).
 여기에 코드 규칙 하나를 더한다: 이번 판단의 intent가 제안을 만들 때의 intent와 다르면 무효화한다. 요청이 바뀌면 정책
@@ -35,8 +40,10 @@ caller_threshold, 제3자로 본 뒤 본인으로 돌아가는 것은 더 높은
 
 빠른 정정(앞 턴 진행 중 새 발화, docs/evaluation.md §3.3 보완): 버전은 발화가 도착할 때 바로 올리고 진행 중인 작업을
 취소한다(예열을 기다리는 중이어도). 예열 뒤에는 가장 최근 발화만 파이프라인을 돌리고 앞 발화는 양보한다(_drive). 앞 턴이
-시작한 쓰기는 취소하지 않으며, 새 발화의 파이프라인은 정책 단계 전에 그 쓰기가 끝나기를 기다린다(writes.wait). 쓰기가 끝나면
-결과로 버전이 올라 새 파이프라인이 취소되고 최신 발화로 다시 진행한다. 그래서 이미 접수 중인 내용을 다시 안내하지 않는다.
+시작한 쓰기와 본인 확인은 취소하지 않으며, 새 발화의 파이프라인은 정책 단계 전에 그 묶음이 끝나기를 기다린다(writes.wait).
+묶음이 끝나면 결과로 버전이 올라 새 파이프라인이 취소되고 최신 발화로 다시 진행한다. 그래서 이미 접수 중인 내용을 다시
+안내하지 않고, 진행 중이던 본인 확인 결과를 잃지 않는다. 답하지 못한 앞 발화의 인증번호로 본인 확인을 시작하기 전이었으면
+그 인증번호를 새 발화로 넘긴다(_carry_otp, docs/engine.md §13).
 
 업무 API 장애(재시도 예산 소진)는 세션이 끝날 때까지 기억한다. 같은 세션에서 그 도구를 다시 부르지 않고 보류한다
 (api.md "재시도 예산 내 1회 재시도 후 접수 보류 안내", 시나리오 s19 "2회를 넘는 quote_refund 호출" 금지).
@@ -66,7 +73,12 @@ from .state import GUARDIAN, OWNER, THIRD_PARTY, Evidence, SessionState, Suggest
 MAX_PASSES = 6  # 한 턴에서 도구 결과로 3단계부터 다시 하는 최대 횟수(무한 반복 방지)
 DECISION_RETRYABLE = ("HTTP 429", "HTTP 500", "HTTP 502", "HTTP 503", "HTTP 504", "ConnectError", "ReadTimeout",
                       "ConnectTimeout", "RemoteProtocolError", "ReadError")
-CHANNEL = "chat"
+CHANNEL = "chat"  # 기본 채널
+# 엔진이 응답을 낸 시각(agent.say)이 곧 노출인 채널. 엔진이 suggestion.exposed를 남긴다(채팅 전송, 콘솔 표시 시작).
+# 그 밖의 채널(음성)은 노출 시각을 채널 계층이 알므로(TTS 재생 시작) 그 계층이 남긴다(docs/evaluation.md §3.3).
+ENGINE_EXPOSED_CHANNELS = frozenset({"chat"})
+# 서버 상태를 바꾸는 호출. 쓰기와 같이 취소하지 않고 끝까지 보낸 뒤 결과를 반영한다(본인 확인은 시도 횟수와 확인 상태를 바꾼다)
+SHIELDED_CALLS = frozenset({"verify_identity"})
 CONVERSATION_FOR_GENERATION = 8  # 생성 입력에 넣는 최근 대화 수
 WARMUP_TEXT = "안녕하세요"  # 예열 요청의 고정 발화(측정 데이터가 아니다)
 
@@ -74,10 +86,16 @@ WARMUP_TEXT = "안녕하세요"  # 예열 요청의 고정 발화(측정 데이�
 class Session:
     def __init__(self, org: OrgConfig, session_id: str, log_dir: Path, decision_backend: str | None = None, *,
                  decision_client: DecisionClient | None = None, generator: gen.Generator | None = None,
-                 bizapi: BizApiClient | None = None):
-        """decision_client, generator, bizapi는 테스트에서 가짜를 넣을 때만 쓴다. 기본은 조직 설정으로 만든다."""
+                 bizapi: BizApiClient | None = None, channel: str = CHANNEL):
+        """decision_client, generator, bizapi는 테스트에서 가짜를 넣을 때만 쓴다. 기본은 조직 설정으로 만든다.
+
+        channel은 응답을 내보내는 채널 이름이다(session.start에 남긴다). ENGINE_EXPOSED_CHANNELS(채팅)면 엔진이 응답을 낼 때
+        suggestion.exposed를 그 채널로 남기고, 음성처럼 노출 시각을 채널 계층이 아는 채널이면 남기지 않는다(음성 계층이
+        TTS 재생 시작에 남긴다). 엔진의 판단·도구·생성·제안 처리는 채널과 관계없이 같다.
+        """
         self.org = org
         self.session_id = session_id
+        self.channel = channel
         self.backend = decision_backend or org.decision_backend
         self.log = EventLog(Path(log_dir) / f"{session_id}.jsonl", session_id)
         self.state = SessionState(org.org, org.today)
@@ -93,11 +111,12 @@ class Session:
         self.biz = bizapi or BizApiClient(org.bizapi_url, session_id)
         self._task: asyncio.Task | None = None  # 현재 버전의 파이프라인
         self._latest_utt: str | None = None
-        self._writes: set[asyncio.Task] = set()
+        self._writes: set[asyncio.Task] = set()  # 취소하지 않는 호출 묶음(쓰기, 본인 확인). _start_bundle
         self._warmup: asyncio.Future | None = None
         self._drivers = 0  # _drive를 돌리고 있거나 예열 뒤 곧 돌릴 호출 수(request_handoff가 본다)
         self._rerun = False  # request_handoff가 진행 중인 _drive에 같은 발화로 다시 진행하라고 남긴 표시
         self._addon_asked: str | None = None  # addon_only를 이미 물은 발화
+        self._answered_utt: str | None = None  # 마지막으로 답(제안 노출)을 낸 고객 발화
         self._n_suggestions = 0
         self._n_agent = 0
         self._n_calls = 0
@@ -108,7 +127,8 @@ class Session:
                       thresholds={"decline": org.decline_threshold, "caller": org.caller_threshold,
                                   "owner_return": org.owner_return_threshold, "addon": org.addon_threshold,
                                   "identity_unavailable": org.identity_unavailable_threshold},
-                      max_candidates=org.retrieval.max_candidates, bizapi_url=org.bizapi_url, channel=CHANNEL)
+                      max_candidates=org.retrieval.max_candidates, bizapi_url=org.bizapi_url, channel=channel,
+                      engine_exposure=channel in ENGINE_EXPOSED_CHANNELS)
 
     @property
     def version(self) -> int:
@@ -159,12 +179,14 @@ class Session:
             self.state.add_turn(utt.utt_id, utt.speaker, utt.text)
             return out
         out.append(self._bump("utterance", utt_id=utt.utt_id))
+        carried = self._carry_otp(self._latest_utt)
         self.state.add_turn(utt.utt_id, "customer", utt.text)
         claims = extract(utt.text, self.org.today)
         self.state.add_claims(utt.utt_id, claims)
         out.append(self.log.emit(ev.CLAIMS_EXTRACTED, self.state.version, utt_id=utt.utt_id, keys=claims.keys,
                                  phones=list(claims.phones), otps=["*" * len(o) for o in claims.otps],
-                                 accounts=len(claims.accounts)))
+                                 accounts=len(claims.accounts),
+                                 **({"carried_otp_from": carried} if carried else {})))
         self._latest_utt = utt.utt_id
         self._drivers += 1
         try:
@@ -226,6 +248,22 @@ class Session:
 
     def _stale(self, version: int) -> bool:
         return self.state.version != version
+
+    def _carry_otp(self, prev: str | None) -> str | None:
+        """새 고객 발화가 왔는데 앞 고객 발화(prev)에 아직 답하지 못했고 그 발화의 인증번호로 본인 확인을 시작하지
+        않았으면, 그 인증번호를 넘겨 둔다(state.carried_otp). 넘겨 둔 발화 ID를 돌려준다.
+
+        앞 발화의 파이프라인은 새 발화로 취소되고 정책은 이번 발화의 진술을 보므로, 넘겨 두지 않으면 고객이 말한 인증번호가
+        사라진다. 빠른 정정(채팅에서 연달아 보냄), 음성에서 한 말이 확정 자막 두 개로 나뉘는 경우에 생긴다. 이미 본인 확인을
+        시작했으면 그 호출은 취소되지 않고 결과가 반영되므로(SHIELDED_CALLS) 넘기지 않는다.
+        """
+        if prev is None or prev == self._answered_utt or self.state.identity.verified:
+            return None
+        claims = self.state.claims_by_utt.get(prev)
+        if claims is None or not claims.otps or prev in self.state.identity.tried_utt.values():
+            return None
+        self.state.carried_otp = (prev, claims.otps[-1])
+        return prev
 
     def _discard(self, stage: str, version: int, **info: Any) -> dict[str, Any]:
         return self.log.emit(ev.RESULT_DISCARDED, self.state.version, stage=stage, started_version=version, **info)
@@ -292,19 +330,22 @@ class Session:
                     identity_unavailable = probs.get("identity_unavailable", 0.0) >= self.org.identity_unavailable_threshold
                     self.state.request = intent
                 sufficient = labels.get("sufficient")
+                attached = [a for a in result.candidates if result.sources.get(a) == "rule"]
                 self.state.evidence = Evidence(my_v, result.candidates, selected,
                                                {a: probs.get(f"applies:{a}", 0.0) for a in result.candidates},
                                                None if sufficient is None else sufficient == "true",
-                                               labels.get("next_info"), labels.get("action"), self.state.request)
+                                               labels.get("next_info"), labels.get("action"), self.state.request,
+                                               attached)
                 # 6. 근거 갱신
                 out.append(self.log.emit(ev.EVIDENCE_UPDATED, my_v, articles=selected, candidates=result.candidates,
                                          applies={a: round(p, 3) for a, p in self.state.evidence.applies.items()},
                                          sufficient=self.state.evidence.sufficient, next_info=labels.get("next_info"),
                                          action=labels.get("action"), intent=self.state.request, caller=self.state.caller,
-                                         addon_only=self.state.addon_only, pass_no=n_pass, decision_error=res.error))
-                # 7. 정책. 앞 턴이 시작한 쓰기가 아직 진행 중이면 끝날 때까지 기다린다. 쓰기 결과 없이 정책을 정하면 이미
-                #    접수 중인 내용을 다시 안내하게 된다(빠른 정정 테스트). 쓰기가 끝나면 그 결과로 버전이 올라 이 작업은
-                #    취소되고 최신 발화로 다시 진행한다(_run_writes).
+                                         addon_only=self.state.addon_only, pass_no=n_pass, decision_error=res.error,
+                                         attached=attached))
+                # 7. 정책. 앞 턴이 시작한 쓰기나 본인 확인이 아직 진행 중이면 끝날 때까지 기다린다. 그 결과 없이 정책을
+                #    정하면 이미 접수 중인 내용을 다시 안내하거나 본인 확인을 다시 묻게 된다(빠른 정정 테스트). 묶음이 끝나면
+                #    그 결과로 버전이 올라 이 작업은 취소되고 최신 발화로 다시 진행한다(_run_bundle).
                 stage = "policy"
                 in_flight = [w for w in self._writes if not w.done()]
                 if in_flight:
@@ -340,7 +381,8 @@ class Session:
                 out.append(self.log.emit(ev.POLICY_DECIDED, my_v, agreed=False, **plan.log()))
             # 8. 생성
             stage = "generation"
-            payload = self._generation_payload(plan)
+            evidence = self._answer_evidence(plan)
+            payload = self._generation_payload(plan, evidence)
             out.append(self.log.emit(ev.GENERATION_REQUEST, my_v, model=self.generator.model, action=plan.action,
                                      rule=plan.rule, articles=[a["id"] for a in payload["articles"]]))
             g = await gen.generate_checked(self.generator, payload, self.org.today)
@@ -352,7 +394,7 @@ class Session:
                 out.append(self._discard(stage, my_v))
                 return
             # 9. 제안과 노출
-            self._expose(plan, g, my_v, out)
+            self._expose(plan, g, my_v, out, evidence)
         except asyncio.CancelledError:
             out.append(self.log.emit(ev.TASK_CANCELLED, self.state.version, stage=stage, started_version=my_v))
             raise
@@ -360,7 +402,7 @@ class Session:
             out.append(self.log.emit(ev.ENGINE_ERROR, self.state.version, stage=stage, started_version=my_v,
                                      error=f"{type(e).__name__}: {e}", traceback=traceback.format_exc(limit=5)))
             if not self._stale(my_v):
-                self._expose(policy.Plan("engine_error", "hold"), gen.fallback("hold", None, "fallback"), my_v, out)
+                self._expose(policy.Plan("engine_error", "hold"), gen.fallback("hold", None, "fallback"), my_v, out, {})
 
     def _retrieval_context(self) -> RetrievalContext:
         f = self.state.facts
@@ -492,15 +534,24 @@ class Session:
         return r
 
     async def _run_tools(self, plan: policy.Plan, my_v: int, out: list[dict[str, Any]]) -> list[str]:
-        """정책이 정한 도구를 실행한다. 조회는 병렬, 쓰기는 순서대로 shield 안에서."""
+        """정책이 정한 도구를 실행한다. 조회는 병렬. 서버 상태를 바꾸는 호출(본인 확인)은 병렬로, 쓰기는 순서대로, 둘 다
+        취소하지 않는 묶음(_start_bundle)으로 보낸다."""
         names: list[str] = []
         if plan.calls:
             for c in plan.calls:
                 if c.tool == "verify_identity":
                     pair = (c.args["phone"], c.args["otp"])
                     self.state.identity.tried.add(pair)
-                    self.state.identity.tried_utt.setdefault(pair, self.state.last_customer_utt_id() or "")
-            await asyncio.gather(*(self._call(c, my_v, out) for c in plan.calls))
+                    # 처음 보낸 발화는 인증번호를 말한 발화다(앞 발화에서 넘겨받은 인증번호면 그 발화, policy 규칙 3)
+                    src = plan.detail.get("otp_from") or self.state.last_customer_utt_id() or ""
+                    self.state.identity.tried_utt.setdefault(pair, src)
+                    self.state.carried_otp = None
+            shielded = tuple(c for c in plan.calls if c.tool in SHIELDED_CALLS)
+            if shielded:
+                await asyncio.shield(self._start_bundle(
+                    self._run_bundle(shielded, my_v, out, asyncio.current_task(), sequential=False)))
+            rest = [c for c in plan.calls if c.tool not in SHIELDED_CALLS]
+            await asyncio.gather(*(self._call(c, my_v, out) for c in rest))
             names += [c.tool for c in plan.calls]
         if plan.lookups:
             cid = self.state.identity.customer_id
@@ -526,45 +577,75 @@ class Session:
                                      priority=list(self.org.policy.quote_priority)))
             names += ["quote_refund"] * len(calls)
         if plan.writes:
-            origin = asyncio.current_task()
-            bundle = asyncio.ensure_future(self._run_writes(plan.writes, my_v, out, origin))
-            self._writes.add(bundle)
-            bundle.add_done_callback(self._writes.discard)
-            await asyncio.shield(bundle)
+            await asyncio.shield(self._start_bundle(
+                self._run_bundle(plan.writes, my_v, out, asyncio.current_task(), sequential=True)))
             names += [c.tool for c in plan.writes]
         return names
 
-    async def _run_writes(self, writes: tuple[policy.ToolCall, ...], my_v: int, out: list[dict[str, Any]],
-                          origin: asyncio.Task | None) -> list[ToolResult]:
-        """쓰기 묶음. 앞의 쓰기가 실패하면 뒤의 쓰기는 하지 않는다(계좌 등록 실패 후 환불 접수 같은 일을 막는다)."""
-        results = []
-        for call in writes:
-            r = await self._call(call, my_v, out)
-            results.append(r)
-            if not r.ok and r.error_code != "DUPLICATE_REQUEST":
-                break
-            if call.tool == "register_refund_account" and not (r.data or {}).get("registered"):
-                break
+    def _start_bundle(self, coro) -> asyncio.Future:
+        """취소하지 않는 호출 묶음을 시작한다. 새 발화의 파이프라인은 정책 단계 전에 진행 중인 묶음이 끝나기를 기다린다
+        (writes.wait)."""
+        bundle = asyncio.ensure_future(coro)
+        self._writes.add(bundle)
+        bundle.add_done_callback(self._writes.discard)
+        return bundle
+
+    async def _run_bundle(self, calls: tuple[policy.ToolCall, ...], my_v: int, out: list[dict[str, Any]],
+                          origin: asyncio.Task | None, sequential: bool) -> list[ToolResult]:
+        """서버 상태를 바꾸는 호출 묶음. 쓰기(sequential)는 순서대로 보내고, 앞의 쓰기가 실패하면 뒤의 쓰기는 하지 않는다
+        (계좌 등록 실패 후 환불 접수 같은 일을 막는다). 본인 확인은 함께 보낸다."""
+        results: list[ToolResult] = []
+        if sequential:
+            for call in calls:
+                r = await self._call(call, my_v, out)
+                results.append(r)
+                if not r.ok and r.error_code != "DUPLICATE_REQUEST":
+                    break
+                if call.tool == "register_refund_account" and not (r.data or {}).get("registered"):
+                    break
+        else:
+            results = list(await asyncio.gather(*(self._call(c, my_v, out) for c in calls)))
         if origin is not None and (origin is not self._task or origin.done()):
-            # 시작한 파이프라인이 없어졌다. 쓰기 결과도 시스템 사실을 바꾸므로 버전을 올리고 최신 발화로 다시 진행한다.
-            out.append(self._bump("tool", cancel=True, tools=[c.tool for c in writes], background=True))
+            # 시작한 파이프라인이 없어졌다. 이 결과도 시스템 사실을 바꾸므로 버전을 올리고 최신 발화로 다시 진행한다.
+            out.append(self._bump("tool", cancel=True, tools=[c.tool for c in calls], background=True))
         return results
 
     # --- 생성과 노출 ----------------------------------------------------------------------------
 
-    def _generation_payload(self, plan: policy.Plan) -> dict[str, Any]:
-        """생성 입력. 정책이 정한 근거 조항(plan.articles)은 판별의 applies와 관계없이 넣는다.
+    def _answer_evidence(self, plan: policy.Plan) -> dict[str, list[str]]:
+        """이 응답의 근거 집합: 응답을 만들 때 엔진이 실제로 쓴 조항을 출처별로(docs/engine.md §12). 생성 입력의 articles는
+        이 순서의 합집합이고, 제안의 cited_articles도 이것이다. 조항 색인에 있는 것만, 앞 출처에 이미 있으면 빼고 담는다.
+
+        - policy: 정책 규칙의 근거 조항(Plan.articles: 제3자 거절, 법정대리인, 승인 대상 환불, 부가 상품, 장애 보상)
+        - rule: 상담 상태로 붙인 절차 조항(retrieval.rules: 본인 확인, 안내 의무, 승인, 인계, 본인 확인 실패)
+        - decision: 판별이 고른 조항(applies ≥ 임계값)
+        - system: 업무 API가 판단 근거로 돌려준 조항(견적·접수 결과의 article_ids)
+        """
+        f = self.state.facts
+        e = self.state.evidence
+        system: list[str] = []
+        for q in sorted(f.quotes.values(), key=lambda q: q.status != "eligible"):
+            system += list(q.article_ids)
+        for rec in f.receipts.values():
+            system += list(rec.get("article_ids", []))
+        groups = {"policy": list(plan.articles), "rule": list(e.attached) if e else [],
+                  "decision": list(e.selected) if e else [], "system": system}
+        out: dict[str, list[str]] = {}
+        seen: set[str] = set()
+        for source, ids in groups.items():
+            out[source] = [a for a in dict.fromkeys(ids) if a in self.articles and a not in seen]
+            seen.update(out[source])
+        return out
+
+    def _generation_payload(self, plan: policy.Plan, evidence: dict[str, list[str]]) -> dict[str, Any]:
+        """생성 입력. 조항은 이 응답의 근거 집합(_answer_evidence) 전부를 넣는다. 정책·상태가 붙인 조항은 판별의 applies와
+        관계없이 들어간다.
 
         - 제3자 거절(plan.detail.refusal): 계정 정보를 알려 주지 않으므로(제15조 제3항) 시스템 사실, 견적, 고객 진술을 뺀다.
         - 인계·보류: 금액을 확정하지 않으므로 견적을 뺀다(인계 사유는 plan.detail에 있다).
         """
         f = self.state.facts
-        ids = [a for a in plan.articles if a in self.articles]
-        ids += [a for a in (self.state.evidence.selected if self.state.evidence else []) if a not in ids]
-        for q in sorted(f.quotes.values(), key=lambda q: q.status != "eligible"):
-            ids += [a for a in q.article_ids if a not in ids and a in self.articles]
-        for rec in f.receipts.values():
-            ids += [a for a in rec.get("article_ids", []) if a not in ids and a in self.articles]
+        ids = [a for source in evidence.values() for a in source]
         claims = {k: recs[-1].value for k, recs in self.state.claims.items()}
         facts: dict[str, Any] = {}
         if f.customer:
@@ -606,7 +687,11 @@ class Session:
                              for t in self.state.conversation[-CONVERSATION_FOR_GENERATION:]],
         }
 
-    def _expose(self, plan: policy.Plan, g: gen.GenerationResult, my_v: int, out: list[dict[str, Any]]) -> None:
+    def _expose(self, plan: policy.Plan, g: gen.GenerationResult, my_v: int, out: list[dict[str, Any]],
+                evidence: dict[str, list[str]]) -> None:
+        """제안을 만들고 채널에 낸다. cited_articles는 이 응답의 근거 집합(_answer_evidence)이고, 생성기가 문장의 근거로 든
+        조항은 generator_cited로 따로 남긴다(docs/engine.md §12). 고정 문구(생성 실패·검사 위반, 엔진 오류)는 근거 조항으로
+        만든 문장이 아니므로 근거 집합을 비운다."""
         self._n_suggestions += 1
         sid = f"{self.session_id}-s{self._n_suggestions}"
         prev = self.state.latest_suggestion()
@@ -614,20 +699,27 @@ class Session:
             prev.status = "superseded"
         # 고정 문구로 대신했으면 접수 내용을 안내하지 못했으므로 동의 대상으로 두지 않는다
         proposal = plan.proposal if plan.rule == "proposal" and not g.fallback else None
-        s = Suggestion(sid, my_v, g.say, plan.action, self.state.request, plan.rule, g.cited_articles, g.amount,
+        sources = {} if g.fallback else {k: v for k, v in evidence.items() if v}
+        cited = [a for ids in sources.values() for a in ids]
+        cited += [a for a in g.cited_articles if a not in cited]  # 생성기 인용은 입력 조항 안이다(generate.sanitize)
+        s = Suggestion(sid, my_v, g.say, plan.action, self.state.request, plan.rule, cited, g.amount,
                        g.amount_final, proposal)
         self.state.suggestions.append(s)
         out.append(self.log.emit(ev.SUGGESTION_CREATED, my_v, suggestion_id=sid, basis_version=my_v, text=g.say,
                                  action=plan.action, rule=plan.rule, intent=self.state.request,
-                                 cited_articles=g.cited_articles, amount=g.amount, amount_final=g.amount_final,
+                                 cited_articles=cited, generator_cited=g.cited_articles, evidence_sources=sources,
+                                 amount=g.amount, amount_final=g.amount_final,
                                  proposal=({"signature": proposal.signature, "kind": proposal.kind,
                                             "writes": [w.tool for w in proposal.writes]} if proposal else None),
                                  fallback=g.fallback))
         self._n_agent += 1
         self.state.add_turn(f"a{self._n_agent}", "agent", g.say)  # 엔진 발화는 버전을 올리지 않는다
         s.exposed = True
+        self._answered_utt = self._latest_utt
+        self.state.carried_otp = None  # 답을 냈으면 앞 발화의 인증번호는 그 답(본인 확인을 다시 묻는 등)으로 처리됐다
         t = now_ms()
-        out.append(self.log.emit(ev.AGENT_SAY, my_v, t_ms=t, text=g.say, suggestion_id=sid, cited_articles=g.cited_articles,
-                                 amount=g.amount, amount_final=g.amount_final))
-        out.append(self.log.emit(ev.SUGGESTION_EXPOSED, my_v, t_ms=t, suggestion_id=sid, channel=CHANNEL,
-                                 start_ms=t, end_ms=t))
+        out.append(self.log.emit(ev.AGENT_SAY, my_v, t_ms=t, text=g.say, suggestion_id=sid, cited_articles=cited,
+                                 generator_cited=g.cited_articles, amount=g.amount, amount_final=g.amount_final))
+        if self.channel in ENGINE_EXPOSED_CHANNELS:
+            out.append(self.log.emit(ev.SUGGESTION_EXPOSED, my_v, t_ms=t, suggestion_id=sid, channel=self.channel,
+                                     start_ms=t, end_ms=t))

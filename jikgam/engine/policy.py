@@ -8,7 +8,9 @@ val 기준선에서 판별 모델이 가장 약했던 질문은 next_info와 act
  1. 업무 API가 인계 사유를 돌려줌 → handoff, create_handoff
  2. 업무 API 장애(재시도 예산 소진) → hold
  3. 발화에 인증번호가 있고 전화번호를 앎 → verify_identity. 이전 발화에서 이미 실패한 번호·인증번호를 다시 말하면
-    다시 보내지 않고 4번(보류)으로 간다(가입되지 않은 번호는 업무 API가 인증번호 불일치와 구분하지 않는다)
+    다시 보내지 않고 4번(보류)으로 간다(가입되지 않은 번호는 업무 API가 인증번호 불일치와 구분하지 않는다).
+    인증번호를 말한 발화가 본인 확인을 시작하기 전에 새 발화로 취소되었으면 세션이 넘겨 둔 그 인증번호를 쓴다
+    (state.carried_otp, docs/engine.md §13)
  4. 본인 확인 전이고 고객이 본인 확인을 마칠 수 없다고 말함(또는 3번의 반복) → hold. 새 번호·인증번호가 오기 전까지 유지
  5. 본인 확인 전이고 요청 처리에 고객 기록이 필요함 → ask(본인 확인)
  6. 본인 확인 직후 → 조회 API 병렬 호출
@@ -406,18 +408,21 @@ def decide(state: SessionState, inp: PolicyInput, cfg: PolicyConfig, required_no
     if f.api_failures:
         return Plan("api_failure", "hold", detail={"api_failures": dict(f.api_failures)})
 
-    # 3. 본인 확인 호출
-    if not ident.verified and cur.otps:
+    # 3. 본인 확인 호출. 인증번호는 이번 발화의 것, 없으면 답하지 못한 앞 발화에서 넘겨받은 것(빠른 정정, state.carried_otp)
+    otp = state.otp_to_verify()
+    if not ident.verified and otp is not None:
+        src, code = otp
         if state.phone is None:
             return Plan("identity_required", "ask", "identity", ask="phone", articles=who_articles)
-        pair = (state.phone, cur.otps[-1])
+        pair = (state.phone, code)
         if pair not in ident.tried:
             return Plan("verify_identity", "ask", "identity",
-                        calls=(ToolCall("verify_identity", {"phone": pair[0], "otp": pair[1]}),))
+                        calls=(ToolCall("verify_identity", {"phone": pair[0], "otp": pair[1]}),),
+                        detail={} if src == state.last_customer_utt_id() else {"otp_from": src})
         # 이전 발화에서 실패한 번호·인증번호를 그대로 다시 말함: 같은 값을 다시 보내지 않는다. 업무 API는 가입되지 않은
         # 번호와 틀린 인증번호를 구분해 주지 않으므로, 인증번호를 다시 묻는 대신 이 번호로는 확인할 수 없다고 보류한다(s25).
         first = ident.tried_utt.get(pair)
-        if ident.failed and first is not None and first != state.last_customer_utt_id():
+        if ident.failed and first is not None and first != src:
             return _unavailable_plan(state, repeated=True)
 
     if not ident.verified and intent in cfg.records_intents:

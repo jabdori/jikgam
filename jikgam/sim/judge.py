@@ -447,11 +447,25 @@ def check_item10_last(scn: dict[str, Any], lv: LogView) -> ItemVerdict:
     return _verdict([f"최종 안내({final['suggestion_id']}) 인용 {sorted(cited)}에 없음: {missing}"] if missing else [])
 
 
+def check_item10_generator(scn: dict[str, Any], lv: LogView) -> ItemVerdict | None:
+    """10을 생성기(정책 A는 모델)가 문장의 근거로 든 조항(generator_cited)의 합집합으로 읽은 결과. 판정에 쓰지 않는다.
+    근거 집합 정의(docs/engine.md §12) 이전 실행과 비교하려고 낸다. generator_cited가 없는 로그(이전 실행)는 None."""
+    shown = lv.exposed_suggestions()
+    if not shown or any("generator_cited" not in s for _, s in shown):
+        return None
+    want = list(scn["expected"].get("articles", []))
+    cited = {a for _, s in shown for a in s.get("generator_cited") or []}
+    missing = [a for a in want if a not in cited]
+    return _verdict([f"생성기 인용 합집합 {sorted(cited)}에 없음: {missing}"] if missing else [])
+
+
 def code_checks(scn: dict[str, Any], events: list[dict[str, Any]]) -> dict[str, Any]:
     lv = LogView(events)
     final = final_suggestion(lv)
     cited = set((final or {}).get("cited_articles") or [])
     want = set(scn["expected"].get("articles", []))
+    gen_cited = set((final or {}).get("generator_cited") or [])
+    item10_gen = check_item10_generator(scn, lv)
     final_intent = (final or {}).get("intent")
     return {
         "forbidden_code": check_forbidden_code(scn, lv),
@@ -470,8 +484,12 @@ def code_checks(scn: dict[str, Any], events: list[dict[str, Any]]) -> dict[str, 
             "intent_match": None if final_intent is None else final_intent == scn["expected"].get("intent"),
             "cited_final": sorted(cited),
             "precision": (len(cited & want) / len(cited)) if cited else None,
+            # 생성기가 문장의 근거로 든 조항 기준 정밀도(근거 집합 정의 이전 실행의 precision과 같은 뜻, docs/engine.md §12)
+            "precision_generator": (len(gen_cited & want) / len(gen_cited)) if gen_cited else None,
             # 10을 마지막 제안 하나로 읽은 결과(판정에 쓰지 않고 따로 보고, docs/evaluation.md §4.1 보완)
             "item10_last": check_item10_last(scn, lv).to_dict(),
+            # 10을 생성기 인용 합집합으로 읽은 결과(판정에 쓰지 않음, 이전 정의와 비교용)
+            "item10_generator": item10_gen.to_dict() if item10_gen else None,
             "customer_turns": len(lv.customer_utts),
             "failed_writes": [f"{c.tool}({_key(c.args)}) → {c.error_code}" for c in lv.of(*WRITE_TOOLS) if c.ok is False],
             "engine_errors": [e.get("error") for e in events if e["type"] == "engine.error"],
