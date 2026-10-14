@@ -96,7 +96,7 @@ async def run_one(name: str, run_dir: Path, run_id: str, cfg: VoiceConfig, bizap
     org = load_org("org_a")
     reset_bizapi(bizapi_url)
     sid = f"{name}-voice-{run_id}"
-    session = Session(org, sid, run_dir)
+    session = Session(org, sid, run_dir, channel=vb.CHANNEL)  # 노출은 연결 계층이 재생 시작에 남긴다
     await session.start()
     recorder = Recorder()
     transport = PacedAudioTransport(TransportParams(audio_in_enabled=True, audio_in_sample_rate=IN_RATE,

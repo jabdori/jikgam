@@ -8,6 +8,7 @@ duration 뒤 BotStoppedSpeakingFrame을 위로 올리고, InterruptionFrame을 �
 import asyncio
 import time
 
+import pytest
 from engine_fakes import EchoGenerator, GatedGenerator, NoBizApi, ScriptedDecider
 from pipecat.frames.frames import (BotStartedSpeakingFrame, BotStoppedSpeakingFrame, InterimTranscriptionFrame,
                                    InterruptionFrame, TranscriptionFrame, TTSSpeakFrame, VADUserStartedSpeakingFrame,
@@ -63,7 +64,7 @@ class FakeSpeaker(FrameProcessor):
 
 def make_session(tmp_path, sid: str, generator=None) -> Session:
     return Session(ORG, sid, tmp_path, decision_client=ScriptedDecider(intents=[("", "other")]),
-                   generator=generator or EchoGenerator(), bizapi=NoBizApi())
+                   generator=generator or EchoGenerator(), bizapi=NoBizApi(), channel=vb.CHANNEL)
 
 
 def run(session: Session, bridge: EngineBridge, speaker: FakeSpeaker, script) -> None:
@@ -172,8 +173,17 @@ def test_voice_exposure_logged_at_playback_start(tmp_path):
     end = types(log, vb.PLAYBACK_END)[0]
     assert end["exposed"] and end["interrupted"] is None and end["end_ms"] > voice[0]["start_ms"]
     assert sp.spoken == [say["text"]]
-    # 평가 지표 코드가 음성 채널 노출로 센다
-    assert [x["channel"] for x in sm.exposures(log)] == ["chat", "voice"]
+    # 평가 지표 코드가 음성 채널 노출로 센다. 엔진은 음성 세션에서 노출 줄을 남기지 않는다(channel=voice)
+    assert [x["channel"] for x in sm.exposures(log)] == ["voice"]
+    assert types(log, ev.SESSION_START)[0]["channel"] == "voice"
+
+
+def test_bridge_rejects_a_chat_channel_session(tmp_path):
+    """채팅 채널 세션을 음성에 붙이면 엔진(chat)과 음성 계층(voice)이 같은 응답의 노출을 두 번 남긴다."""
+    s = Session(ORG, "v-chat", tmp_path, decision_client=ScriptedDecider(), generator=EchoGenerator(), bizapi=NoBizApi())
+    with pytest.raises(ValueError):
+        EngineBridge(s)
+    asyncio.run(s.aclose())
 
 
 def test_barge_in_by_vad_stops_playback(tmp_path):

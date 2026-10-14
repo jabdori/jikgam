@@ -34,6 +34,9 @@ await aclose())와 같은 이벤트 로그 형식(jikgam/engine/events.py)을 �
   조항(조항 색인에 있는 것), candidates는 검색한 조항. RAG에서 근거 집합과 다음 행동이 다시 정해지는 시점은 LLM 답이
   나온 때이므로, 검색 직후가 아니라 이때를 근거 갱신으로 본다.
 - suggestion.created(기준 버전 = 위 version), agent.say(구조화된 amount, amount_final, cited_articles), suggestion.exposed.
+  cited_articles는 이 답의 근거 집합이다: 이 답을 만들 때 모델에 준 조항(이번 발화로 검색한 조항 전부와 도구 루프에서
+  업무 API가 돌려준 근거 조항)과 모델이 근거로 든 조항. 엔진(생성 입력에 넣은 조항)과 같은 원칙이다(docs/engine.md §12).
+  모델이 든 조항만은 generator_cited, 출처별 목록은 evidence_sources(retrieved, system, model)에 남긴다.
 - tool.call, tool.result는 엔진과 같은 필드. generation.request, generation.response는 LLM 요청마다(도구 루프의 단계마다).
 - version.bumped, suggestion.invalidated, result.discarded, task.cancelled는 남기지 않는다(그런 구조가 없다).
 """
@@ -244,8 +247,7 @@ class _ToolState:
 
     def observe(self, r: ToolResult) -> None:
         d = r.data or {}
-        err = r.error or {}
-        ids = list(d.get("article_ids") or []) + list(err.get("article_ids") or [])
+        ids = result_article_ids(r)
         self.article_ids += [a for a in ids if a not in self.article_ids]
         if r.tool == "verify_identity" and r.ok:
             self.verified = self.verified or bool(d.get("verified"))
@@ -254,6 +256,11 @@ class _ToolState:
             self.handoff = True
         if r.tool == "quote_refund" and r.ok and d.get("eligible") and d.get("approval_required"):
             self.approval_required = True
+
+
+def result_article_ids(r: ToolResult) -> list[str]:
+    """업무 API 결과가 판단 근거로 돌려준 조항(견적·접수 결과와 오류 본문의 article_ids)."""
+    return list((r.data or {}).get("article_ids") or []) + list((r.error or {}).get("article_ids") or [])
 
 
 def _final_fields(args: dict[str, Any]) -> tuple[str, list[str], int | None, bool, str]:
@@ -352,6 +359,7 @@ class RagSession:
         final: dict[str, Any] | None = None
         error: str | None = None
         tools_used: list[str] = []
+        tool_articles: list[str] = []  # 이 답의 도구 루프에서 업무 API가 돌려준 근거 조항(모델에 그대로 전달됨)
         for step in range(1, self.max_steps + 1):
             out.append(self.log.emit(ev.GENERATION_REQUEST, self.n_final, request_version=basis, model=self.llm.model,
                                      step=step, articles=result.candidates))
@@ -369,7 +377,7 @@ class RagSession:
                 parts = [p for p in (r.content or {}).get("parts") or []
                          if (p.get("functionCall") or {}).get("name") != FINAL]
                 self.history.append({"role": "model", "parts": parts})
-                results = await asyncio.gather(*(self._tool(c, basis, out) for c in others))
+                results = await asyncio.gather(*(self._tool(c, basis, out, tool_articles) for c in others))
                 tools_used += [c.get("name") for c in others]
                 self.history.append({"role": "user", "parts": [
                     {"functionResponse": {k: v for k, v in (("name", c.get("name")), ("id", c.get("id")),
@@ -380,10 +388,11 @@ class RagSession:
                 break
         else:
             error = f"{self.max_steps}단계 안에 final_answer가 없다"
-        self._expose(final, error, result.candidates, tools_used, basis, out)
+        self._expose(final, error, result.candidates, tool_articles, tools_used, basis, out)
 
-    async def _tool(self, call: dict[str, Any], basis: int, out: list[dict[str, Any]]) -> dict[str, Any]:
-        """모델이 부른 업무 API를 실행하고 모델에 돌려줄 결과를 만든다."""
+    async def _tool(self, call: dict[str, Any], basis: int, out: list[dict[str, Any]],
+                    tool_articles: list[str]) -> dict[str, Any]:
+        """모델이 부른 업무 API를 실행하고 모델에 돌려줄 결과를 만든다. 결과의 근거 조항은 tool_articles에 더한다."""
         self._n_calls += 1
         call_id = f"c{self._n_calls}"
         name = str(call.get("name"))
@@ -407,10 +416,14 @@ class RagSession:
                                  latency_ms=r.latency_ms, idempotency_key=r.idempotency_key,
                                  data=r.data if r.ok else r.error))
         self.tool_state.observe(r)
+        tool_articles += [a for a in result_article_ids(r) if a not in tool_articles]
         return {"ok": True, "data": r.data} if r.ok else {"ok": False, "error": r.error or {"code": r.error_code}}
 
-    def _expose(self, final: dict[str, Any] | None, error: str | None, candidates: list[str], tools_used: list[str],
-                basis: int, out: list[dict[str, Any]]) -> None:
+    def _expose(self, final: dict[str, Any] | None, error: str | None, candidates: list[str], tool_articles: list[str],
+                tools_used: list[str], basis: int, out: list[dict[str, Any]]) -> None:
+        """답을 제안으로 남기고 낸다. cited_articles는 이 답의 근거 집합이다: 이 답을 만들 때 모델에 준 조항(이번 발화로
+        검색한 조항, 도구 루프에서 업무 API가 돌려준 근거 조항)과 모델이 근거로 든 조항(docs/engine.md §12, 엔진과 같은 원칙).
+        모델이 든 조항은 generator_cited로 따로 남긴다. 답을 받지 못해 고정 문구로 대신하면 근거 집합을 비운다."""
         if final is not None:
             say, cited, amount, amount_final, action = _final_fields(final)
         if final is None or not say:
@@ -422,16 +435,22 @@ class RagSession:
             fallback = False
         self.history.append({"role": "model", "parts": [{"text": say}]})
         known = [a for a in dict.fromkeys(cited) if a in self.articles]
+        sources = {} if fallback else {
+            k: v for k, v in (("retrieved", list(candidates)),
+                              ("system", [a for a in tool_articles if a in self.articles and a not in candidates]),
+                              ("model", [a for a in known if a not in candidates and a not in tool_articles])) if v}
+        evidence = [a for ids in sources.values() for a in ids]
         out.append(self.log.emit(ev.EVIDENCE_UPDATED, basis, articles=known, candidates=candidates, sufficient=None,
                                  next_info=None, action=action, intent=None, cited_raw=cited, tools=tools_used,
                                  error=error))
         self._n_suggestions += 1
         sid = f"{self.session_id}-s{self._n_suggestions}"
         out.append(self.log.emit(ev.SUGGESTION_CREATED, basis, suggestion_id=sid, basis_version=basis, text=say,
-                                 action=action, rule="rag", intent=None, cited_articles=known, amount=amount,
-                                 amount_final=amount_final, proposal=None, fallback=fallback))
+                                 action=action, rule="rag", intent=None, cited_articles=evidence, generator_cited=known,
+                                 evidence_sources=sources, amount=amount, amount_final=amount_final, proposal=None,
+                                 fallback=fallback))
         t = now_ms()
-        out.append(self.log.emit(ev.AGENT_SAY, basis, t_ms=t, text=say, suggestion_id=sid, cited_articles=known,
-                                 amount=amount, amount_final=amount_final))
+        out.append(self.log.emit(ev.AGENT_SAY, basis, t_ms=t, text=say, suggestion_id=sid, cited_articles=evidence,
+                                 generator_cited=known, amount=amount, amount_final=amount_final))
         out.append(self.log.emit(ev.SUGGESTION_EXPOSED, basis, t_ms=t, suggestion_id=sid, channel=CHANNEL, start_ms=t,
                                  end_ms=t))

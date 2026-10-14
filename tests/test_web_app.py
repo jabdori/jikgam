@@ -237,9 +237,14 @@ def test_observed_log_errors_do_not_reach_engine(tmp_path):
     assert any(e["type"] == ev.AGENT_SAY for e in log)  # 엔진은 끝까지 진행했다
 
 
-def test_replay_through_app_against_mock_bizapi(bizapi, tmp_path, monkeypatch):
-    """재생 세션: 모의 업무 API를 비우고 s20을 끝까지 보낸다. 판별·생성은 가짜다."""
-    monkeypatch.setattr(live_mod, "FAST_DELAY_MS", 20.0)
+@pytest.mark.parametrize("fast_delay_ms", [0.0, 20.0])
+def test_replay_through_app_against_mock_bizapi(bizapi, tmp_path, monkeypatch, fast_delay_ms):
+    """재생 세션: 모의 업무 API를 비우고 s20을 끝까지 보낸다. 판별·생성은 가짜다.
+
+    s20의 조건 변경 줄(u4)은 인증번호 줄(u3) 뒤 fast_delay_ms에 응답을 기다리지 않고 간다. u3의 본인 확인이 그 사이에
+    끝나는지와 관계없이 본인 확인이 되어야 한다(전에는 전체 실행처럼 느릴 때 가끔 실패했다. tests/test_engine_concurrency.py
+    본인 확인과 빠른 정정). 0ms는 u3의 파이프라인이 본인 확인을 보내기 전에 늘 취소되는 경우다."""
+    monkeypatch.setattr(live_mod, "FAST_DELAY_MS", fast_delay_ms)
     org = dataclasses.replace(ORG, bizapi_url=bizapi)
 
     def make(policy, sid, log_dir):

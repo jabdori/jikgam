@@ -1,0 +1,85 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진은 위약금 없이 19,800원이 환불된다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 엔진은 시스템상 결제일인 3월 2일을 기준으로 8개월의 이용 개월 수를 산정했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담 엔진은 상담사 승인이 필요하다고 안내하지 않고 즉시 해지 및 환불 처리를 완료했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "상담 엔진은 결제 금액 99,000원에서 이용 개월 수 8개월의 정상 월 요금 79,200원을 차감하여 환불 예정액이 19,800원임을 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "상담 엔진은 카드 결제 취소로 3~7영업일 내에 처리된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "상담 엔진은 서비스 이용 가능한 마지막 날이 2026년 10월 12일이라고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "상담 엔진은 2026년 6월 30일 이전 결제 건으로 부칙 제1조 제2항에 따라 위약금이 면제된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "상담 엔진은 고객의 해지 및 환불 요청을 성공적으로 접수하고 처리 결과를 안내하며 대화를 마무리했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "고객은 첫 메시지에서 '올 봄인가 사월인가 결제했는데'라고 말하며 정확한 결제일을 모른다고 표현했습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 이용 여부에 대해 묻지 않아 고객이 답변할 기회가 없었습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 10183.3,
+   "input_tokens": 2685,
+   "output_tokens": 1181,
+   "thoughts_tokens": 548,
+   "cost_usd": 0.019542,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.019542,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "s05-r4-pre-freeze-C",
+ "scenario": "s05"
+}

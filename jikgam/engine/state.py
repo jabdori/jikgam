@@ -96,6 +96,9 @@ class Evidence:
     next_info: str | None
     action: str | None
     intent: str | None
+    # 상담 상태로 붙인 절차 조항(조직 설정 retrieval.rules: 본인 확인, 안내 의무, 승인, 인계 등). 판별의 applies와
+    # 관계없이 응답의 근거 집합에 들어간다(docs/engine.md §12)
+    attached: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -131,6 +134,9 @@ class SessionState:
         self.addon_only: bool = False
         self.evidence: Evidence | None = None
         self.suggestions: list[Suggestion] = []
+        # 답하지 못한 앞 발화에서 넘겨받은 인증번호 (발화 ID, 인증번호). 그 발화의 파이프라인이 본인 확인을 시작하기 전에
+        # 새 발화로 취소되면 세션이 넘겨 둔다(빠른 정정, docs/engine.md §13). 본인 확인을 시작하거나 답을 내면 지운다.
+        self.carried_otp: tuple[str, str] | None = None
 
     # --- 대화와 진술 ---
 
@@ -160,6 +166,13 @@ class SessionState:
     def current_claims(self) -> Claims:
         uid = self.last_customer_utt_id()
         return self.claims_by_utt.get(uid, Claims()) if uid else Claims()
+
+    def otp_to_verify(self) -> tuple[str, str] | None:
+        """본인 확인에 쓸 (발화 ID, 인증번호). 이번 발화의 마지막 인증번호, 없으면 답하지 못한 앞 발화에서 넘겨받은 것."""
+        cur = self.current_claims()
+        if cur.otps:
+            return self.last_customer_utt_id() or "", cur.otps[-1]
+        return self.carried_otp
 
     # --- 제안 ---
 

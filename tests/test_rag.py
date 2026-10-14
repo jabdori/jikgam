@@ -99,7 +99,18 @@ def test_rag_tool_loop_writes_engine_event_format(bizapi, tmp_path):
     assert [e["version"] for e in types(log, ev.UTTERANCE_END)] == [0, 1, 2, 3]
     assert ups[2]["articles"] == ["A-05"] and ups[2]["cited_raw"] == ["A-05", "A-99"]  # 색인에 없는 조항은 근거에서 뺀다
     say3 = types(outs[2], ev.AGENT_SAY)[0]
-    assert (say3["amount"], say3["amount_final"], say3["cited_articles"]) == (9900, True, ["A-05"])
+    assert (say3["amount"], say3["amount_final"], say3["generator_cited"]) == (9900, True, ["A-05"])
+    # 근거 집합(docs/engine.md §12): 이번 발화로 검색해 모델에 준 조항 + 도구 결과의 근거 조항 + 모델이 든 조항
+    retrieved = types(outs[2], ev.RETRIEVAL_DONE)[0]["candidates"]
+    quote_ids = next(r["data"]["article_ids"] for r in types(outs[2], ev.TOOL_RESULT) if r["tool"] == "quote_refund")
+    assert quote_ids and set(say3["cited_articles"]) == set(retrieved) | set(quote_ids) | {"A-05"}
+    assert say3["cited_articles"][:len(retrieved)] == retrieved and "A-99" not in say3["cited_articles"]
+    created3 = types(outs[2], ev.SUGGESTION_CREATED)[0]
+    assert created3["cited_articles"] == say3["cited_articles"]
+    assert created3["evidence_sources"]["retrieved"] == retrieved
+    # 모델이 조항을 들지 않은 답(본인 확인 질문)도 모델에 준 조항이 근거 집합이다
+    say1 = types(outs[0], ev.AGENT_SAY)[0]
+    assert say1["generator_cited"] == [] and say1["cited_articles"] == types(outs[0], ev.RETRIEVAL_DONE)[0]["candidates"]
     # 도구 호출은 엔진과 같은 형식. 쓰기에는 (세션, 도구, 대상) 멱등 키
     calls = types(log, ev.TOOL_CALL)
     assert [c["tool"] for c in calls] == ["verify_identity", "list_payments", "get_usage", "quote_refund",
@@ -172,6 +183,7 @@ def test_rag_fallback_on_llm_error_and_step_limit(tmp_path):
     s, outs, log = _run(tmp_path, "r-err", llm, ["환불해 주세요"])
     created = types(log, ev.SUGGESTION_CREATED)[0]
     assert created["fallback"] and created["action"] == "hold" and created["amount"] is None
+    assert created["cited_articles"] == [] and created["evidence_sources"] == {}  # 고정 문구는 근거 조항으로 만든 답이 아니다
     assert types(log, ev.EVIDENCE_UPDATED)[0]["error"] == "대본 끝"
     loop = ScriptedLLM([[{"name": "list_incidents", "args": {}}]] * 3)
 

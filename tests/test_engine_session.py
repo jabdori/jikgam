@@ -529,3 +529,49 @@ def test_utterance_during_warmup_waits_for_it(tmp_path):
     log = ev.read_log(tmp_path / "t-warm2.jsonl")
     assert len(dec.calls) == 2 and types(out, ev.AGENT_SAY)
     assert [e["type"] for e in log].index(ev.WARMUP) < [e["type"] for e in log].index(ev.DECISION_REQUEST)
+
+
+def test_channel_sets_who_logs_the_exposure(tmp_path):
+    """채널 인자: 채팅(기본)은 엔진이 응답을 낼 때 노출 줄을 남기고, 음성은 남기지 않는다(음성 계층이 재생 시작에 남긴다).
+    판단·생성·제안·agent.say는 채널과 관계없이 같다."""
+    async def go(sid, **kw):
+        dec = ScriptedDecider(intents=[("가입 전", "other")])
+        s = Session(ORG, sid, tmp_path, decision_client=dec, generator=EchoGenerator(), bizapi=NoBizApi(), **kw)
+        out = await s.handle(utt("u1", "가입 전에 환불 규정이 궁금해요"))
+        await s.aclose()
+        return out
+
+    chat = asyncio.run(go("t-ch-chat"))
+    voice = asyncio.run(go("t-ch-voice", channel="voice"))
+    chat_log, voice_log = ev.read_log(tmp_path / "t-ch-chat.jsonl"), ev.read_log(tmp_path / "t-ch-voice.jsonl")
+    assert [(e["channel"], e["engine_exposure"]) for e in types(chat_log, ev.SESSION_START)] == [("chat", True)]
+    assert [(e["channel"], e["engine_exposure"]) for e in types(voice_log, ev.SESSION_START)] == [("voice", False)]
+    assert [e["channel"] for e in types(chat, ev.SUGGESTION_EXPOSED)] == ["chat"]
+    assert types(voice, ev.SUGGESTION_EXPOSED) == []
+    def pick(out):
+        same = ("type", "text", "rule", "action", "cited_articles", "amount", "basis_version")
+        return [{k: e.get(k) for k in same} for e in out
+                if e["type"] in (ev.SUGGESTION_CREATED, ev.AGENT_SAY, ev.POLICY_DECIDED)]
+    assert pick(chat) == pick(voice)
+
+
+def test_stt_phone_with_spoken_separators_verifies_identity(bizapi, tmp_path):
+    """개발용 음성 재생 s01에서 STT가 적은 그대로(번호를 '에'로 끊음). 전에는 번호를 찾지 못하고 '0000', '0001'을
+    인증번호로 읽어 번호를 다시 물었다(PROGRESS.md 음성 연결)."""
+    dec = ScriptedDecider(intents=[("취소하고 환불", "cancel_refund")])
+
+    async def go():
+        s = Session(ORG, "t-stt-phone", tmp_path, decision_client=dec, generator=EchoGenerator(),
+                    bizapi=BizApiClient(bizapi, "t-stt-phone"))
+        outs = []
+        for i, text in enumerate(["안녕하세요. 지난주 목요일쯤 별단 플러스 결제가 됐는데요.",
+                                  "안 쓸 거라서 취소하고 환불받고 싶어요.",
+                                  "네, 휴대폰 번호는 010에 0000에 0001이에요.", "인증 번호는 0001이요."], 1):
+            outs.append(await s.handle(utt(f"u{i}", text)))
+        await s.aclose()
+        return s, outs
+
+    s, outs = asyncio.run(go())
+    assert types(outs[2], ev.CLAIMS_EXTRACTED)[0]["phones"] == ["010-0000-0001"]
+    assert types(outs[2], ev.AGENT_SAY)[-1]["text"] == "[identity_required:ask:otp]"
+    assert tool_calls(outs[3])[0] == "verify_identity" and s.state.identity.verified

@@ -1,7 +1,9 @@
 """엔진 연결 FrameProcessor: STT 자막을 엔진 입력 이벤트로 바꾸고, 엔진 응답을 TTS로 보낸다.
 
 파이프라인: 입력 → VAD → STT(VERBATIM) → EngineBridge → TTS → 출력. 엔진(jikgam.engine.session.Session)은 고치지 않고
-`handle(event)`, `version`, `log`만 쓴다. 음성 계층의 기록은 같은 세션 로그에 남긴다(docs/voice.md §3).
+`handle(event)`, `version`, `log`만 쓴다. 음성 계층의 기록은 같은 세션 로그에 남긴다(docs/voice.md §3). 엔진 세션은
+`channel="voice"`로 만든다. 그러면 엔진은 응답을 낼 때 노출 줄을 남기지 않고, 노출은 이 계층이 재생 시작에 남긴다(아래).
+채널이 다른 세션을 넘기면 노출이 두 채널로 남으므로 받지 않는다.
 
 입력 방향
 - 미확정 자막(InterimTranscriptionFrame) → `{"type": "utterance", "final": false}`. 엔진은 stt.partial만 남기고 버전을
@@ -122,6 +124,9 @@ class EngineBridge(FrameProcessor):
                  marker_for: Callable[[float | None, float], dict[str, Any] | None] | None = None, **kwargs):
         """marker_for(발화 시작 추정, 발화 종료)는 시험 실행기가 조건 변경 표시를 붙일 때만 준다(엔진은 읽지 않는다)."""
         super().__init__(enable_direct_mode=True, **kwargs)
+        channel = getattr(session, "channel", CHANNEL)
+        if channel != CHANNEL:
+            raise ValueError(f"음성 연결에는 channel={CHANNEL!r}로 만든 엔진 세션을 넘긴다(받은 채널 {channel!r})")
         self.session = session
         self.final_wait_ms = final_wait_ms
         self.play_start_timeout_ms = play_start_timeout_ms

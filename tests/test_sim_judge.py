@@ -217,6 +217,23 @@ def test_item10_uses_union_and_reports_last_suggestion_separately():
     assert item.ok is False and "['A-99']" in item.reasons[0]
 
 
+def test_item10_generator_reading_is_reported_only_when_logged():
+    """근거 집합(cited_articles)과 생성기가 든 조항(generator_cited)을 함께 남긴 로그는 생성기 인용 합집합 읽기와 그 정밀도도
+    보조로 낸다. 판정(10)은 cited_articles로 한다. generator_cited가 없는 이전 로그는 None."""
+    b = good_log()
+    assert jd.code_checks(scn(), b.events)["aux"]["item10_generator"] is None
+    for e in b.events:
+        if e["type"] == "suggestion.created":
+            e["generator_cited"] = [a for a in e["cited_articles"] if a != "A-05"]
+    c = jd.code_checks(scn(), b.events)
+    assert c["item10"]["ok"] is True  # 판정은 근거 집합으로
+    assert c["aux"]["item10_generator"]["ok"] is False and "['A-05']" in c["aux"]["item10_generator"]["reasons"][0]
+    final = [e for e in b.events if e["type"] == "suggestion.created"][-1]
+    want = set(scn()["expected"]["articles"])
+    gen = set(final["generator_cited"])
+    assert c["aux"]["precision_generator"] == (len(gen & want) / len(gen) if gen else None)
+
+
 def test_intent_match_is_none_when_policy_records_no_intent():
     b = LogBuilder()
     b.utt("x")
