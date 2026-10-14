@@ -1,0 +1,91 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 3]에서 장애가 아닌 결제 후 이용 이력이 없음을 근거로 환불한다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 4]에서 무료 체험 기간 중의 이용은 이력에 포함되지 않아 전액 환불 대상이라고 정확히 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 3] 및 [상담 4]에서 이용 가능한 마지막 날이 2026-10-12라고 바르게 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 4]에서 체험 기간 이용은 이력에 포함되지 않음을 설명하며 9,900원 전액 환불을 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3] 및 [상담 4] 등에서 결제한 카드로 3~7영업일 내에 승인 취소된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3] 및 [상담 4] 등에서 이용 가능한 마지막 날을 2026-10-12로 명확히 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "[상담 6]에서 고객의 해지 및 환불 처리가 완료되었음을 최종적으로 안내하며 대화를 정상적으로 마쳤습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 고객에게 이용 여부를 묻지 않고 곧바로 환불 처리를 진행하여 규칙이 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담원이 장애 시간에 대해 묻지 않아 규칙을 적용할 기회가 없었습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 2]에서 인증번호 입력을 요청받자 [고객 3]에서 정확하게 번호를 제시했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 지시된 대로 체험 기간에 많이 이용한 것 때문에 환불이 안 되는지 묻는 대사를 실행했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 21301.4,
+   "input_tokens": 3307,
+   "output_tokens": 2250,
+   "thoughts_tokens": 1552,
+   "cost_usd": 0.033614,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.033614,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h01-r2-holdout-r2-C",
+ "scenario": "h01"
+}

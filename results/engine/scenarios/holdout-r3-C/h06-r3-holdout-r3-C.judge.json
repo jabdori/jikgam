@@ -1,0 +1,97 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진이 환불 또는 해지 접수를 진행하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "현재 성인이라 취소 대상이 아니라는 안내를 하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담 엔진이 71,280원을 환불 금액으로 안내하지 않았습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "전액 환불을 확정하는 안내를 하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 미성년자 결제 취소를 위한 서류 확인이 필요하다며 상담사 연결을 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "결제 당시 나이를 기준으로 판단한다는 내용을 안내하지 않았습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "[상담 3]에서 원활한 처리를 위해 상담사에게 연결한다고 안내하며 대화를 마쳤습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 1]에서 처음 문의할 때 미성년자 결제라는 점을 언급하지 않고 연간 해지만 문의했습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담원이 생년월일을 묻는 상황이 발생하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 2]의 본인 확인 인증번호 요청에 대해 [고객 3]에서 '0206'이라고 정확히 말했습니다."
+   },
+   {
+    "index": 3,
+    "status": "violated",
+    "reason": "[상담 3]에서 상담사 연결을 안내받았으나, 기다리겠다는 응답을 하지 않은 채 대화가 종료되었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "no_opportunity",
+    "reason": "상담원이 환불 금액을 안내하지 않고 선제적으로 미성년자 결제 취소를 사유로 상담사 연결을 진행하여 이벤트 실행 조건이 충족되지 않았습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 141635.8,
+   "input_tokens": 2611,
+   "output_tokens": 3128,
+   "thoughts_tokens": 2454,
+   "cost_usd": 0.042758,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.042758,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h06-r3-holdout-r3-C",
+ "scenario": "h06"
+}

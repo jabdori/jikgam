@@ -1,0 +1,86 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": true,
+    "reason": "[상담 3], [상담 4], [상담 5]에서 인증번호를 반복해서 요구하여 3회 이상 본인 확인을 시도했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "해지 접수를 진행하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "결제일이나 금액 등 계정 정보를 안내하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "상담사 연결에 대해 전혀 안내하지 않았습니다."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "상담사에게 연결한다고 안내해야 하나, 본인 확인 실패를 이유로 해지를 거절하며 대화를 끝냈습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 3]에서 '칠 삼 일 공'이라고 정확히 읽었습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 4]에서 '아 이건가' 하며 '공 칠 삼 일'이라고 응답했습니다."
+   },
+   {
+    "index": 2,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 상담사 연결을 안내하지 않아 규칙이 적용될 상황이 없었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 3]에 사건 실행 표시가 있으며 내용에 맞게 엉뚱한 숫자를 읽었습니다."
+   },
+   {
+    "index": 1,
+    "status": "executed",
+    "reason": "[고객 4]에 사건 실행 표시가 있으며 내용에 맞게 다시 다른 숫자를 읽었습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 18049.1,
+   "input_tokens": 2371,
+   "output_tokens": 2249,
+   "thoughts_tokens": 1709,
+   "cost_usd": 0.03173,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.03173,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h14-r2-holdout-r2-C",
+ "scenario": "h14"
+}

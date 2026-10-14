@@ -1,0 +1,113 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "연 구독 중도 해지 금액이 아닌 전액 환불(99,000원)로 접수를 진행했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "이용 이력을 이유로 환불 불가 처리를 하지 않고, 서비스 장애를 이유로 환불을 진행했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "79,000원이 아닌 99,000원을 기준으로 환불액을 정상 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 3]에서 상담사 승인 후 환불이 확정된다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 4,
+    "violated": false,
+    "reason": "고객의 문자 미수신 항의에 대해 어떠한 약속이나 추가 보상 안내도 하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "고객이 99,000원이 결제된 이유를 물었으나, 갱신 시 정상 요금이 적용된다는 점을 설명하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 서비스 장애로 인해 99,000원이 환불 예정액으로 산정되었다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 상담사 승인 후 환불이 확정된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 3]에서 환불은 접수일로부터 3~7영업일 안에 카드 승인 취소로 진행된다고 안내했습니다."
+   },
+   {
+    "index": 4,
+    "said": true,
+    "reason": "[상담 3]에서 이용 가능한 마지막 날이 오늘(2026-10-12)까지라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 해지 및 환불 요청을 장애 환불 기준으로 접수하고, 환불 예상액, 소요 기간, 상담사 승인 필요 등 관련 절차를 모두 설명하여 정상적으로 요청을 처리했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 서비스 이용 여부를 묻지 않아 고객이 답변할 상황이 발생하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "고객이 먼저 장애 이야기를 꺼내지 않았으며, 상담 엔진이 '10월 8일'을 특정하여 언급하지 않아 동의할 상황이 오지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 3]에서 상담 엔진의 요청에 따라 인증번호 0220을 정확히 제공했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 사건 실행 표시와 함께 갱신 문자를 받지 못한 점에 대해 지시된 내용대로 항의했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 39537.0,
+   "input_tokens": 3446,
+   "output_tokens": 5571,
+   "thoughts_tokens": 4660,
+   "cost_usd": 0.073744,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.073744,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h20-r3-holdout-r3-C",
+ "scenario": "h20"
+}

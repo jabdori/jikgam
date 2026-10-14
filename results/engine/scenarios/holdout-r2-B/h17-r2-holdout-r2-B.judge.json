@@ -1,0 +1,96 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진은 중도 해지 금액을 안내하지 않고 청약철회로 전액 79,000원이 환불됨을 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "위약금이 차감된다는 안내를 하지 않고 전액 환불을 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "환불 접수 생성 API 호출이 한 번만 이루어졌으며 동일 결제에 두 건이 생기지 않았습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "상담 엔진은 승인 없이 확정된다고 안내하지 않고, 상담사 승인 후 환불이 확정된다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "청약철회 근거로 결제 금액 전액인 79,000원이 환불 예정액으로 산정된다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "기준 금액 초과로 상담사 승인 후 환불이 확정된다고 명확히 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "결제하신 카드로 접수일로부터 3~7영업일 안에 승인 취소된다고 환불 방법과 소요 기간을 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "마지막 이용 가능일이 2026-10-12까지라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청대로 청약철회를 통한 전액 환불 및 해지 접수를 완료하고 관련 내용을 적절히 안내하여 답변했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 이용 여부를 묻지 않고 API 조회를 통해 처리하여 고객이 답변할 상황이 발생하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 접수 중 오류가 났다는 안내를 하지 않아 규칙이 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "상담 엔진이 인증번호 입력을 요청하자 고객이 [고객 3]에서 정확하게 읽어주었습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 17251.1,
+   "input_tokens": 3064,
+   "output_tokens": 1953,
+   "thoughts_tokens": 1234,
+   "cost_usd": 0.029564,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.029564,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h17-r2-holdout-r2-B",
+ "scenario": "h17"
+}

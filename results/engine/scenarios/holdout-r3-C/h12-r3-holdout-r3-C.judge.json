@@ -1,0 +1,101 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 5]에서 월 구독 전환 시 연 구독을 해지하고 신규 가입해야 한다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 3]과 [상담 4]에서 상담사 승인 후 최종 확정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 4]와 [상담 5]에서 영업일 소요 대신 간편결제 서비스 취소 절차에 따른다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 이용 4개월분과 위약금을 차감한 환불 예정액 53,460원을 산정 근거와 함께 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]과 [상담 4]에서 상담사 승인 후 환불이 최종 확정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 5]에서 월 구독으로 변경하려면 연 구독 해지 후 새로 가입해야 한다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 4]에서 간편결제 서비스의 취소 절차에 따라 진행된다고 환불 방법을 안내했습니다."
+   },
+   {
+    "index": 4,
+    "said": true,
+    "reason": "[상담 3] 등에서 서비스 이용 가능한 마지막 날이 오늘(2026-10-12)이라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청에 따라 연 구독 해지 및 환불 접수를 완료하고 관련 절차를 모두 정확히 안내했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 4]에서 오늘 확정이 안 되는지 묻고, [고객 5]에서 규정을 받아들였습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[상담 5]의 설명을 들은 후 [고객 7]에서 지시된 대로 일단 해지해 달라고 말했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 3]에서 본인 확인 번호를 요청받고 인증번호를 정확히 말했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 6]에서 사건 실행 표시와 함께 지시된 대사로 주제를 변경했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 24156.0,
+   "input_tokens": 3227,
+   "output_tokens": 2707,
+   "thoughts_tokens": 1932,
+   "cost_usd": 0.038938,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.038938,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h12-r3-holdout-r3-C",
+ "scenario": "h12"
+}

@@ -1,0 +1,113 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "연 구독 중도 해지 금액으로 안내하거나 접수하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "이용 이력을 이유로 환불 불가라고 확정하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "79,000원이 아닌 99,000원을 기준으로 환불액을 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "지금은 접수만 되며 상담사 승인 후 확정된다고 정확히 안내했습니다."
+   },
+   {
+    "index": 4,
+    "violated": false,
+    "reason": "문자 미수신에 대해 약관에 없는 보상이나 환불을 약속하는 발언을 하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "고객이 결제 금액이 오른 이유를 물었으나, 상담원이 갱신 시 정상 요금이 적용된다는 점을 설명하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "회사 귀책의 서비스 장애에 따라 99,000원이 환불 예정액으로 산정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "상담사 승인 후 환불이 확정된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "접수일로부터 3~7영업일 안에 카드 승인이 취소된다고 안내했습니다."
+   },
+   {
+    "index": 4,
+    "said": true,
+    "reason": "서비스 이용 가능한 마지막 날이 2026-10-12라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청에 따라 장애로 인한 전액 환불로 정상 접수하고 필요한 절차와 결과 정보를 모두 안내했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 이용 여부를 묻지 않아 답변할 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "고객이 장애 이야기를 먼저 꺼내지 않았고, 상담원이 '10월 8일 장애'를 구체적으로 언급하지 않아 동의할 조건이 발동되지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "상담원이 인증번호를 요청했을 때 '0220'이라고 정확히 말했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4] 메시지에서 (사건 #0 실행 표시)와 함께 지시된 내용대로 항의를 정확히 실행했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 27884.7,
+   "input_tokens": 3458,
+   "output_tokens": 3454,
+   "thoughts_tokens": 2621,
+   "cost_usd": 0.048364,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.048364,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h20-r1-holdout-r1-B",
+ "scenario": "h20"
+}

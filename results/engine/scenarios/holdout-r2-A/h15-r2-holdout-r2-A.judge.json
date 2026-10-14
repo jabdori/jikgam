@@ -1,0 +1,98 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 1], [상담 2], [상담 3]에서 제3자 요청으로 간주하여 계정 정보 조회 및 접수가 불가하다고 안내함."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 5]에서 환불 예정액이 0원이라고 안내하여 환불을 약속하거나 접수하지 않음."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 5]에서 결제일 다음 날부터 기산하므로 청약철회 가능 기한이 어제로 만료되었다고 안내함."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 5]와 [상담 6]에서 2026년 11월 3일까지 이용 후 중단된다고 안내함."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 5]에서 결제일 다음 날부터 기산하여 7일 기한이 지났기 때문에 환불 예정액이 0원이라고 안내함."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 5]와 [상담 6]에서 마지막 이용 가능일인 2026년 11월 3일을 명확히 안내함."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 해지 요청에 따라 월 구독 일반 해지를 정상적으로 처리하고 안내를 완료함."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 5]에서 환불 없이 11월 3일까지 이용 가능한 일반 해지로 접수할지 물었고, [고객 6]에서 고객이 이에 동의한 후 API가 호출됨."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 2]에서 7일 기준에 대해 '4일 결제니까 오늘이 딱 일주일 아니에요?'라고 따짐."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 6]에서 환불이 안 된다는 점을 수용하고 해지 진행을 요청함."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 5]에서 상담원의 요청에 맞게 본인 확인용 번호와 인증번호를 정확히 제공함."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 사건 실행 표시와 함께 명의와 번호가 본인 것임을 밝히며 정정함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 29977.1,
+   "input_tokens": 3158,
+   "output_tokens": 2503,
+   "thoughts_tokens": 1728,
+   "cost_usd": 0.036352,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.036352,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h15-r2-holdout-r2-A",
+ "scenario": "h15"
+}

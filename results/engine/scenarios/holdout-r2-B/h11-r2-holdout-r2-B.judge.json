@@ -1,0 +1,101 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 3]에서 서비스는 해지 신청일인 2026-10-12까지 이용할 수 있다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 4]에서 기준 금액을 넘지 않아 별도의 승인 절차 없이 바로 접수하실 수 있다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 3]에서 이용 개월 수를 차감하고 위약금 없이 환불 예정액이 산정되었다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 4]에서 환불 조건 등을 안내하며 해지 의사를 물었고, [고객 5]에서 고객이 동의한 후 해지 및 환불 처리를 진행했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 해지 신청일인 2026-10-12까지 이용할 수 있다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 결제 금액 99,000원에서 이용 5개월을 차감하고 위약금 없이 환불액 49,500원이라고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 4]에서 기준 금액을 넘지 않아 별도의 승인 절차 없이 접수된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 3] 및 [상담 4]에서 접수 후 3~7영업일 안에 카드 승인 취소로 환불될 예정이라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "해지 및 환불 접수를 성공적으로 완료하고 그 결과를 고객에게 정상적으로 안내했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "대화 중 상담원이 고객에게 가입 날짜를 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 4]에서 오늘 끝내고 돈 돌려받겠다고 규칙에 맞게 말했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 4]에서 5만 원이 넘으면 승인을 받아야 하는지 질문했습니다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "[고객 3]에서 본인 확인 번호를 천천히 명확하게 읽어 주었습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 21450.1,
+   "input_tokens": 3090,
+   "output_tokens": 2909,
+   "thoughts_tokens": 2121,
+   "cost_usd": 0.041088,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.041088,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h11-r2-holdout-r2-B",
+ "scenario": "h11"
+}

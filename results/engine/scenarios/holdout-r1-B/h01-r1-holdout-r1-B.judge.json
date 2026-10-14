@@ -1,0 +1,91 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 3]과 [상담 4]에서 장애가 아닌 결제 후 이용 이력이 없음을 근거로 환불을 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 4]에서 무료 체험 기간 중 이용은 이력에 포함되지 않아 청약철회가 가능하다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 3]과 [상담 4]에서 서비스 이용 가능한 마지막 날을 2026-10-12로 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]과 [상담 4]에서 9,900원 환불과 무료 체험 기간 중 이용은 이력에 포함되지 않는다는 산정 근거를 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]과 [상담 4]에서 결제한 카드로 접수일로부터 3~7영업일 안에 승인 취소된다고 환불 방법과 기간을 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]과 [상담 4]에서 서비스 이용 가능한 마지막 날이 2026-10-12임을 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "거절이나 보류 없이 고객의 요청에 따라 해지 및 환불 처리를 완료하고 결과를 안내했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 이용 여부를 묻지 않고 API로 조회하여 답변할 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 장애 시간을 묻지 않아 답변할 상황이 오지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 2]의 본인 확인 요청에 대해 [고객 3]에서 '0201'로 정확히 인증번호를 제공했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 사건 실행 표시와 함께 체험 기간 이용 때문에 환불이 안 되는지 먼저 걱정하는 지시를 실행했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 23094.5,
+   "input_tokens": 3145,
+   "output_tokens": 2948,
+   "thoughts_tokens": 2239,
+   "cost_usd": 0.041666,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.041666,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h01-r1-holdout-r1-B",
+ "scenario": "h01"
+}

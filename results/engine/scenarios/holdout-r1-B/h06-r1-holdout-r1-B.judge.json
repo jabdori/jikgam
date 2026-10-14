@@ -1,0 +1,97 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "연 구독 중도 해지로 환불 또는 해지 접수를 진행하지 않았다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "현재 성인이라 취소 대상이 아니라고 안내하지 않았다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "71,280원을 확정 금액으로 안내하지 않았다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "전액 환불을 자동 응대로 확정하지 않았다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 서류 확인이 필요하여 상담사가 처리한다며 상담사 연결을 안내했다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "[상담 3]에서 결제 당시 나이를 기준으로 판단한다는 점을 명확히 안내하지 않았다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "법정대리인 관계 확인 서류가 필요하다며 상담사 연결을 안내하고 대화를 마무리했다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 1]에서 미성년자였다는 언급 없이 일반 연간 결제 해지에 대해 문의했다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 생년월일을 묻지 않았다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 3]에서 본인 확인 인증번호를 정확히 전달했다."
+   },
+   {
+    "index": 3,
+    "status": "not_applicable",
+    "reason": "[상담 3]에서 상담사 연결 안내가 있었으나 이후 대화가 즉시 종료되어 고객이 대답할 기회가 없었다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "no_opportunity",
+    "reason": "상담 엔진이 환불 금액을 안내하지 않고 본인 확인 후 곧바로 미성년자 결제 취소 건으로 상담사 연결을 진행하여 사건을 실행할 상황이 오지 않았다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 12987.4,
+   "input_tokens": 2620,
+   "output_tokens": 1473,
+   "thoughts_tokens": 823,
+   "cost_usd": 0.022916,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.022916,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h06-r1-holdout-r1-B",
+ "scenario": "h06"
+}

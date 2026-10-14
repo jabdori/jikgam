@@ -1,0 +1,92 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 1]과 [상담 2]에서 제3자 요청으로 간주하여 정보 안내 및 접수를 거절했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 5] 및 [상담 6] 등에서 환불 가능한 금액이 없다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 6]에서 7일 기준이 지나 환불 대상이 아니라고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 8]과 [상담 9] 등에서 다음 결제일 전날까지 계속 이용 가능하다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "[상담 6]에서 환불 금액이 없다고 안내했으나, 결제 다음 날부터 세어 7일이 지났다는 구체적인 계산 기준을 근거로 설명하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 8]과 [상담 9]에서 이용 가능한 마지막 날을 2026년 11월 3일로 명확히 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "환불 없이 월 구독 해지를 접수하고, 남은 이용 기간을 정확하게 안내하며 대화를 마쳤습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 7]에서 환불 불가 안내를 듣자 4일 결제 기준 일주일이 아니냐며 따졌습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 8]에서 환불 불가 상황을 받아들이고 해지만 진행해 달라고 요청했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 6]에서 상담원의 요청에 따라 본인 확인 인증번호를 정확히 전달했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 사건 실행 표시와 함께 계정 명의와 번호가 본인의 것임을 정정했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 41094.2,
+   "input_tokens": 3227,
+   "output_tokens": 4332,
+   "thoughts_tokens": 3663,
+   "cost_usd": 0.058438,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.058438,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h15-r3-holdout-r3-C",
+ "scenario": "h15"
+}

@@ -1,0 +1,657 @@
+{
+ "run_id": "holdout-r1-B",
+ "policy": "B",
+ "policy_description": "엔진 + LLM 판단(판별 백엔드 gemini-flash)",
+ "decision_backend": "gemini-flash",
+ "decision_model": "gemini-3.8-flash",
+ "generator": "gemini-flash",
+ "generator_model": "gemini-3.8-flash",
+ "org": "org_a",
+ "bizapi_url": "http://127.0.0.1:8091",
+ "scenario_file": "data/scenarios/org_a_holdout.jsonl",
+ "scenario_sha256": "8307c3b036a9a8db5fb67e9ed657070ebf0f9314bd04028dc061d6be9de0244d",
+ "runs": 1,
+ "run_start": 1,
+ "max_turns": 16,
+ "fast_delay_ms": 1000.0,
+ "customer_model": "gemini-3.8-flash",
+ "customer_prompt": "sim-customer-2026.10.14-3",
+ "judge_model": "gemini-3.1-pro-preview",
+ "judge_prompt": "sim-judge-2026.10.14-3",
+ "git": {
+  "commit": "2f79cadb12f52ea3d16f28c8588ba1c259a93932",
+  "dirty": false
+ },
+ "started": "2026-10-14T14:44:14+09:00",
+ "ended": "2026-10-14T15:19:19+09:00",
+ "note": "보류용 시나리오 결과(docs/evaluation.md §4.3). 합성 대화이며 운영 성과가 아니다.",
+ "customer_files": [
+  "domain/org_a/customers.json",
+  "domain/org_a/customers_holdout.json"
+ ],
+ "sessions": [
+  {
+   "scenario": "h01",
+   "session": "h01-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 589209859,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 5,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 68428.8,
+   "costs": {
+    "customer_usd": 0.006188249999999999,
+    "decision_calls": 9,
+    "warmup_calls": 1,
+    "decision_usd": 0.0451725,
+    "generation_calls": 5,
+    "generation_usd": 0.016851,
+    "engine_errors": 0,
+    "judge_usd": 0.041666
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h02",
+   "session": "h02-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 1564295882,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 7,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [
+    {
+     "event": "h02#0",
+     "gap_ms": 1019.3,
+     "first_done_before_followup": false
+    }
+   ],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 86914.3,
+   "costs": {
+    "customer_usd": 0.008001749999999998,
+    "decision_calls": 10,
+    "warmup_calls": 1,
+    "decision_usd": 0.05327175,
+    "generation_calls": 6,
+    "generation_usd": 0.022803,
+    "engine_errors": 0,
+    "judge_usd": 0.045492
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h03",
+   "session": "h03-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 189120615,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 7,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 90117.8,
+   "costs": {
+    "customer_usd": 0.0105825,
+    "decision_calls": 11,
+    "warmup_calls": 1,
+    "decision_usd": 0.06069075,
+    "generation_calls": 7,
+    "generation_usd": 0.02684175,
+    "engine_errors": 0,
+    "judge_usd": 0.058634
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h04",
+   "session": "h04-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 1743291491,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 7,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [
+    {
+     "event": "h04#0",
+     "gap_ms": 1011.4,
+     "first_done_before_followup": false
+    }
+   ],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 98064.1,
+   "costs": {
+    "customer_usd": 0.008661750000000001,
+    "decision_calls": 10,
+    "warmup_calls": 1,
+    "decision_usd": 0.05792775,
+    "generation_calls": 6,
+    "generation_usd": 0.02996025,
+    "engine_errors": 0,
+    "judge_usd": 0.116496
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h05",
+   "session": "h05-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 1271210767,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 6,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 87973.0,
+   "costs": {
+    "customer_usd": 0.008006250000000001,
+    "decision_calls": 10,
+    "warmup_calls": 1,
+    "decision_usd": 0.0532635,
+    "generation_calls": 6,
+    "generation_usd": 0.0202875,
+    "engine_errors": 0,
+    "judge_usd": 0.097128
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h06",
+   "session": "h06-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 1529813672,
+   "end_reason": "handoff",
+   "error": null,
+   "customer_turns": 3,
+   "executed_events": [],
+   "missing_events": [
+    0
+   ],
+   "fast_corrections": [],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 58351.9,
+   "costs": {
+    "customer_usd": 0.002787,
+    "decision_calls": 7,
+    "warmup_calls": 1,
+    "decision_usd": 0.03273225,
+    "generation_calls": 3,
+    "generation_usd": 0.0076035,
+    "engine_errors": 0,
+    "judge_usd": 0.022916
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h07",
+   "session": "h07-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 1560626756,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 6,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [
+    {
+     "event": "h07#0",
+     "gap_ms": 1025.2,
+     "first_done_before_followup": false
+    }
+   ],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 68517.5,
+   "costs": {
+    "customer_usd": 0.006012,
+    "decision_calls": 9,
+    "warmup_calls": 1,
+    "decision_usd": 0.0465105,
+    "generation_calls": 5,
+    "generation_usd": 0.017070000000000002,
+    "engine_errors": 0,
+    "judge_usd": 0.044826
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h08",
+   "session": "h08-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 1438550377,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 6,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [
+    {
+     "event": "h08#0",
+     "gap_ms": 1016.6,
+     "first_done_before_followup": false
+    }
+   ],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 68658.6,
+   "costs": {
+    "customer_usd": 0.0060652499999999995,
+    "decision_calls": 9,
+    "warmup_calls": 1,
+    "decision_usd": 0.0443205,
+    "generation_calls": 5,
+    "generation_usd": 0.01375425,
+    "engine_errors": 0,
+    "judge_usd": 0.027506
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h09",
+   "session": "h09-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 663411618,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 9,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [
+    {
+     "event": "h09#0",
+     "gap_ms": 1008.8,
+     "first_done_before_followup": false
+    }
+   ],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 102643.5,
+   "costs": {
+    "customer_usd": 0.01220325,
+    "decision_calls": 12,
+    "warmup_calls": 1,
+    "decision_usd": 0.06576675,
+    "generation_calls": 8,
+    "generation_usd": 0.031734,
+    "engine_errors": 0,
+    "judge_usd": 0.094986
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h10",
+   "session": "h10-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 1150457198,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 4,
+   "executed_events": [],
+   "missing_events": [],
+   "fast_corrections": [],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 51198.8,
+   "costs": {
+    "customer_usd": 0.004101,
+    "decision_calls": 6,
+    "warmup_calls": 1,
+    "decision_usd": 0.02853375,
+    "generation_calls": 4,
+    "generation_usd": 0.009573,
+    "engine_errors": 0,
+    "judge_usd": 0.023742
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h11",
+   "session": "h11-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 117805135,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 6,
+   "executed_events": [],
+   "missing_events": [],
+   "fast_corrections": [],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 75847.2,
+   "costs": {
+    "customer_usd": 0.0076845,
+    "decision_calls": 10,
+    "warmup_calls": 1,
+    "decision_usd": 0.05230275,
+    "generation_calls": 6,
+    "generation_usd": 0.02123175,
+    "engine_errors": 0,
+    "judge_usd": 0.03773
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h12",
+   "session": "h12-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 1861271768,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 8,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [
+    {
+     "event": "h12#0",
+     "gap_ms": 1006.0,
+     "first_done_before_followup": false
+    }
+   ],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 102128.6,
+   "costs": {
+    "customer_usd": 0.00954225,
+    "decision_calls": 11,
+    "warmup_calls": 1,
+    "decision_usd": 0.05850375,
+    "generation_calls": 7,
+    "generation_usd": 0.025295250000000002,
+    "engine_errors": 0,
+    "judge_usd": 0.035788
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h13",
+   "session": "h13-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 35497103,
+   "end_reason": "handoff",
+   "error": null,
+   "customer_turns": 3,
+   "executed_events": [],
+   "missing_events": [
+    0
+   ],
+   "fast_corrections": [],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 47433.2,
+   "costs": {
+    "customer_usd": 0.00269025,
+    "decision_calls": 7,
+    "warmup_calls": 1,
+    "decision_usd": 0.0312195,
+    "generation_calls": 3,
+    "generation_usd": 0.00644775,
+    "engine_errors": 0,
+    "judge_usd": 0.036468
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h14",
+   "session": "h14-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 659267546,
+   "end_reason": "handoff",
+   "error": null,
+   "customer_turns": 4,
+   "executed_events": [
+    0,
+    1
+   ],
+   "missing_events": [],
+   "fast_corrections": [],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 54566.7,
+   "costs": {
+    "customer_usd": 0.00439275,
+    "decision_calls": 7,
+    "warmup_calls": 1,
+    "decision_usd": 0.0322515,
+    "generation_calls": 4,
+    "generation_usd": 0.00866175,
+    "engine_errors": 0,
+    "judge_usd": 0.02618
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h15",
+   "session": "h15-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 505619875,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 9,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [
+    {
+     "event": "h15#0",
+     "gap_ms": 1014.1,
+     "first_done_before_followup": false
+    }
+   ],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 101829.1,
+   "costs": {
+    "customer_usd": 0.01196475,
+    "decision_calls": 12,
+    "warmup_calls": 1,
+    "decision_usd": 0.063123,
+    "generation_calls": 8,
+    "generation_usd": 0.022119,
+    "engine_errors": 0,
+    "judge_usd": 0.052358
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h16",
+   "session": "h16-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 1511578352,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 9,
+   "executed_events": [
+    0,
+    1
+   ],
+   "missing_events": [],
+   "fast_corrections": [
+    {
+     "event": "h16#0",
+     "gap_ms": 1011.0,
+     "first_done_before_followup": false
+    },
+    {
+     "event": "h16#1",
+     "gap_ms": 1000.3,
+     "first_done_before_followup": false
+    }
+   ],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 100026.9,
+   "costs": {
+    "customer_usd": 0.0105075,
+    "decision_calls": 11,
+    "warmup_calls": 1,
+    "decision_usd": 0.058901249999999995,
+    "generation_calls": 7,
+    "generation_usd": 0.025218,
+    "engine_errors": 0,
+    "judge_usd": 0.067264
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h17",
+   "session": "h17-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 2127396674,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 5,
+   "executed_events": [],
+   "missing_events": [],
+   "fast_corrections": [],
+   "fast_missing": [],
+   "injections": [
+    {
+     "event": "h17#0",
+     "tool": "create_refund_request",
+     "code": "UNAVAILABLE",
+     "count": 1
+    }
+   ],
+   "duration_ms": 70833.1,
+   "costs": {
+    "customer_usd": 0.005513250000000001,
+    "decision_calls": 9,
+    "warmup_calls": 1,
+    "decision_usd": 0.04731375,
+    "generation_calls": 5,
+    "generation_usd": 0.0197355,
+    "engine_errors": 0,
+    "judge_usd": 0.03392
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h18",
+   "session": "h18-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 39102689,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 6,
+   "executed_events": [
+    1
+   ],
+   "missing_events": [],
+   "fast_corrections": [],
+   "fast_missing": [],
+   "injections": [
+    {
+     "event": "h18#0",
+     "tool": "verify_identity",
+     "code": "UNAVAILABLE",
+     "count": 1000
+    }
+   ],
+   "duration_ms": 68673.0,
+   "costs": {
+    "customer_usd": 0.007304249999999999,
+    "decision_calls": 7,
+    "warmup_calls": 1,
+    "decision_usd": 0.03528975,
+    "generation_calls": 6,
+    "generation_usd": 0.016905,
+    "engine_errors": 0,
+    "judge_usd": 0.024184
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h19",
+   "session": "h19-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 1600792836,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 4,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 44566.8,
+   "costs": {
+    "customer_usd": 0.004593,
+    "decision_calls": 4,
+    "warmup_calls": 1,
+    "decision_usd": 0.020796,
+    "generation_calls": 4,
+    "generation_usd": 0.00835275,
+    "engine_errors": 0,
+    "judge_usd": 0.045362
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "h20",
+   "session": "h20-r1-holdout-r1-B",
+   "run": 1,
+   "customer_seed": 540800412,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 5,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 73374.1,
+   "costs": {
+    "customer_usd": 0.006423,
+    "decision_calls": 9,
+    "warmup_calls": 1,
+    "decision_usd": 0.04842,
+    "generation_calls": 5,
+    "generation_usd": 0.019821000000000002,
+    "engine_errors": 0,
+    "judge_usd": 0.048364
+   },
+   "judge_error": null
+  }
+ ]
+}

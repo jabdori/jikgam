@@ -1,0 +1,102 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "고객이 계좌번호를 정정한 후 업무 API를 호출하였으며, 정정 전 계좌번호로 등록했다는 정황이 없습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 3]에서 결제 월이 지나 본인 명의 계좌로 환불된다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 4]와 [상담 5]에서 금액이 50,000원을 초과하여 상담사 승인 후 확정된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 4]와 [상담 5]에서 할인 전 정상 월 요금인 9,900원으로 계산된다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 4]와 [상담 5]에서 환불 예정액 62,190원과 차감액 산정 근거(정상 월 요금 9,900원, 위약금 6,910원)를 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4]와 [상담 5]에서 상담사 승인 후 환불이 확정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 4]와 [상담 5]에서 본인 명의 계좌로 정보를 받은 날부터 5영업일 안에 입금된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 4]와 [상담 5]에서 2026-10-12까지 서비스 이용이 가능하다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "[상담 6]과 [상담 7]에서 연 구독 해지 및 환불 접수를 완료하고 상세 내용을 안내했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 4]에서 계좌번호 끝자리를 '4455'로 잘못 불렀습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 5]에서 '할인가로 샀는데 왜 9,900원씩 빼요?'라며 지시된 대로 질문했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 3]에서 요청받은 인증번호 0209를 정확히 제공했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 6]에서 사건 실행 표시와 함께 계좌번호 끝자리를 4456으로 정정했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 36765.7,
+   "input_tokens": 3488,
+   "output_tokens": 3694,
+   "thoughts_tokens": 2856,
+   "cost_usd": 0.051304,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.051304,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h09-r2-holdout-r2-B",
+ "scenario": "h09"
+}

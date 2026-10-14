@@ -1,0 +1,112 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 1]에서 해지 신청일에 즉시 종료된다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 3]에서 별도의 상담사 승인 절차 없이 접수가 완료된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 2]에서 위약금이 없음을 명시하여 차감 내역을 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 2]에서 오늘 종료됨을 안내하고 [고객 3]에서 동의를 얻은 뒤 해지를 접수했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 1]에서 해지 시 신청일에 즉시 종료됨을 명확히 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 2]에서 5개월 이용분 차감, 위약금 없음 등의 근거와 49,500원 환불 예정액을 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 상담사 승인 절차 없이 즉시 환불 접수가 완료됨을 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 2]와 [상담 3]에서 신용카드 결제 취소로 3~7영업일 내 처리됨을 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 구독 해지 및 환불 요청을 성공적으로 처리하고 답변을 완료했습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 2]에서 해지 조건과 오늘 종료됨을 안내하고 [고객 3]에서 동의를 받아 취소 API(쓰기 #0)를 호출했습니다."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "[상담 2]에서 환불 방법과 금액을 안내하고 [고객 3]에서 동의를 받아 환불 요청 API(쓰기 #1)를 호출했습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 가입 날짜를 묻지 않아 적용되지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[상담 1]의 설명을 듣고 [고객 2]에서 오늘 끝내고 환불받겠다는 내용을 말했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 2]에서 금액 안내를 들은 후 [고객 3]에서 오만 원 이상 승인 여부에 대해 물었습니다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "[고객 2]에서 수신한 인증번호를 한 글자씩 천천히 전달했습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 27112.5,
+   "input_tokens": 2889,
+   "output_tokens": 2496,
+   "thoughts_tokens": 1616,
+   "cost_usd": 0.03573,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.03573,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h11-r1-holdout-r1-A",
+ "scenario": "h11"
+}

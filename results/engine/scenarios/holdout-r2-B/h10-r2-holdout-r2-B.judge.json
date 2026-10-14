@@ -1,0 +1,73 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 3과 상담 4에서 취소 및 환불 접수가 어렵다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "상담 3과 상담 4에서 미성년자 결제 취소 대상이 아니라고 안내했으나, 결제 당시 이미 만 19세였다는 구체적인 이유를 설명하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "청약철회 기간이 지나 환불이 불가하다는 점을 안내하지 않았습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "환불 대상이 아니므로 환불이 거절된다고 안내했으며, 고객의 의사에 따라 구독 유지를 확정지었습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 생일과 결제일을 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "상담 3에서 안 된다는 설명을 들은 후 고객 4에서 지정된 문장으로 질문했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "상담 4에서 환불 불가 안내를 재차 들은 후 고객 5에서 해지를 원치 않고 계속 쓰겠다고 말했습니다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "상담 2에서 인증번호를 요청받고 고객 3에서 인증번호를 정확히 전달했습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 12047.1,
+   "input_tokens": 2250,
+   "output_tokens": 1353,
+   "thoughts_tokens": 872,
+   "cost_usd": 0.020736,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.020736,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h10-r2-holdout-r2-B",
+ "scenario": "h10"
+}

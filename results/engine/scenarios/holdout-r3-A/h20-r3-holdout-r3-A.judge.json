@@ -1,0 +1,124 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": true,
+    "reason": "[상담 2]와 [상담 3]에서 연 구독 중도 해지 금액인 80,190원으로 환불 예정액을 안내하고 접수했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "이용 이력을 이유로 환불을 거절하지 않고 환불(80,190원)을 접수했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "결제 금액을 99,000원으로 안내하며 79,000원 기준으로 환불액을 계산하지 않았습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 2]와 [상담 4]에서 상담사 승인을 거친다고 안내했습니다."
+   },
+   {
+    "index": 4,
+    "violated": false,
+    "reason": "갱신 안내 문자를 못 받았다는 항의에 대해 별도의 보상이나 추가 환불을 약속하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 1]에서 갱신 시에는 정상 요금(99,000원)으로 결제된다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "장애 발생으로 인한 전액 환불(99,000원)을 안내하지 않고 중도 해지 위약금을 적용한 80,190원으로 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 2]에서 상담사 승인을 거친다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 2]와 [상담 4]에서 3~7영업일 내 카드 승인 취소된다고 환불 방법과 기간을 안내했습니다."
+   },
+   {
+    "index": 4,
+    "said": true,
+    "reason": "[상담 2]에서 서비스 이용은 오늘(2026-10-12) 종료된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "환불 예정액 계산은 틀렸지만, 고객의 환불 및 해지 요청을 접수하고 답변을 완료하여 answer 요건을 충족합니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 3]에서 해지와 환불액(80,190원)에 대해 확인을 요청했고, [고객 4]에서 고객이 접수를 동의한 후 API가 호출되었습니다."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "[상담 3]에서 안내한 환불 조건(80,190원)에 대해 [고객 4]에서 고객이 접수를 동의한 후 API가 호출되었습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 이용 여부를 묻지 않아 답변할 기회가 없었습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "고객이 장애 이야기를 먼저 꺼내지 않음으로써 규칙을 따랐습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 2]에서 본인 확인 번호를 정확히 말했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 3]에 사건 실행 표시가 있으며, 갱신 안내 문자를 못 받았다는 내용으로 항의를 잘 수행했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 18066.9,
+   "input_tokens": 3477,
+   "output_tokens": 2245,
+   "thoughts_tokens": 1209,
+   "cost_usd": 0.033894,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.033894,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h20-r3-holdout-r3-A",
+ "scenario": "h20"
+}

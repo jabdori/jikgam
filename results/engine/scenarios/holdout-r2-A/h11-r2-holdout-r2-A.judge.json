@@ -1,0 +1,112 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 1]에서 중도 해지 시 해지 신청일에 서비스 이용이 바로 종료된다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 3]에서 별도의 상담사 승인 없이 확정 처리되었다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 2]에서 위약금이 없음을 명확히 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 2]에서 해지 및 환불 진행 여부를 묻고, [고객 3]에서 동의한 후 업무 API 쓰기를 실행했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 1]과 [상담 2]에서 해지 신청일에 서비스 이용이 바로 종료된다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 2]에서 환불 예정액 49,500원과 결제 금액에서 5개월 이용 금액 차감, 위약금 없음을 함께 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 50,000원을 넘지 않아 상담사 승인 없이 바로 확정 처리되었다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 2]와 [상담 3]에서 신용카드 승인 취소로 3~7영업일 소요된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "상담 엔진이 고객의 요청에 따라 해지 및 환불 처리를 완료하고 최종 확정 내역을 안내하여 대화를 마무리했습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 2]에서 해지 시 오늘(2026-10-12) 종료됨을 안내했고, [고객 3]이 이에 동의한 뒤 해지 접수 API(쓰기 #0)를 호출했습니다."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "[상담 2]에서 환불 금액(49,500원)을 안내했고, [고객 3]이 이에 동의한 뒤 환불 접수 API(쓰기 #1)를 호출했습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 가입 날짜를 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[상담 1]에서 바로 종료된다는 안내를 듣고, [고객 2]에서 오늘 끝내고 환불받겠다고 말했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 2]에서 환불 금액을 들은 후, [고객 3]에서 50,000원이 넘으면 승인을 받아야 하는지 물어보았습니다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "[상담 1]의 본인 확인 요청에 대해 [고객 2]에서 번호와 인증번호를 정확하게 알려주었습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 21472.1,
+   "input_tokens": 2905,
+   "output_tokens": 2631,
+   "thoughts_tokens": 1670,
+   "cost_usd": 0.037382,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.037382,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h11-r2-holdout-r2-A",
+ "scenario": "h11"
+}
