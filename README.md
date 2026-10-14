@@ -29,6 +29,7 @@ uv run python -m jikgam.eval.report results/decisions/val/<run_id>              
 uv run python -m jikgam.sim.runner --org org_a --scenarios all --policy C           # AI 고객 시나리오 실행(모의 업무 API와 .env 키 필요)
 uv run python -m jikgam.sim.report results/engine/scenarios/<run_id>               # 시나리오 판정, 근거 갱신 시간, 무효 노출, 비용
 uv run python -m jikgam.web --bizapi-url http://127.0.0.1:8101 --start-bizapi      # 웹 화면: /console, /timeline, /dashboard (127.0.0.1:8100)
+uv run python -m jikgam.voice.replay --replays s01 s20 s21 --bizapi-url http://127.0.0.1:8096  # 음성 재생(실제 STT·TTS, docs/voice.md)
 ```
 
 ## 구성
@@ -58,5 +59,8 @@ uv run python -m jikgam.web --bizapi-url http://127.0.0.1:8101 --start-bizapi   
 | `jikgam/sim/` | AI 고객 시뮬레이터, 시나리오 실행기(정책 B·C), 엔진 지표(평가 기준 §3.2·§3.3), 시나리오 판정(§4, 코드 + AI 평가) |
 | `config/orgs/org_a.toml` | 조직 A 엔진 설정(약관, 업무 API 주소, 판별 백엔드·질문 세트, 검색·정책 설정) |
 | `data/replays/` | 엔진 개발용 고정 대화(고객 발화) |
+| `jikgam/voice/` | 음성 연결(Pipecat): Gemini STT(VERBATIM) → 엔진 → Gemini TTS, 끼어들기, 로컬 시험 전송, 음성 재생 측정([docs/voice.md](docs/voice.md)) |
+| `config/voice.toml` | 음성 설정(STT·TTS 모델 ID, 목소리, VAD, 응답 재생 규칙) |
+| `data/voice/` | 개발용 재생의 고객 녹음(Gemini TTS)과 매니페스트 |
 | `bizapi/` | 조직 A 모의 업무 API (Go) |
 | `results/` | 측정 원본 로그와 보고서 |
