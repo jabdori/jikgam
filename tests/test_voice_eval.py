@@ -216,8 +216,8 @@ def test_voice_customer_prompt_keeps_chat_rules():
 def test_tts_text_reads_only_the_otp_digit_by_digit():
     assert read_digits("0016") == "공공일육"
     said = tts_text("인증번호는 0016이고, 번호는 010-0000-0016, 금액은 10016원이에요.", {"0016"})
-    assert said == "인증번호는 공공일육이고, 번호는 010-0000-0016, 금액은 10016원이에요."
-    assert tts_text("01000000016 이에요", {"0016"}) == "01000000016 이에요"  # 붙여 쓴 번호
+    assert said == "인증번호는 공공일육이고, 번호는 공일공, 공공공공, 공공일육, 금액은 10016원이에요."
+    assert tts_text("01000000016 이에요", set()) == "공일공, 공공공공, 공공일육 이에요"  # 붙여 쓴 번호
     assert tts_text("번호 0016요", set()) == "번호 0016요"
 
 
@@ -228,3 +228,26 @@ def test_heard_orders_lines_and_marks_cut_replies():
     conv = heard([(1000.0, "환불해 주세요"), (4000.0, "아니 해지만요")], pbs)
     assert conv == [{"speaker": "customer", "text": "환불해 주세요"}, {"speaker": "agent", "text": "환불 안내 [끊김]"},
                     {"speaker": "customer", "text": "아니 해지만요"}, {"speaker": "agent", "text": "해지 안내"}]
+
+
+def test_marker_moves_to_the_last_final_of_the_line():
+    """STT가 조건 변경 줄을 여러 확정 발화로 나누면 표시를 그 줄의 마지막 확정 발화로 옮긴다(§4 보완)."""
+    log = [
+        e(1000, "voice.segment", line=1, text="저기, 아 그냥 해지할게요.", marker=MARK, feed_start_ms=1000,
+          speech_start_ms=1200, speech_end_ms=4000),
+        e(1600, "utterance.end", 0, utt_id="u1", speaker="customer", text="저기", final=True, marker=MARK),
+        e(2400, "version.bumped", 1, utt_id="u1", **{"from": 0, "to": 1}),
+        e(4000, "utterance.end", 1, utt_id="u2", speaker="customer", text="그냥 해지할게요.", final=True, marker=None),
+        e(4800, "version.bumped", 2, utt_id="u2", **{"from": 1, "to": 2}),
+        e(5000, "evidence.updated", 2),
+        e(6000, "voice.segment", 2, line=2, text="네", marker=None, feed_start_ms=6000, speech_start_ms=6200,
+          speech_end_ms=6500),
+        e(6500, "utterance.end", 2, utt_id="u3", speaker="customer", text="네", final=True, marker=None),
+    ]
+    norm = vm.normalize_markers(log)
+    marks = [(x["utt_id"], (x.get("marker") or {}).get("moved_from")) for x in norm if x["type"] == "utterance.end"
+             and x.get("marker")]
+    assert marks == [("u2", "u1")]
+    assert log[1]["marker"] == MARK  # 원본은 그대로
+    (r,) = vm.session_summary(log)["refresh"]
+    assert (r["utt_id"], r["version"], r["latency_ms"]) == ("u2", 2, 1000)

@@ -21,7 +21,7 @@ from jikgam.sim import judge as jd
 from jikgam.sim.metrics import latency_stats
 from jikgam.sim.scenario import load_scenarios
 
-from .metrics import session_summary
+from .metrics import normalize_markers, session_summary
 
 
 def _ms(x: float | None) -> str:
@@ -37,7 +37,7 @@ def load_runs(run_dirs: list[Path]) -> list[dict[str, Any]]:
         scenarios = {s["id"]: s for s in load_scenarios(ROOT / summary["scenario_file"])}
         for sess in summary["sessions"]:
             sid = sess["session"]
-            events = read_log(run_dir / f"{sid}.jsonl")
+            events = normalize_markers(read_log(run_dir / f"{sid}.jsonl"))  # 조건 변경 표시는 줄의 마지막 확정 발화
             jp = jd.judge_path(run_dir, sid)
             ai = json.loads(jp.read_text(encoding="utf-8")) if jp.exists() else None
             result = jd.evaluate(scenarios[sess["scenario"]], events, ai, jd.sim_end_of(run_dir, sid))
@@ -66,7 +66,9 @@ def policy_stats(sessions: list[dict[str, Any]]) -> dict[str, Any]:
             stale["cases"] += [{**c, "session": x["session"]} for c in v["cases"] if c["kind"] == "invalid"]
         refresh = [r for x in group for r in x["voice"]["refresh"]]
         audio = [r for x in group for r in x["voice"]["new_condition_audio"]]
-        barge = [b for x in group for b in x["voice"]["barge_ins"]]
+        # 끼어들기는 재생이 시작된 답을 끊은 것만 센다. 재생 전 취소(늦게 온 미확정 자막)는 따로 센다(§4 보완)
+        barge = [b for x in group for b in x["voice"]["barge_ins"] if b["started"]]
+        cancelled = sum(not b["started"] for x in group for b in x["voice"]["barge_ins"])
         played = [c["played_ms"] for c in stale["cases"] if c.get("played_ms") is not None]
         return {
             "stale": {**{k: stale[k] for k in ("invalid", "denominator", "unconfirmed")},
@@ -76,7 +78,7 @@ def policy_stats(sessions: list[dict[str, Any]]) -> dict[str, Any]:
             "refresh_from_speech_end": _stats([r["latency_from_speech_end_ms"] if r["t1"] is not None else None
                                                for r in refresh]),
             "new_condition_audio": _stats([r["from_speech_end_ms"] for r in audio]),
-            "barge_ins": {"count": len(barge),
+            "barge_ins": {"count": len(barge), "cancelled_before_audio": cancelled,
                           "detect": _stats([b["detect_ms"] for b in barge if b["detect_ms"] is not None]),
                           "stop": _stats([b["stop_ms"] for b in barge if b["stop_ms"] is not None]),
                           "new_audio": _stats([b["new_audio_ms"] for b in barge])},
@@ -135,7 +137,8 @@ def render(stats: dict[str, dict[str, Any]], verdicts: list[dict[str, Any]] | No
                 f"{_ms(v['refresh_from_speech_end']['p95'])}ms",
                 f"  새 조건 첫 음성 p50/p95 {_ms(v['new_condition_audio']['p50'])}/{_ms(v['new_condition_audio']['p95'])}ms "
                 f"(이벤트 {v['new_condition_audio']['events']}, 미응답 {v['new_condition_audio']['misses']})",
-                f"  끼어들기 {v['barge_ins']['count']}회, 멈춤 p50 {_ms(v['barge_ins']['stop']['p50'])}ms, "
+                f"  끼어들기 {v['barge_ins']['count']}회(재생 전 취소 {v['barge_ins']['cancelled_before_audio']}회), "
+                f"멈춤 p50 {_ms(v['barge_ins']['stop']['p50'])}ms, "
                 f"새 음성 p50 {_ms(v['barge_ins']['new_audio']['p50'])}ms",
                 f"  비용 {s['cost_usd']} 합 ${s['cost_usd_total']:.4f}"]
         for r in s["invalid_runs"]:

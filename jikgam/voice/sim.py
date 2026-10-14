@@ -73,24 +73,25 @@ def read_digits(digits: str) -> str:
     return "".join(DIGIT_READING[int(d)] for d in digits)
 
 
-PHONE_SPAN = re.compile(r"01\d[-\s.]?\d{3,4}[-\s.]?\d{4}")
+PHONE_SPAN = re.compile(r"(?<!\d)(01\d)[-\s.]?(\d{3,4})[-\s.]?(\d{4})(?!\d)")
+
+
+def read_phone(m: re.Match) -> str:
+    """휴대폰 번호를 사람이 불러 주듯 묶음마다 한 자리씩 한글로 읽고 묶음 사이를 쉰다(010-0000-0016 → 공일공, 공공공공, 공공일육)."""
+    return ", ".join(read_digits(g) for g in m.groups())
 
 
 def tts_text(text: str, codes: set[str]) -> str:
-    """TTS에 넣을 문장. 고객이 받은 인증번호(codes)가 숫자로 있으면 한 자리씩 한글 읽기로 바꾼다.
-    TTS가 "0016"을 "십육"처럼 읽지 않게 하려는 것이며, 다른 숫자(휴대폰 번호, 금액, 날짜)는 그대로 둔다. 모의 인증번호는
-    휴대폰 번호의 끝 4자리라서(jikgam/sim/scenario.py sms_codes) 휴대폰 번호 안의 숫자는 바꾸지 않는다."""
-    phones = [m.span() for m in PHONE_SPAN.finditer(text)]
+    """TTS에 넣을 문장. 숫자를 한 자리씩 읽어야 하는 것만 한글 읽기로 바꾸고 나머지(금액, 날짜)는 그대로 둔다.
+    - 휴대폰 번호: 묶음마다 한 자리씩(read_phone). 숫자로 넣으면 TTS 읽기가 매번 달라 STT가 0을 빠뜨리는 일이 잦았다
+      (개발용 s20 점검, 2026-10-14).
+    - 고객이 받은 인증번호(codes): 한 자리씩. TTS가 "0016"을 "십육"처럼 읽지 않게 한다. 모의 인증번호는 휴대폰 번호의 끝
+      4자리라서(jikgam/sim/scenario.py sms_codes) 번호를 먼저 바꾼 뒤 남은 숫자에만 적용한다."""
+    text = PHONE_SPAN.sub(read_phone, text)
     pattern = "|".join(re.escape(c) for c in sorted(codes, key=len, reverse=True) if c)
     if not pattern:
         return text
-
-    def swap(m: re.Match) -> str:
-        if any(a <= m.start() < b for a, b in phones):
-            return m.group(0)
-        return read_digits(m.group(0))
-
-    return re.sub(rf"(?<!\d)(?:{pattern})(?!\d)", swap, text)
+    return re.sub(rf"(?<!\d)(?:{pattern})(?!\d)", lambda m: read_digits(m.group(0)), text)
 
 
 @dataclass

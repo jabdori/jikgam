@@ -20,6 +20,10 @@ VAD로 추정한 값이므로 둘의 차(t_end_error_ms)를 함께 낸다.
   (docs/evaluation-voice.md §4.3). 다음 고객 발화 전까지 없으면 None(미응답)
 - barge_in의 new_audio_ms: 끼어든 구간의 기준 발화 종료부터 새 버전 답의 재생 시작까지(§4.4)
 
+조건 변경 표시의 위치(docs/evaluation-voice.md §4 보완, 2026-10-14): 실행 중에는 표시가 그 줄(voice.segment)에서 처음
+확정된 발화에 붙는다. STT가 한 줄을 여러 확정 발화로 나누면 첫 조각에는 바뀐 조건이 아직 없으므로, 지표는 표시를 그 줄에서
+마지막으로 확정된 발화로 옮겨 계산한다(normalize_markers). session_summary와 jikgam/voice/report.py의 판정이 이것을 쓴다.
+
 발화가 만든 버전은 version.bumped(utt_id 일치)의 to다. 정책 A(개선형 RAG)는 version.bumped를 남기지 않으므로 그 발화의
 utterance.end 버전 + 1을 쓴다(jikgam.sim.metrics.utterance_version과 같은 규칙).
 """
@@ -159,7 +163,32 @@ def refresh(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return rows
 
 
+def normalize_markers(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """조건 변경 표시를 그 줄(voice.segment)에서 마지막으로 확정된 고객 발화로 옮긴 사본. 줄은 발화 종료(t_ms)가 그 줄을
+    넣기 시작한 뒤, 다음 줄을 넣기 전인 고객 utterance.end들이다(EngineBridge의 marker_for와 같은 구간). 음성 로그가 아니면
+    그대로 돌려준다."""
+    segs = sorted((e for e in events if e["type"] == SEGMENT), key=lambda e: e["feed_start_ms"])
+    if not segs:
+        return events
+    out = [dict(e) for e in events]
+    utts = [i for i, e in enumerate(out) if e["type"] == ev.UTTERANCE_END and e.get("speaker", "customer") == "customer"]
+    for n, seg in enumerate(segs):
+        lo = seg["feed_start_ms"]
+        hi = segs[n + 1]["feed_start_ms"] if n + 1 < len(segs) else float("inf")
+        mine = [i for i in utts if lo <= float(out[i]["t_ms"]) < hi]
+        marked = [i for i in mine if isinstance(out[i].get("marker"), dict) and out[i]["marker"].get("event")]
+        if not marked or len(mine) < 2:
+            continue
+        mark = out[marked[0]]["marker"]
+        for i in marked:
+            out[i]["marker"] = None
+        last = max(mine, key=lambda i: float(out[i]["t_ms"]))
+        out[last]["marker"] = {**mark, "moved_from": out[marked[0]]["utt_id"]}
+    return out
+
+
 def session_summary(events: list[dict[str, Any]]) -> dict[str, Any]:
+    events = normalize_markers(events)
     stale = sm.stale_exposure(events)
     voice = stale["by_channel"].get(vb.CHANNEL, {"invalid": 0, "denominator": 0, "unconfirmed": 0, "cases": []})
     playbacks = [e for e in events if e["type"] == vb.PLAYBACK_END]
