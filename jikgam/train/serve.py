@@ -92,6 +92,9 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--run", help="실행 이름(JIKGAM_RUNS 아래) 또는 병합 모델 경로")
     ap.add_argument("--port", type=int, default=8888)
+    ap.add_argument("--backend", default="pytorch", choices=["pytorch", "llama.cpp", "auto"],
+                    help="Decision API 런타임. 설치 전체 설정이라 같은 Studio 설치의 다른 서버에도 적용된다")
+    ap.add_argument("--native-ctx", type=int, default=None, help="llama.cpp -c/-b/-ub(기본 16384)")
     ap.add_argument("--stop", action="store_true")
     args = ap.parse_args()
     if args.stop:
@@ -103,6 +106,7 @@ def main() -> None:
     merged = run_dir / "merged" if (run_dir / "merged").is_dir() else run_dir
     if not (merged / "joint_head.safetensors").is_file():
         raise SystemExit(f"병합 모델이 아니다: {merged}")
+    # 서빙 폴더(export_gguf.py)는 병합 폴더 파일을 링크로 가리키므로 merged를 resolve하지 않는다(지문은 링크를 따라간다).
     stop(args.port)
 
     # --password(UNSLOTH_STUDIO_PASSWORD)는 처음 한 번만 받는다. 이미 정한 뒤에 다시 주면 Studio가 시작을 거부한다.
@@ -126,8 +130,10 @@ def main() -> None:
         raise SystemExit("관리자 비밀번호를 먼저 바꿔야 한다고 응답했다. UI에서 한 번 로그인해 바꾼 뒤 secrets 파일을 고친다.")
     admin = {"Authorization": f"Bearer {token['access_token']}"}
     # 장치는 UNSLOTH_SYSTEMONE_DEVICE로 고정했으므로 설정으로 보내지 않는다(보내면 400).
-    r = httpx.put(f"{base}/api/settings/systemone", headers=admin, timeout=30,
-                  json={"enabled": True, "backend": "pytorch"})
+    settings = {"enabled": True, "backend": args.backend}
+    if args.native_ctx:
+        settings["native_ctx"] = args.native_ctx
+    r = httpx.put(f"{base}/api/settings/systemone", headers=admin, timeout=30, json=settings)
     if r.status_code != 200:
         raise SystemExit(f"Decision API 설정 실패 HTTP {r.status_code}: {r.text[:300]}")
 
@@ -146,8 +152,11 @@ def main() -> None:
         if r.status_code not in (503, 529):
             raise SystemExit(f"예열 실패 HTTP {r.status_code}: {r.text[:300]}")
         time.sleep(5)
+    export = merged / "gguf" / "export.json"
+    gguf = json.loads(export.read_text(encoding="utf-8")) if export.is_file() else None
     print(json.dumps({"port": args.port, "merged": str(merged), "weights_sha256_16": weights_sha16(merged),
-                      "pid": proc.pid,
+                      "gguf_quantizations": gguf and gguf["quantizations"],
+                      "settings": settings, "pid": proc.pid,
                       "warm_status": r.status_code, "load_seconds": round(time.perf_counter() - t0, 1),
                       "response_model": r.json().get("model") if r.status_code == 200 else None,
                       "backend_header": r.headers.get("x-unsloth-decision-backend")}, ensure_ascii=False))

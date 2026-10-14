@@ -77,6 +77,54 @@ price_source = "로컬 서빙, 외부 과금 없음. 참고 비용은 docs/evalu
 served = "WSL2 ~/jikgam-train/runs/q35-2b-d-mix/merged, unsloth/Qwen3.5-2B@fffbc0d8 + LoRA + Clef 헤드, 구성 (d), 질문 세트 q-2026.10.14-mix, Unsloth 2026.10.5, PyTorch 16비트"
 weights_sha256_16 = "3f9dcfe6df110822"
 
+# 2B (d)의 서빙 방식 비교(docs/training.md §10). 가중치는 q35-2b-ko와 같고, Studio의 llama.cpp 경로로 GGUF를 서빙한다.
+# 서빙 폴더 ~/jikgam-train/serve/q35-2b-d-mix-<양자화>는 jikgam/train/export_gguf.py가 만든다(병합 파일은 링크).
+# serve.py --backend llama.cpp로 띄운다. 런타임 설정은 Studio 설치 전체에 걸리므로 한 번에 하나씩 잰다.
+# 측정(2026-10-14) 뒤 GGUF 서빙 폴더는 지웠다. 다시 재려면 export_gguf.py로 다시 만든다. 주장 3 후보는 q35-2b-ko-direct(ADR 0012).
+["q35-2b-ko-gguf-bf16"]
+kind = "systemone"
+url = "http://127.0.0.1:8890/v1/systemone"
+model = "laya-local"
+api_key_env = "UNSLOTH_API_KEY"
+price_input_per_mtok = 0.0
+price_output_per_mtok = 0.0
+price_source = "로컬 서빙, 외부 과금 없음. 참고 비용은 docs/evaluation.md §2.6(jikgam/train/gpu_cost.py)"
+served = "WSL2 ~/jikgam-train/serve/q35-2b-d-mix-bf16, q35-2b-d-mix 병합 모델의 GGUF BF16, Studio llama.cpp(unslothai/llama.cpp b11541)"
+weights_sha256_16 = "3f9dcfe6df110822"
+
+["q35-2b-ko-gguf-q8"]
+kind = "systemone"
+url = "http://127.0.0.1:8891/v1/systemone"
+model = "laya-local"
+api_key_env = "UNSLOTH_API_KEY"
+price_input_per_mtok = 0.0
+price_output_per_mtok = 0.0
+price_source = "로컬 서빙, 외부 과금 없음. 참고 비용은 docs/evaluation.md §2.6(jikgam/train/gpu_cost.py)"
+served = "WSL2 ~/jikgam-train/serve/q35-2b-d-mix-q8_0, q35-2b-d-mix 병합 모델의 GGUF Q8_0, Studio llama.cpp(unslothai/llama.cpp b11541)"
+weights_sha256_16 = "3f9dcfe6df110822"
+
+["q35-2b-ko-gguf-q4km"]
+kind = "systemone"
+url = "http://127.0.0.1:8892/v1/systemone"
+model = "laya-local"
+api_key_env = "UNSLOTH_API_KEY"
+price_input_per_mtok = 0.0
+price_output_per_mtok = 0.0
+price_source = "로컬 서빙, 외부 과금 없음. 참고 비용은 docs/evaluation.md §2.6(jikgam/train/gpu_cost.py)"
+served = "WSL2 ~/jikgam-train/serve/q35-2b-d-mix-q4_k_m, q35-2b-d-mix 병합 모델의 GGUF Q4_K_M, Studio llama.cpp(unslothai/llama.cpp b11541)"
+weights_sha256_16 = "3f9dcfe6df110822"
+
+["q35-2b-ko-direct"]
+kind = "systemone"
+url = "http://127.0.0.1:8893/v1/systemone"
+model = "direct-local"
+api_key_env = "UNSLOTH_API_KEY"
+price_input_per_mtok = 0.0
+price_output_per_mtok = 0.0
+price_source = "로컬 서빙, 외부 과금 없음. 참고 비용은 docs/evaluation.md §2.6(jikgam/train/gpu_cost.py)"
+served = "WSL2 ~/jikgam-train/runs/q35-2b-d-mix/merged, jikgam/train/serve_direct.py(Studio와 같은 _clef_decide를 서버 프로세스에서 직접 호출, PyTorch 16비트)"
+weights_sha256_16 = "3f9dcfe6df110822"
+
 [rules]
 kind = "rules"
 
