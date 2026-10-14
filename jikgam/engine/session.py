@@ -95,6 +95,8 @@ class Session:
         self._latest_utt: str | None = None
         self._writes: set[asyncio.Task] = set()
         self._warmup: asyncio.Future | None = None
+        self._drivers = 0  # _drive를 돌리고 있거나 예열 뒤 곧 돌릴 호출 수(request_handoff가 본다)
+        self._rerun = False  # request_handoff가 진행 중인 _drive에 같은 발화로 다시 진행하라고 남긴 표시
         self._addon_asked: str | None = None  # addon_only를 이미 물은 발화
         self._n_suggestions = 0
         self._n_agent = 0
@@ -164,29 +166,38 @@ class Session:
                                  phones=list(claims.phones), otps=["*" * len(o) for o in claims.otps],
                                  accounts=len(claims.accounts)))
         self._latest_utt = utt.utt_id
-        if self._warmup is not None and not self._warmup.done():  # 예열 중이면 같은 연결을 쓰도록 기다린다
-            await asyncio.shield(self._warmup)
-        await self._drive(utt.utt_id, out)
+        self._drivers += 1
+        try:
+            if self._warmup is not None and not self._warmup.done():  # 예열 중이면 같은 연결을 쓰도록 기다린다
+                await asyncio.shield(self._warmup)
+            await self._drive(utt.utt_id, out)
+        finally:
+            self._drivers -= 1
         return out
 
     async def request_handoff(self, reason: str = "agent_request") -> list[dict[str, Any]]:
         """상담사가 인계를 요청했다(웹 상담 콘솔의 인계 버튼). 인계는 엔진 정책이 진행한다.
 
         인계 사유를 시스템 사실에 두고(이미 있으면 그 사유를 쓴다) 버전을 올린 뒤 마지막 고객 발화로 다시 진행한다.
-        create_handoff 호출과 안내 문구는 정책 규칙 1과 생성이 정한다(통화자가 제3자면 규칙 0이 앞선다). 진행 중인
-        파이프라인이 있거나 예열을 기다리는 발화가 있으면 버전만 올린다. 그 발화의 _drive가 새 버전으로 다시 진행하므로
-        파이프라인을 따로 만들지 않는다(같은 버전의 제안이 두 번 나가지 않게). 고객 발화가 아직 없으면 아무것도 하지 않는다.
+        create_handoff 호출과 안내 문구는 정책 규칙 1과 생성이 정한다(통화자가 제3자면 규칙 0이 앞선다). 고객 발화를
+        처리하는 _drive가 있으면(예열을 기다리는 중이거나, 파이프라인이 막 끝나 아직 깨어나지 않은 경우 포함) 버전을 올리고
+        다시 진행하라는 표시(_rerun)만 남긴다. 그 _drive가 새 버전으로 다시 진행하므로 파이프라인을 따로 만들지 않는다
+        (같은 버전의 제안이 두 번 나가지 않게). 고객 발화가 아직 없으면 아무것도 하지 않는다.
         """
         out: list[dict[str, Any]] = []
         if self._latest_utt is None:
             return out
-        busy = (self._task is not None and not self._task.done()) or \
-            (self._warmup is not None and not self._warmup.done())
         if self.state.facts.handoff_reason is None:
             self.state.facts.handoff_reason = reason
         out.append(self._bump("agent_handoff", reason=reason))
-        if not busy:
+        if self._drivers > 0:
+            self._rerun = True
+            return out
+        self._drivers += 1
+        try:
             await self._drive(self._latest_utt, out)
+        finally:
+            self._drivers -= 1
         return out
 
     async def aclose(self) -> None:
@@ -223,10 +234,11 @@ class Session:
         while True:
             if self._latest_utt != utt_id:  # 예열을 기다리는 사이 더 새로운 고객 발화가 왔다. 그 발화가 진행한다
                 return
+            self._rerun = False
             task = asyncio.create_task(self._pipeline(self.state.version, out))
             self._task = task
             await asyncio.wait({task})
-            if not task.cancelled():
+            if not task.cancelled() and not self._rerun:  # _rerun은 request_handoff만 켠다
                 return
             if self._latest_utt != utt_id:  # 더 새로운 고객 발화가 이어받았다
                 return

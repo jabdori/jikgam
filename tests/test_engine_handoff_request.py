@@ -88,6 +88,54 @@ def test_handoff_request_during_running_turn_restarts_once(tmp_path):
     assert len(biz.calls) == 1
 
 
+def test_repeated_handoff_requests_during_a_turn_do_not_duplicate_pipelines(tmp_path):
+    """검토에서 재현된 경우: 진행 중인 턴에 인계를 요청하고 한 번 양보한 뒤 다시 요청한다. 앞 요청이 취소한 작업이
+    끝났지만 그 발화의 _drive가 아직 깨어나기 전이면, 예전 구현은 두 번째 요청이 파이프라인을 따로 만들어 같은 버전의
+    제안이 두 번 나갔다."""
+    biz = HandoffOnlyBiz()
+    dec = GatedDecider(ignore_cancel=False, intents=[("궁금", "other")])
+
+    async def go():
+        s = Session(ORG, "t-ho-twice", tmp_path, decision_client=dec, generator=EchoGenerator(), bizapi=biz)
+        s.state.facts.receipts["handoff"] = {"handoff_id": "HO-0"}  # 쓰기가 없어 버전이 다시 오르지 않는 경우
+        t1 = asyncio.create_task(s.handle(utt("u1", "가입 전에 환불 규정이 궁금해요")))
+        await dec.entered.wait()
+        await s.request_handoff()
+        await asyncio.sleep(0)
+        await s.request_handoff()
+        dec.release.set()
+        await t1
+        await s.aclose()
+
+    asyncio.run(go())
+    log = ev.read_log(tmp_path / "t-ho-twice.jsonl")
+    bases = [e["basis_version"] for e in types(log, ev.SUGGESTION_CREATED)]
+    assert len(bases) == len(set(bases)) == 1
+    assert [e["rule"] for e in types(log, ev.SUGGESTION_CREATED)] == ["handoff"]
+
+
+def test_handoff_request_right_after_turn_finishes_still_hands_off(tmp_path):
+    """앞 턴의 파이프라인이 막 끝났고 그 발화의 _drive가 아직 깨어나지 않은 순간에 요청해도 인계가 진행된다."""
+    biz = HandoffOnlyBiz()
+
+    async def go():
+        s = Session(ORG, "t-ho-edge", tmp_path, decision_client=ScriptedDecider(intents=[("궁금", "other")]),
+                    generator=EchoGenerator(), bizapi=biz)
+        t1 = asyncio.create_task(s.handle(utt("u1", "가입 전에 환불 규정이 궁금해요")))
+        while s._task is None or not s._task.done():  # 파이프라인이 끝나는 순간을 잡는다
+            await asyncio.sleep(0)
+        out = await s.request_handoff()
+        await t1
+        await s.aclose()
+        return out
+
+    asyncio.run(go())
+    log = ev.read_log(tmp_path / "t-ho-edge.jsonl")
+    created = types(log, ev.SUGGESTION_CREATED)
+    assert [e["rule"] for e in created] == ["decision", "handoff"]
+    assert len({e["basis_version"] for e in created}) == 2 and len(biz.calls) == 1
+
+
 def test_handoff_request_without_customer_utterance_does_nothing(tmp_path):
     biz = HandoffOnlyBiz()
 
