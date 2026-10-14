@@ -10,6 +10,10 @@ dependencies = [
 
 [dependency-groups]
 dev = ["pytest>=8"]
+web = [
+    "starlette>=0.40",
+    "uvicorn>=0.30",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -17,3 +21,6 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["jikgam"]
+
+[tool.uv]
+default-groups = ["dev", "web"]

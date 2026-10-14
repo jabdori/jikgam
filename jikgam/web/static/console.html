@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>상담 콘솔 · 직감</title>
+  <link rel="stylesheet" href="/static/common.css">
+  <link rel="stylesheet" href="/static/console.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+  <header class="topbar">
+    <div class="brand">직감 <small>가상 조직 데모</small></div>
+    <nav class="topnav" aria-label="화면">
+      <ul>
+        <li><a href="/console" aria-current="page">상담 콘솔</a></li>
+        <li><a href="/timeline">턴 상세 타임라인</a></li>
+        <li><a href="/dashboard">평가 대시보드</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div id="announce" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <main id="main">
+    <section class="controls panel" aria-labelledby="h-console">
+      <div class="controls-head">
+        <h1 id="h-console">상담 콘솔</h1>
+        <p class="muted" id="env-line">설정을 읽는 중…</p>
+      </div>
+      <form id="start-form" class="start-form">
+        <div class="field">
+          <label for="policy">실행 정책</label>
+          <select id="policy" name="policy"></select>
+        </div>
+        <fieldset class="field">
+          <legend>입력 방식</legend>
+          <label class="inline"><input type="radio" name="mode" value="chat" checked> 직접 입력(채팅)</label>
+          <label class="inline"><input type="radio" name="mode" value="replay"> 고정 대화 재생</label>
+        </fieldset>
+        <div class="field replay-only">
+          <label for="replay">재생 파일</label>
+          <select id="replay" name="replay"></select>
+        </div>
+        <div class="field replay-only">
+          <label for="speed">재생 속도</label>
+          <select id="speed" name="speed"></select>
+        </div>
+        <div class="field actions">
+          <button type="submit" class="primary" id="start-btn">새 세션 시작</button>
+        </div>
+      </form>
+      <p class="muted small replay-only" id="replay-note">
+        재생 간격은 화면 시연용 값(앞 응답 뒤 1.2초 + 글자당 0.12초, 최대 6초)이며 측정 조건이 아니다.
+        조건 변경 표시가 붙은 줄은 시나리오 실행기와 같이 직전 고객 발화 1,000ms 뒤에 응답을 기다리지 않고 보낸다(빠른 정정).
+        재생을 시작하면 모의 업무 API의 상태를 비운다(열려 있는 다른 콘솔 세션의 본인 확인·접수 상태도 지워진다).
+      </p>
+      <div id="start-error" class="error-box" hidden role="alert"></div>
+      <div class="session-line" id="session-line" hidden>
+        <span id="session-status" class="badge">대기</span>
+        <span><span class="muted">세션</span> <code id="session-id"></code></span>
+        <span><span class="muted">정책</span> <span id="session-policy"></span></span>
+        <span><span class="muted">대화 버전</span> <span id="session-version" class="num"></span></span>
+        <span><span class="muted">호출 비용</span> <span id="session-cost" class="num"></span></span>
+        <a id="timeline-link" href="#">이 세션의 타임라인</a>
+        <button type="button" id="close-btn">세션 종료</button>
+      </div>
+    </section>
+
+    <div class="console-grid">
+      <section class="panel col-transcript" aria-labelledby="h-transcript">
+        <h2 id="h-transcript">대화 <span class="muted small">실시간</span></h2>
+        <div id="transcript-box" class="transcript" role="log" aria-live="polite" aria-relevant="additions" aria-label="대화 기록" tabindex="0">
+          <ol id="transcript" class="transcript-list"></ol>
+        </div>
+        <p id="transcript-empty" class="muted">세션을 시작하고 고객 메시지를 보내면 여기에 대화가 쌓인다.</p>
+        <form id="say-form" class="say-form">
+          <label for="say-input">고객 메시지</label>
+          <div class="say-row">
+            <input type="text" id="say-input" autocomplete="off" disabled
+                   placeholder="예: 지난주에 결제됐는데 해지하고 환불받고 싶어요">
+            <button type="submit" class="primary" id="say-btn" disabled>보내기</button>
+          </div>
+          <p class="muted small">응답을 기다리지 않고 이어 보내면 엔진이 앞 턴을 취소하거나 결과를 버린다(빠른 정정). 모든 데이터는 가상이다.</p>
+        </form>
+      </section>
+
+      <section class="panel col-assist" aria-labelledby="h-assist">
+        <h2 id="h-assist">응답 제안</h2>
+        <div id="current-suggestion" class="suggestion-card empty">
+          <p class="muted">아직 제안이 없다.</p>
+        </div>
+        <div class="next-action" aria-labelledby="h-next">
+          <h3 id="h-next">다음 행동</h3>
+          <div id="next-action"><p class="muted">-</p></div>
+        </div>
+        <div class="handoff-box">
+          <button type="button" class="danger" id="handoff-btn" disabled>상담사 인계</button>
+          <p id="handoff-note" class="muted small">세션을 시작하면 쓸 수 있다.</p>
+        </div>
+        <h3>제안 기록</h3>
+        <ol id="suggestions" class="suggestion-list" reversed></ol>
+      </section>
+
+      <section class="panel col-state" aria-labelledby="h-state">
+        <h2 id="h-state">상담 상태</h2>
+        <dl class="kv" id="state-summary"></dl>
+
+        <h3 id="h-evidence">근거 조항과 적용 확률</h3>
+        <p class="muted small" id="evidence-note"></p>
+        <div class="table-wrap" tabindex="0" role="region" aria-labelledby="h-evidence">
+          <table id="evidence-table">
+            <thead><tr><th scope="col">조항</th><th scope="col">제목</th><th scope="col">적용 확률</th><th scope="col">선택</th><th scope="col">검색 출처</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="facts-grid">
+          <div>
+            <h3>확인된 사실 <span class="badge ok">시스템 조회</span></h3>
+            <dl class="kv" id="facts"></dl>
+          </div>
+          <div>
+            <h3>미확인 조건 <span class="badge warn">고객 진술</span></h3>
+            <ul id="claims" class="plain-list"></ul>
+          </div>
+        </div>
+
+        <h3>도구 호출과 결과</h3>
+        <ol id="tools" class="tool-list" reversed></ol>
+
+        <h3>폐기·취소된 작업</h3>
+        <ul id="discards" class="plain-list"></ul>
+      </section>
+    </div>
+
+    <details class="panel activity">
+      <summary>이벤트 기록 <span id="activity-count" class="muted num"></span></summary>
+      <p class="muted small">엔진 이벤트 로그 줄을 한 줄씩 옮긴 것이다. 시각은 엔진 시계(ms)다.</p>
+      <ol id="activity" class="activity-list" tabindex="0" aria-label="이벤트 기록"></ol>
+    </details>
+  </main>
+  <script src="/static/common.js"></script>
+  <script src="/static/console.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+.small { font-size: 0.86rem; }
+.block { margin-bottom: var(--gap); }
+.toc { margin: 0 0 12px; }
+.run-card { border: 1px solid var(--border); border-radius: var(--radius); margin: 10px 0; }
+.run-card > summary { padding: 10px 12px; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.run-card > summary::-webkit-details-marker { margin-right: 4px; }
+.run-card[open] > summary { border-bottom: 1px solid var(--border); }
+.run-card .inner { padding: 10px 12px; }
+.run-card table { font-size: 0.9rem; }
+.acc { display: flex; align-items: center; gap: 8px; min-width: 11rem; }
+.acc .bar { width: 64px; height: 8px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; flex: none; }
+.acc .bar span { display: block; height: 100%; background: var(--stage-decision); border-radius: 0 4px 4px 0; }
+td .sub, th .sub { display: block; color: var(--muted); font-size: 0.8rem; font-weight: 400; }
+thead th { white-space: nowrap; }
+.cond { margin: 8px 0 0; padding-left: 18px; font-size: 0.85rem; color: var(--text-2); }
+.matrix td.pass { color: var(--ok); font-weight: 600; }
+.matrix td.fail { color: var(--danger); }
+.matrix td { white-space: nowrap; }
+.group-detail { margin-top: 12px; }
+.items { display: flex; flex-wrap: wrap; gap: 4px 14px; padding: 0; margin: 6px 0; list-style: none; font-size: 0.86rem; }
+@media (max-width: 640px) {
+  .run-card > summary { flex-direction: column; }
+}
+#group-table tbody th, #run-table tbody th { min-width: 12rem; }
