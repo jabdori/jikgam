@@ -169,6 +169,26 @@ class Session:
         await self._drive(utt.utt_id, out)
         return out
 
+    async def request_handoff(self, reason: str = "agent_request") -> list[dict[str, Any]]:
+        """상담사가 인계를 요청했다(웹 상담 콘솔의 인계 버튼). 인계는 엔진 정책이 진행한다.
+
+        인계 사유를 시스템 사실에 두고(이미 있으면 그 사유를 쓴다) 버전을 올린 뒤 마지막 고객 발화로 다시 진행한다.
+        create_handoff 호출과 안내 문구는 정책 규칙 1과 생성이 정한다(통화자가 제3자면 규칙 0이 앞선다). 진행 중인
+        파이프라인이 있거나 예열을 기다리는 발화가 있으면 버전만 올린다. 그 발화의 _drive가 새 버전으로 다시 진행하므로
+        파이프라인을 따로 만들지 않는다(같은 버전의 제안이 두 번 나가지 않게). 고객 발화가 아직 없으면 아무것도 하지 않는다.
+        """
+        out: list[dict[str, Any]] = []
+        if self._latest_utt is None:
+            return out
+        busy = (self._task is not None and not self._task.done()) or \
+            (self._warmup is not None and not self._warmup.done())
+        if self.state.facts.handoff_reason is None:
+            self.state.facts.handoff_reason = reason
+        out.append(self._bump("agent_handoff", reason=reason))
+        if not busy:
+            await self._drive(self._latest_utt, out)
+        return out
+
     async def aclose(self) -> None:
         if self._warmup is not None and not self._warmup.done():
             await asyncio.wait({self._warmup})
