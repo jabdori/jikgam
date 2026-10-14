@@ -18,7 +18,7 @@ from jikgam.engine.bizapi import BizApiClient
 from jikgam.engine.org import load_org
 from jikgam.engine.session import Session
 from jikgam.web import live as live_mod
-from jikgam.web.app import WebConfig, create_app, resolve_log
+from jikgam.web.app import WebConfig, create_app, list_logs, resolve_log
 from jikgam.web.live import LiveSession
 
 ORG = load_org("org_a")
@@ -143,6 +143,11 @@ def test_timeline_paths_are_restricted(tmp_path):
             dash = await c.get("/api/dashboard")
             assert dash.status_code == 200 and "운영 성과가 아니다" in dash.json()["note"]
     asyncio.run(go())
+    # 실행기가 summary.json을 다시 쓰는 중이라 읽을 수 없으면 보류용인지 모르므로 잠근다
+    (run / "summary.json").write_text("", encoding="utf-8")
+    with pytest.raises(PermissionError):
+        resolve_log(cfg, "results/engine/scenarios/dev9-r1-C/s.jsonl")
+    assert {g["dir"]: g for g in list_logs(cfg)}["engine/scenarios/dev9-r1-C"]["locked"]
     cfg.allow_holdout = True
     assert resolve_log(cfg, "results/engine/scenarios/hold-r1-C/h.jsonl").name == "h.jsonl"
 
@@ -195,6 +200,24 @@ def test_replay_sends_condition_change_without_waiting(tmp_path, monkeypatch):
         await ls.close()
         with pytest.raises(RuntimeError):
             ls.say("닫힌 뒤")
+
+    asyncio.run(go())
+
+
+def test_stream_does_not_miss_events_emitted_while_sending(tmp_path):
+    """SSE 본문을 보내는 동안(전송이 밀려 생성기가 yield에 멈춘 동안) 생긴 이벤트도 다음 묶음으로 나간다."""
+
+    async def go():
+        s = GatedSession(tmp_path)
+        ls = LiveSession("g", "C", s)
+        gen = ls.stream()
+        first = await gen.__anext__()  # 생성기는 첫 묶음을 내고 멈춰 있다
+        assert first.startswith("event: update")
+        s.log.emit(ev.UTTERANCE_END, 0, utt_id="u1", speaker="customer", text="보내는 동안 온 발화")
+        nxt = await asyncio.wait_for(gen.__anext__(), 2.0)
+        assert "보내는 동안 온 발화" in nxt
+        await gen.aclose()
+        await ls.close()
 
     asyncio.run(go())
 

@@ -369,6 +369,8 @@ function renderFacts(f) {
     `${q.reason_label}: ${q.status_label}${isNum(q.refund_amount) && q.status !== "failed" ? ` ${fmtWon(q.refund_amount)}` : ""}` +
     `${q.approval_required ? " · 상담사 승인 필요" : ""}${q.chosen ? " · 선택됨" : ""}${q.message ? ` · ${q.message}` : ""}`));
   if (f.receipts.length) add("접수", list(f.receipts, (r) => `${r.summary}${r.existing ? " (기존 접수)" : ""}`));
+  if (f.account_rejections.length) add("계좌 등록 거절", list(f.account_rejections, (x) =>
+    `${x.reason || "거절"}${x.holder ? ` · 예금주 ${x.holder}` : ""}${x.message ? ` — ${x.message}` : ""}`));
   if (f.api_errors.length) add("업무 API 오류", list(f.api_errors, (x) => `${x.tool}: ${x.code}${x.message ? ` — ${x.message}` : ""}`));
 }
 

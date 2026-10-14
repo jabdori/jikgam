@@ -81,14 +81,17 @@ def _page(name: str) -> Callable:
     return page
 
 
-def _summary_of(dir_: Path) -> dict[str, Any] | None:
+def _summary_of(dir_: Path) -> tuple[dict[str, Any] | None, bool]:
+    """(summary.json 내용, 보류용으로 잠글지). 파일이 있는데 읽을 수 없으면(실행기가 세션마다 다시 쓰는 중일 수 있다)
+    보류용인지 알 수 없으므로 잠근다."""
     p = dir_ / "summary.json"
     if not p.exists():
-        return None
+        return None, False
     try:
-        return json.loads(p.read_text(encoding="utf-8"))
+        summary = json.loads(p.read_text(encoding="utf-8"))
     except (OSError, ValueError):
-        return None
+        return None, True
+    return summary, db.is_holdout(summary)
 
 
 def _is_event_log(path: Path) -> bool:
@@ -113,8 +116,7 @@ def list_logs(cfg: WebConfig) -> list[dict[str, Any]]:
         for d in dirs:
             if key == "results" and (d.resolve() == console or console in d.resolve().parents):
                 continue  # 콘솔 로그는 console 루트로만 보인다
-            summary = _summary_of(d)
-            holdout = bool(summary and db.is_holdout(summary))
+            summary, holdout = _summary_of(d)
             rel_dir = d.relative_to(root).as_posix()
             group = {"root": key, "dir": rel_dir if rel_dir != "." else "", "holdout": holdout,
                      "locked": holdout and not cfg.allow_holdout,
@@ -141,8 +143,8 @@ def resolve_log(cfg: WebConfig, path: str) -> Path:
         raise PermissionError("로그 폴더 밖의 경로다")
     if p.suffix != ".jsonl" or p.name.endswith(".sim.jsonl"):
         raise PermissionError("엔진 이벤트 로그(.jsonl)만 열 수 있다")
-    summary = _summary_of(p.parent)
-    if summary and db.is_holdout(summary) and not cfg.allow_holdout:
+    _, holdout = _summary_of(p.parent)
+    if holdout and not cfg.allow_holdout:
         raise PermissionError("보류용 시나리오 실행은 엔진 설정 고정 전 열람 금지다(data/scenarios/HOLDOUT.md)")
     if not p.is_file():
         raise FileNotFoundError(path)

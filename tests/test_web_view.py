@@ -181,3 +181,20 @@ def test_deduction_quote_is_not_labelled_as_refund():
     assert "plan_change" in ORG.policy.deduction_reasons
     assert q["kind"] == "deduction" and q["status_label"] == "차감액(환불 아님)"
     assert "환불" not in snap["tools"][0]["summary"]
+
+
+def test_rejected_account_registration_is_not_a_receipt_and_cancelled_lookup_closes():
+    b = LogBuilder(session="x")
+    b.utt("아내 명의 계좌로 해 주세요")
+    b.call("register_refund_account", {"customer_id": "C008", "holder": "김아내", "bank": "별담은행"},
+           data={"registered": False, "reject_reason": "HOLDER_MISMATCH", "message": "예금주가 회원과 다르다"})
+    b._emit(ev.TOOL_CALL, request_version=1, call_id="c9", tool="get_usage", args={"customer_id": "C008"})
+    b._emit(ev.TOOL_CALL, request_version=1, call_id="c10", tool="create_cancellation", args={"customer_id": "C008"})
+    b._emit(ev.TASK_CANCELLED, stage="tools", started_version=1)
+    snap = view_of(b.events).snapshot()
+    f = snap["facts"]
+    assert f["receipts"] == []
+    assert f["account_rejections"] == [{"holder": "김아내", "reason": "HOLDER_MISMATCH", "message": "예금주가 회원과 다르다"}]
+    status = {t["call_id"]: t["status"] for t in snap["tools"]}
+    assert status["c9"] == "취소됨(결과 없음)"  # 조회는 취소되면 결과가 오지 않는다
+    assert status["c10"] == "진행 중"  # 쓰기는 shield라 나중에 결과가 온다

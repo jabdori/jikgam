@@ -249,12 +249,12 @@ class ConsoleView:
             self.tools[e["call_id"]] = {"call_id": e["call_id"], "tool": e.get("tool"),
                                         "label": lb.label(lb.TOOL, e.get("tool")), "args": e.get("args") or {},
                                         "request_version": e.get("request_version"), "t_call": e.get("t_ms"),
-                                        "result": None, "discarded": False}
+                                        "result": None, "discarded": False, "cancelled": False}
         elif t == ev.TOOL_RESULT:
             call = self.tools.setdefault(e["call_id"], {"call_id": e["call_id"], "tool": e.get("tool"),
                                                         "label": lb.label(lb.TOOL, e.get("tool")), "args": {},
                                                         "request_version": e.get("request_version"), "t_call": None,
-                                                        "result": None, "discarded": False})
+                                                        "result": None, "discarded": False, "cancelled": False})
             call["result"] = {"ok": e.get("ok"), "status": e.get("status"), "error_code": e.get("error_code"),
                               "attempts": e.get("attempts"), "latency_ms": e.get("latency_ms"), "data": e.get("data"),
                               "t_ms": e.get("t_ms")}
@@ -293,6 +293,11 @@ class ConsoleView:
                 s["reasons"] = [{"code": r, "label": lb.invalidation_reason(r)} for r in e.get("reasons") or []]
         elif t in (ev.RESULT_DISCARDED, ev.TASK_CANCELLED):
             kind = "discarded" if t == ev.RESULT_DISCARDED else "cancelled"
+            if kind == "cancelled":  # 취소된 파이프라인의 조회는 결과 없이 끝난다. 쓰기는 shield라 나중에 결과가 온다
+                for call in self.tools.values():
+                    if (call["result"] is None and call["tool"] not in WRITE_TOOLS
+                            and call["request_version"] == e.get("started_version")):
+                        call["cancelled"] = True
             self.discards.append({"kind": kind, "stage": e.get("stage"), "stage_label": lb.label(lb.STAGE, e.get("stage")),
                                   "started_version": e.get("started_version"), "version": e.get("version"),
                                   "t_ms": e.get("t_ms"), "detail": e.get("tool") or e.get("backend")})
@@ -328,7 +333,8 @@ class ConsoleView:
         out: dict[str, Any] = {"identity": {"verified": False, "customer_id": None, "attempts": 0, "failed_attempts": 0,
                                             "handoff_required": False},
                                "customer": None, "subscriptions": None, "payments": None, "usage": None,
-                               "incidents": None, "quotes": {}, "receipts": [], "api_errors": []}
+                               "incidents": None, "quotes": {}, "receipts": [], "account_rejections": [],
+                               "api_errors": []}
         lists = {"list_subscriptions": "subscriptions", "list_payments": "payments", "get_usage": "usage",
                  "list_incidents": "incidents"}
         for call in self.tools.values():
@@ -350,6 +356,9 @@ class ConsoleView:
                     out[lists[tool]] = d.get(lists[tool]) or []
                 elif tool == "quote_refund":
                     self._quote(out, args.get("reason"), "eligible" if d.get("eligible") else "zero", d)
+                elif tool == "register_refund_account" and not d.get("registered"):  # 엔진도 거절로 본다(state.py)
+                    out["account_rejections"].append({"holder": args.get("holder"), "reason": d.get("reject_reason"),
+                                                      "message": d.get("message")})
                 elif tool in WRITE_TOOLS:
                     out["receipts"].append(self._receipt(tool, d, existing=False))
             else:
@@ -403,8 +412,12 @@ class ConsoleView:
         tools = []
         for call in self.tools.values():
             r = call["result"]
-            status = "진행 중" if r is None else ("성공" if r["ok"] else f"오류 {r['error_code']}")
-            tools.append({**{k: call[k] for k in ("call_id", "tool", "label", "args", "request_version", "discarded")},
+            if r is None:
+                status = "취소됨(결과 없음)" if call["cancelled"] else "진행 중"
+            else:
+                status = "성공" if r["ok"] else f"오류 {r['error_code']}"
+            tools.append({**{k: call[k] for k in ("call_id", "tool", "label", "args", "request_version", "discarded",
+                                                  "cancelled")},
                           "status": status, "ok": None if r is None else r["ok"],
                           "attempts": None if r is None else r["attempts"],
                           "latency_ms": None if r is None else r["latency_ms"],

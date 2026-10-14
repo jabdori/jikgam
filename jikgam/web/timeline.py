@@ -20,6 +20,7 @@ from collections import defaultdict, deque
 from typing import Any
 
 from jikgam.engine import events as ev
+from jikgam.engine.bizapi import WRITE_TOOLS
 
 from . import labels as lb
 from .view import _short, tool_summary
@@ -181,7 +182,8 @@ def build_timeline(events: list[dict[str, Any]]) -> dict[str, Any]:
         elif t == ev.TOOL_CALL:
             tool_rows[e["call_id"]] = add(turn, {"kind": "bar", "stage": "tool",
                                                  "label": f"도구 {e.get('tool')}", "start": tm, "end": None,
-                                                 "status": "open", "detail": "", "args": e.get("args") or {}})
+                                                 "status": "open", "detail": "", "args": e.get("args") or {},
+                                                 "tool": e.get("tool"), "version": stage_version(e)})
         elif t == ev.TOOL_RESULT:
             row = tool_rows.get(e["call_id"]) or add(turn, {"kind": "bar", "stage": "tool", "label": f"도구 {e.get('tool')}",
                                                             "start": tm - float(e.get("latency_ms") or 0), "args": {}})
@@ -192,12 +194,16 @@ def build_timeline(events: list[dict[str, Any]]) -> dict[str, Any]:
             name, detail = _point_label(e)
             row = add(turn, {"kind": "point", "stage": t, "label": name, "start": tm, "end": None, "status": "ok",
                              "detail": detail})
-            if t == ev.TASK_CANCELLED:  # 응답 없이 취소된 판별·생성 막대를 취소 시각에서 닫는다
+            if t == ev.TASK_CANCELLED:  # 응답 없이 취소된 판별·생성·조회 막대를 취소 시각에서 닫는다
                 for key in [k for k in open_bars if k[0] in ("decision", "generation") and k[1] == e.get("started_version")]:
                     while open_bars[key]:
                         bar = open_bars[key].popleft()
                         bar.update(end=tm, status="cancelled")
                         bar["detail"] += " · 응답 전에 취소됨"
+                for bar in tool_rows.values():  # 쓰기는 shield라 취소되지 않고 나중에 결과가 온다
+                    if (bar["end"] is None and bar.get("tool") not in WRITE_TOOLS
+                            and bar.get("version") == e.get("started_version")):
+                        bar.update(end=tm, status="cancelled", detail="결과 전에 취소됨")
                 row["status"] = "cancelled"
             elif t == ev.RESULT_DISCARDED:
                 row["status"] = "discarded"
@@ -220,7 +226,7 @@ def build_timeline(events: list[dict[str, Any]]) -> dict[str, Any]:
                        "event": marker.get("event")}
         trows = []
         for r in sorted(rows.get(u["utt_id"], []), key=lambda r: r["start"]):
-            r = {k: v for k, v in r.items() if k != "args"}
+            r = {k: v for k, v in r.items() if k not in ("args", "tool", "version")}
             r["start"] = round(r["start"] - t0, 1)
             r["end"] = None if r["end"] is None else round(r["end"] - t0, 1)
             trows.append(r)
@@ -239,7 +245,7 @@ def build_timeline(events: list[dict[str, Any]]) -> dict[str, Any]:
     origin = meta.get("t_ms", float(events[0]["t_ms"]) if events else 0.0)
     pre = []
     for r in sorted(rows.get(None, []), key=lambda r: r["start"]):
-        r = {k: v for k, v in r.items() if k != "args"}
+        r = {k: v for k, v in r.items() if k not in ("args", "tool", "version")}
         r["start"] = round(r["start"] - origin, 1)
         r["end"] = None if r["end"] is None else round(r["end"] - origin, 1)
         pre.append(r)

@@ -118,6 +118,7 @@ class LiveSession:
         cursor = 0
         try:
             while True:
+                wake.clear()  # 보내는 동안(전송이 밀려 기다리는 동안 포함) 들어온 이벤트의 깨움을 지우지 않게 먼저 지운다
                 batch = self.messages[cursor:]
                 cursor += len(batch)
                 payload = {"messages": batch, "view": self.view.snapshot(), "session": self.state()}
@@ -125,7 +126,6 @@ class LiveSession:
                 if self.closed and cursor == len(self.messages):
                     yield "event: closed\ndata: {}\n\n"
                     return
-                wake.clear()
                 while not wake.is_set():
                     try:
                         await asyncio.wait_for(wake.wait(), PING_S)

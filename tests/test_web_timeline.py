@@ -99,6 +99,20 @@ def test_rag_log_without_version_bumps_and_missing_refresh():
     assert rows_of(u2, "generation")[0]["start"] == 930.0
 
 
+def test_lookup_cancelled_without_result_is_closed_but_write_stays_open():
+    b = LogBuilder(session="x", step=1)
+    b.utt("조회해 주세요", t=0.0)
+    b._emit(ev.TOOL_CALL, t=10.0, request_version=1, call_id="c1", tool="list_payments", args={})
+    b._emit(ev.TOOL_CALL, t=11.0, request_version=1, call_id="c2", tool="create_cancellation", args={})
+    b.utt("아 잠깐만요", t=50.0)
+    b._emit(ev.TASK_CANCELLED, t=51.0, stage="tools", started_version=1)
+    t1 = build_timeline(b.events)["turns"][0]
+    bars = {r["label"]: r for r in rows_of(t1, "tool")}
+    assert bars["도구 list_payments"]["status"] == "cancelled" and bars["도구 list_payments"]["end"] == 51.0
+    assert bars["도구 create_cancellation"]["status"] == "open"  # 쓰기는 shield라 나중에 결과가 온다
+    assert "tool" not in bars["도구 list_payments"] and "version" not in bars["도구 list_payments"]
+
+
 def test_timeline_of_real_engine_session_with_cancellation(tmp_path):
     gen = GatedGenerator()
 
