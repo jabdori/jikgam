@@ -50,6 +50,8 @@ caller_threshold, 제3자로 본 뒤 본인으로 돌아가는 것은 더 높은
 """
 
 import asyncio
+import copy
+import hashlib
 import json
 import traceback
 from pathlib import Path
@@ -81,6 +83,15 @@ ENGINE_EXPOSED_CHANNELS = frozenset({"chat"})
 SHIELDED_CALLS = frozenset({"verify_identity"})
 CONVERSATION_FOR_GENERATION = 8  # 생성 입력에 넣는 최근 대화 수
 WARMUP_TEXT = "안녕하세요"  # 예열 요청의 고정 발화(측정 데이터가 아니다)
+
+
+PREJUDGE_MAX_IN_FLIGHT = 2  # 정책 D: 동시에 진행하는 선판단 호출 수 상한
+
+
+def _decision_key(state: dict[str, Any], questions: dict[str, Any]) -> str:
+    """판별 입력(상태와 질문)이 같은지 보는 키."""
+    return hashlib.sha256(json.dumps({"state": state, "questions": questions}, ensure_ascii=False,
+                                     sort_keys=True).encode("utf-8")).hexdigest()
 
 
 class Session:
@@ -120,6 +131,7 @@ class Session:
         self._n_suggestions = 0
         self._n_agent = 0
         self._n_calls = 0
+        self._prejudged: dict[str, tuple[str, asyncio.Future]] = {}  # 정책 D 선판단: 판별 입력 키 → (발화, 결과)
         self.log.emit(ev.SESSION_START, 0, org=org.org, today=org.today.isoformat(), decision_backend=self.backend,
                       generator=getattr(self.generator, "model", None), question_sets=[base_version, extra_version],
                       generation_prompt=gen.PROMPT_VERSION, llm_judge_prompt=llm.PROMPT_VERSION,
@@ -170,7 +182,7 @@ class Session:
         received = now_ms()
         utt = parse_utterance(event, received)
         out: list[dict[str, Any]] = []
-        if not utt.final:  # 미확정 자막은 버전을 올리지 않는다(선판단은 이 엔진 범위 밖)
+        if not utt.final:  # 미확정 자막은 버전을 올리지 않는다(정책 D의 선판단은 음성 계층이 prejudge로 따로 부른다)
             out.append(self.log.emit(ev.STT_PARTIAL, self.state.version, utt_id=utt.utt_id, text=utt.text))
             return out
         out.append(self.log.emit(ev.UTTERANCE_END, self.state.version, t_ms=utt.t_end_ms, utt_id=utt.utt_id,
@@ -188,6 +200,8 @@ class Session:
                                  accounts=len(claims.accounts),
                                  **({"carried_otp_from": carried} if carried else {})))
         self._latest_utt = utt.utt_id
+        # 다른 발화로 미리 한 판별은 더 쓰지 않는다(진행 중인 호출은 끝나게 두고 비용은 기록한다)
+        self._prejudged = {k: v for k, v in self._prejudged.items() if v[0] == utt.utt_id}
         self._drivers += 1
         try:
             if self._warmup is not None and not self._warmup.done():  # 예열 중이면 같은 연결을 쓰도록 기다린다
@@ -225,6 +239,9 @@ class Session:
     async def aclose(self) -> None:
         if self._warmup is not None and not self._warmup.done():
             await asyncio.wait({self._warmup})
+        pending = [f for _, f in self._prejudged.values() if not f.done()]
+        if pending:  # 판별 클라이언트를 닫기 전에 선판단 호출을 끝낸다
+            await asyncio.wait(pending)
         if self._writes:
             await asyncio.gather(*self._writes, return_exceptions=True)
         if self._task and not self._task.done():
@@ -404,8 +421,10 @@ class Session:
             if not self._stale(my_v):
                 self._expose(policy.Plan("engine_error", "hold"), gen.fallback("hold", None, "fallback"), my_v, out, {})
 
-    def _retrieval_context(self) -> RetrievalContext:
-        f = self.state.facts
+    def _retrieval_context(self, state: SessionState | None = None) -> RetrievalContext:
+        """검색 상태. state는 선판단(prejudge)이 미리 계산할 때 넘기는 사본이다."""
+        s = state or self.state
+        f = s.facts
         system_ids: list[str] = []
         ordered = sorted(f.quotes.values(), key=lambda q: q.status != "eligible")
         for q in ordered:
@@ -413,19 +432,24 @@ class Session:
         for rec in f.receipts.values():
             system_ids += [a for a in rec.get("article_ids", []) if a not in system_ids]
         return RetrievalContext(
-            customer_texts=tuple(self.state.customer_texts()), intent=self.state.request,
-            identity_verified=self.state.identity.verified, identity_failed=self.state.identity.failed > 0,
+            customer_texts=tuple(s.customer_texts()), intent=s.request,
+            identity_verified=s.identity.verified, identity_failed=s.identity.failed > 0,
             approval_required=any((q.quote or {}).get("approval_required") for q in f.quotes.values()
                                   if q.status == "eligible"),
             handoff_reason=f.handoff_reason is not None, system_article_ids=tuple(system_ids))
 
     # --- 판별 --------------------------------------------------------------------------------
 
-    def _question_ids(self, candidates: list[str], first: bool, latest: Suggestion | None) -> list[str]:
+    def _question_ids(self, candidates: list[str], first: bool, latest: Suggestion | None,
+                      state: SessionState | None = None, utt_id: str | None = None, mark_addon: bool = True) -> list[str]:
+        """state·utt_id는 선판단이 사본과 아직 넘겨받지 않은 발화로 계산할 때 준다. 그때는 addon_only를 물었다는 표시를
+        남기지 않는다(mark_addon=False)."""
+        s = state or self.state
+        utt = utt_id or self._latest_utt
         qids: list[str] = []
         if first:
             qids += ["intent", "caller"]
-            if self.state.known_facts():
+            if s.known_facts():
                 qids.append("condition_changed")
         qids += [f"applies:{a}" for a in candidates]
         if candidates:
@@ -436,13 +460,14 @@ class Session:
             if latest.proposal is not None:
                 qids += ["customer_agreed", "customer_declined"]
         # 고객이 본인 확인을 마칠 수 없다고 하는가: 본인 확인을 물었거나 한 번 실패한 뒤에만 묻는다
-        last_rule = self.state.suggestions[-1].rule if self.state.suggestions else None
-        if first and not self.state.identity.verified and (self.state.identity.failed or last_rule == "identity_required"):
+        last_rule = s.suggestions[-1].rule if s.suggestions else None
+        if first and not s.identity.verified and (s.identity.failed or last_rule == "identity_required"):
             qids.append("identity_unavailable")
         # 해지 대상이 부가 상품뿐인가: 유효한 부가 상품 구독이 조회됐을 때만, 발화마다 한 번(조회 직후 패스에서도) 묻는다
-        if self._latest_utt != self._addon_asked and policy.addon_subscription(self.state, self.org.policy) is not None:
+        if utt != self._addon_asked and policy.addon_subscription(s, self.org.policy) is not None:
             qids.append("addon_only")
-            self._addon_asked = self._latest_utt
+            if mark_addon:
+                self._addon_asked = utt
         return qids
 
     def _update_caller(self, label: str | None, p: float) -> None:
@@ -461,6 +486,13 @@ class Session:
         questions = render(qids, self.bank)
         out.append(self.log.emit(ev.DECISION_REQUEST, my_v, backend=self.backend, questions=qids,
                                  state_chars=len(json.dumps(state, ensure_ascii=False))))
+        pre = self._prejudged.get(_decision_key(state, questions)) if first else None
+        if pre is not None:  # 정책 D: 같은 입력으로 미리 한 판별이 있으면 그 결과를 쓴다(끝나지 않았으면 기다린다)
+            t0 = now_ms()
+            res = await asyncio.shield(pre[1])
+            if res.answers and not res.error:
+                out.append(self._decision_response(res, qids, my_v, 0, wait_ms=round(now_ms() - t0, 1)))
+                return res, qids
         attempts = 0
         while True:
             attempts += 1
@@ -470,15 +502,65 @@ class Session:
                 res = DecisionResult(self.backend, "응답 없음", {}, error=f"{type(e).__name__}: {e}")
             if not (res.error and not res.answers and res.error.startswith(DECISION_RETRYABLE)) or attempts == 2:
                 break
+        out.append(self._decision_response(res, qids, my_v, attempts))
+        return res, qids
+
+    def _decision_response(self, res: DecisionResult, qids: list[str], my_v: int, attempts: int,
+                           wait_ms: float | None = None) -> dict[str, Any]:
+        """decision.response. 선판단 결과를 쓰면(wait_ms가 있음) latency_ms는 파이프라인이 실제로 기다린 시간이고,
+        비용은 선판단 줄(decision.prejudge)에 이미 남겼으므로 0이다. 백엔드 지연은 backend_latency_ms에 둔다."""
         answers = {}
         for q, a in res.answers.items():
             label, p, _ = label_and_prob(a)
             answers[q] = {"label": label, "p": round(p, 3)} if a["type"] == "choice" else {"p_true": round(a["noul"], 3)}
-        out.append(self.log.emit(ev.DECISION_RESPONSE, self.state.version, request_version=my_v, backend=res.backend,
-                                 model=res.model, latency_ms=round(res.latency_ms, 1), attempts=attempts,
-                                 input_tokens=res.input_tokens, cost_usd=res.cost_usd, error=res.error, answers=answers,
-                                 meta=res.meta))
-        return res, qids
+        extra = {} if wait_ms is None else {"prejudged": True, "backend_latency_ms": round(res.latency_ms, 1)}
+        return self.log.emit(ev.DECISION_RESPONSE, self.state.version, request_version=my_v, backend=res.backend,
+                             model=res.model, latency_ms=round(res.latency_ms if wait_ms is None else wait_ms, 1),
+                             attempts=attempts, input_tokens=res.input_tokens,
+                             cost_usd=res.cost_usd if wait_ms is None else 0.0, error=res.error, answers=answers,
+                             meta=res.meta, **extra)
+
+    # --- 정책 D: 미확정 자막 선판단 ---------------------------------------------------------------
+
+    def prejudge(self, utt_id: str, text: str) -> bool:
+        """미확정 자막 text를 이번 고객 발화(utt_id)로 본 상태로 첫 판별을 미리 돌려 둔다(docs/evaluation-voice.md §9.2).
+
+        세션 상태의 사본에 그 발화를 더해, 확정 발화가 왔을 때 첫 판별이 만들 판별 입력과 질문을 그대로 계산한다(검색 포함,
+        동기 코드라 그 사이 상태가 바뀌지 않는다). 상태와 버전은 바꾸지 않는다. 나중의 첫 판별(_decide)이 같은 입력이면 이
+        결과를 쓰고, 다르면 쓰지 않는다. 호출을 시작했으면 True. 예열 중이거나, 같은 입력을 이미 시작했거나, 진행 중인
+        선판단이 PREJUDGE_MAX_IN_FLIGHT개면 시작하지 않는다."""
+        text = text.strip()
+        if not text or (self._warmup is not None and not self._warmup.done()):
+            return False
+        if sum(not f.done() for _, f in self._prejudged.values()) >= PREJUDGE_MAX_IN_FLIGHT:
+            return False
+        sim = copy.deepcopy(self.state)
+        sim.version += 1
+        sim.add_turn(utt_id, "customer", text)
+        sim.add_claims(utt_id, extract(text, self.org.today))
+        result = self.index.search(self._retrieval_context(sim))
+        latest = sim.latest_suggestion()
+        qids = self._question_ids(result.candidates, True, latest, state=sim, utt_id=utt_id, mark_addon=False)
+        state = sim.decision_state([self.articles[a] for a in result.candidates], latest.text if latest else None)
+        questions = render(qids, self.bank)
+        key = _decision_key(state, questions)
+        if key in self._prejudged:
+            return False
+        self._prejudged[key] = (utt_id, asyncio.ensure_future(self._prejudge_call(key, utt_id, text, state, questions,
+                                                                                  qids)))
+        return True
+
+    async def _prejudge_call(self, key: str, utt_id: str, text: str, state: dict[str, Any], questions: dict[str, Any],
+                             qids: list[str]) -> DecisionResult:
+        t0 = now_ms()
+        try:
+            res = await self.decider.decide(state, questions)
+        except Exception as e:  # 선판단 실패는 확정 발화의 판별이 다시 한다
+            res = DecisionResult(self.backend, "응답 없음", {}, error=f"{type(e).__name__}: {e}")
+        self.log.emit(ev.DECISION_PREJUDGE, self.state.version, t_ms=t0, utt_id=utt_id, text=text, key=key[:16],
+                      backend=res.backend, model=res.model, questions=qids, latency_ms=round(res.latency_ms, 1),
+                      input_tokens=res.input_tokens, cost_usd=res.cost_usd, error=res.error)
+        return res
 
     def _labels(self, res: DecisionResult, qids: list[str]) -> tuple[dict[str, str], dict[str, float]]:
         """choice는 가장 높은 선택지, noul은 참일 확률. 라벨은 임계값 0.5(applies·동의는 조직 설정 임계값을 따로 쓴다)."""

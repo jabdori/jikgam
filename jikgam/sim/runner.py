@@ -147,10 +147,11 @@ def handed_off(out: list[dict[str, Any]]) -> bool:
 def engine_costs(log_path: Path) -> dict[str, Any]:
     """판별(예열 포함)·생성 호출 수와 비용. 정책 A는 판별이 없고 생성이 도구 루프 단계마다 남는다."""
     events = ev.read_log(log_path) if log_path.exists() else []
-    dec = [e for e in events if e["type"] in (ev.DECISION_RESPONSE, ev.WARMUP)]
+    dec = [e for e in events if e["type"] in (ev.DECISION_RESPONSE, ev.WARMUP, ev.DECISION_PREJUDGE)]
     gen = [e for e in events if e["type"] == ev.GENERATION_RESPONSE]
     return {"decision_calls": sum(e["type"] == ev.DECISION_RESPONSE for e in dec),
             "warmup_calls": sum(e["type"] == ev.WARMUP for e in dec),
+            "prejudge_calls": sum(e["type"] == ev.DECISION_PREJUDGE for e in dec),
             "decision_usd": sum(e.get("cost_usd") or 0 for e in dec),
             "generation_calls": len(gen), "generation_usd": sum(e.get("cost_usd") or 0 for e in gen),
             "engine_errors": sum(e["type"] == ev.ENGINE_ERROR for e in events)}

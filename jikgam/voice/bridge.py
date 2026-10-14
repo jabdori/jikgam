@@ -35,12 +35,23 @@
 
 미확정 자막 선판단(정책 D)은 하지 않는다. 엔진에 넘기는 미확정 자막은 기록용이며 그 결과가 말해지는 경로가 없다.
 
+provisional(기본 False, 정책 D, docs/evaluation-voice.md §9.2):
+- 미확정 자막이 바뀔 때마다 세션의 prejudge(발화 ID, 자막)를 불러 첫 판별을 미리 돌려 둔다(세션 상태는 바뀌지 않는다).
+- VAD가 말 끝을 판정했을 때 이 발화의 미확정 자막이 있으면 확정 자막을 기다리지 않고 그 자막을 확정 발화로 엔진에 넘긴다
+  (잠정 확정, voice.provisional). 그 발화는 확정 자막을 기다리지 않으므로 응답도 붙잡지 않는다. 자막에 숫자(아라비아 숫자,
+  한글 숫자 읽기 세 글자 이상)가 있으면 잠정 확정하지 않고 확정 자막을 기다린다.
+- 확정 자막이 오면 먼저 넘긴 잠정 문장과 비교한다(공백·문장부호를 뺀 글자). 같으면 엔진에 다시 넘기지 않는다. 다르면 확정
+  자막을 새 발화 ID로 엔진에 넘긴다(버전이 올라 잠정 문장으로 하던 작업이 취소되고 지난 답은 위 규칙으로 버려지거나 끊긴다).
+- 잠정 확정 뒤 고객이 다시 말을 시작하기 전에 늦게 온 미확정 자막은 끝난 말의 것이므로 새 발화로 보지 않고, 끼어들기나
+  확정 자막 기다리기에도 쓰지 않는다(기록만 한다).
+
 stale_guard(기본 True): 위의 대화 버전 규칙 두 가지(요청 직전 폐기, 재생 시작 때 끊기)와 확정 자막 기다리기는 엔진 구조의
 일부다. 정책 A(개선형 RAG, 대화 버전이 없다)를 음성으로 돌릴 때는 stale_guard=False로 만들어 이 셋을 끈다. 그래도 한 번에
 하나씩 재생, VAD가 말하는 중에는 시작하지 않기, 끼어들기는 그대로다(docs/evaluation-voice.md §2.1).
 """
 
 import asyncio
+import re
 import time
 from collections import deque
 from collections.abc import Callable
@@ -66,6 +77,20 @@ TTS_REQUEST = "tts.request"
 PLAYBACK_END = "tts.playback_end"
 BARGE_IN = "voice.barge_in"
 VOICE_ERROR = "voice.error"
+PROVISIONAL = "voice.provisional"  # 정책 D: 미확정 자막으로 잠정 확정해 엔진에 넘겼다
+PROVISIONAL_DROPPED = "voice.provisional_unconfirmed"  # 잠정 확정한 발화의 확정 자막이 끝내 오지 않았다
+_DIGITS = re.compile(r"\d|[공영일이삼사오육칠팔구]{3,}")
+_NORM = re.compile(r"[\s.,!?~·…\"'“”‘’]")
+
+
+def has_digits(text: str) -> bool:
+    """번호처럼 읽히는 숫자가 있는가(잠정 확정하지 않는다)."""
+    return bool(_DIGITS.search(text))
+
+
+def same_text(a: str, b: str) -> bool:
+    """공백과 문장부호를 빼면 같은 문장인가."""
+    return _NORM.sub("", a) == _NORM.sub("", b)
 PLAYBACK_END_TIMEOUT_MS = 180_000  # 재생이 끝났다는 신호가 끝내 오지 않을 때의 안전장치
 
 
@@ -102,6 +127,8 @@ class _Utterance:
     speech_start_ms: float | None  # VAD 추정 발화 시작
     first_partial_ms: float | None = None
     partials: int = 0
+    text: str = ""  # 마지막 미확정 자막(누적 문장)
+    prejudged: str = ""  # 마지막으로 선판단을 부른 자막
 
 
 @dataclass(frozen=True)
@@ -126,9 +153,9 @@ class Playback:
 class EngineBridge(FrameProcessor):
     def __init__(self, session: SessionLike, *, final_wait_ms: float = 3000.0, play_start_timeout_ms: float = 15000.0,
                  marker_for: Callable[[float | None, float], dict[str, Any] | None] | None = None,
-                 stale_guard: bool = True, **kwargs):
+                 stale_guard: bool = True, provisional: bool = False, **kwargs):
         """marker_for(발화 시작 추정, 발화 종료)는 시험 실행기가 조건 변경 표시를 붙일 때만 준다(엔진은 읽지 않는다).
-        stale_guard=False는 정책 A용이다(모듈 설명)."""
+        stale_guard=False는 정책 A용, provisional=True는 정책 D용이다(모듈 설명)."""
         super().__init__(enable_direct_mode=True, **kwargs)
         channel = getattr(session, "channel", CHANNEL)
         if channel != CHANNEL:
@@ -138,6 +165,9 @@ class EngineBridge(FrameProcessor):
         self.play_start_timeout_ms = play_start_timeout_ms
         self._marker_for = marker_for
         self.stale_guard = stale_guard
+        self.provisional = provisional
+        self._pending_prov: deque[dict[str, Any]] = deque()  # 잠정 확정해 넘기고 확정 자막을 기다리는 발화
+        self._prov_open = False  # 잠정 확정 뒤 고객이 아직 다시 말하지 않았다(늦게 온 미확정 자막은 끝난 말의 것)
         self.playbacks: list[Playback] = []
         self.turn_outputs: list[dict[str, Any]] = []  # 세션 handle()이 돌려준 이벤트(실행기가 상담사 연결 등을 본다)
         self.finals: list[dict[str, Any]] = []
@@ -233,6 +263,7 @@ class EngineBridge(FrameProcessor):
     async def _on_vad_start(self, vad_ms: float, start_secs: float) -> None:
         start = round(vad_ms - start_secs * 1000, 3)
         self._vad_speaking = True
+        self._prov_open = False
         self._seg_start_ms = start
         self._final_in_seg = False
         self._awaiting_since = None
@@ -252,7 +283,36 @@ class EngineBridge(FrameProcessor):
         if self._utt is not None or not self._final_in_seg:
             self._awaiting_since = now_ms()
         self._emit(VAD_STOP, vad_ms=vad_ms, speech_end_ms=end, awaiting_final=self._awaiting_since is not None)
+        if self.provisional and self._utt is not None and self._utt.text and not has_digits(self._utt.text):
+            await self._send_provisional(end)
         await self._notify()
+
+    async def _send_provisional(self, end: float) -> None:
+        """정책 D: 지금 발화의 마지막 미확정 자막을 확정 발화로 엔진에 넘긴다(확정 자막을 기다리지 않는다)."""
+        utt = self._utt
+        self._utt = None
+        self._stop_fresh = False  # 이 VAD 끝 판정은 이 발화에 썼다
+        self._final_in_seg = True
+        self._awaiting_since = None
+        self._prov_open = True
+        marker = self._marker_for(utt.speech_start_ms, end) if self._marker_for else None
+        info = {"utt_id": utt.utt_id, "text": utt.text, "t_end_ms": end, "t_end_source": "vad",
+                "speech_start_ms": utt.speech_start_ms, "first_partial_ms": utt.first_partial_ms,
+                "partials": utt.partials}
+        t = now_ms()
+        self._pending_prov.append({**info, "sent_ms": t})
+        self.finals.append({**info, "received_ms": t, "marker": marker, "provisional": True})
+        self.session.log.emit(PROVISIONAL, self.session.version, t_ms=t, **info)
+        event: dict[str, Any] = {"type": "utterance", "utt_id": utt.utt_id, "speaker": "customer", "text": utt.text,
+                                 "final": True, "t_end_ms": end}
+        if marker:
+            event["marker"] = marker
+        self._start_turn(event)
+
+    def _start_turn(self, event: dict[str, Any]) -> None:
+        task = asyncio.create_task(self._run_turn(event))
+        self._turns.add(task)
+        task.add_done_callback(self._turns.discard)
 
     def _new_utterance(self) -> _Utterance:
         """새 발화. 지금 VAD 구간에서 아직 확정된 발화가 없을 때만 그 구간의 시작을 발화 시작으로 본다."""
@@ -262,6 +322,12 @@ class EngineBridge(FrameProcessor):
 
     async def _on_partial(self, text: str, result: Any = None) -> None:
         t = now_ms()
+        if self._prov_open and self._utt is None and not self._vad_speaking:
+            # 잠정 확정한 말에 늦게 온 미확정 자막이다. 새 발화나 끼어들기로 보지 않고 기록만 한다
+            prov = self._pending_prov[-1] if self._pending_prov else None
+            await self.session.handle({"type": "utterance", "utt_id": prov["utt_id"] if prov else "late",
+                                       "speaker": "customer", "text": text, "final": False})
+            return
         if self._utt is None:
             self._utt = self._new_utterance()
             self._utt.first_partial_ms = t
@@ -271,11 +337,25 @@ class EngineBridge(FrameProcessor):
         pb = self._current
         if pb is not None and not pb.done:  # 짧은 말("네")은 VAD 시작 판정보다 자막이 먼저 온다
             await self._interrupt(pb, "barge_in", trigger="transcript", text=text)
-        await self.session.handle({"type": "utterance", "utt_id": self._utt.utt_id, "speaker": "customer",
+        utt = self._utt
+        utt.text = text
+        await self.session.handle({"type": "utterance", "utt_id": utt.utt_id, "speaker": "customer",
                                    "text": text, "final": False})
+        prejudge = getattr(self.session, "prejudge", None)
+        if self.provisional and prejudge is not None and not same_text(text, utt.prejudged):
+            utt.prejudged = text
+            prejudge(utt.utt_id, text)
 
     async def _on_final(self, text: str, result: Any = None) -> None:
         t = now_ms()
+        if self._pending_prov:
+            prov = self._pending_prov.popleft()
+            later = self._stop_fresh and self._seg_end_ms is not None and self._seg_end_ms > prov["t_end_ms"]
+            if same_text(text, prov["text"]) or not later:
+                await self._on_provisional_final(prov, text, t, result)
+                return
+            # 잠정 확정한 말의 확정 자막이 오지 않고 다음 말의 확정 자막이 왔다
+            self._emit(PROVISIONAL_DROPPED, utt_id=prov["utt_id"], text=prov["text"])
         utt = self._utt or self._new_utterance()
         self._utt = None
         self._final_in_seg = True
@@ -301,9 +381,29 @@ class EngineBridge(FrameProcessor):
                                  "final": True, "t_end_ms": t_end}
         if marker:
             event["marker"] = marker
-        task = asyncio.create_task(self._run_turn(event))
-        self._turns.add(task)
-        task.add_done_callback(self._turns.discard)
+        self._start_turn(event)
+        await self._notify()
+
+    async def _on_provisional_final(self, prov: dict[str, Any], text: str, t: float, result: Any) -> None:
+        """잠정 확정한 발화의 확정 자막. 같으면 기록만 하고, 다르면 새 발화 ID로 엔진에 넘긴다."""
+        same = same_text(text, prov["text"])
+        utt_id = prov["utt_id"]
+        if not same:
+            self._n_utt += 1
+            utt_id = f"u{self._n_utt}"
+        info = {"utt_id": utt_id, "text": text, "t_end_ms": prov["t_end_ms"], "t_end_source": "vad",
+                "speech_start_ms": prov["speech_start_ms"], "first_partial_ms": prov["first_partial_ms"],
+                "partials": prov["partials"], "provisional_utt_id": prov["utt_id"], "provisional_text": prov["text"],
+                "confirms_provisional": same}
+        if (offsets := stt_offsets(result)) is not None:
+            info["stt_offsets"] = offsets
+        self.finals.append({**info, "received_ms": t, "marker": None})
+        self.session.log.emit(ev.STT_FINAL, self.session.version, t_ms=t, **info)
+        if not self._vad_speaking and self._utt is None:
+            self._awaiting_since = None
+        if not same:
+            self._start_turn({"type": "utterance", "utt_id": utt_id, "speaker": "customer", "text": text,
+                              "final": True, "t_end_ms": prov["t_end_ms"]})
         await self._notify()
 
     async def _run_turn(self, event: dict[str, Any]) -> None:

@@ -141,8 +141,7 @@ def new_condition_audio(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
     for m in sm.marked_utterances(events):
         if not m.condition_change:
             continue
-        final = next((e for e in events if e["type"] == ev.STT_FINAL and e.get("utt_id") == m.utt_id), None)
-        seg = _segment_at(segs, final["t_ms"]) if final else None
+        seg = _segment_at(segs, m.t0)  # 발화 종료(t0)는 그 줄을 넣은 구간 안에 있다
         nxt = min((t for t in customer if t > m.t0), default=float("inf"))
         x = _first_reply_audio(events, m.version, m.t0, nxt)
         rows.append({"event": m.event, "utt_id": m.utt_id, "version": m.version,
@@ -182,7 +181,7 @@ def normalize_markers(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
         mark = out[marked[0]]["marker"]
         for i in marked:
             out[i]["marker"] = None
-        last = max(mine, key=lambda i: float(out[i]["t_ms"]))
+        last = max(mine, key=lambda i: (float(out[i]["t_ms"]), i))  # 같은 시각이면 나중 줄(잠정 문장을 바꾼 확정 자막)
         out[last]["marker"] = {**mark, "moved_from": out[marked[0]]["utt_id"]}
     return out
 
@@ -196,7 +195,15 @@ def session_summary(events: list[dict[str, Any]]) -> dict[str, Any]:
     cases = [{**c, "played_ms": (ends.get(c["suggestion_id"]) or {}).get("played_ms"),
               "interrupted": (ends.get(c["suggestion_id"]) or {}).get("interrupted")} for c in voice["cases"]]
     recording = next((e for e in events if e["type"] == RECORDING), None)
+    finals = [e for e in events if e["type"] == ev.STT_FINAL and "confirms_provisional" in e]
     return {
+        "provisional": {"sent": sum(e["type"] == vb.PROVISIONAL for e in events),
+                        "confirmed": sum(bool(e["confirms_provisional"]) for e in finals),
+                        "replaced": sum(not e["confirms_provisional"] for e in finals),
+                        "unconfirmed": sum(e["type"] == vb.PROVISIONAL_DROPPED for e in events),
+                        "prejudge_calls": sum(e["type"] == ev.DECISION_PREJUDGE for e in events),
+                        "prejudged_used": sum(e["type"] == ev.DECISION_RESPONSE and bool(e.get("prejudged"))
+                                              for e in events)},
         "segments": segment_rows(events),
         "refresh": refresh(events),
         "new_condition_audio": new_condition_audio(events),

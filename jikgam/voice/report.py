@@ -97,27 +97,32 @@ def policy_stats(sessions: list[dict[str, Any]]) -> dict[str, Any]:
         "notes": [{"session": x["session"], "notes": x["notes"]} for x in sessions if x.get("notes")],
         "valid_runs": voice_of(valid), "all_runs": voice_of(sessions),
         "cost_usd": {k: round(v, 4) for k, v in cost.items()}, "cost_usd_total": round(sum(cost.values()), 4),
+        "provisional": {k: sum(x["voice"]["provisional"][k] for x in sessions)
+                        for k in ("sent", "confirmed", "replaced", "unconfirmed", "prejudge_calls", "prejudged_used")},
+        "decision_calls": sum(x["costs"].get("decision_calls", 0) + x["costs"].get("prejudge_calls", 0) for x in sessions),
         "per_run": {r: {"passed": sum(x["result"]["pass"] is True for x in valid if x["run"] == r),
                         "valid": sum(x["run"] == r for x in valid)}
                     for r in sorted({x["run"] for x in sessions})},
     }
 
 
-def verdict(a: dict[str, Any], c: dict[str, Any]) -> list[dict[str, Any]]:
-    """docs/evaluation-voice.md §5. 유효 실행 기준."""
+def verdict(a: dict[str, Any], c: dict[str, Any], name: str = "C") -> list[dict[str, Any]]:
+    """docs/evaluation-voice.md §5(정책 D는 §9.3, 같은 조건). 유효 실행 기준. name은 A와 비교하는 정책 이름."""
     ra, rc = a["valid_runs"]["refresh"]["p95"], c["valid_runs"]["refresh"]["p95"]
     sa, sc = a["valid_runs"]["stale"]["rate"], c["valid_runs"]["stale"]["rate"]
     pa, pc = a["pass_rate"], c["pass_rate"]
+    n = name
     rows = [
-        {"condition": "근거 갱신: C p95 500ms 이하, A p95의 1/10 이하",
-         "value": f"C {_ms(rc)}ms, A {_ms(ra)}ms, 비 {rc / ra:.3f}" if ra and not math.isinf(ra) else f"C {_ms(rc)}ms, A {_ms(ra)}ms",
+        {"policy": n, "condition": f"근거 갱신: {n} p95 500ms 이하, A p95의 1/10 이하",
+         "value": f"{n} {_ms(rc)}ms, A {_ms(ra)}ms, 비 {rc / ra:.3f}" if ra and not math.isinf(ra)
+         else f"{n} {_ms(rc)}ms, A {_ms(ra)}ms",
          "ok": bool(rc <= 500 and (math.isinf(ra) or rc <= ra / 10))},
-        {"condition": "이미 틀린 안내: C 무효 음성 노출률 5% 이하, A보다 10%p 이상 낮음",
-         "value": f"C {c['valid_runs']['stale']['invalid']}/{c['valid_runs']['stale']['denominator']}, "
+        {"policy": n, "condition": f"이미 틀린 안내: {n} 무효 음성 노출률 5% 이하, A보다 10%p 이상 낮음",
+         "value": f"{n} {c['valid_runs']['stale']['invalid']}/{c['valid_runs']['stale']['denominator']}, "
                   f"A {a['valid_runs']['stale']['invalid']}/{a['valid_runs']['stale']['denominator']}",
          "ok": sc is not None and sa is not None and sc <= 0.05 and sa - sc >= 0.10},
-        {"condition": "업무 성공 보호: C 통과율이 A보다 5%p 넘게 낮지 않음",
-         "value": f"C {c['passed']}/{c['valid']}, A {a['passed']}/{a['valid']}",
+        {"policy": n, "condition": f"업무 성공 보호: {n} 통과율이 A보다 5%p 넘게 낮지 않음",
+         "value": f"{n} {c['passed']}/{c['valid']}, A {a['passed']}/{a['valid']}",
          "ok": pc is not None and pa is not None and pc >= pa - 0.05},
     ]
     return rows
@@ -140,6 +145,7 @@ def render(stats: dict[str, dict[str, Any]], verdicts: list[dict[str, Any]] | No
                 f"  끼어들기 {v['barge_ins']['count']}회(재생 전 취소 {v['barge_ins']['cancelled_before_audio']}회), "
                 f"멈춤 p50 {_ms(v['barge_ins']['stop']['p50'])}ms, "
                 f"새 음성 p50 {_ms(v['barge_ins']['new_audio']['p50'])}ms",
+                f"  잠정 확정 {s['provisional']}, 판별 호출 {s['decision_calls']}",
                 f"  비용 {s['cost_usd']} 합 ${s['cost_usd_total']:.4f}"]
         for r in s["invalid_runs"]:
             out.append(f"  무효 실행 {r['session']}: {r['reasons']}")
@@ -168,7 +174,7 @@ def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
     sessions = load_runs(args.run_dirs)
     stats = {p: policy_stats([x for x in sessions if x["policy"] == p]) for p in sorted({x["policy"] for x in sessions})}
-    verdicts = verdict(stats["A"], stats["C"]) if {"A", "C"} <= set(stats) else None
+    verdicts = [r for p in ("C", "D") if "A" in stats and p in stats for r in verdict(stats["A"], stats[p], p)] or None
     print(render(stats, verdicts))
     if args.json:
         args.json.write_text(json.dumps(_clean({"runs": [str(d).replace("\\", "/") for d in args.run_dirs],

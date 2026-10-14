@@ -5,19 +5,20 @@ import asyncio
 
 from test_rag import ScriptedLLM
 from test_rag import final as rag_final
-from test_voice_bridge import FakeSpeaker, make_session, run, types, vad_start, vad_stop
+from test_voice_bridge import FakeSpeaker, make_session, partial, run, types, vad_start, vad_stop
 from test_voice_bridge import final as stt_final
 
-from engine_fakes import GatedGenerator, utt
+from engine_fakes import EchoGenerator, GatedGenerator, NoBizApi, ScriptedDecider, utt
 from jikgam.baselines.rag import RagSession
 from jikgam.engine import events as ev
 from jikgam.engine.bizapi import BizApiClient
 from jikgam.engine.org import load_org
+from jikgam.engine.session import Session
 from jikgam.sim import customer as cust
 from jikgam.sim import judge as jd
 from jikgam.voice import bridge as vb
 from jikgam.voice import metrics as vm
-from jikgam.voice.bridge import EngineBridge, Playback
+from jikgam.voice.bridge import EngineBridge, Playback, has_digits, same_text
 from jikgam.voice.sim import heard, read_digits, tts_text
 
 ORG = load_org("org_a")
@@ -251,3 +252,118 @@ def test_marker_moves_to_the_last_final_of_the_line():
     assert log[1]["marker"] == MARK  # 원본은 그대로
     (r,) = vm.session_summary(log)["refresh"]
     assert (r["utt_id"], r["version"], r["latency_ms"]) == ("u2", 2, 1000)
+
+
+# --- 정책 D: 엔진 선판단과 음성 계층의 잠정 확정 ---------------------------------------------------------
+
+def d_session(tmp_path, sid, decider=None):
+    return Session(ORG, sid, tmp_path, decision_client=decider or ScriptedDecider(intents=[("해지", "cancel")]),
+                   generator=EchoGenerator(), bizapi=NoBizApi(), channel=vb.CHANNEL)
+
+
+def test_prejudge_reuses_the_first_decision_without_changing_state(tmp_path):
+    dec = ScriptedDecider(intents=[("해지", "cancel")])
+    s = d_session(tmp_path, "d-pre", dec)
+
+    async def go():
+        assert s.prejudge("u1", "그냥 해지할게요")
+        assert not s.prejudge("u1", "그냥 해지할게요")  # 같은 입력은 한 번만
+        assert s.version == 0 and s.state.conversation == []  # 상태는 그대로
+        await asyncio.sleep(0.05)
+        await s.handle(utt("u1", "그냥 해지할게요"))
+        await s.aclose()
+
+    asyncio.run(go())
+    log = ev.read_log(tmp_path / "d-pre.jsonl")
+    pre = types(log, ev.DECISION_PREJUDGE)
+    resp = types(log, ev.DECISION_RESPONSE)
+    assert len(pre) == 1 and resp[0]["prejudged"] is True and resp[0]["cost_usd"] == 0.0
+    assert len(dec.calls) == len(pre) + len(resp) - 1  # 첫 판별은 다시 부르지 않았다
+
+
+def test_prejudge_is_not_used_when_the_final_text_differs(tmp_path):
+    dec = ScriptedDecider(intents=[("해지", "cancel")])
+    s = d_session(tmp_path, "d-miss", dec)
+
+    async def go():
+        s.prejudge("u1", "그냥 해지")
+        await asyncio.sleep(0.05)
+        await s.handle(utt("u1", "그냥 해지할게요"))
+        await s.aclose()
+
+    asyncio.run(go())
+    resp = types(ev.read_log(tmp_path / "d-miss.jsonl"), ev.DECISION_RESPONSE)
+    assert not any(r.get("prejudged") for r in resp)
+
+
+def test_digits_and_text_comparison_helpers():
+    assert has_digits("010 0000") and has_digits("공일공에 공공공공") and has_digits("인증번호 0016이요")
+    assert not has_digits("이번 달 환불이요") and not has_digits("그냥 해지할게요")
+    assert same_text("그냥 해지할게요.", "그냥 해지 할게요") and not same_text("연장 말고요", "연장 말고고요")
+
+
+def test_provisional_final_at_vad_stop_then_confirmed(tmp_path):
+    s = d_session(tmp_path, "d-prov")
+    b = EngineBridge(s, provisional=True)
+    sp = FakeSpeaker()
+
+    async def script(w):
+        await w.queue_frame(vad_start())
+        await w.queue_frame(partial("그냥 해지"))
+        await w.queue_frame(partial("그냥 해지할게요"))
+        await asyncio.sleep(0.05)
+        await w.queue_frame(vad_stop())  # 확정 자막 없이 잠정 확정한다
+        assert await b.wait_until(lambda: bool(b.playbacks) and b.playbacks[0].start_ms is not None, 5)
+        await w.queue_frame(partial("그냥 해지할게요."))  # 끝난 말에 늦게 온 미확정 자막: 끼어들기가 아니다
+        await w.queue_frame(stt_final("그냥 해지할게요."))  # 같은 문장: 엔진에 다시 넘기지 않는다
+        assert await b.wait_until(lambda: b.playbacks[0].done, 5)
+
+    run(s, b, sp, script)
+    log = ev.read_log(tmp_path / "d-prov.jsonl")
+    assert [e["text"] for e in types(log, vb.PROVISIONAL)] == ["그냥 해지할게요"]
+    assert [e["utt_id"] for e in types(log, ev.UTTERANCE_END)] == ["u1"]
+    (final,) = types(log, ev.STT_FINAL)
+    assert final["confirms_provisional"] is True and final["utt_id"] == "u1"
+    assert not types(log, vb.BARGE_IN) and types(log, vb.PLAYBACK_END)[0]["interrupted"] is None
+    assert types(log, ev.DECISION_PREJUDGE)  # 말하는 도중 미리 판단했다
+
+
+def test_provisional_replaced_when_final_differs(tmp_path):
+    s = d_session(tmp_path, "d-repl")
+    b = EngineBridge(s, provisional=True)
+    sp = FakeSpeaker(start_delay=0.3, duration=2.0)
+
+    async def script(w):
+        await w.queue_frame(vad_start())
+        await w.queue_frame(partial("환불 말고요"))
+        await asyncio.sleep(0.05)
+        await w.queue_frame(vad_stop())
+        assert await b.wait_until(lambda: bool(b.playbacks), 5)
+        await w.queue_frame(stt_final("환불 말고 해지요"))  # 다르다: 새 발화로 넘겨 다시 판단한다
+        assert await b.wait_until(lambda: len(b.playbacks) == 2 and b.playbacks[1].done, 10)
+
+    run(s, b, sp, script)
+    log = ev.read_log(tmp_path / "d-repl.jsonl")
+    assert [e["utt_id"] for e in types(log, ev.UTTERANCE_END)] == ["u1", "u2"]
+    final = types(log, ev.STT_FINAL)[0]
+    assert final["confirms_provisional"] is False and final["provisional_utt_id"] == "u1"
+    assert types(log, vb.PLAYBACK_END)[0]["interrupted"] == "version"  # 잠정 문장으로 만든 답은 끊겼다
+
+
+def test_no_provisional_when_the_caption_has_digits(tmp_path):
+    s = d_session(tmp_path, "d-digits")
+    b = EngineBridge(s, provisional=True)
+    sp = FakeSpeaker()
+
+    async def script(w):
+        await w.queue_frame(vad_start())
+        await w.queue_frame(partial("010 0000 0016이에요"))
+        await w.queue_frame(vad_stop())
+        await asyncio.sleep(0.2)
+        assert b.playbacks == []  # 확정 자막을 기다린다
+        await w.queue_frame(stt_final("010-0000-0016이에요."))
+        assert await b.wait_until(lambda: any(p.done for p in b.playbacks), 5)
+
+    run(s, b, sp, script)
+    log = ev.read_log(tmp_path / "d-digits.jsonl")
+    assert not types(log, vb.PROVISIONAL) and len(types(log, ev.UTTERANCE_END)) == 1

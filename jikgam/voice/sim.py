@@ -8,8 +8,9 @@
 채팅 실행기(jikgam/sim/runner.py)와 같은 시나리오, 같은 고객 AI 규칙, 같은 판정기를 쓰고, 고객 말과 상담 답이 음성으로
 오간다.
 
-- 세션: A는 개선형 RAG, C는 엔진(jikgam/voice/replay.py의 make_voice_session). 음성 계층은 jikgam/voice/pipeline.py이고
-  A는 stale_guard=False로 엔진의 음성 출력 규칙을 끈다(docs/evaluation-voice.md §2.1).
+- 세션: A는 개선형 RAG, C와 D는 엔진(jikgam/voice/replay.py의 make_voice_session). 음성 계층은 jikgam/voice/pipeline.py이고
+  A는 stale_guard=False로 엔진의 음성 출력 규칙을 끄고(docs/evaluation-voice.md §2.1), D는 provisional=True로 실시간 자막
+  선판단과 잠정 확정을 쓴다(§9.2).
 - 고객 말: 고객 AI(음성 판 프롬프트)가 쓴 문장을 Gemini TTS(config/voice.toml [customer_tts])로 읽혀 16kHz로 바꾸고, 앞뒤
   무음을 잘라 앞 200ms·뒤 300ms 무음을 붙여 시험 전송으로 실시간으로 넣는다. 인증번호 숫자는 한 자리씩 한글 읽기로 바꿔
   TTS에 넣는다(tts_text). 넣은 구간마다 voice.segment(말하려던 문장, TTS에 넣은 문장, 기준 발화 시작·종료)를 세션 로그에
@@ -59,7 +60,7 @@ from .audio import resample, speech_bounds, trim_and_pad
 from .config import TtsConfig, VoiceConfig, load_voice_config
 from .customer_audio import LEAD_MS, SAMPLE_RATE, TAIL_MS, synthesize
 from .metrics import SEGMENT, session_summary
-from .replay import POLICIES, TTS_TOKENS_PER_S, Segments, make_voice_session, save_recording, write_json
+from .replay import POLICIES, TTS_TOKENS_PER_S, Segments, make_voice_session, save_recording, voice_options, write_json
 
 OUT_DIR = ROOT / "results/voice/scenarios"
 GAP_MS = 700.0  # 조용해진 뒤 고객이 말을 시작하기까지(docs/voice.md §5와 같은 값)
@@ -234,7 +235,7 @@ async def run_voice_scenario(scn: dict[str, Any], policy: str, org: OrgConfig, c
     transport = PacedAudioTransport(TransportParams(audio_in_enabled=True, audio_in_sample_rate=IN_RATE,
                                                     audio_out_enabled=True, audio_out_sample_rate=OUT_RATE), recorder)
     segs = Segments()
-    vp = build_voice_pipeline(session, cfg, transport, marker_for=segs.marker_for, stale_guard=policy == "C")
+    vp = build_voice_pipeline(session, cfg, transport, marker_for=segs.marker_for, **voice_options(policy))
     bridge = vp.bridge
     started = asyncio.Event()
 
@@ -254,6 +255,7 @@ async def run_voice_scenario(scn: dict[str, Any], policy: str, org: OrgConfig, c
         await asyncio.wait_for(started.wait(), 30)
         session.log.emit(vb.VOICE_SESSION, session.version, **cfg.log(), pipecat=pkg_version("pipecat-ai"),
                          google_genai=pkg_version("google-genai"), policy=policy, stale_guard=bridge.stale_guard,
+                         provisional=bridge.provisional,
                          decision_backend=getattr(session, "backend", None), scenario=scn["id"], run=run,
                          gap_ms=gap_ms, fast_delay_ms=fast_delay_ms,
                          customer_tts={"model": voice.cfg.model, "voice": voice.cfg.voice},
@@ -354,9 +356,9 @@ async def run(args: argparse.Namespace) -> Path:
     logger.add(run_dir / "pipecat.log", level="DEBUG", encoding="utf-8")
     cfg = load_voice_config()
     models = load_config()
-    backend = org.decision_backend if args.policy == "C" else None
+    backend = org.decision_backend if args.policy in ("C", "D") else None
     summary: dict[str, Any] = {
-        "run_id": run_id, "policy": args.policy, "channel": vb.CHANNEL, "stale_guard": args.policy == "C",
+        "run_id": run_id, "policy": args.policy, "channel": vb.CHANNEL, **voice_options(args.policy),
         "decision_backend": backend, "decision_model": (models.get(backend) or {}).get("model") if backend else None,
         "generator": org.generator, "generator_model": models[org.generator]["model"], "org": org.org,
         "bizapi_url": org.bizapi_url, "scenario_file": str(path.relative_to(ROOT)).replace("\\", "/"),

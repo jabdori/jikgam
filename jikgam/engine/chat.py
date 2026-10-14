@@ -121,9 +121,9 @@ def report(log: list[dict]) -> str:
 
 
 def session_cost(log: list[dict]) -> float:
-    """판별(예열 포함)과 생성 호출 비용 합(USD)."""
+    """판별(예열, 정책 D 선판단 포함)과 생성 호출 비용 합(USD)."""
     return sum(e.get("cost_usd") or 0 for e in log
-               if e["type"] in (ev.DECISION_RESPONSE, ev.WARMUP, ev.GENERATION_RESPONSE))
+               if e["type"] in (ev.DECISION_RESPONSE, ev.WARMUP, ev.DECISION_PREJUDGE, ev.GENERATION_RESPONSE))
 
 
 async def replay(session, path: Path, bizapi_url: str | None = None) -> None:

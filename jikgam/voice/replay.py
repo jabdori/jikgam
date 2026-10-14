@@ -52,18 +52,24 @@ REPLY_TIMEOUT_S = 60.0
 TTS_TOKENS_PER_S = 25.0  # Gemini TTS 오디오 출력 토큰(2026-10-14 측정: 3.2초 78토큰, 8.6초 212토큰)
 
 
-POLICIES = ("A", "C")
+POLICIES = ("A", "C", "D")
 
 
 def make_voice_session(policy: str, org, session_id: str, run_dir: Path):
-    """음성 채널 세션. A는 개선형 RAG, C는 엔진(조직 기본 판별 백엔드). 노출은 음성 계층이 남긴다."""
+    """음성 채널 세션. A는 개선형 RAG, C와 D는 엔진(조직 기본 판별 백엔드). 노출은 음성 계층이 남긴다.
+    D의 차이는 음성 계층에 있다(voice_options)."""
     if policy == "A":
         from jikgam.baselines.rag import RagSession
         return RagSession(org, session_id, run_dir, channel=vb.CHANNEL)
-    if policy == "C":
+    if policy in ("C", "D"):
         from jikgam.engine.session import Session
         return Session(org, session_id, run_dir, channel=vb.CHANNEL)
-    raise ValueError(f"음성 실행 정책은 A 또는 C다: {policy}")
+    raise ValueError(f"음성 실행 정책은 A, C, D 중 하나다: {policy}")
+
+
+def voice_options(policy: str) -> dict[str, bool]:
+    """정책별 음성 계층 설정(docs/evaluation-voice.md §2.1, §9.2). A는 엔진의 음성 출력 규칙이 없고, D는 잠정 확정을 쓴다."""
+    return {"stale_guard": policy != "A", "provisional": policy == "D"}
 
 
 def save_recording(recorder, session, path: Path, t0_ms: float) -> dict[str, Any]:
@@ -139,7 +145,7 @@ async def run_one(name: str, run_dir: Path, run_id: str, cfg: VoiceConfig, bizap
     transport = PacedAudioTransport(TransportParams(audio_in_enabled=True, audio_in_sample_rate=IN_RATE,
                                                     audio_out_enabled=True, audio_out_sample_rate=OUT_RATE), recorder)
     segs = Segments()
-    vp = build_voice_pipeline(session, cfg, transport, marker_for=segs.marker_for, stale_guard=policy == "C")
+    vp = build_voice_pipeline(session, cfg, transport, marker_for=segs.marker_for, **voice_options(policy))
     bridge = vp.bridge
     started = asyncio.Event()
 
@@ -156,6 +162,7 @@ async def run_one(name: str, run_dir: Path, run_id: str, cfg: VoiceConfig, bizap
         await asyncio.wait_for(started.wait(), 30)
         session.log.emit(vb.VOICE_SESSION, session.version, **cfg.log(), pipecat=pkg_version("pipecat-ai"),
                          google_genai=pkg_version("google-genai"), policy=policy, stale_guard=bridge.stale_guard,
+                         provisional=bridge.provisional,
                          decision_backend=getattr(session, "backend", None), rep=rep,
                          gap_ms=gap_ms, barge_in_after_ms=barge_in_after_ms,
                          clock="engine monotonic ms; t_end_ms = VAD stop decision (wall→engine) - stop_secs",
@@ -258,7 +265,8 @@ async def main() -> None:
     ap.add_argument("--run-id", default=datetime.now(ev.KST).strftime("%Y%m%dT%H%M%S"))
     ap.add_argument("--gap-ms", type=float, default=GAP_MS)
     ap.add_argument("--barge-in-after-ms", type=float, default=BARGE_IN_AFTER_MS)
-    ap.add_argument("--policy", choices=POLICIES, default="C", help="C: 엔진, A: 개선형 RAG(docs/evaluation-voice.md §3.2)")
+    ap.add_argument("--policy", choices=POLICIES, default="C",
+                    help="C: 엔진, A: 개선형 RAG, D: 엔진 + 실시간 자막 선판단(docs/evaluation-voice.md §3.2, §9)")
     ap.add_argument("--reps", type=int, default=0, help="재생마다 반복 횟수. 0이면 반복 번호 없이 한 번(이전 실행과 같은 이름)")
     args = ap.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")

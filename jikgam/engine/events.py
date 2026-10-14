@@ -25,6 +25,7 @@ STT_FINAL = "stt.final"
 VERSION_BUMPED = "version.bumped"
 DECISION_REQUEST = "decision.request"
 DECISION_RESPONSE = "decision.response"
+DECISION_PREJUDGE = "decision.prejudge"  # 정책 D 선판단(미확정 자막으로 미리 한 첫 판별). 상태를 바꾸지 않는다
 EVIDENCE_UPDATED = "evidence.updated"
 SUGGESTION_CREATED = "suggestion.created"
 SUGGESTION_INVALIDATED = "suggestion.invalidated"
