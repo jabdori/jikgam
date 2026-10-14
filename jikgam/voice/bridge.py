@@ -34,6 +34,10 @@
   VAD와 자막 둘 다를 쓴다. 버전은 엔진이 확정 발화를 받을 때 올린다.
 
 미확정 자막 선판단(정책 D)은 하지 않는다. 엔진에 넘기는 미확정 자막은 기록용이며 그 결과가 말해지는 경로가 없다.
+
+stale_guard(기본 True): 위의 대화 버전 규칙 두 가지(요청 직전 폐기, 재생 시작 때 끊기)와 확정 자막 기다리기는 엔진 구조의
+일부다. 정책 A(개선형 RAG, 대화 버전이 없다)를 음성으로 돌릴 때는 stale_guard=False로 만들어 이 셋을 끈다. 그래도 한 번에
+하나씩 재생, VAD가 말하는 중에는 시작하지 않기, 끼어들기는 그대로다(docs/evaluation-voice.md §2.1).
 """
 
 import asyncio
@@ -121,8 +125,10 @@ class Playback:
 
 class EngineBridge(FrameProcessor):
     def __init__(self, session: SessionLike, *, final_wait_ms: float = 3000.0, play_start_timeout_ms: float = 15000.0,
-                 marker_for: Callable[[float | None, float], dict[str, Any] | None] | None = None, **kwargs):
-        """marker_for(발화 시작 추정, 발화 종료)는 시험 실행기가 조건 변경 표시를 붙일 때만 준다(엔진은 읽지 않는다)."""
+                 marker_for: Callable[[float | None, float], dict[str, Any] | None] | None = None,
+                 stale_guard: bool = True, **kwargs):
+        """marker_for(발화 시작 추정, 발화 종료)는 시험 실행기가 조건 변경 표시를 붙일 때만 준다(엔진은 읽지 않는다).
+        stale_guard=False는 정책 A용이다(모듈 설명)."""
         super().__init__(enable_direct_mode=True, **kwargs)
         channel = getattr(session, "channel", CHANNEL)
         if channel != CHANNEL:
@@ -131,7 +137,9 @@ class EngineBridge(FrameProcessor):
         self.final_wait_ms = final_wait_ms
         self.play_start_timeout_ms = play_start_timeout_ms
         self._marker_for = marker_for
+        self.stale_guard = stale_guard
         self.playbacks: list[Playback] = []
+        self.turn_outputs: list[dict[str, Any]] = []  # 세션 handle()이 돌려준 이벤트(실행기가 상담사 연결 등을 본다)
         self.finals: list[dict[str, Any]] = []
         self._n_utt = 0
         self._utt: _Utterance | None = None  # 미확정 자막만 온 발화
@@ -163,9 +171,12 @@ class EngineBridge(FrameProcessor):
             return False
 
     def customer_turn_open(self, t: float | None = None) -> bool:
-        """고객 차례인가: VAD가 말하는 중이거나, 말이 끝났는데 확정 자막을 final_wait_ms 안에서 기다리는 중."""
+        """고객 차례인가: VAD가 말하는 중이거나, 말이 끝났는데 확정 자막을 final_wait_ms 안에서 기다리는 중.
+        stale_guard가 꺼져 있으면 VAD가 말하는 중일 때만이다."""
         if self._vad_speaking:
             return True
+        if not self.stale_guard:
+            return False
         t = now_ms() if t is None else t
         return self._awaiting_since is not None and t - self._awaiting_since < self.final_wait_ms
 
@@ -301,6 +312,7 @@ class EngineBridge(FrameProcessor):
         except Exception as e:  # 엔진은 자기 오류를 기록하고 보류로 답한다. 여기 오는 것은 입력 형식 오류뿐이다
             self._emit(VOICE_ERROR, stage="engine", utt_id=event["utt_id"], error=f"{type(e).__name__}: {e}")
             out = []
+        self.turn_outputs += out
         for e in out:
             if e["type"] == ev.AGENT_SAY:
                 self._replies.append(Reply(e["suggestion_id"], int(e["version"]), e["text"]))
@@ -318,7 +330,7 @@ class EngineBridge(FrameProcessor):
                            vad_speaking=self._vad_speaking)
                 while self.customer_turn_open():  # 확정 자막 대기에는 시간 한도가 있어 짧게 나눠 다시 본다
                     await self.wait_until(lambda: not self.customer_turn_open(), 0.05)
-            if self.session.version != reply.version:
+            if self.stale_guard and self.session.version != reply.version:
                 self._emit(ev.RESULT_DISCARDED, stage="voice", started_version=reply.version,
                            suggestion_id=reply.suggestion_id, reason="version")
                 continue
@@ -350,7 +362,7 @@ class EngineBridge(FrameProcessor):
         self.session.log.emit(ev.SUGGESTION_EXPOSED, self.session.version, t_ms=t, suggestion_id=pb.suggestion_id,
                               channel=CHANNEL, start_ms=t, end_ms=None, basis_version=pb.version,
                               requested_ms=pb.requested_ms)
-        if self.session.version != pb.version:  # TTS를 기다리는 사이 버전이 바뀌었다
+        if self.stale_guard and self.session.version != pb.version:  # TTS를 기다리는 사이 버전이 바뀌었다
             await self._interrupt(pb, "version")
         await self._notify()
 

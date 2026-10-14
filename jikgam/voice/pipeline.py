@@ -37,8 +37,9 @@ def make_tts(cfg: VoiceConfig, api_key: str) -> GeminiTTSService:
 
 
 def build_voice_pipeline(session: SessionLike, cfg: VoiceConfig, transport: BaseTransport, *,
-                         marker_for: Callable[[float | None, float], dict[str, Any] | None] | None = None
-                         ) -> VoicePipeline:
+                         marker_for: Callable[[float | None, float], dict[str, Any] | None] | None = None,
+                         stale_guard: bool = True) -> VoicePipeline:
+    """stale_guard=False는 정책 A(대화 버전이 없는 개선형 RAG)용이다(jikgam/voice/bridge.py)."""
     env = secrets()
     vad = VADProcessor(vad_analyzer=SileroVADAnalyzer(params=VADParams(
         confidence=cfg.vad.confidence, start_secs=cfg.vad.start_secs, stop_secs=cfg.vad.stop_secs,
@@ -46,7 +47,7 @@ def build_voice_pipeline(session: SessionLike, cfg: VoiceConfig, transport: Base
     stt = make_stt(cfg.stt, env[cfg.stt.api_key_env])
     bridge = EngineBridge(session, final_wait_ms=cfg.channel.final_wait_ms,
                           play_start_timeout_ms=cfg.channel.play_start_timeout_ms, marker_for=marker_for,
-                          name="engine-bridge")
+                          stale_guard=stale_guard, name="engine-bridge")
     tts = make_tts(cfg, env[cfg.tts.api_key_env])
     pipeline = Pipeline([transport.input(), vad, stt, bridge, tts, transport.output()])
     worker = PipelineWorker(pipeline, params=PipelineParams(audio_in_sample_rate=IN_RATE, audio_out_sample_rate=OUT_RATE,

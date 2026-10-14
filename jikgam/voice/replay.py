@@ -1,9 +1,11 @@
 """개발용 재생을 음성으로 돌린다: 고객 녹음 → 실제 STT → 엔진 → 실제 TTS → (재생 흉내) 출력.
 
     uv run python -m jikgam.voice.replay --replays s01 s20 s21 --bizapi-url http://127.0.0.1:8096
+    uv run python -m jikgam.voice.replay --replays s20 s21 --policy A --reps 3 --bizapi-url http://127.0.0.1:8096
 
-- 고객 음성은 data/voice/<재생>/uNN.wav(jikgam/voice/customer_audio.py로 만든 것)다. 정책은 C(엔진 + 조직 기본 판별
-  백엔드)이고, 엔진 코드와 설정은 채팅 재생과 같다.
+- 고객 음성은 data/voice/<재생>/uNN.wav(jikgam/voice/customer_audio.py로 만든 것)다. 정책은 기본 C(엔진 + 조직 기본 판별
+  백엔드)이고, 엔진 코드와 설정은 채팅 재생과 같다. --policy A는 개선형 RAG(jikgam.baselines.rag.RagSession)를 음성 계층의
+  공통 기능만으로 돌린다(stale_guard=False, docs/evaluation-voice.md §2.1).
 - 실행 순서: 모의 업무 API 초기화 → 세션 열기와 예열(start) → 파이프라인 시작 → 줄마다 녹음 넣기 → 마지막 응답 재생이
   끝나면 정리.
 - 줄을 넣는 때: 보통은 앞 줄에 대한 엔진 응답의 재생이 끝나고 gap_ms(700ms) 뒤. 조건 변경 표시(marker.condition_change)가
@@ -13,14 +15,17 @@
 - 조건 변경 표시는 그 줄의 녹음 구간에서 처음 확정된 발화에 붙인다(EngineBridge의 marker_for). STT가 한 줄을 둘 이상으로
   확정하면 나머지에는 붙지 않으며 보고서의 finals로 드러난다.
 - 결과: results/voice/<run_id>/<세션>.jsonl(엔진과 음성 계층 이벤트), <세션>.wav(스테레오 녹음, 저장소 밖),
-  <세션>.metrics.json, summary.json, pipecat.log(저장소 밖).
+  <세션>.metrics.json, summary.json, pipecat.log(저장소 밖). 녹음의 시작 시각(엔진 시계), 해시, 길이는 세션 로그의
+  voice.recording에 남긴다. 로그 시각 t는 녹음의 (t - t0_ms) 위치다.
 """
 
 import argparse
 import asyncio
+import hashlib
 import json
 import os
 import sys
+import wave
 from datetime import datetime
 from importlib.metadata import version as pkg_version
 from pathlib import Path
@@ -37,7 +42,7 @@ from jikgam.engine.org import ROOT, load_org
 from . import bridge as vb
 from .audio import duration_ms, read_wav
 from .config import VoiceConfig, load_voice_config
-from .metrics import SEGMENT, session_summary
+from .metrics import RECORDING, SEGMENT, session_summary
 
 OUT_DIR = ROOT / "results/voice"
 MANIFEST = ROOT / "data/voice/manifest.json"
@@ -45,6 +50,40 @@ GAP_MS = 700.0  # 앞 응답 재생이 끝난 뒤 고객이 말을 시작하기�
 BARGE_IN_AFTER_MS = 1000.0  # 조건 변경 줄: 앞 응답 재생 시작부터 고객이 말을 시작하기까지
 REPLY_TIMEOUT_S = 60.0
 TTS_TOKENS_PER_S = 25.0  # Gemini TTS 오디오 출력 토큰(2026-10-14 측정: 3.2초 78토큰, 8.6초 212토큰)
+
+
+POLICIES = ("A", "C")
+
+
+def make_voice_session(policy: str, org, session_id: str, run_dir: Path):
+    """음성 채널 세션. A는 개선형 RAG, C는 엔진(조직 기본 판별 백엔드). 노출은 음성 계층이 남긴다."""
+    if policy == "A":
+        from jikgam.baselines.rag import RagSession
+        return RagSession(org, session_id, run_dir, channel=vb.CHANNEL)
+    if policy == "C":
+        from jikgam.engine.session import Session
+        return Session(org, session_id, run_dir, channel=vb.CHANNEL)
+    raise ValueError(f"음성 실행 정책은 A 또는 C다: {policy}")
+
+
+def save_recording(recorder, session, path: Path, t0_ms: float) -> dict[str, Any]:
+    """스테레오 녹음(왼쪽 고객, 오른쪽 실제로 재생된 응답)을 저장하고 voice.recording을 세션 로그에 남긴다."""
+    recorder.save(path, t0_ms)
+    data = path.read_bytes()
+    with wave.open(str(path), "rb") as w:
+        rate, frames = w.getframerate(), w.getnframes()
+    info = {"file": path.relative_to(ROOT).as_posix(), "t0_ms": t0_ms, "sha256_16": hashlib.sha256(data).hexdigest()[:16],
+            "duration_ms": round(frames / rate * 1000, 1), "sample_rate": rate,
+            "channels": {"left": "customer", "right": "agent"}}
+    session.log.emit(RECORDING, session.version, **info)
+    return info
+
+
+def session_name(name: str, run_id: str, policy: str, rep: int | None) -> str:
+    """이전 실행(정책 C, 반복 없음)과 같은 이름을 유지하고, 정책 A나 반복이 있으면 이름에 붙인다."""
+    if policy == "C" and rep is None:
+        return f"{name}-voice-{run_id}"
+    return f"{name}-{policy}" + ("" if rep is None else f"-r{rep}") + f"-voice-{run_id}"
 
 
 def reset_bizapi(url: str) -> None:
@@ -83,11 +122,9 @@ class Segments:
 
 
 async def run_one(name: str, run_dir: Path, run_id: str, cfg: VoiceConfig, bizapi_url: str, gap_ms: float,
-                  barge_in_after_ms: float) -> dict[str, Any]:
+                  barge_in_after_ms: float, policy: str = "C", rep: int | None = None) -> dict[str, Any]:
     from pipecat.transports.base_transport import TransportParams
     from pipecat.workers.runner import WorkerRunner
-
-    from jikgam.engine.session import Session
 
     from .pipeline import IN_RATE, OUT_RATE, build_voice_pipeline
     from .transport import PacedAudioTransport, Recorder
@@ -95,14 +132,14 @@ async def run_one(name: str, run_dir: Path, run_id: str, cfg: VoiceConfig, bizap
     files = manifest_files(name)
     org = load_org("org_a")
     reset_bizapi(bizapi_url)
-    sid = f"{name}-voice-{run_id}"
-    session = Session(org, sid, run_dir, channel=vb.CHANNEL)  # 노출은 연결 계층이 재생 시작에 남긴다
+    sid = session_name(name, run_id, policy, rep)
+    session = make_voice_session(policy, org, sid, run_dir)  # 노출은 연결 계층이 재생 시작에 남긴다
     await session.start()
     recorder = Recorder()
     transport = PacedAudioTransport(TransportParams(audio_in_enabled=True, audio_in_sample_rate=IN_RATE,
                                                     audio_out_enabled=True, audio_out_sample_rate=OUT_RATE), recorder)
     segs = Segments()
-    vp = build_voice_pipeline(session, cfg, transport, marker_for=segs.marker_for)
+    vp = build_voice_pipeline(session, cfg, transport, marker_for=segs.marker_for, stale_guard=policy == "C")
     bridge = vp.bridge
     started = asyncio.Event()
 
@@ -118,7 +155,8 @@ async def run_one(name: str, run_dir: Path, run_id: str, cfg: VoiceConfig, bizap
     try:
         await asyncio.wait_for(started.wait(), 30)
         session.log.emit(vb.VOICE_SESSION, session.version, **cfg.log(), pipecat=pkg_version("pipecat-ai"),
-                         google_genai=pkg_version("google-genai"), policy="C", decision_backend=session.backend,
+                         google_genai=pkg_version("google-genai"), policy=policy, stale_guard=bridge.stale_guard,
+                         decision_backend=getattr(session, "backend", None), rep=rep,
                          gap_ms=gap_ms, barge_in_after_ms=barge_in_after_ms,
                          clock="engine monotonic ms; t_end_ms = VAD stop decision (wall→engine) - stop_secs",
                          audio=[{"file": f["path"], "sha256_16": f["sha256_16"]} for f in files])
@@ -164,13 +202,13 @@ async def run_one(name: str, run_dir: Path, run_id: str, cfg: VoiceConfig, bizap
         except TimeoutError:
             notes.append("파이프라인이 30초 안에 끝나지 않았다")
             await vp.worker.cancel()
+        save_recording(recorder, session, run_dir / f"{sid}.wav", t_open)
         await session.aclose()
-    recorder.save(run_dir / f"{sid}.wav", t_open)
     log = ev.read_log(run_dir / f"{sid}.jsonl")
     summary = session_summary(log)
     agent_ms = sum(duration_ms(pcm, r) for _, pcm, r in recorder.agent)
     stream_min = (t_close - t_open) / 60000
-    summary.update(replay=name, session=sid, notes=notes, stt_stream_min=round(stream_min, 2),
+    summary.update(replay=name, session=sid, policy=policy, rep=rep, notes=notes, stt_stream_min=round(stream_min, 2),
                    tts_audio_s=round(agent_ms / 1000, 1),
                    cost_usd={"engine": round(session_cost(log), 5),
                              "stt_estimate": round(stream_min * cfg.stt.price_usd_per_min, 5),
@@ -220,6 +258,8 @@ async def main() -> None:
     ap.add_argument("--run-id", default=datetime.now(ev.KST).strftime("%Y%m%dT%H%M%S"))
     ap.add_argument("--gap-ms", type=float, default=GAP_MS)
     ap.add_argument("--barge-in-after-ms", type=float, default=BARGE_IN_AFTER_MS)
+    ap.add_argument("--policy", choices=POLICIES, default="C", help="C: 엔진, A: 개선형 RAG(docs/evaluation-voice.md §3.2)")
+    ap.add_argument("--reps", type=int, default=0, help="재생마다 반복 횟수. 0이면 반복 번호 없이 한 번(이전 실행과 같은 이름)")
     args = ap.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")
     os.environ["JIKGAM_BIZAPI_URL"] = args.bizapi_url  # 조직 설정의 bizapi_url보다 우선한다(docs/engine.md §9)
@@ -230,13 +270,15 @@ async def main() -> None:
     logger.add(run_dir / "pipecat.log", level="DEBUG", encoding="utf-8")
     cfg = load_voice_config()
     summaries = []
-    for name in args.replays:
-        s = await run_one(name, run_dir, args.run_id, cfg, args.bizapi_url, args.gap_ms, args.barge_in_after_ms)
-        summaries.append(s)
-        print(report(s), flush=True)
+    for rep in (range(1, args.reps + 1) if args.reps else [None]):
+        for name in args.replays:
+            s = await run_one(name, run_dir, args.run_id, cfg, args.bizapi_url, args.gap_ms, args.barge_in_after_ms,
+                              args.policy, rep)
+            summaries.append(s)
+            print(report(s), flush=True)
     total = {k: round(sum(s["cost_usd"][k] for s in summaries), 5) for k in ("engine", "stt_estimate", "tts_estimate")}
-    write_json(run_dir / "summary.json", {"run_id": args.run_id, "replays": args.replays, "cost_usd": total,
-                                          "sessions": summaries})
+    write_json(run_dir / "summary.json", {"run_id": args.run_id, "replays": args.replays, "policy": args.policy,
+                                          "reps": args.reps, "cost_usd": total, "sessions": summaries})
     print(f"결과: {run_dir}\n비용 합: {total}")
 
 

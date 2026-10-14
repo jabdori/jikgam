@@ -39,6 +39,9 @@ await aclose())와 같은 이벤트 로그 형식(jikgam/engine/events.py)을 �
   모델이 든 조항만은 generator_cited, 출처별 목록은 evidence_sources(retrieved, system, model)에 남긴다.
 - tool.call, tool.result는 엔진과 같은 필드. generation.request, generation.response는 LLM 요청마다(도구 루프의 단계마다).
 - version.bumped, suggestion.invalidated, result.discarded, task.cancelled는 남기지 않는다(그런 구조가 없다).
+- 채널: 기본은 chat이고 답을 낼 때 노출(suggestion.exposed)을 남긴다. channel="voice"로 만들면 노출 줄을 남기지 않는다.
+  음성에서는 재생 시작을 아는 음성 계층(jikgam/voice/bridge.py)이 노출을 남긴다(엔진 Session과 같은 규칙,
+  docs/evaluation-voice.md §2.1).
 """
 
 import asyncio
@@ -276,9 +279,10 @@ class RagSession:
     """정책 A 세션. 엔진 Session과 같은 방식으로 쓴다: start → handle(입력 이벤트)* → aclose."""
 
     def __init__(self, org: OrgConfig, session_id: str, log_dir: Path, *, llm: ToolLLM | None = None,
-                 bizapi: BizApiClient | None = None, max_steps: int = MAX_STEPS):
+                 bizapi: BizApiClient | None = None, max_steps: int = MAX_STEPS, channel: str = CHANNEL):
         """llm, bizapi는 테스트에서 가짜를 넣을 때만 쓴다. 기본은 조직 설정으로 만든다."""
         self.org = org
+        self.channel = channel
         self.session_id = session_id
         self.log = EventLog(Path(log_dir) / f"{session_id}.jsonl", session_id)
         self.articles = parse_terms(org.terms)
@@ -299,7 +303,7 @@ class RagSession:
         self._n_suggestions = 0
         self.log.emit(ev.SESSION_START, 0, org=org.org, today=org.today.isoformat(), policy="A", engine="rag",
                       decision_backend=None, generator=self.llm.model, rag_prompt=PROMPT_VERSION, max_steps=max_steps,
-                      max_candidates=org.retrieval.max_candidates, bizapi_url=org.bizapi_url, channel=CHANNEL)
+                      max_candidates=org.retrieval.max_candidates, bizapi_url=org.bizapi_url, channel=channel)
 
     @property
     def version(self) -> int:
@@ -452,5 +456,6 @@ class RagSession:
         t = now_ms()
         out.append(self.log.emit(ev.AGENT_SAY, basis, t_ms=t, text=say, suggestion_id=sid, cited_articles=evidence,
                                  generator_cited=known, amount=amount, amount_final=amount_final))
-        out.append(self.log.emit(ev.SUGGESTION_EXPOSED, basis, t_ms=t, suggestion_id=sid, channel=CHANNEL, start_ms=t,
-                                 end_ms=t))
+        if self.channel == CHANNEL:  # 음성은 재생 시작에 음성 계층이 노출을 남긴다
+            out.append(self.log.emit(ev.SUGGESTION_EXPOSED, basis, t_ms=t, suggestion_id=sid, channel=CHANNEL,
+                                     start_ms=t, end_ms=t))

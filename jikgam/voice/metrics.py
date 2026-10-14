@@ -14,7 +14,14 @@ VAD로 추정한 값이므로 둘의 차(t_end_error_ms)를 함께 낸다.
   만든 버전 이상이어야 한다. 단계: 확정 자막 → agent.say(engine_ms) → tts.request → 재생 시작(tts_ms)
 - refresh: jikgam.sim.metrics.refresh_latencies(docs/evaluation.md §3.2, t0 = utterance.end). 기준 발화 종료로 잰 값도 낸다
 - barge_in: voice.barge_in마다 발화 시작부터 재생이 멈춘 시각(tts.playback_end)까지
-- stale: jikgam.sim.metrics.stale_exposure의 voice 채널(docs/evaluation.md §3.3)
+- stale: jikgam.sim.metrics.stale_exposure의 voice 채널(docs/evaluation.md §3.3). 사례마다 실제로 재생된 시간(played_ms)을
+  붙인다(docs/evaluation-voice.md §4.1)
+- new_condition_audio: 조건 변경 발화의 기준 발화 종료부터 그 발화가 만든 버전 이상으로 만든 답의 재생 시작까지
+  (docs/evaluation-voice.md §4.3). 다음 고객 발화 전까지 없으면 None(미응답)
+- barge_in의 new_audio_ms: 끼어든 구간의 기준 발화 종료부터 새 버전 답의 재생 시작까지(§4.4)
+
+발화가 만든 버전은 version.bumped(utt_id 일치)의 to다. 정책 A(개선형 RAG)는 version.bumped를 남기지 않으므로 그 발화의
+utterance.end 버전 + 1을 쓴다(jikgam.sim.metrics.utterance_version과 같은 규칙).
 """
 
 from typing import Any
@@ -25,6 +32,7 @@ from jikgam.sim import metrics as sm
 from . import bridge as vb
 
 SEGMENT = "voice.segment"
+RECORDING = "voice.recording"  # 세션 녹음 파일과 그 시작 시각(엔진 시계). 로그 시각 t는 녹음의 (t - t0_ms) 위치다
 
 
 def _r(x: float | None) -> float | None:
@@ -32,7 +40,26 @@ def _r(x: float | None) -> float | None:
 
 
 def _version_of(events: list[dict[str, Any]], utt_id: str) -> int | None:
-    return next((int(e["to"]) for e in events if e["type"] == ev.VERSION_BUMPED and e.get("utt_id") == utt_id), None)
+    """그 발화가 만든 대화 버전. version.bumped가 없으면(정책 A) utterance.end의 버전 + 1."""
+    bumped = next((int(e["to"]) for e in events if e["type"] == ev.VERSION_BUMPED and e.get("utt_id") == utt_id), None)
+    if bumped is not None:
+        return bumped
+    return next((int(e["version"]) + 1 for e in events if e["type"] == ev.UTTERANCE_END and e.get("utt_id") == utt_id
+                 and e.get("speaker", "customer") == "customer"), None)
+
+
+def _segment_at(segs: list[dict[str, Any]], t: float) -> dict[str, Any] | None:
+    """시각 t에 넣고 있던(또는 마지막으로 넣은) 구간."""
+    return next((s for s in reversed(segs) if s["feed_start_ms"] <= t), None)
+
+
+def _first_reply_audio(events: list[dict[str, Any]], version: int, after_ms: float,
+                       before_ms: float = float("inf")) -> dict[str, Any] | None:
+    """after_ms 뒤 before_ms 전에 시작한 voice 노출 중 기준 버전이 version 이상인 첫 것."""
+    basis = {e["suggestion_id"]: int(e["basis_version"]) for e in events if e["type"] == ev.SUGGESTION_CREATED}
+    return next((x for x in events if x["type"] == ev.SUGGESTION_EXPOSED and x.get("channel") == vb.CHANNEL
+                 and after_ms <= float(x["start_ms"]) < before_ms and basis.get(x["suggestion_id"], -1) >= version),
+                None)
 
 
 def segment_rows(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -48,7 +75,7 @@ def segment_rows(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
         inside = [e for e in events if lo <= e["t_ms"] < hi]
         partials = [e for e in inside if e["type"] == ev.STT_PARTIAL]
         finals = [e for e in inside if e["type"] == ev.STT_FINAL]
-        row: dict[str, Any] = {"line": s["line"], "utt_file": s["file"], "script": s["text"], "marker": s.get("marker"),
+        row: dict[str, Any] = {"line": s["line"], "utt_file": s.get("file"), "script": s["text"], "marker": s.get("marker"),
                                "barge_in_planned": s.get("barge_in_planned", False),
                                "transcript": " / ".join(f["text"] for f in finals), "finals": len(finals),
                                "utt_ids": [f["utt_id"] for f in finals],
@@ -82,15 +109,43 @@ def segment_rows(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def barge_ins(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
     segs = [e for e in events if e["type"] == SEGMENT]
     ends = {e["suggestion_id"]: e for e in events if e["type"] == vb.PLAYBACK_END}
+    finals = [e for e in events if e["type"] == ev.STT_FINAL]
     out = []
     for b in (e for e in events if e["type"] == vb.BARGE_IN):
-        seg = next((s for s in reversed(segs) if s["feed_start_ms"] <= b["t_ms"]), None)
+        seg = _segment_at(segs, b["t_ms"])
         end = ends.get(b["suggestion_id"])
-        out.append({"suggestion_id": b["suggestion_id"], "trigger": b.get("trigger"), "started": b["started"],
-                    "played_ms": b.get("played_ms"), "line": seg["line"] if seg else None,
-                    "detect_ms": _r(b["t_ms"] - seg["speech_start_ms"]) if seg else None,
-                    "stop_ms": _r(end["end_ms"] - seg["speech_start_ms"]) if seg and end else None})
+        row = {"suggestion_id": b["suggestion_id"], "trigger": b.get("trigger"), "started": b["started"],
+               "played_ms": b.get("played_ms"), "line": seg["line"] if seg else None,
+               "detect_ms": _r(b["t_ms"] - seg["speech_start_ms"]) if seg else None,
+               "stop_ms": _r(end["end_ms"] - seg["speech_start_ms"]) if seg and end else None, "new_audio_ms": None}
+        if seg is not None:
+            nxt = next((s["feed_start_ms"] for s in segs if s["feed_start_ms"] > seg["feed_start_ms"]), float("inf"))
+            mine = [f for f in finals if seg["feed_start_ms"] <= f["t_ms"] < nxt]
+            v = _version_of(events, mine[-1]["utt_id"]) if mine else None
+            x = _first_reply_audio(events, v, mine[-1]["t_ms"]) if v is not None else None
+            if x is not None:
+                row["new_audio_ms"] = _r(float(x["start_ms"]) - seg["speech_end_ms"])
+        out.append(row)
     return out
+
+
+def new_condition_audio(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """조건 변경 이벤트마다 기준 발화 종료부터 새 버전 답의 첫 재생까지(docs/evaluation-voice.md §4.3)."""
+    segs = [e for e in events if e["type"] == SEGMENT]
+    customer = [float(e["t_ms"]) for e in events if e["type"] == ev.UTTERANCE_END and e.get("speaker", "customer") == "customer"]
+    rows = []
+    for m in sm.marked_utterances(events):
+        if not m.condition_change:
+            continue
+        final = next((e for e in events if e["type"] == ev.STT_FINAL and e.get("utt_id") == m.utt_id), None)
+        seg = _segment_at(segs, final["t_ms"]) if final else None
+        nxt = min((t for t in customer if t > m.t0), default=float("inf"))
+        x = _first_reply_audio(events, m.version, m.t0, nxt)
+        rows.append({"event": m.event, "utt_id": m.utt_id, "version": m.version,
+                     "invalidates_prior": m.invalidates_prior, "suggestion_id": x["suggestion_id"] if x else None,
+                     "from_speech_end_ms": _r(float(x["start_ms"]) - seg["speech_end_ms"]) if x and seg else None,
+                     "from_t0_ms": _r(float(x["start_ms"]) - m.t0) if x else None})
+    return rows
 
 
 def refresh(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -108,11 +163,18 @@ def session_summary(events: list[dict[str, Any]]) -> dict[str, Any]:
     stale = sm.stale_exposure(events)
     voice = stale["by_channel"].get(vb.CHANNEL, {"invalid": 0, "denominator": 0, "unconfirmed": 0, "cases": []})
     playbacks = [e for e in events if e["type"] == vb.PLAYBACK_END]
+    ends = {p["suggestion_id"]: p for p in playbacks}
+    cases = [{**c, "played_ms": (ends.get(c["suggestion_id"]) or {}).get("played_ms"),
+              "interrupted": (ends.get(c["suggestion_id"]) or {}).get("interrupted")} for c in voice["cases"]]
+    recording = next((e for e in events if e["type"] == RECORDING), None)
     return {
         "segments": segment_rows(events),
         "refresh": refresh(events),
+        "new_condition_audio": new_condition_audio(events),
         "barge_ins": barge_ins(events),
-        "stale_voice": {**voice, "events": stale["events"]},
+        "stale_voice": {**voice, "cases": cases, "events": stale["events"]},
+        "recording": {k: recording[k] for k in ("file", "t0_ms", "sha256_16", "duration_ms") if k in recording}
+        if recording else None,
         "playbacks": {"total": len(playbacks), "exposed": sum(p["exposed"] for p in playbacks),
                       "interrupted": {k: sum(p.get("interrupted") == k for p in playbacks)
                                       for k in ("barge_in", "version", "timeout", "error")},

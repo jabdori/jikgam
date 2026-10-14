@@ -43,6 +43,30 @@ SYSTEM_PROMPT = """당신은 구독 서비스 '별담 플러스' 고객센터 �
 7. done: 목표가 이뤄졌다는 안내(예: 접수 완료)를 받았거나, 더 진행할 수 없다고 판단했거나, persona상 대화를 끝낼 때 true로 한다. done이 true인 출력의 메시지는 고객의 마지막 메시지로 상담원에게 전달된다. 마지막에 할 말이 없으면 say를 빈 문자열로 둔다.
 설명 없이 지정된 JSON만 출력한다."""
 
+# 음성 판(docs/evaluation-voice.md §3.1): 규칙은 채팅 판과 같고 말투, 빠른 정정의 묘사, 숫자 쓰기만 전화 통화에 맞게 바꾼다.
+# 바꾸는 문장은 채팅 판에 정확히 하나씩 있어야 한다(없으면 가져올 때 멈춘다).
+VOICE_PROMPT_VERSION = "sim-customer-voice-2026.10.14-1"
+VOICE_REPLACEMENTS = (
+    ("고객센터 채팅 상담에서 고객을 연기한다.", "고객센터 전화 상담에서 고객을 연기한다. 고객의 말은 음성 합성으로 읽혀 상담원에게 들린다."),
+    ("채팅이므로 한 메시지는 짧게(보통 1~2문장) 자연스러운 구어체 한국어로 쓴다.",
+     "전화 통화이므로 한 번에 하는 말은 짧게(보통 1~2문장) 소리 내어 말하는 자연스러운 구어체 한국어로 쓴다. 이모지, 괄호, 목록 기호는 쓰지 않는다. 휴대폰 번호와 인증번호는 숫자로 쓴다(예: 010-1234-5678, 0016)."),
+    ("고객이 첫 메시지를 보내고 1초쯤 뒤 상담원의 답을 보기 전에 생각을 바꾸거나 정정하며 이어 보내는 채팅처럼 자연스럽게 이어져야 한다.",
+     "고객이 첫 말을 마치고 1초쯤 뒤, 상담원이 답하기 전에 생각을 바꾸거나 정정하며 이어 말하는 것처럼 자연스럽게 이어져야 한다."),
+    ("다음에 보낼 고객 메시지를 쓴다.",
+     "다음에 할 고객의 말을 쓴다. conversation의 상담원 말은 고객이 실제로 들은 것이다. 끝에 [끊김] 표시가 있으면 고객이 끼어들어 그 뒤를 듣지 못했다는 뜻이다."),
+)
+
+
+def _voice_prompt(base: str) -> str:
+    for old, new in VOICE_REPLACEMENTS:
+        if base.count(old) != 1:
+            raise ValueError(f"음성 판으로 바꿀 문장이 채팅 프롬프트에 정확히 하나 있어야 한다: {old}")
+        base = base.replace(old, new)
+    return base
+
+
+VOICE_SYSTEM_PROMPT = _voice_prompt(SYSTEM_PROMPT)
+
 RESPONSE_SCHEMA = {
     "type": "object",
     "properties": {
@@ -129,16 +153,20 @@ def check_turn(scn: dict[str, Any], d: dict[str, Any], executed: set[int], usage
 
 
 class GeminiCustomer:
-    def __init__(self, scn: dict[str, Any], client: GeminiJson, registered: frozenset[str], seed: int | None = None):
+    def __init__(self, scn: dict[str, Any], client: GeminiJson, registered: frozenset[str], seed: int | None = None,
+                 channel: str = "chat"):
+        """channel="voice"면 음성 판 프롬프트(VOICE_SYSTEM_PROMPT)를 쓴다."""
         self.scn = scn
         self.client = client
         self.registered = registered
         self.seed = seed
         self.model = client.model
-        self.prompt_version = PROMPT_VERSION
+        self.channel = channel
+        self.system = VOICE_SYSTEM_PROMPT if channel == "voice" else SYSTEM_PROMPT
+        self.prompt_version = VOICE_PROMPT_VERSION if channel == "voice" else PROMPT_VERSION
 
     async def next_turn(self, conversation: list[dict[str, str]], turn_no: int, executed: set[int]) -> CustomerTurn:
-        reply = await self.client.ask(SYSTEM_PROMPT, user_message(self.scn, conversation, turn_no, executed,
+        reply = await self.client.ask(self.system, user_message(self.scn, conversation, turn_no, executed,
                                                                   self.registered), RESPONSE_SCHEMA, seed=self.seed)
         usage = reply.usage()
         if reply.data is None:
@@ -150,5 +178,5 @@ class GeminiCustomer:
 
 
 def make_customer(scn: dict[str, Any], registered: frozenset[str], model: str = DEFAULT_MODEL,
-                  seed: int | None = None) -> GeminiCustomer:
-    return GeminiCustomer(scn, GeminiJson.from_config(model), registered, seed)
+                  seed: int | None = None, channel: str = "chat") -> GeminiCustomer:
+    return GeminiCustomer(scn, GeminiJson.from_config(model), registered, seed, channel)

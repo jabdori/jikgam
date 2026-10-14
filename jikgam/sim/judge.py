@@ -516,6 +516,32 @@ B. 고객 AI 지시 준수 판정. customer_instructions만 기준으로 한다.
 reason은 근거가 된 메시지 번호를 들어 한두 문장으로 쓴다. 항목 번호(index)는 입력의 index를 그대로 쓴다. 설명 없이 지정된 JSON만 출력한다."""
 
 
+# 음성 판(docs/evaluation-voice.md §4.5): 판정 규칙은 같고, 대화록이 무엇을 담는지만 음성에 맞게 설명한다.
+# 로그에 voice.session이 있으면 이 판을 쓴다. 바꾸는 문장은 채팅 판에 정확히 하나씩 있어야 한다.
+JUDGE_VOICE_PROMPT_VERSION = "sim-judge-voice-2026.10.14-1"
+VOICE_JUDGE_REPLACEMENTS = (
+    ("고객센터 채팅 상담 시뮬레이션의 평가자다.", "고객센터 전화(음성) 상담 시뮬레이션의 평가자다."),
+    ("transcript의 [상담 n]은 평가 대상인 상담 엔진이 보낸 메시지, [고객 n]은 AI 고객의 메시지,",
+     "transcript의 [상담 n]은 평가 대상인 상담 엔진의 답 중 실제로 음성으로 재생되기 시작한 것이다. 재생되지 않은 답은 transcript에 없다. "
+     "(끼어들기로 N초 재생 뒤 끊김)이 붙은 답은 고객이 끼어들어 그 뒤를 듣지 못했으므로, 재생 시간으로 보아 들렸을 앞부분만 안내한 것으로 본다. "
+     "[고객 n]은 AI 고객이 말한 문장이고, 그 아래 (인식) 줄은 음성 인식이 적어 상담 엔진이 받은 문장이다(인식은 틀릴 수 있다). "
+     "고객 AI의 지시 준수는 [고객 n]의 문장으로 판정한다."),
+    ("고객은 상담 엔진의 답을 기다리지 않고 메시지를 1초 간격으로 연달아 보낼 때가 있다(사건 실행 표시가 붙은 메시지와 그 바로 앞 메시지).",
+     "고객은 상담 엔진의 답을 기다리지 않고 1초쯤 뒤 이어 말할 때가 있다(사건 실행 표시가 붙은 말과 그 바로 앞 말)."),
+)
+
+
+def _voice_judge_prompt(base: str) -> str:
+    for old, new in VOICE_JUDGE_REPLACEMENTS:
+        if base.count(old) != 1:
+            raise ValueError(f"음성 판으로 바꿀 문장이 판정 프롬프트에 정확히 하나 있어야 한다: {old}")
+        base = base.replace(old, new)
+    return base
+
+
+JUDGE_VOICE_SYSTEM = _voice_judge_prompt(JUDGE_SYSTEM)
+
+
 def _item_schema(flag: str) -> dict[str, Any]:
     return {"type": "array", "items": {"type": "object", "properties": {
         "index": {"type": "integer"}, flag: {"type": "boolean"}, "reason": {"type": "string"}},
@@ -587,6 +613,47 @@ def transcript(events: list[dict[str, Any]]) -> str:
     return "\n".join(lines)
 
 
+def is_voice(events: list[dict[str, Any]]) -> bool:
+    """음성 실행 로그인가(음성 계층이 voice.session을 남긴다)."""
+    return any(e["type"] == "voice.session" for e in events)
+
+
+def voice_transcript(events: list[dict[str, Any]]) -> str:
+    """음성 판 대화록(docs/evaluation-voice.md §4.5). 시각 순서로 고객이 말한 문장(voice.segment), 엔진이 받은 인식
+    (utterance.end), 재생이 시작된 답(voice 노출, 끊겼으면 재생 시간), 업무 API 호출을 적는다."""
+    lv = LogView(events)
+    write_no = {c.index: k for k, c in enumerate(consent_writes(lv))}
+    texts = {e["suggestion_id"]: e["text"] for e in events if e["type"] in ("suggestion.created", "agent.say")}
+    ends = {e["suggestion_id"]: e for e in events if e["type"] == "tts.playback_end"}
+    items: list[tuple[float, int, str]] = []
+    n_c = 0
+    for i, e in enumerate(events):
+        if e["type"] == "voice.segment":
+            n_c += 1
+            m = e.get("marker")
+            mark = f" (사건 #{str(m['event']).rsplit('#', 1)[-1]} 실행 표시)" if isinstance(m, dict) and m.get("event") else ""
+            items.append((float(e["speech_start_ms"]), i, f"[고객 {n_c}]{mark} {e['text']}"))
+        elif e["type"] == "utterance.end" and e.get("speaker", "customer") == "customer":
+            items.append((float(e["t_ms"]), i, f"  (인식) {e['text']}"))
+        elif e["type"] == "suggestion.exposed" and e.get("channel") == "voice":
+            end = ends.get(e["suggestion_id"]) or {}
+            cut = ""
+            if end.get("interrupted") == "barge_in" and end.get("played_ms") is not None:
+                cut = f" (끼어들기로 {end['played_ms'] / 1000:.1f}초 재생 뒤 끊김)"
+            elif end.get("interrupted"):
+                cut = f" (재생 {(end.get('played_ms') or 0) / 1000:.1f}초 뒤 끊김)"
+            items.append((float(e.get("start_ms", e["t_ms"])), i, f"[상담] {texts.get(e['suggestion_id'], '')}{cut}"))
+    for c in lv.calls:
+        items.append((c.t, c.index, _call_line(c, write_no.get(c.index))))
+    lines, n_a = [], 0
+    for _, _, line in sorted(items):
+        if line.startswith("[상담]"):
+            n_a += 1
+            line = f"[상담 {n_a}]" + line[len("[상담]"):]
+        lines.append(line)
+    return "\n".join(lines)
+
+
 def judge_input(scn: dict[str, Any], events: list[dict[str, Any]]) -> str:
     exp = scn["expected"]
     ai_forbidden = forbidden_split(scn)[1]
@@ -602,7 +669,7 @@ def judge_input(scn: dict[str, Any], events: list[dict[str, Any]]) -> str:
             "reveal_rules": [{"index": i, "text": t} for i, t in enumerate(view.get("reveal_rules", []))],
             "mid_call_events": view["mid_call_events"],
         },
-        "transcript": transcript(events),
+        "transcript": voice_transcript(events) if is_voice(events) else transcript(events),
     }
     return "```json\n" + json.dumps(payload, ensure_ascii=False, indent=1) + "\n```"
 
@@ -628,11 +695,14 @@ def _validate(scn: dict[str, Any], data: dict[str, Any], n_consent: int = 0) -> 
 async def ai_judge(scn: dict[str, Any], events: list[dict[str, Any]], client: GeminiJson) -> dict[str, Any]:
     """AI 평가 한 번(빠진 항목이 있으면 한 번 더). 결과는 판정 파일에 그대로 저장한다."""
     user = judge_input(scn, events)
+    voice = is_voice(events)
+    system = JUDGE_VOICE_SYSTEM if voice else JUDGE_SYSTEM
     usages = []
-    record: dict[str, Any] = {"judge_model": client.model, "prompt_version": JUDGE_PROMPT_VERSION,
+    record: dict[str, Any] = {"judge_model": client.model,
+                              "prompt_version": JUDGE_VOICE_PROMPT_VERSION if voice else JUDGE_PROMPT_VERSION,
                               "forbidden_ai": forbidden_split(scn)[1], "verdict": None, "error": None}
     for _ in range(2):
-        reply = await client.ask(JUDGE_SYSTEM, user, JUDGE_SCHEMA)
+        reply = await client.ask(system, user, JUDGE_SCHEMA)
         usages.append(reply.usage())
         if reply.data is None:
             record["error"] = reply.error
