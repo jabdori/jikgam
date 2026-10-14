@@ -238,3 +238,5 @@ test에서 val로 고른 판별 모델(설정은 §8에서 ADR로 고정)과 `ge
 1. 모델(버전 ID), 질문 세트 버전, 프롬프트, 상태 구성, 임계값을 고정하고 그 내용을 ADR로 남긴다.
 2. 사용자가 test 20건의 대화, 정답, 이유를 직접 검토한다. 검토한 사례는 `source`를 `reviewed`로 바꾼다. 정답을 고쳐야 하면 test를 수정하지 않고 진행 기록에 남긴다.
 3. 고정한 설정으로 test를 한 번 평가한다. 결과를 본 뒤에는 §7과 설정을 바꾸지 않는다.
+
+보완(2026-10-14, 사용자 test 검토 직후, test 평가 전): 사용자가 20건 중 14건에 동의했고 6건에 의견을 냈다(`docs/labeling-review.md`). 정답 변경을 요구한 판단은 g017-2(sufficient, action), g018-2(sufficient, condition_changed, action), g026-1(sufficient, action), g026-2(sufficient, action), g030-1(intent)의 10개다. test 결과는 판단 146개 전체를 주 결과로 하고(§7 판정도 이것으로 한다), 이 10개를 뺀 136개 결과를 보조로 함께 보고한다.
