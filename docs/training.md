@@ -1,5 +1,8 @@
 # 한국어 판별 모델 학습
 
+> 이 문서는 한국어 판별 모델 학습의 환경, 데이터 구성, 학습·선별·서빙 절차와 val 측정 결과를 다룬다. 학습을 재현하거나 학습한 모델을 서빙하려는 사람이 읽으면 된다.
+> 기반 모델과 데이터 구성을 고른 이유는 [결정 기록 0012](adr/0012-한국어-판별-모델-기반과-데이터-구성.md)에 있다.
+
 공개 LLM(Qwen3.5-0.8B, 2B)에 Unsloth의 decision model 학습 경로로 Clef 형식 판별 헤드와 LoRA를 붙여 학습하고, 이 PC(RTX 3090 Ti)에서 Jev 호환 API로 서빙해 val에서 Jev·Clef-flash와 비교한다. 결정과 근거는 ADR 0012, 수치는 `results/training/`와 `results/decisions/val/`에 있다.
 
 학습에는 train 분할(`data/build/train.jsonl`), 보강 사례(`data/build/train_aug.jsonl`), typed-decisions의 train 분할만 쓴다. 선별·보정은 val만 쓴다. test 파일은 어떤 스크립트도 열지 않는다(`jikgam/train/data.py`는 train·train_aug가 아닌 행이나 val·test 그룹의 행을 만나면 멈춘다).
@@ -16,7 +19,11 @@
 | 패키지 | Python 3.13.14, unsloth 2026.10.5, unsloth_zoo 2026.10.5, torch 2.13.0+cu130(CUDA 13.0), transformers 5.5.0, peft 0.18.1, trl 0.23.1, datasets 4.3.0, bitsandbytes 0.50.2, accelerate 1.15.0 |
 | 평가 실행기 | Windows 쪽 저장소 환경(`uv sync`, Python 3.12). 로컬 서버는 WSL2의 localhost 전달로 `http://127.0.0.1:<포트>`에 접속한다 |
 
-드라이버 변경: 2026-10-14 07:21~07:22 Windows Update가 "NVIDIA Display Driver Update (32.0.16.1088)"를 설치해 드라이버가 591.86에서 610.88로 바뀌었다. 그 시각 학습 중이던 2B (d) 시드 3408이 `CUDA error: unknown error`로 끝났다. 610.88에서 시작한 2B 학습 4번 중 2번이 GPU를 쓰지 않은 채 멈췄고(07:32:20, 08:24:50), 두 번 모두 같은 시각에 시스템 로그에 `nvlddmkm` 이벤트 153이 남았다. 이날 0시 이후 시스템 로그의 `nvlddmkm` 이벤트는 이 두 개뿐이고, 591.86에서 끝까지 돈 학습 13번 동안에는 없었다. 첫 번째는 `wsl --shutdown`(이 PC의 모든 WSL 배포판을 멈춘다) 뒤에, 두 번째는 해당 프로세스만 끝낸 뒤 다시 돌렸고 둘 다 끝까지 돌았다. §6.1·§8·§9의 모든 수치와 §10의 처음 여섯 실행은 591.86에서, 2B 시드 3408·3409와 §10의 `20261014T090432`는 610.88에서 쟀다. 0.8B 시드 3408·3409는 06:43~07:17에 591.86에서 돌았다.
+드라이버 변경: 2026-10-14 07:21~07:22 Windows Update가 "NVIDIA Display Driver Update (32.0.16.1088)"를 설치해 드라이버가 591.86에서 610.88로 바뀌었다. 그 시각 학습 중이던 2B (d) 시드 3408이 `CUDA error: unknown error`로 끝났다.
+
+610.88에서 시작한 2B 학습 4번 중 2번이 GPU를 쓰지 않은 채 멈췄고(07:32:20, 08:24:50), 두 번 모두 같은 시각에 시스템 로그에 `nvlddmkm` 이벤트 153이 남았다. 이날 0시 이후 시스템 로그의 `nvlddmkm` 이벤트는 이 두 개뿐이고, 591.86에서 끝까지 돈 학습 13번 동안에는 없었다. 첫 번째는 `wsl --shutdown`(이 PC의 모든 WSL 배포판을 멈춘다) 뒤에, 두 번째는 해당 프로세스만 끝낸 뒤 다시 돌렸고 둘 다 끝까지 돌았다.
+
+§6.1·§8·§9의 모든 수치와 §10의 처음 여섯 실행은 591.86에서, 2B 시드 3408·3409와 §10의 `20261014T090432`는 610.88에서 쟀다. 0.8B 시드 3408·3409는 06:43~07:17에 591.86에서 돌았다.
 
 WSL2를 쓴 이유: Unsloth 문서가 Linux/WSL 설치를 먼저 안내하고, 설치 스크립트가 한 번에 끝났다(PyTorch cu130, GPU 인식 확인). Windows 설치는 시도하지 않았다.
 
@@ -32,7 +39,9 @@ source ~/.unsloth/studio/unsloth_studio/bin/activate
 python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"
 ```
 
-저장소 모듈은 `jikgam/train/run_wsl.sh <모듈> [인자]`로 실행한다. 이 스크립트는 venv를 켜고 `PYTHONPATH`를 저장소로 두며, Unsloth가 현재 폴더에 만드는 `unsloth_compiled_cache/`가 저장소에 생기지 않도록 실행 폴더(`$JIKGAM_RUNS`, 기본 `~/jikgam-train/runs`)에서 돌린다. WSL의 git은 Windows 쪽 worktree를 읽지 못해서, 학습 기록의 커밋은 `JIKGAM_GIT_COMMIT` 환경 변수로 넘긴다.
+저장소 모듈은 `jikgam/train/run_wsl.sh <모듈> [인자]`로 실행한다. 이 스크립트는 venv를 켜고 `PYTHONPATH`를 저장소로 두며, Unsloth가 현재 폴더에 만드는 `unsloth_compiled_cache/`가 저장소에 생기지 않도록 실행 폴더(`$JIKGAM_RUNS`, 기본 `~/jikgam-train/runs`)에서 돌린다.
+
+WSL의 git은 Windows 쪽 worktree를 읽지 못해서, 학습 기록의 커밋은 `JIKGAM_GIT_COMMIT` 환경 변수로 넘긴다.
 
 ## 3. 데이터
 
@@ -40,7 +49,9 @@ python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_
 
 `FastDecisionModel.build_dataset`은 `data/build/train.jsonl`을 그대로 받는다(판단 461개 중 버린 것 0, 잘린 것 0, `results/training/dataset_check.json`). `gold`의 `{type, label}`과 noul의 `"true"`/`"false"`도 그대로 읽는다. 그래도 그대로 쓰지 않고 두 가지를 바꾼다.
 
-- **질문 키:** Unsloth는 질문 ID를 프롬프트에 그대로 넣는다(`ID: applies:A-08`). 평가 실행기는 Workers AI 제약 때문에 모든 Jev 형식 백엔드에 `applies__A-08`로 보낸다(ADR 0007). 빌드 파일 그대로 학습하면 학습 입력과 서빙 입력이 달라진다. train 64건은 모두 applies 질문이 있어 64건 모두 입력 토큰이 달랐다. 그래서 학습 데이터의 키도 `jikgam.decision.types.wire_id`로 바꾼다. Unsloth 자체는 키의 `:`를 거부하지 않는다.
+- **질문 키:** Unsloth는 질문 ID를 프롬프트에 그대로 넣는다(`ID: applies:A-08`). 평가 실행기는 Workers AI 제약 때문에 모든 Jev 형식 백엔드에 `applies__A-08`로 보낸다(ADR 0007).
+
+  빌드 파일 그대로 학습하면 학습 입력과 서빙 입력이 달라진다. train 64건은 모두 applies 질문이 있어 64건 모두 입력 토큰이 달랐다. 그래서 학습 데이터의 키도 `jikgam.decision.types.wire_id`로 바꾼다. Unsloth 자체는 키의 `:`를 거부하지 않는다.
 - **질문 문구:** 평가 실행기와 같은 함수(`jikgam.eval.questions.render`)로 질문 세트에서 다시 만든다. 기본은 엔진 질문 세트 `q-2026.10.14-mix`(ADR 0011)다. 처음 학습한 `q35-0.8b-a-v1` 하나만 빌드 파일 문구(`q-2026.10.12`)로 학습했다.
 
 state는 JSON 문자열 그대로 둔다. Unsloth는 학습(`_parsed` 후 `render`)과 서빙(요청의 객체를 `render`) 모두 키 정렬, 공백 없음, `ensure_ascii=False`로 다시 직렬화하므로 한국어가 `\uXXXX`로 바뀌지 않고 두 경로의 입력이 같다.
@@ -64,7 +75,9 @@ state는 JSON 문자열 그대로 둔다. Unsloth는 학습(`_parsed` 후 `rende
 
 - 반복 4회는 (c)를 학습하기 전에 정했다. typed-decisions 1,200건 옆에서 한국어 64건이 묻히지 않게 하되(행 17.6%, 판단 23.5%. 입력 길이 중앙값이 한국어 2,402토큰, typed-decisions 876토큰이라 토큰으로는 중앙값 기준 추정 약 37%), 2 에폭 동안 한 사례를 8번 보는 정도로 제한했다. (d)는 사례당 노출을 (c)와 같게 같은 4회를 썼다(행 35.9%, 판단 45.2%). 반복 횟수는 val로 고르지 않았다.
 - train_aug(104건, 대화 그룹 a001~a038, 판단 777개)는 다른 작성자가 val 실패 유형을 기준으로 val 사례를 보지 않고 새로 썼다(`scripts/build_dataset.py --aug`). 어떤 유형을 보강할지는 val 결과에서 나왔으므로, (d)·(e)의 val 수치에는 그만큼 val 정보가 섞여 있다.
-- 섞는 순서는 시드 3407. 실제로 넣은 행은 `~/jikgam-train/runs/<실행>/train_rows.jsonl`에 남기고 sha256 앞 16자리를 학습 기록(`results/training/runs/<실행>.json`)에 적는다. 입력 파일 해시: `data/build/train.jsonl` `3a57f58bb3f6d705`, `data/build/train_aug.jsonl` `f64e713e361676ef`. 구성별로 실제로 넣은 행의 해시: (a) mix `07d064d9ecf5a7a6`, (a) q-2026.10.12 `c891fc460653bcaf`, (b) `db80b2cd3bba5763`, (c) `9d5aeb8548e42b01`, (d) `b4147322c6fb2190`, (e) `d89f0afa924850e6`(0.8B와 2B가 같은 행을 썼다).
+- 섞는 순서는 시드 3407. 실제로 넣은 행은 `~/jikgam-train/runs/<실행>/train_rows.jsonl`에 남기고 sha256 앞 16자리를 학습 기록(`results/training/runs/<실행>.json`)에 적는다.
+
+  입력 파일 해시: `data/build/train.jsonl` `3a57f58bb3f6d705`, `data/build/train_aug.jsonl` `f64e713e361676ef`. 구성별로 실제로 넣은 행의 해시: (a) mix `07d064d9ecf5a7a6`, (a) q-2026.10.12 `c891fc460653bcaf`, (b) `db80b2cd3bba5763`, (c) `9d5aeb8548e42b01`, (d) `b4147322c6fb2190`, (e) `d89f0afa924850e6`(0.8B와 2B가 같은 행을 썼다).
 
 ## 4. 토큰화 확인 (`jikgam/train/tokens.py`, `results/training/tokenizer.json`)
 
@@ -113,7 +126,9 @@ uv run python -m jikgam.train.screening_table                            # resul
 
 - 병합 모델을 Studio Decision API와 같은 방식으로 올린다(`FastDecisionModel.from_pretrained(max_seq_length=16384)`, 메모리가 충분하면 16비트). 답은 Studio가 쓰는 함수와 같은 `FastDecisionModel.predict`(`_clef_decide`)로 낸다. 같은 사례를 서버에 HTTP로 보낸 답과 확률이 소수 넷째 자리까지 같았다.
 - 지표는 저장소 정의(`jikgam.eval.metrics`, `label_and_prob`)로 계산한다.
-- 보정: 보정 전 정확도·ECE가 주 지표다. 보정은 `FastDecisionModel.calibrate`(온도 조정. 대부분 예측 라벨이 그대로지만 0.8B (b)에서는 정답 수가 81개에서 80개로 바뀌었다)를 val에 맞춘 것이라 표본 내 값이다. 두 값을 적는다. (1) val 전체로 맞춘 온도로 다시 예측해 저장소 정의로 계산한 ECE, (2) Unsloth가 돌려주는 값(val 사례를 반씩 나눠 서로의 절반으로 맞춘 온도, Unsloth의 ECE 정의). 보정한 모델은 저장하지 않고, 서빙하는 병합 모델은 보정 전이다.
+- 보정: 보정 전 정확도·ECE가 주 지표다. 보정은 `FastDecisionModel.calibrate`(온도 조정. 대부분 예측 라벨이 그대로지만 0.8B (b)에서는 정답 수가 81개에서 80개로 바뀌었다)를 val에 맞춘 것이라 표본 내 값이다.
+
+  두 값을 적는다. (1) val 전체로 맞춘 온도로 다시 예측해 저장소 정의로 계산한 ECE, (2) Unsloth가 돌려주는 값(val 사례를 반씩 나눠 서로의 절반으로 맞춘 온도, Unsloth의 ECE 정의). 보정한 모델은 저장하지 않고, 서빙하는 병합 모델은 보정 전이다.
 - val을 쓴 모든 선별 구성을 `results/training/val-screening/README.md`에 빠짐없이 적는다.
 
 ### 6.1 선별 결과(2026-10-14, val 판단 152개)
@@ -147,7 +162,9 @@ uv run python -m jikgam.train.screening_table                            # resul
 
 ### 6.3 학습 경로 점검(typed-decisions 공개 test)
 
-`jikgam/train/td_eval.py`로 (b) 모델을 typed-decisions의 공개 test(400건, 판단 2,000개)에 평가했다. 이 저장소의 test 분할과 무관하며 선택에 쓰지 않았다. Unsloth `evaluate` 정의로 0.8B 77.0%, 2B 78.8%였다(`results/training/typed-decisions-test/`). Unsloth 문서의 typed-decisions 수치(0.8B 73%, 2B 78%, 다른 데이터 12종을 더한 학습)와 같은 범위라 학습 경로가 정상으로 돈다고 봤다.
+`jikgam/train/td_eval.py`로 (b) 모델을 typed-decisions의 공개 test(400건, 판단 2,000개)에 평가했다. 이 저장소의 test 분할과 무관하며 선택에 쓰지 않았다.
+
+Unsloth `evaluate` 정의로 0.8B 77.0%, 2B 78.8%였다(`results/training/typed-decisions-test/`). Unsloth 문서의 typed-decisions 수치(0.8B 73%, 2B 78%, 다른 데이터 12종을 더한 학습)와 같은 범위라 학습 경로가 정상으로 돈다고 봤다.
 
 ## 7. 서빙 (`jikgam/train/serve.py`)
 
@@ -158,9 +175,13 @@ bash jikgam/train/run_wsl.sh serve --stop --port 8888
 ```
 
 - `UNSLOTH_SYSTEMONE_MODEL=<병합 폴더> UNSLOTH_SYSTEMONE_DEVICE=gpu unsloth studio -H 127.0.0.1 -p <포트>`로 띄운다. 엔드포인트는 `POST /v1/systemone`(Jev 형식).
-- Decision API는 환경 변수만으로 켜지지 않는다. 관리자 설정 `systemone_enabled`가 필요해서, 스크립트가 관리자 로그인(`/api/auth/login`) 뒤 `PUT /api/settings/systemone {"enabled": true, "backend": "pytorch"}`를 보내고 API 키를 발급한다(`POST /api/auth/api-keys`). 첫 실행의 관리자 비밀번호는 `UNSLOTH_STUDIO_PASSWORD`로 한 번만 정할 수 있고, 다시 주면 Studio가 시작을 거부한다. 비밀번호와 키는 WSL의 `~/jikgam-train/secrets/`(권한 600)에 두고, 평가 실행기는 저장소 `.env`(gitignore)의 `UNSLOTH_API_KEY`로 읽는다.
+- Decision API는 환경 변수만으로 켜지지 않는다. 관리자 설정 `systemone_enabled`가 필요해서, 스크립트가 관리자 로그인(`/api/auth/login`) 뒤 `PUT /api/settings/systemone {"enabled": true, "backend": "pytorch"}`를 보내고 API 키를 발급한다(`POST /api/auth/api-keys`).
+
+  첫 실행의 관리자 비밀번호는 `UNSLOTH_STUDIO_PASSWORD`로 한 번만 정할 수 있고, 다시 주면 Studio가 시작을 거부한다. 비밀번호와 키는 WSL의 `~/jikgam-train/secrets/`(권한 600)에 두고, 평가 실행기는 저장소 `.env`(gitignore)의 `UNSLOTH_API_KEY`로 읽는다.
 - 병합 폴더에 GGUF가 없어 PyTorch로 서빙된다(응답 헤더 `x-unsloth-decision-backend: pytorch`). 메모리가 충분하면 16비트로 올린다. 모델을 처음 올리는 데 31~50초 걸렸다.
-- 요청 모델 이름은 `laya-local`을 쓴다. 별칭(`laya`, `default`, `jev-latest`)은 설정 화면에서 고른 모델로 바뀔 수 있지만 `laya-local`은 환경 변수로 띄운 폴더에만 연결된다. 응답의 `model`도 항상 `laya-local`이라, 설정(`config/decision_models.toml`)의 `served`와 `weights_sha256_16`으로 가중치를 식별한다: 0.8B `94f8e23735f64400`, 2B `3f9dcfe6df110822`.
+- 요청 모델 이름은 `laya-local`을 쓴다. 별칭(`laya`, `default`, `jev-latest`)은 설정 화면에서 고른 모델로 바뀔 수 있지만 `laya-local`은 환경 변수로 띄운 폴더에만 연결된다.
+
+  응답의 `model`도 항상 `laya-local`이라, 설정(`config/decision_models.toml`)의 `served`와 `weights_sha256_16`으로 가중치를 식별한다: 0.8B `94f8e23735f64400`, 2B `3f9dcfe6df110822`.
 - 한 GPU에 두 Studio를 포트만 달리해 띄웠다(같은 `~/.unsloth/studio`). 같은 val 사례에 대한 서버 응답 확률은 선별 때 같은 프로세스에서 낸 확률과 소수 넷째 자리까지 같았다.
 - Windows의 실행기는 WSL2 localhost 전달로 접속한다. WSL 세션이 모두 끝나면 서버가 같이 내려갈 수 있어, 측정하는 동안 WSL 세션 하나를 열어 두었다.
 - 2B는 지연 때문에 나중에 Studio 대신 같은 프로세스 서버(`jikgam/train/serve_direct.py`, 설정 `q35-2b-ko-direct`)로 서빙하기로 했다(§10). 가중치와 답은 같다.
@@ -192,7 +213,11 @@ uv run python -m jikgam.train.tag_compare results/decisions/val/20261014T060432 
 - 정확도(Jev보다 5%p 넘게 낮지 않음): 2B는 4.2%p 낮아 범위 안, 0.8B는 8.8%p 낮아 범위 밖.
 - 지연(이 PC p95 ≤ 200ms): 0.8B 197ms(점검 실행 180ms)로 범위 안, 2B 448ms(점검 실행 348ms)로 범위 밖.
 - 두 조건을 함께 만족하는 모델은 val에서 없다. 이 결과는 val로 고른 모델의 val 수치이고, (d)의 보강 사례는 val 실패 유형을 보고 썼으므로 test에서는 더 낮을 수 있다.
-- 갱신(2026-10-14, §10·§11): 2B 후보를 같은 프로세스 서버로 서빙하면 로컬 실행 세 번의 p95가 175, 173, 181ms였고 답은 위 실행과 같다(152개 판단 × 5회 모두 같은 라벨, 확률 차 0). 그래서 2B 후보(시드 3407)는 val에서 두 조건을 함께 만족한다: 정확도 Jev보다 4.2%p 낮음(`20261014T060432`), p95 200ms 이하(`20261014T064204`, `20261014T064235`, `20261014T090432`). 단, 지연은 로컬 백엔드만 부른 조건에서 쟀고, 같은 구성을 다른 시드로 학습한 두 모델(128, 126개)은 정확도 조건(5%p, 이 실행 기준 133개 이상)을 만족하지 못했다. 판정은 §8 절차의 test 평가로 한다.
+- 갱신(2026-10-14, §10·§11): 2B 후보를 같은 프로세스 서버로 서빙하면 로컬 실행 세 번의 p95가 175, 173, 181ms였고 답은 위 실행과 같다(152개 판단 × 5회 모두 같은 라벨, 확률 차 0).
+
+  그래서 2B 후보(시드 3407)는 val에서 두 조건을 함께 만족한다: 정확도 Jev보다 4.2%p 낮음(`20261014T060432`), p95 200ms 이하(`20261014T064204`, `20261014T064235`, `20261014T090432`).
+
+  단, 지연은 로컬 백엔드만 부른 조건에서 쟀고, 같은 구성을 다른 시드로 학습한 두 모델(128, 126개)은 정확도 조건(5%p, 이 실행 기준 133개 이상)을 만족하지 못했다. 판정은 §8 절차의 test 평가로 한다.
 
 ### 8.2 실패 유형 태그별 비교
 
@@ -215,7 +240,9 @@ uv run python -m jikgam.train.tag_compare results/decisions/val/20261014T060432 
 | stale_suggestion (3건) | 21/24 | 23/24 | 21/24 | 23~24/24 | 같음 | 나빠짐 | 나아짐 | 같음 |
 | stt_error (2건) | 11/12 | 10/12 | 7/12 | 12/12 | 나아짐 | 나빠짐 | 나아짐 | 나빠짐 |
 
-- 2B는 clef-flash보다 14개 태그 중 13개에서 나아졌고 missing_evidence는 같았다. Jev보다 나아진 태그는 없다. 같음 5개(ellipsis, negation, number_date, similar_article, stale_suggestion), 나빠짐 9개(colloquial, correction, exception, handoff, insufficient_info, missing_evidence, multi_evidence, partial_stt, stt_error).
+- 2B는 clef-flash보다 14개 태그 중 13개에서 나아졌고 missing_evidence는 같았다.
+
+  Jev보다 나아진 태그는 없다. 같음 5개(ellipsis, negation, number_date, similar_article, stale_suggestion), 나빠짐 9개(colloquial, correction, exception, handoff, insufficient_info, missing_evidence, multi_evidence, partial_stt, stt_error).
 - 0.8B는 clef-flash보다 나아짐 9개, 나빠짐 4개(correction, missing_evidence, negation, number_date), 같음 1개(stale_suggestion). Jev보다는 ellipsis 하나(판단 7개, 사례 1건)만 나아졌고 같음 3개(insufficient_info, partial_stt, similar_article), 나빠짐 10개.
 
 ## 9. 참고 비용 (§2.6)
@@ -233,7 +260,9 @@ uv run python -m jikgam.train.tag_compare results/decisions/val/20261014T060432 
 
 ## 10. 2B 서빙 방식과 지연
 
-2B (d)의 가중치는 그대로 두고 서빙 방식만 바꿔 쟀다. 모든 측정은 로컬 백엔드 하나만 부르는 실행기 실행(원격 호출 없음, 5회 반복, 동시 실행 1, 예열 후, Windows 클라이언트 → WSL2 localhost)이고, 한 번에 서버 하나만 GPU에 올렸다. 서빙한 답은 선별 예측(`results/training/val-screening/q35-2b-d-mix__q-mix/predictions.jsonl`)과 판단마다 비교했다(`jikgam/train/compare_served.py`, 표는 `jikgam/train/latency_table.py`).
+2B (d)의 가중치는 그대로 두고 서빙 방식만 바꿔 쟀다. 모든 측정은 로컬 백엔드 하나만 부르는 실행기 실행(원격 호출 없음, 5회 반복, 동시 실행 1, 예열 후, Windows 클라이언트 → WSL2 localhost)이고, 한 번에 서버 하나만 GPU에 올렸다.
+
+서빙한 답은 선별 예측(`results/training/val-screening/q35-2b-d-mix__q-mix/predictions.jsonl`)과 판단마다 비교했다(`jikgam/train/compare_served.py`, 표는 `jikgam/train/latency_table.py`).
 
 | 방식 | 실행 | p50 ms | p95 ms | 최대 ms | 정답(회차 평균)/152 | 선별 예측과 라벨 일치 | 확률 차 중앙값 / 최대 |
 |---|---|---|---|---|---|---|---|
@@ -247,7 +276,11 @@ uv run python -m jikgam.train.tag_compare results/decisions/val/20261014T060432 
 
 참고로 앞선 조건의 Studio PyTorch: 0.8B 서버와 함께 올리고 원격 백엔드와 번갈아 부른 실행 `20261014T060432` p50 220 / p95 448ms, 0.8B와 번갈아 부른 실행 `20261014T060738` p50 204 / p95 348ms. 한 GPU에 모델 하나만 올리고 그것만 부르면 꼬리가 줄었다.
 
-- **llama.cpp(GGUF):** Studio의 Clef GGUF 경로(`jikgam/train/export_gguf.py`로 내보내고 `serve.py --backend llama.cpp`로 서빙, unslothai/llama.cpp b11541). 세 양자화 모두 회차 0에서 5개 호출이 1.7~3.5초 걸렸다(1초 넘는 호출은 모두 회차 0). 회차 1~4의 중앙값도 BF16 244~270ms, Q8_0 196~216ms로 Studio PyTorch의 회차별 중앙값(187~197ms)보다 빠르지 않았다. 라벨이 선별 예측과 다른 판단은 BF16 1개(g033-1 intent, 확률 0.4979 → 0.5059로 정답 쪽으로 바뀌어 5회 모두 다름), Q8_0 3개(회차 합 15개), Q4_K_M 13개(회차 합 65개)였다.
+- **llama.cpp(GGUF):** Studio의 Clef GGUF 경로(`jikgam/train/export_gguf.py`로 내보내고 `serve.py --backend llama.cpp`로 서빙, unslothai/llama.cpp b11541). 세 양자화 모두 회차 0에서 5개 호출이 1.7~3.5초 걸렸다(1초 넘는 호출은 모두 회차 0).
+
+  회차 1~4의 중앙값도 BF16 244~270ms, Q8_0 196~216ms로 Studio PyTorch의 회차별 중앙값(187~197ms)보다 빠르지 않았다.
+
+  라벨이 선별 예측과 다른 판단은 BF16 1개(g033-1 intent, 확률 0.4979 → 0.5059로 정답 쪽으로 바뀌어 5회 모두 다름), Q8_0 3개(회차 합 15개), Q4_K_M 13개(회차 합 65개)였다.
 - **GPU 클럭 고정:** `nvidia-smi -lgc`가 "The current user does not have permission to change clocks"로 거부됐다(관리자 권한 필요). 측정하지 않았다. 유휴 상태는 P8, 210MHz였다.
 - **요청 경로:** Studio 로그의 서버 처리 시간(`process_time_ms`, 실행기 예열 요청 1개 포함 106~107건)은 PyTorch p50 172 / p95 205ms였다. 클라이언트 지연(188/217)과의 차이인 약 15ms가 Windows → WSL2 전달 몫이다. 선별 때 같은 프로세스에서 잰 `predict`는 p50 132 / p95 179ms라, Studio의 요청 경로(설정·키 확인, 스레드 풀, 별도 작업 프로세스와의 파이프)에 약 40ms가 든다.
 - **같은 프로세스 서버:** `jikgam/train/serve_direct.py`는 Studio와 같은 방식으로 병합 모델을 올리고(16비트, 최대 16,384토큰) Studio의 작업 프로세스가 부르는 함수(`unsloth.models.decision._clef_decide`)를 서버 프로세스에서 직접 부른다. 응답 형식도 Studio와 같다. 답은 선별 예측과 760개 모두 같았고 확률 차는 0이었다.

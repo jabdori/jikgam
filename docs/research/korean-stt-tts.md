@@ -1,5 +1,8 @@
 # 한국어 STT·TTS와 음성 런타임 조사
 
+> 이 문서는 한국어 음성 인식(STT)·음성 합성(TTS) 서비스와 음성 런타임(LiveKit, Pipecat)을 실제 호출과 공식 문서로 비교한 조사 기록이다.
+> 음성 구성을 바꾸거나 [결정 기록 0008](../adr/0008-음성-런타임과-STT-TTS.md)의 근거를 확인하려는 사람이 읽으면 된다.
+
 - 날짜: 2026-10-14 (호출은 01:58~02:15 KST, 서울)
 - 결정: [ADR 0008](../adr/0008-음성-런타임과-STT-TTS.md)
 - 표기: **[호출]** 실제 호출로 확인, **[문서]** 공식 문서나 소스로만 확인
@@ -73,7 +76,15 @@ LiveKit Agents 1.8.6(2026-10-09), Pipecat 1.12.0(2026-09-26) 기준.
 | 자체 엔진 연결 | `llm.LLM` 하위 클래스 또는 `llm_node` 재정의 | 사용자 정의 `FrameProcessor` |
 | 라이선스 | Apache-2.0 | BSD-2-Clause |
 
-출처: https://github.com/livekit/agents, https://docs.livekit.io/testing/overview.md, https://docs.livekit.io/testing/simulations.md, https://github.com/pipecat-ai/pipecat, https://docs.pipecat.ai/pipecat/evals/overview.md, https://docs.pipecat.ai/pipecat/fundamentals/interruptions.md, https://github.com/pipecat-ai/smart-turn
+출처:
+
+- https://github.com/livekit/agents
+- https://docs.livekit.io/testing/overview.md
+- https://docs.livekit.io/testing/simulations.md
+- https://github.com/pipecat-ai/pipecat
+- https://docs.pipecat.ai/pipecat/evals/overview.md
+- https://docs.pipecat.ai/pipecat/fundamentals/interruptions.md
+- https://github.com/pipecat-ai/smart-turn
 
 ## 확인하지 않은 것
 

@@ -1,5 +1,7 @@
 # 0009. 업무 API는 엔진 밖의 Go 서비스로 둔다
 
+> 처음 읽는다면: [전체 흐름 안내](../overview.md) · [용어집](../glossary.md)
+
 - 상태: 채택
 - 날짜: 2026-10-14
 - 관련: `bizapi/`, `domain/org_a/api.md`, ADR 0004

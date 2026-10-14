@@ -1,5 +1,7 @@
 # 0008. 음성 런타임은 Pipecat, STT·TTS는 Gemini
 
+> 처음 읽는다면: [전체 흐름 안내](../overview.md) · [용어집](../glossary.md)
+
 - 상태: 채택 (Windows에서 런타임 설치·실행은 3단계 시작 때 확인. 실패하면 새 ADR) — 2026-10-14 Pipecat 1.12.0으로 Windows 실행 확인, 런타임 유지(`docs/voice.md` §2)
 - 날짜: 2026-10-14
 - 관련: `docs/research/korean-stt-tts.md`, `docs/design.md` §5.2, §8
