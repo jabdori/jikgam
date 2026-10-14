@@ -80,6 +80,7 @@ weights_sha256_16 = "3f9dcfe6df110822"
 # 2B (d)의 서빙 방식 비교(docs/training.md §10). 가중치는 q35-2b-ko와 같고, Studio의 llama.cpp 경로로 GGUF를 서빙한다.
 # 서빙 폴더 ~/jikgam-train/serve/q35-2b-d-mix-<양자화>는 jikgam/train/export_gguf.py가 만든다(병합 파일은 링크).
 # serve.py --backend llama.cpp로 띄운다. 런타임 설정은 Studio 설치 전체에 걸리므로 한 번에 하나씩 잰다.
+# 측정(2026-10-14) 뒤 GGUF 서빙 폴더는 지웠다. 다시 재려면 export_gguf.py로 다시 만든다. 주장 3 후보는 q35-2b-ko-direct(ADR 0012).
 ["q35-2b-ko-gguf-bf16"]
 kind = "systemone"
 url = "http://127.0.0.1:8890/v1/systemone"
