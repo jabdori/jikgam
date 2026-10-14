@@ -1,0 +1,71 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 1]에서 이번 달 요금이 모두 사라지지 않는다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 3] 이전에 업무 API를 통해 차감액(6,380원)을 확인한 후 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "청약철회나 환불로 처리하지 않고 연 구독 결제 시 차감되는 방식으로 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 1]과 [상담 3]에서 남은 일수만큼 일할 계산되어 차감된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객이 궁금해하던 요금 차감액과 할인가 적용 여부에 대해 약관에 근거하여 명확하게 답변했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "고객이 [고객 4]에서 '연간 할인가 칠만 구천 원으로 되나요?'라고 중간에 질문했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "고객이 3번째 턴 이후인 [고객 4]에서 사건 실행 표시와 함께 할인가 적용 여부를 문의했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 25791.1,
+   "input_tokens": 2237,
+   "output_tokens": 1162,
+   "thoughts_tokens": 726,
+   "cost_usd": 0.018418,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.018418,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "s16-r3-dev3-r3-A",
+ "scenario": "s16"
+}
