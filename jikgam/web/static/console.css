@@ -26,7 +26,8 @@ body:not(.mode-replay) .replay-only { display: none; }
 }
 
 /* 대화 */
-.transcript { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; max-height: 60vh; overflow-y: auto; }
+.transcript { max-height: 60vh; overflow-y: auto; border-radius: 6px; }
+.transcript-list { list-style: none; margin: 0; padding: 2px; display: flex; flex-direction: column; gap: 8px; }
 .msg { max-width: 92%; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); }
 .msg .who { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 2px; }
 .msg.customer { align-self: flex-start; }

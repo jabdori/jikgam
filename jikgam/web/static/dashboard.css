@@ -21,3 +21,4 @@ thead th { white-space: nowrap; }
 @media (max-width: 640px) {
   .run-card > summary { flex-direction: column; }
 }
+#group-table tbody th, #run-table tbody th { min-width: 12rem; }

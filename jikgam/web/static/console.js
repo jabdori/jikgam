@@ -177,7 +177,8 @@ function renderTranscript(v) {
     if (existing) existing.replaceWith(node); else list.append(node);
   }
   ui.rendered.transcript = items.length;
-  if (items.length) list.scrollTop = list.scrollHeight;
+  const box = $("transcript-box");
+  if (items.length) box.scrollTop = box.scrollHeight;
 }
 
 function transcriptItem(t, v) {
@@ -292,7 +293,8 @@ function renderHandoff(v, s) {
     note.textContent = "고객 발화가 있어야 인계할 수 있다.";
   } else {
     btn.disabled = false;
-    note.textContent = "누르면 엔진이 인계 사유(agent_request)를 두고 정책 경로로 create_handoff와 인계 안내를 만든다.";
+    note.textContent = "누르면 엔진이 인계 사유(agent_request)를 두고 정책 경로로 create_handoff와 인계 안내를 만든다." +
+      (v.evidence && v.evidence.caller === "third_party" ? " 지금 통화자가 제3자로 판단돼 있어 정책 규칙 0(거절 안내)이 앞선다." : "");
   }
 }
 
@@ -392,7 +394,7 @@ function renderTools(tools) {
         t.discarded ? el("span", { class: "badge", text: "폐기됨(지난 버전, 사실에 반영 안 함)" }) : null),
       el("div", { class: "small" }, t.summary || "응답 기다리는 중",
         t.latency_ms !== null ? el("span", { class: "muted num", text: ` · ${fmtMs(t.latency_ms)} ms · 시도 ${t.attempts} · v${t.request_version}` }) : null));
-    if (t.data) li.append(el("details", {}, el("summary", { class: "small", text: "응답 본문" }), el("pre", { text: JSON.stringify(t.data, null, 1) })));
+    if (t.data) li.append(el("details", {}, el("summary", { class: "small", text: "응답 본문" }), el("pre", { tabindex: "0", text: JSON.stringify(t.data, null, 1) })));
     list.append(li);
   }
 }
