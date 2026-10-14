@@ -223,7 +223,16 @@ def _counts(text: str) -> list[tuple[int, CountClaim]]:
 
 _SPOKEN_RUN = re.compile(r"[공영일이삼사오육륙칠팔구](?:(?:[\s-]|,\s*|…\s*)?[공영일이삼사오육륙칠팔구])+")
 _PARTICLE_AFTER = re.compile(r"^(?:요|에요|예요|고|라고|랑|입|으로|로|은|는|를|을|$|[^가-힣])")
-_PHONE = re.compile(r"(?<!\d)(01[016789])[-\s.]?(\d{3,4})[-\s.]?(\d{4})(?!\d)")
+# 전화번호 묶음 사이의 구분: '-', 공백, '.', 그리고 말로 읽는 구분 '에'·'의'. 번호는 흔히 "공일공에 공공공공에 공공공일"로
+# 읽고, STT는 이것을 "010에 0000에 0001"이나 "0100000에 0110"으로 적는다(개발용 음성 재생 s01·s21). '에'·'의'는 01X로
+# 시작하는 3·3~4·4자리 모양 안에서만 구분으로 본다. 날짜·금액에는 이 모양이 없다.
+_PHONE_SEP = r"(?:\s*[에의]\s*|[-\s.])?"
+_PHONE = re.compile(rf"(?<!\d)(01[016789]){_PHONE_SEP}(\d{{3,4}}){_PHONE_SEP}(\d{{4}})(?!\d)")
+_KDIGITS = "공영일이삼사오육륙칠팔구"
+# 한 자씩 읽은 전화번호를 '에'·'의'로 끊어 적은 것("공일공에 공공공공에 공공공일이에요"). 마지막 '이'는 서술격 조사일 수 있다.
+_SPOKEN_PHONE = re.compile(
+    rf"(?<![가-힣])(공일[공일육칠팔구])(\s*[에의]\s*|[\s-]+)([{_KDIGITS}]{{3,4}})(\s*[에의]\s*|[\s-]+)([{_KDIGITS}]{{4}})"
+    rf"(?=이(?:요|에요|예요|고|라고)|(?![{_KDIGITS}]))")
 # 뒤에 마침표가 와도 문장 끝이면 인증번호로 읽는다("인증번호 000103."). 소수("1234.5")는 읽지 않는다.
 _OTP = re.compile(r"(?<![\d,.-])(\d{4,6})(?![\d,-]|\.\d)(?!\s*(?:원|년|월|일|번|회|개|명|시|분|초|만|천|살|세|%))")
 
@@ -264,6 +273,14 @@ def _spoken_digits(text: str) -> str:
         if not _PARTICLE_AFTER.match(rest):
             return raw
         return convert(raw) or raw
+
+    def phone_repl(m: re.Match) -> str:
+        if not any(sep.strip() in ("에", "의") for sep in (m.group(2), m.group(4))):
+            return m.group(0)  # 공백·'-'로만 끊었으면 아래 일반 규칙이 읽는다
+        digits = [("".join(str(_DIGIT[c]) for c in g)) for g in (m.group(1), m.group(3), m.group(5))]
+        return digits[0] + m.group(2) + digits[1] + m.group(4) + digits[2]
+
+    text = _SPOKEN_PHONE.sub(phone_repl, text)
     return _SPOKEN_RUN.sub(repl, text)
 
 
