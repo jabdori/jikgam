@@ -1,0 +1,157 @@
+{
+  "seed": 20261016,
+  "size": 60,
+  "context": 20,
+  "segments": [
+    {
+      "id": "seg-01",
+      "doc": "ecom-act",
+      "group": "법령",
+      "region": "전체",
+      "start": 4,
+      "end": 63,
+      "context_start": 1,
+      "seed": "20261016:ecom-act:전체:0"
+    },
+    {
+      "id": "seg-02",
+      "doc": "ecom-decree",
+      "group": "법령",
+      "region": "전체",
+      "start": 20,
+      "end": 79,
+      "context_start": 1,
+      "seed": "20261016:ecom-decree:전체:0"
+    },
+    {
+      "id": "seg-03",
+      "doc": "ecom-rule",
+      "group": "법령",
+      "region": "전체",
+      "start": 12,
+      "end": 71,
+      "context_start": 1,
+      "seed": "20261016:ecom-rule:전체:0"
+    },
+    {
+      "id": "seg-04",
+      "doc": "terms-act",
+      "group": "법령",
+      "region": "전체",
+      "start": 271,
+      "end": 330,
+      "context_start": 251,
+      "seed": "20261016:terms-act:전체:0"
+    },
+    {
+      "id": "seg-05",
+      "doc": "consumer-act",
+      "group": "법령",
+      "region": "전체",
+      "start": 54,
+      "end": 113,
+      "context_start": 34,
+      "seed": "20261016:consumer-act:전체:0"
+    },
+    {
+      "id": "seg-06",
+      "doc": "content-act",
+      "group": "법령",
+      "region": "전체",
+      "start": 181,
+      "end": 240,
+      "context_start": 161,
+      "seed": "20261016:content-act:전체:0"
+    },
+    {
+      "id": "seg-07",
+      "doc": "dispute-std",
+      "group": "고시",
+      "region": "본문·별표 1·3·4",
+      "start": 158,
+      "end": 217,
+      "context_start": 138,
+      "seed": "20261016:dispute-std:본문·별표 1·3·4:0"
+    },
+    {
+      "id": "seg-08",
+      "doc": "dispute-std",
+      "group": "고시",
+      "region": "별표 2",
+      "start": 3909,
+      "end": 3968,
+      "context_start": 3889,
+      "seed": "20261016:dispute-std:별표 2:0"
+    },
+    {
+      "id": "seg-09",
+      "doc": "dispute-std",
+      "group": "고시",
+      "region": "별표 2",
+      "start": 4580,
+      "end": 4639,
+      "context_start": 4560,
+      "seed": "20261016:dispute-std:별표 2:0"
+    },
+    {
+      "id": "seg-10",
+      "doc": "content-guide",
+      "group": "고시",
+      "region": "전체",
+      "start": 102,
+      "end": 161,
+      "context_start": 82,
+      "seed": "20261016:content-guide:전체:0"
+    },
+    {
+      "id": "seg-11",
+      "doc": "content-guide",
+      "group": "고시",
+      "region": "전체",
+      "start": 168,
+      "end": 227,
+      "context_start": 148,
+      "seed": "20261016:content-guide:전체:0"
+    },
+    {
+      "id": "seg-12",
+      "doc": "game-terms",
+      "group": "표준약관",
+      "region": "전체",
+      "start": 220,
+      "end": 279,
+      "context_start": 200,
+      "seed": "20261016:game-terms:전체:1"
+    },
+    {
+      "id": "seg-13",
+      "doc": "game-terms",
+      "group": "표준약관",
+      "region": "전체",
+      "start": 329,
+      "end": 388,
+      "context_start": 309,
+      "seed": "20261016:game-terms:전체:1"
+    },
+    {
+      "id": "seg-14",
+      "doc": "ecom-terms",
+      "group": "표준약관",
+      "region": "전체",
+      "start": 203,
+      "end": 262,
+      "context_start": 183,
+      "seed": "20261016:ecom-terms:전체:0"
+    },
+    {
+      "id": "seg-15",
+      "doc": "ecom-terms",
+      "group": "표준약관",
+      "region": "전체",
+      "start": 269,
+      "end": 328,
+      "context_start": 249,
+      "seed": "20261016:ecom-terms:전체:0"
+    }
+  ]
+}

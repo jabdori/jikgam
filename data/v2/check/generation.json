@@ -1,0 +1,82 @@
+{
+  "model": "gpt-6.1-sol",
+  "effort": "high",
+  "codex_version": "codex-cli 0.162.1",
+  "seed": 20261016,
+  "targets": {
+    "법령/single": 12,
+    "법령/multi": 8,
+    "고시/single": 9,
+    "고시/multi": 6,
+    "표준약관/single": 9,
+    "표준약관/multi": 6
+  },
+  "over": 1.2,
+  "prompt_sha256": {
+    "법령": "613c7b273534ed80bd7e205ed982f5a9e0ac2e73a1635b5b75c10a5d13eba3ba",
+    "고시": "93a7aa8aa18406d10ac227917af902b30c6ca810124e3d9cb9fd8f3a2d56ee9d",
+    "표준약관": "6a415974a78699dec6a220dabe3d1307c7b93b5c91d02d1c76e77555128e230c"
+  },
+  "counts": {
+    "법령": {
+      "written": 25,
+      "kept_single": 15,
+      "kept_multi": 10,
+      "chosen_single": 12,
+      "short_single": 0,
+      "chosen_multi": 8,
+      "short_multi": 0
+    },
+    "고시": {
+      "written": 19,
+      "kept_single": 11,
+      "kept_multi": 8,
+      "chosen_single": 9,
+      "short_single": 0,
+      "chosen_multi": 6,
+      "short_multi": 0
+    },
+    "표준약관": {
+      "written": 19,
+      "kept_single": 11,
+      "kept_multi": 8,
+      "chosen_single": 9,
+      "short_single": 0,
+      "chosen_multi": 6,
+      "short_multi": 0
+    }
+  },
+  "usage": {
+    "법령": {
+      "seconds": 236.4,
+      "input_tokens": 128757,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 11952,
+      "reasoning_output_tokens": 4142,
+      "exit": 0
+    },
+    "고시": {
+      "seconds": 227.0,
+      "input_tokens": 127886,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 10995,
+      "reasoning_output_tokens": 5696,
+      "exit": 0
+    },
+    "표준약관": {
+      "seconds": 176.6,
+      "input_tokens": 38076,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 8421,
+      "reasoning_output_tokens": 3526,
+      "exit": 0
+    }
+  },
+  "files": {
+    "data/v2/check/items.jsonl": 35,
+    "data/v2/local/check/items.jsonl": 15
+  }
+}

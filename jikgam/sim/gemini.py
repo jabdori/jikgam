@@ -26,6 +26,7 @@ class JsonReply:
     input_tokens: int = 0
     output_tokens: int = 0  # 사고 토큰 포함
     thoughts_tokens: int = 0
+    cached_tokens: int = 0  # 입력 중 암묵 캐시에서 온 토큰(cost_usd는 캐시 할인을 빼지 않은 값이다)
     cost_usd: float = 0.0  # 모든 시도의 합
     attempts: int = 1
     error: str | None = None
@@ -33,7 +34,7 @@ class JsonReply:
     def usage(self) -> dict[str, Any]:
         return {"model": self.model, "latency_ms": round(self.latency_ms, 1), "input_tokens": self.input_tokens,
                 "output_tokens": self.output_tokens, "thoughts_tokens": self.thoughts_tokens,
-                "cost_usd": self.cost_usd, "attempts": self.attempts, "error": self.error}
+                "cached_tokens": self.cached_tokens, "cost_usd": self.cost_usd, "attempts": self.attempts, "error": self.error}
 
 
 class GeminiJson:
@@ -59,11 +60,15 @@ class GeminiJson:
         return cls(name, cfg["model"], secrets()[cfg["api_key_env"]], cfg["price_input_per_mtok"],
                    cfg["price_output_per_mtok"], thinking_level=cfg.get("thinking_level"), **kw)
 
-    async def ask(self, system: str, user: str, schema: dict[str, Any], seed: int | None = None) -> JsonReply:
-        """seed는 generationConfig.seed로 보낸다. 같은 seed라도 출력이 같다는 보장은 없다(재현을 돕는 기록용)."""
+    async def ask(self, system: str, user: str, schema: dict[str, Any], seed: int | None = None,
+                  max_output_tokens: int | None = None) -> JsonReply:
+        """seed는 generationConfig.seed로 보낸다. 같은 seed라도 출력이 같다는 보장은 없다(재현을 돕는 기록용).
+        max_output_tokens를 주지 않으면 모델 기본값을 쓴다(긴 출력을 받는 v2 평가 세트 생성에서만 준다)."""
         gen: dict[str, Any] = {"responseMimeType": "application/json", "responseJsonSchema": schema}
         if seed is not None:
             gen["seed"] = seed
+        if max_output_tokens is not None:
+            gen["maxOutputTokens"] = max_output_tokens
         if self.thinking_level:
             gen["thinkingConfig"] = {"thinkingLevel": self.thinking_level}
         body = {"systemInstruction": {"parts": [{"text": system}]},
@@ -97,7 +102,8 @@ class GeminiJson:
         total = usage.get("totalTokenCount")
         tout = int(total) - tin if total is not None else int(usage.get("candidatesTokenCount", 0)) + thoughts
         reply = JsonReply(None, str(data.get("modelVersion") or f"{self.model} (응답에 모델 없음)"), latency, tin, tout,
-                          thoughts, (tin * self.price_in + tout * self.price_out) / 1e6)
+                          thoughts, int(usage.get("cachedContentTokenCount", 0)),
+                          (tin * self.price_in + tout * self.price_out) / 1e6)
         try:
             text = "".join(p.get("text", "") for p in data["candidates"][0]["content"]["parts"] if not p.get("thought"))
             parsed = json.loads(text)
