@@ -1,8 +1,8 @@
-"""웹 화면 세 개(ADR 0005): 상담 콘솔, 턴 상세 타임라인, 평가 대시보드.
+"""웹 콘솔 두 개(ADR 0021): 고객사 콘솔(/app, 상담 운영팀)과 관리 콘솔(/admin, 직감 팀 내부).
 
-엔진 동작은 바꾸지 않는다. 콘솔은 엔진 세션(정책 B·C)이나 RAG 기준선 세션(정책 A)을 그대로 돌리고, 세션의 이벤트 로그
-줄을 화면 메시지로 옮긴다. 타임라인과 대시보드는 결과 폴더의 원본 로그만 읽고, 수치는 jikgam.engine.events,
-jikgam.sim.report·metrics, jikgam.eval.report·metrics의 함수로 계산한다.
+화면은 서버가 공용 컴포넌트로 HTML을 만든다(jikgam/web/ui, saas, admin). 화면 수치는 결과 폴더의 원본 로그와 녹음에서
+화면을 열 때 계산한다(jikgam/web/data, dashboard.py). 디자인 하네스(ADR 0022, docs/design/README.md)를 통과해야 화면을
+완료로 본다.
 
     uv run python -m jikgam.web --port 8100
 """

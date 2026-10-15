@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>직감 · 연동</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+KR:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F5F7}
+a{color:#2449B8}a:hover{color:#1A3687}
+</style>
+</helmet>
+<div style="min-height: 1060px; display: flex; flex-wrap: wrap; background: #F4F5F7; color: #15171C; font-family: 'IBM Plex Sans KR', system-ui, sans-serif; font-size: 14px; line-height: 1.5;">
+
+  <nav aria-label="주 메뉴" style="flex: 1 1 232px; max-width: 260px; min-width: 220px; box-sizing: border-box; background: #FFFFFF; border-right: 1px solid #E3E5EA; padding: 20px 16px; display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 4px;">
+      <div aria-hidden="true" style="width: 28px; height: 28px; border-radius: 7px; background: #15171C; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px;">직</div>
+      <div style="font-weight: 700; font-size: 17px;">직감</div>
+    </div>
+    <button type="button" style="all: unset; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #E3E5EA; border-radius: 10px; background: #F9FAFB;">
+      <div aria-hidden="true" style="width: 30px; height: 30px; border-radius: 8px; background: #E8EEFB; color: #2449B8; display: flex; align-items: center; justify-content: center; font-weight: 700;">별</div>
+      <div style="flex-grow: 1;"><div style="font-weight: 600;">별담 플러스</div><div style="font-size: 12px; color: #5A6170;">고객센터</div></div>
+    </button>
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <div style="font-size: 11px; font-weight: 600; color: #8A909C; padding: 0 12px 4px; letter-spacing: 0.04em;">운영</div>
+      <a href="Main.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">실시간 통화</a>
+      <a href="Compare.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">통화 기록</a>
+      <a href="Report.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">운영 리포트</a>
+      <div style="font-size: 11px; font-weight: 600; color: #8A909C; padding: 14px 12px 4px; letter-spacing: 0.04em;">설정</div>
+      <a href="Knowledge.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">지식·정책</a>
+      <a href="Integrations.dc.html" aria-current="page" style="padding: 9px 12px; border-radius: 8px; background: #E8EEFB; color: #1A3687; font-weight: 600; text-decoration: none;">연동</a>
+    </div>
+    <div style="margin-top: auto; font-size: 12px; color: #5A6170; padding: 10px 12px; border-radius: 8px; background: #F4F5F7;">데모 데이터: AI 고객과 나눈 합성 상담입니다.</div>
+  </nav>
+
+  <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column;">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px 28px; background: #FFFFFF; border-bottom: 1px solid #E3E5EA;">
+      <label for="q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">검색</label>
+      <input id="q" type="search" placeholder="고객 이름, 전화번호, 발화 내용 검색" style="flex: 1 1 280px; max-width: 420px; font: inherit; min-height: 40px; padding: 0 12px; border: 1px solid #D5D8DF; border-radius: 9px; background: #F9FAFB;">
+      <span aria-label="사용자 상담 운영팀" style="margin-left: auto; width: 32px; height: 32px; border-radius: 50%; background: #2449B8; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600;">운</span>
+    </div>
+
+    <main style="box-sizing: border-box; padding: 22px 28px 32px; display: flex; flex-direction: column; gap: 16px;">
+      <header style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px;">
+        <div style="flex-grow: 1;">
+          <h1 style="margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em;">연동</h1>
+          <div style="font-size: 13px; color: #5A6170;">AI 상담원이 쓰는 업무 시스템과 전화 회선을 연결합니다.</div>
+        </div>
+        <button type="button" style="font: inherit; font-size: 13px; cursor: pointer; min-height: 38px; padding: 0 14px; border: 1px solid #D5D8DF; border-radius: 9px; background: #FFFFFF; color: #15171C; font-weight: 600;">연결 테스트</button>
+      </header>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px;">
+        <sc-for list="{{conns}}" as="c" hint-placeholder-count="3">
+          <section aria-label="{{c.n}}" style="background: #FFFFFF; border: 1px solid #E3E5EA; border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div aria-hidden="true" style="width: 34px; height: 34px; border-radius: 9px; background: #F4F5F7; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #3A404C;">{{c.i}}</div>
+              <div style="flex-grow: 1;"><div style="font-weight: 600;">{{c.n}}</div><div style="font-size: 12px; color: #5A6170;">{{c.d}}</div></div>
+              <span style="font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: #E9F5EE; color: #1F6B45;">연결됨</span>
+            </div>
+            <sc-for list="{{c.rows}}" as="r" hint-placeholder-count="3">
+              <div style="display: flex; gap: 10px; font-size: 13px; padding-top: 8px; border-top: 1px solid #F0F1F4;">
+                <span style="color: #5A6170; min-width: 96px;">{{r.k}}</span>
+                <span style="flex-grow: 1;">{{r.v}}</span>
+              </div>
+            </sc-for>
+          </section>
+        </sc-for>
+      </div>
+
+      <section aria-label="업무 API 동작" style="background: #FFFFFF; border: 1px solid #E3E5EA; border-radius: 12px; overflow: hidden;">
+        <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; padding: 16px 18px 10px;">
+          <h2 style="margin: 0; font-size: 15px; font-weight: 600;">업무 API 동작</h2>
+          <span style="font-size: 12px; color: #5A6170;">AI가 할 수 있는 일과 실행 조건</span>
+          <span style="margin-left: auto; font-size: 12px; color: #5A6170;">https://api.byeoldam.example/cs/v1</span>
+        </div>
+        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+          <thead>
+            <tr style="background: #F9FAFB; color: #5A6170; text-align: left;">
+              <th scope="col" style="padding: 9px 18px; font-weight: 500;">동작</th>
+              <th scope="col" style="padding: 9px 12px; font-weight: 500;">설명</th>
+              <th scope="col" style="padding: 9px 12px; font-weight: 500;">실행 조건</th>
+              <th scope="col" style="padding: 9px 18px; font-weight: 500; text-align: right;">오늘 사용</th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{tools}}" as="t" hint-placeholder-count="9">
+              <tr style="border-top: 1px solid #F0F1F4;">
+                <td style="padding: 9px 18px; font-family: 'IBM Plex Mono', monospace; font-size: 12px;">{{t.n}}</td>
+                <td style="padding: 9px 12px;">{{t.d}}</td>
+                <td style="padding: 9px 12px;"><span style="font-size: 12px; padding: 2px 8px; border-radius: 6px; background: {{t.bg}}; color: {{t.fg}};">{{t.g}}</span></td>
+                <td style="padding: 9px 18px; text-align: right; font-family: 'IBM Plex Mono', monospace;">{{t.c}}회</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1060}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const conns = [
+      { i: 'API', n: '업무 API', d: '회원·결제·해지 시스템', rows: [
+        { k: '인증', v: 'API 키 · 다음 교체 2027-01-12' },
+        { k: '허용한 동작', v: '9개 · 접수·연결 3개는 고객 동의 후 실행' },
+        { k: '응답이 없을 때', v: '고객에게 양해를 구하고 보류 · 담당자에게 알림' }
+      ] },
+      { i: '☎', n: '전화', d: '대표번호 1588-0000', rows: [
+        { k: '응대 시간', v: '24시간 · 상담사 연결은 평일 9–18시' },
+        { k: 'AI 목소리', v: '차분한 여성 · 보통 속도' },
+        { k: '첫 인사', v: '"별담 플러스 고객센터입니다. 무엇을 도와드릴까요?"' }
+      ] },
+      { i: '人', n: '상담사 연결', d: 'AI가 처리하지 않는 상담', rows: [
+        { k: '연결 대상', v: '상담 큐 "해지·환불 2팀"' },
+        { k: '연결 조건', v: '미성년자 결제, 카드사 이의 제기, 본인 확인 2회 실패' },
+        { k: '데이터 보관', v: '국내 리전 · 녹취 90일 후 삭제' }
+      ] }
+    ];
+    const W = { bg: '#E8EEFB', fg: '#1A3687' }, C = { bg: '#FFF4EC', fg: '#8A4209' }, V = { bg: '#F4F5F7', fg: '#3A404C' };
+    function t(n, d, g, s, c, p) { return { n: n, d: d, g: g, bg: s.bg, fg: s.fg, c: c, p: p }; }
+    const tools = [
+      t('verify_identity', '본인 확인', '항상', V, '32', '180ms'),
+      t('list_subscriptions', '구독 목록 조회', '본인 확인 후', W, '29', '120ms'),
+      t('list_payments', '결제 내역 조회', '본인 확인 후', W, '27', '140ms'),
+      t('get_usage', '이용 기록 조회', '본인 확인 후', W, '24', '160ms'),
+      t('list_incidents', '장애 이력 조회', '본인 확인 후', W, '9', '110ms'),
+      t('quote_refund', '환불 금액 계산', '본인 확인 후', W, '17', '150ms'),
+      t('create_cancellation', '해지 접수', '고객 동의 후 실행', C, '16', '210ms'),
+      t('create_refund_request', '환불 접수', '고객 동의 후 실행', C, '15', '230ms'),
+      t('create_handoff', '상담사 연결', '고객 동의 후 실행', C, '4', '190ms')
+    ];
+    return { conns: conns, tools: tools };
+  }
+}
+</script>
+</body>
+</html>

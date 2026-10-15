@@ -101,14 +101,14 @@ async def main() -> None:
     if args.limit:
         rows = rows[: args.limit]
     q_version, bank = load_bank(ROOT / args.questions)
-    reps = {n: args.llm_reps if cfg_all[n]["kind"] == "gemini" else args.reps for n in names}
+    reps = {n: args.llm_reps if cfg_all[n]["kind"] in ("gemini", "openai") else args.reps for n in names}
 
     started = datetime.now(KST)
     run_id = started.strftime("%Y%m%dT%H%M%S")
     out_dir = ROOT / args.out / args.split / run_id
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    hosts = sorted({host_key(cfg_all[n]["url"]) for n in names if cfg_all[n]["kind"] == "systemone"} |
+    hosts = sorted({host_key(cfg_all[n]["url"]) for n in names if cfg_all[n]["kind"] in ("systemone", "openai")} |
                    {GEMINI_HOST for n in names if cfg_all[n]["kind"] == "gemini"})
     meta = {
         "run_id": run_id, "split": args.split, "started_kst": started.isoformat(timespec="seconds"),

@@ -55,15 +55,15 @@ TTS_TOKENS_PER_S = 25.0  # Gemini TTS 오디오 출력 토큰(2026-10-14 측정:
 POLICIES = ("A", "C", "D")
 
 
-def make_voice_session(policy: str, org, session_id: str, run_dir: Path):
-    """음성 채널 세션. A는 개선형 RAG, C와 D는 엔진(조직 기본 판별 백엔드). 노출은 음성 계층이 남긴다.
-    D의 차이는 음성 계층에 있다(voice_options)."""
+def make_voice_session(policy: str, org, session_id: str, run_dir: Path, decision_backend: str | None = None):
+    """음성 채널 세션. A는 개선형 RAG, C와 D는 엔진(decision_backend가 없으면 조직 기본 판별 백엔드). 노출은 음성 계층이
+    남긴다. D의 차이는 음성 계층에 있다(voice_options)."""
     if policy == "A":
         from jikgam.baselines.rag import RagSession
         return RagSession(org, session_id, run_dir, channel=vb.CHANNEL)
     if policy in ("C", "D"):
         from jikgam.engine.session import Session
-        return Session(org, session_id, run_dir, channel=vb.CHANNEL)
+        return Session(org, session_id, run_dir, decision_backend, channel=vb.CHANNEL)
     raise ValueError(f"음성 실행 정책은 A, C, D 중 하나다: {policy}")
 
 
@@ -128,7 +128,8 @@ class Segments:
 
 
 async def run_one(name: str, run_dir: Path, run_id: str, cfg: VoiceConfig, bizapi_url: str, gap_ms: float,
-                  barge_in_after_ms: float, policy: str = "C", rep: int | None = None) -> dict[str, Any]:
+                  barge_in_after_ms: float, policy: str = "C", rep: int | None = None,
+                  decision_backend: str | None = None) -> dict[str, Any]:
     from pipecat.transports.base_transport import TransportParams
     from pipecat.workers.runner import WorkerRunner
 
@@ -139,7 +140,7 @@ async def run_one(name: str, run_dir: Path, run_id: str, cfg: VoiceConfig, bizap
     org = load_org("org_a")
     reset_bizapi(bizapi_url)
     sid = session_name(name, run_id, policy, rep)
-    session = make_voice_session(policy, org, sid, run_dir)  # 노출은 연결 계층이 재생 시작에 남긴다
+    session = make_voice_session(policy, org, sid, run_dir, decision_backend)  # 노출은 연결 계층이 재생 시작에 남긴다
     await session.start()
     recorder = Recorder()
     transport = PacedAudioTransport(TransportParams(audio_in_enabled=True, audio_in_sample_rate=IN_RATE,
@@ -268,6 +269,7 @@ async def main() -> None:
     ap.add_argument("--policy", choices=POLICIES, default="C",
                     help="C: 엔진, A: 개선형 RAG, D: 엔진 + 실시간 자막 선판단(docs/evaluation-voice.md §3.2, §9)")
     ap.add_argument("--reps", type=int, default=0, help="재생마다 반복 횟수. 0이면 반복 번호 없이 한 번(이전 실행과 같은 이름)")
+    ap.add_argument("--decision-backend", help="정책 C·D의 판별 백엔드(config/decision_models의 이름). 생략하면 조직 설정 값")
     args = ap.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")
     os.environ["JIKGAM_BIZAPI_URL"] = args.bizapi_url  # 조직 설정의 bizapi_url보다 우선한다(docs/engine.md §9)
@@ -281,11 +283,12 @@ async def main() -> None:
     for rep in (range(1, args.reps + 1) if args.reps else [None]):
         for name in args.replays:
             s = await run_one(name, run_dir, args.run_id, cfg, args.bizapi_url, args.gap_ms, args.barge_in_after_ms,
-                              args.policy, rep)
+                              args.policy, rep, args.decision_backend)
             summaries.append(s)
             print(report(s), flush=True)
     total = {k: round(sum(s["cost_usd"][k] for s in summaries), 5) for k in ("engine", "stt_estimate", "tts_estimate")}
     write_json(run_dir / "summary.json", {"run_id": args.run_id, "replays": args.replays, "policy": args.policy,
+                                          "decision_backend": args.decision_backend,
                                           "reps": args.reps, "cost_usd": total, "sessions": summaries})
     print(f"결과: {run_dir}\n비용 합: {total}")
 

@@ -1,0 +1,46 @@
+# 웹 콘솔의 고객사(ADR 0021). 조직 설정(config/orgs/*.toml)과 따로 둔다. 엔진은 이 파일을 읽지 않는다.
+# 경로는 저장소 루트 기준이다. 모든 회사·고객은 가상이다.
+#
+# history: 고객사 콘솔의 통화 기록으로 보일 실행 폴더. 제품의 방식인 정책 C 실행만 넣는다(기준선 A·B는 관리 콘솔에만).
+# holdout_history: 미공개 시나리오 실행. 서버를 --allow-holdout으로 띄울 때만 더한다(data/scenarios/HOLDOUT.md).
+# live: 실시간 통화 화면에서 다시 흘릴 기록(재생 피드). 여기 넣은 통화는 통화 기록에서 뺀다.
+# 값이 없는 항목은 화면에 "정하지 않음"으로 보인다. 지어낸 값을 넣지 않는다.
+
+[org_a]
+name = "별담 플러스"
+desc = "고객센터"
+service = "영상 구독"
+history = [
+  "results/engine/scenarios/dev3-r1-C",
+  "results/engine/scenarios/dev3-r2-C",
+  "results/engine/scenarios/dev3-r3-C",
+  "results/voice/voice-barge-C",
+]
+holdout_history = [
+  "results/engine/scenarios/holdout-r1-C",
+  "results/engine/scenarios/holdout-r2-C",
+  "results/engine/scenarios/holdout-r3-C",
+  "results/voice/scenarios/voice-holdout-C",
+]
+live = [
+  "results/voice/voice-barge-C/s20-C-r1-voice-voice-barge-C.jsonl",
+  "results/voice/voice-barge-C/s21-C-r1-voice-voice-barge-C.jsonl",
+  "results/voice/20261014-voice-r2/s01-voice-20261014-voice-r2.jsonl",
+]
+voice = true                    # 음성 통화를 받는다(목소리는 config/voice.toml [tts])
+handoff_article = "A-19"        # 상담사 연결 조건을 정한 약관 조항
+adapter = "bizapi/internal/orga"   # 업무 API(공통 계약을 그대로 구현한 모의 업무 시스템)
+
+[org_b]
+name = "책솔"
+desc = "고객센터"
+service = "전자책·오디오북 구독"
+history = [
+  "results/engine/org_b/20261014-orgb-r2",
+]
+holdout_history = []
+live = []
+voice = false
+handoff_article = "B-15"
+adapter = "bizapi/internal/orgbgw"   # 조직 B 업무 시스템 앞의 어댑터(docs/org-b.md §4)
+changes = "docs/org-b.md"            # 붙이면서 바꾼 엔진 코드 기록(그 문서의 §5 표)

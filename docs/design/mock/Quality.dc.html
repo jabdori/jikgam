@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>직감 Admin · 모델·벤치마크</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+KR:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E1014}
+a{color:#8FB0FF}a:hover{color:#B7CCFF}
+select,input{color-scheme:dark}
+</style>
+</helmet>
+<div style="min-height: 1060px; display: flex; flex-wrap: wrap; background: #0E1014; color: #E6E8EC; font-family: 'IBM Plex Sans KR', system-ui, sans-serif; font-size: 14px; line-height: 1.5;">
+
+  <nav aria-label="관리 메뉴" style="flex: 1 1 220px; max-width: 240px; min-width: 200px; box-sizing: border-box; background: #08090C; border-right: 1px solid #22262E; padding: 20px 14px; display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 6px;">
+      <div aria-hidden="true" style="width: 28px; height: 28px; border-radius: 7px; background: #E6E8EC; color: #08090C; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px;">직</div>
+      <div style="font-weight: 700; font-size: 16px;">직감 <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; color: #F2A65A; border: 1px solid #5A3A1A; border-radius: 5px; padding: 1px 5px; margin-left: 2px;">ADMIN</span></div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <div style="font-size: 11px; font-weight: 600; color: #6B7280; padding: 0 10px 4px; letter-spacing: 0.04em;">엔진</div>
+      <a href="Quality.dc.html" aria-current="page" style="padding: 8px 10px; border-radius: 7px; background: #1B2130; color: #FFFFFF; font-weight: 600; text-decoration: none;">모델·벤치마크</a>
+      <a href="Trace.dc.html" style="padding: 8px 10px; border-radius: 7px; color: #C3C8D2; text-decoration: none;">통화 리플레이</a>
+      <div style="font-size: 11px; font-weight: 600; color: #6B7280; padding: 14px 10px 4px; letter-spacing: 0.04em;">고객사</div>
+      <a href="Tenants.dc.html" style="padding: 8px 10px; border-radius: 7px; color: #C3C8D2; text-decoration: none;">고객사 관리</a>
+    </div>
+    <div style="margin-top: auto; font-size: 12px; color: #9AA1AE; padding: 10px; border-radius: 8px; border: 1px solid #22262E;">직감 팀 내부용 · 고객사에는 보이지 않습니다.</div>
+  </nav>
+
+  <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column;">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 28px; border-bottom: 1px solid #22262E; background: #0B0D11; font-size: 13px;">
+      <span style="color: #9AA1AE;">모델·벤치마크</span>
+      <span aria-label="사용자 김현성" style="margin-left: auto; width: 28px; height: 28px; border-radius: 50%; background: #2A2F3A; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;">김</span>
+    </div>
+
+    <div style="flex-grow: 1; display: flex; flex-wrap: wrap;">
+      <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 20px 28px 32px; display: flex; flex-direction: column; gap: 14px;">
+        <header>
+          <h1 style="margin: 0; font-size: 20px; font-weight: 700;">모델·벤치마크</h1>
+          <div style="font-size: 13px; color: #9AA1AE;">모델은 어댑터로 등록하고, 같은 벤치마크 세트로 자동 비교합니다. 판정 기준은 사전 등록 문서를 따릅니다.</div>
+        </header>
+
+        <section aria-label="벤치마크 세트" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+          <sc-for list="{{suites}}" as="s" hint-placeholder-count="4">
+            <div style="background: #151820; border: 1px solid #22262E; border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px;">
+              <div style="font-weight: 600;">{{s.n}}</div>
+              <div style="font-size: 12px; color: #9AA1AE;">{{s.d}}</div>
+              <div style="font-size: 12px; color: #C3C8D2; font-family: 'IBM Plex Mono', monospace;">{{s.m}}</div>
+            </div>
+          </sc-for>
+        </section>
+
+        <section aria-label="판별 모델 순위" style="background: #151820; border: 1px solid #22262E; border-radius: 10px; overflow: hidden;">
+          <div style="display: flex; align-items: baseline; padding: 14px 16px 8px;">
+            <h2 style="margin: 0; font-size: 14px; font-weight: 600;">판별 모델 결과</h2>
+            <span style="margin-left: auto; font-size: 12px; color: #9AA1AE;">판별 test · 판단 146개</span>
+          </div>
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <thead><tr style="color: #9AA1AE; text-align: left; font-size: 12px;">
+              <th scope="col" style="padding: 7px 16px; font-weight: 500;">모델</th>
+              <th scope="col" style="padding: 7px 8px; font-weight: 500;">어댑터</th>
+              <th scope="col" style="padding: 7px 8px; font-weight: 500; text-align: right;">정확도</th>
+              <th scope="col" style="padding: 7px 8px; font-weight: 500; text-align: right;">p95</th>
+              <th scope="col" style="padding: 7px 8px; font-weight: 500; text-align: right;">1회 비용</th>
+              <th scope="col" style="padding: 7px 16px; font-weight: 500;">기준 통과</th>
+            </tr></thead>
+            <tbody>
+              <sc-for list="{{models}}" as="m" hint-placeholder-count="5">
+                <tr style="border-top: 1px solid #22262E;">
+                  <th scope="row" style="text-align: left; padding: 9px 16px; font-weight: 500;">{{m.n}}<div style="font-size: 12px; font-weight: 400; color: #9AA1AE;">{{m.role}}</div></th>
+                  <td style="padding: 9px 8px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #C3C8D2;">{{m.ad}}</td>
+                  <td style="padding: 9px 8px; text-align: right; font-family: 'IBM Plex Mono', monospace;">{{m.a}}</td>
+                  <td style="padding: 9px 8px; text-align: right; font-family: 'IBM Plex Mono', monospace; color: {{m.pc}};">{{m.p}}</td>
+                  <td style="padding: 9px 8px; text-align: right; font-family: 'IBM Plex Mono', monospace; color: #C3C8D2;">{{m.c}}</td>
+                  <td style="padding: 9px 16px;"><span style="font-size: 12px; padding: 1px 8px; border-radius: 999px; background: {{m.sb}}; color: {{m.sf}};">{{m.s}}</span></td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+          <div style="padding: 10px 16px 14px; font-size: 12px; color: #9AA1AE;">통과 기준은 사전 등록 문서(docs/evaluation.md)를 따릅니다. Qwen은 Unsloth LoRA 튜닝, 로컬 GPU 측정.</div>
+        </section>
+
+        <section aria-label="상담 방식 결과" style="background: #151820; border: 1px solid #22262E; border-radius: 10px; overflow: hidden;">
+          <div style="display: flex; align-items: baseline; padding: 14px 16px 8px;">
+            <h2 style="margin: 0; font-size: 14px; font-weight: 600;">상담 방식 결과</h2>
+            <span style="margin-left: auto; font-size: 12px; color: #9AA1AE;">미공개 시나리오 20개 × 3회</span>
+          </div>
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <thead><tr style="color: #9AA1AE; text-align: left; font-size: 12px;">
+              <th scope="col" style="padding: 7px 16px; font-weight: 500;">방식</th>
+              <th scope="col" style="padding: 7px 8px; font-weight: 500; text-align: right;">상담 통과</th>
+              <th scope="col" style="padding: 7px 8px; font-weight: 500; text-align: right;">말 바꿈 반영 p95</th>
+              <th scope="col" style="padding: 7px 16px; font-weight: 500; text-align: right;">이전 답 노출</th>
+            </tr></thead>
+            <tbody>
+              <sc-for list="{{policies}}" as="p" hint-placeholder-count="3">
+                <tr style="border-top: 1px solid #22262E;">
+                  <th scope="row" style="text-align: left; padding: 9px 16px; font-weight: 500;">{{p.n}}</th>
+                  <td style="padding: 9px 8px; text-align: right; font-family: 'IBM Plex Mono', monospace;">{{p.a}}</td>
+                  <td style="padding: 9px 8px; text-align: right; font-family: 'IBM Plex Mono', monospace;">{{p.l}}</td>
+                  <td style="padding: 9px 16px; text-align: right; font-family: 'IBM Plex Mono', monospace; color: {{p.ec}};">{{p.e}}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </section>
+      </main>
+
+      <aside aria-label="모델 추가" style="flex: 1 1 300px; max-width: 340px; box-sizing: border-box; border-left: 1px solid #22262E; background: #12151B; padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+        <h2 style="margin: 0; font-size: 15px; font-weight: 600;">모델 추가</h2>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label for="mn" style="font-size: 12px; color: #9AA1AE;">이름</label>
+          <input id="mn" value="Qwen 0.8B 튜닝 r3" style="font: inherit; min-height: 38px; padding: 0 10px; border: 1px solid #2A2F3A; border-radius: 8px; background: #0E1014; color: #E6E8EC;">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label for="ad" style="font-size: 12px; color: #9AA1AE;">어댑터</label>
+          <select id="ad" style="font: inherit; min-height: 38px; padding: 0 8px; border: 1px solid #2A2F3A; border-radius: 8px; background: #0E1014; color: #E6E8EC;">
+            <option>로컬 서버 (판별 헤드)</option><option>판별 API</option><option>OpenAI 호환 생성형</option>
+          </select>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <label for="ep" style="font-size: 12px; color: #9AA1AE;">엔드포인트</label>
+          <input id="ep" value="http://gpu-01:8080/v1/decide" style="font: inherit; font-family: 'IBM Plex Mono', monospace; font-size: 12px; min-height: 38px; padding: 0 10px; border: 1px solid #2A2F3A; border-radius: 8px; background: #0E1014; color: #E6E8EC;">
+        </div>
+        <fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px;">
+          <legend style="font-size: 12px; color: #9AA1AE; margin-bottom: 4px;">실행할 벤치마크</legend>
+          <sc-for list="{{suites}}" as="s" hint-placeholder-count="4">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;"><input type="checkbox" checked style="width: 16px; height: 16px;">{{s.n}}</label>
+          </sc-for>
+        </fieldset>
+        <div style="font-size: 12px; color: #9AA1AE; padding: 10px; border: 1px solid #22262E; border-radius: 8px;">어댑터가 입력(대화 상태·질문)과 출력(선택지별 확률)을 공통 형식으로 맞춥니다. 모델 종류와 상관없이 같은 채점기로 비교됩니다.</div>
+        <button type="button" style="font: inherit; font-weight: 600; cursor: pointer; min-height: 42px; border: 0; border-radius: 8px; background: #E6E8EC; color: #0E1014;">등록하고 벤치마크 실행</button>
+      </aside>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1060}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const suites = [
+      { n: '판별 정확도', d: '판단 146개 · 정답 라벨', m: '정확도 · 지연 · 비용' },
+      { n: '상담 시나리오', d: '미공개 20개 × 3회 · AI 고객', m: '통과율 · 이전 답 노출' },
+      { n: '음성 재생', d: '20개 · 합성 고객 음성', m: '끼어들기 반응 · 첫 음성' },
+      { n: '부하', d: '동시 통화 10 · 5분', m: 'p50 · p95 · 오류율' }
+    ];
+    const pass = ['#14281E', '#6FD3A0'], fail = ['#3A1A18', '#F07167'], wait = ['#22262E', '#C3C8D2'];
+    function m(n, role, ad, a, p, pc, c, s, st) { return { n: n, role: role, ad: ad, a: a, p: p, pc: pc, c: c, s: s, sb: st[0], sf: st[1] }; }
+    const models = [
+      m('Qwen 2B 튜닝', '폐쇄망 기본', 'local-head', '87.0%', '165ms', '#6FD3A0', '자체 GPU', '통과', pass),
+      m('Jev', '표준 기본', 'decision-api', '86.6%', '233ms', '#6FD3A0', '$0.00012', '통과', pass),
+      m('Clef-flash', '후보', 'decision-api', '72.6%', '890ms', '#F2A65A', '—', '정확도 미달', fail),
+      m('Gemini Flash', '생성형 기준선', 'openai-compat', '89.0%', '5,135ms', '#F07167', '$0.00296', '지연 초과', fail),
+      m('Qwen 0.8B 튜닝 r3', '새로 등록', 'local-head', '—', '—', '#9AA1AE', '자체 GPU', '대기 중', wait)
+    ];
+    const policies = [
+      { n: '직감 (판별 + 무효화)', a: '70.6%', l: '245ms', e: '0 / 64', ec: '#6FD3A0' },
+      { n: '엔진 + 생성형 판단', a: '—', l: '5,939ms', e: '0%', ec: '#6FD3A0' },
+      { n: '일반 RAG', a: '50.0%', l: '17,059ms', e: '23 / 72', ec: '#F07167' }
+    ];
+    return { suites: suites, models: models, policies: policies };
+  }
+}
+</script>
+</body>
+</html>

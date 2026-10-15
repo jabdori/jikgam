@@ -343,6 +343,10 @@ async def run(args: argparse.Namespace) -> Path:
     if args.policy == "D":
         raise SystemExit("정책 D(미확정 자막 선판단)는 음성 런타임이 필요해 채팅 실행기에서 돌리지 않는다")
     policy = POLICIES[args.policy]
+    if args.decision_backend:
+        if policy.name != "C":
+            raise SystemExit("--decision-backend는 정책 C에만 쓴다(B는 gemini-flash로 정해져 있다)")
+        policy = Policy("C", f"엔진 + 판별 모델({args.decision_backend}), 확정 발화", engine_policy(args.decision_backend))
     org = load_org(args.org)
     if args.bizapi_url:
         org = replace(org, bizapi_url=args.bizapi_url.rstrip("/"))
@@ -355,7 +359,7 @@ async def run(args: argparse.Namespace) -> Path:
     run_dir = args.out_dir / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
     models = load_config()
-    backend = {"B": "gemini-flash", "C": org.decision_backend}.get(policy.name)
+    backend = {"B": "gemini-flash", "C": args.decision_backend or org.decision_backend}.get(policy.name)
     summary: dict[str, Any] = {
         "run_id": run_id, "policy": policy.name, "policy_description": policy.description,
         "decision_backend": backend, "decision_model": (models.get(backend) or {}).get("model") if backend else None,
@@ -425,6 +429,7 @@ def main() -> None:
     ap.add_argument("--customer-model", default=cust.DEFAULT_MODEL)
     ap.add_argument("--judge-model", default=judge.DEFAULT_JUDGE_MODEL)
     ap.add_argument("--no-judge", action="store_true", help="AI 판정을 건너뛴다(나중에 jikgam.sim.judge로 한다)")
+    ap.add_argument("--decision-backend", help="정책 C의 판별 백엔드(config/decision_models의 이름). 생략하면 조직 설정 값")
     args = ap.parse_args()
     if args.runs < 1:
         raise SystemExit("--runs는 1 이상이어야 한다")

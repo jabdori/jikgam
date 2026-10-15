@@ -11,11 +11,16 @@ dependencies = [
 [dependency-groups]
 dev = ["pytest>=8"]
 web = [
+    "python-multipart>=0.0.20",
     "starlette>=0.40",
     "uvicorn>=0.30",
 ]
 # 음성 런타임(ADR 0008). 엔진 코드는 이 그룹에 의존하지 않는다(jikgam/voice만 쓴다).
 voice = ["pipecat-ai[google]==1.12.0"]
+ui = [
+    "axe-playwright-python==0.1.8",
+    "playwright==1.63.0",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -25,4 +30,4 @@ build-backend = "hatchling.build"
 packages = ["jikgam"]
 
 [tool.uv]
-default-groups = ["dev", "web", "voice"]
+default-groups = ["dev", "web", "voice", "ui"]

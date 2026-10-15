@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>직감 · 실시간 통화</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+KR:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F5F7}
+a{color:#2449B8}a:hover{color:#1A3687}
+</style>
+</helmet>
+<div style="min-height: 1000px; display: flex; flex-wrap: wrap; background: #F4F5F7; color: #15171C; font-family: 'IBM Plex Sans KR', system-ui, sans-serif; font-size: 14px; line-height: 1.5;">
+
+  <nav aria-label="주 메뉴" style="flex: 1 1 232px; max-width: 260px; min-width: 220px; box-sizing: border-box; background: #FFFFFF; border-right: 1px solid #E3E5EA; padding: 20px 16px; display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 4px;">
+      <div aria-hidden="true" style="width: 28px; height: 28px; border-radius: 7px; background: #15171C; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px;">직</div>
+      <div style="font-weight: 700; font-size: 17px;">직감</div>
+    </div>
+    <button type="button" style="all: unset; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #E3E5EA; border-radius: 10px; background: #F9FAFB;">
+      <div aria-hidden="true" style="width: 30px; height: 30px; border-radius: 8px; background: #E8EEFB; color: #2449B8; display: flex; align-items: center; justify-content: center; font-weight: 700;">별</div>
+      <div style="flex-grow: 1;"><div style="font-weight: 600;">별담 플러스</div><div style="font-size: 12px; color: #5A6170;">고객센터</div></div>
+    </button>
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <div style="font-size: 11px; font-weight: 600; color: #8A909C; padding: 0 12px 4px; letter-spacing: 0.04em;">운영</div>
+      <a href="Main.dc.html" aria-current="page" style="display: flex; padding: 9px 12px; border-radius: 8px; background: #E8EEFB; color: #1A3687; font-weight: 600; text-decoration: none;">실시간 통화<span style="margin-left: auto; font-size: 12px; background: #2449B8; color: #FFFFFF; border-radius: 999px; padding: 0 8px;">3</span></a>
+      <a href="Compare.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">통화 기록</a>
+      <a href="Report.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">운영 리포트</a>
+      <div style="font-size: 11px; font-weight: 600; color: #8A909C; padding: 14px 12px 4px; letter-spacing: 0.04em;">설정</div>
+      <a href="Knowledge.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">지식·정책</a>
+      <a href="Integrations.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">연동</a>
+    </div>
+    <div style="margin-top: auto; font-size: 12px; color: #5A6170; padding: 10px 12px; border-radius: 8px; background: #F4F5F7;">데모 데이터: AI 고객과 나눈 합성 상담입니다.</div>
+  </nav>
+
+  <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column;">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px 28px; background: #FFFFFF; border-bottom: 1px solid #E3E5EA;">
+      <label for="q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">검색</label>
+      <input id="q" type="search" placeholder="고객 이름, 전화번호, 발화 내용 검색" style="flex: 1 1 280px; max-width: 420px; font: inherit; min-height: 40px; padding: 0 12px; border: 1px solid #D5D8DF; border-radius: 9px; background: #F9FAFB;">
+      <span aria-label="사용자 상담 운영팀" style="margin-left: auto; width: 32px; height: 32px; border-radius: 50%; background: #2449B8; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600;">운</span>
+    </div>
+
+    <div style="flex-grow: 1; display: flex; flex-wrap: wrap; min-height: 0;">
+      <section aria-label="진행 중인 통화" style="flex: 1 1 260px; max-width: 300px; box-sizing: border-box; background: #FFFFFF; border-right: 1px solid #E3E5EA; display: flex; flex-direction: column;">
+        <div style="padding: 18px 18px 10px;">
+          <h1 style="margin: 0; font-size: 18px; font-weight: 700;">실시간 통화</h1>
+          <div style="font-size: 12px; color: #5A6170;">AI 응대 2 · 상담사 요청 1</div>
+        </div>
+        <sc-for list="{{calls}}" as="c" hint-placeholder-count="3">
+          <button type="button" aria-pressed="{{c.on}}" style="all: unset; cursor: pointer; display: flex; flex-direction: column; gap: 3px; padding: 12px 18px; border-top: 1px solid #F0F1F4; background: {{c.bg}}; box-shadow: inset 3px 0 0 {{c.bar}};">
+            <div style="display: flex; align-items: center; gap: 8px;"><span style="font-weight: 600;">{{c.n}}</span><span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5A6170;">{{c.t}}</span></div>
+            <div style="font-size: 13px; color: #3A404C;">{{c.topic}}</div>
+            <span style="align-self: flex-start; font-size: 12px; padding: 1px 8px; border-radius: 999px; background: {{c.sb}}; color: {{c.sf}};">{{c.s}}</span>
+          </button>
+        </sc-for>
+      </section>
+
+      <main style="flex: 999 1 420px; min-width: 0; box-sizing: border-box; padding: 20px 24px 28px; display: flex; flex-direction: column; gap: 14px;">
+        <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
+          <div style="flex-grow: 1;">
+            <div style="font-size: 20px; font-weight: 700;">송하은 고객</div>
+            <div style="font-size: 13px; color: #5A6170;">010-****-0016 · 월 구독 · 해지 문의</div>
+          </div>
+          <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; padding: 5px 10px; border-radius: 999px; background: #E8EEFB; color: #1A3687; font-weight: 600;"><span aria-hidden="true" style="width: 7px; height: 7px; border-radius: 50%; background: #2449B8;"></span>AI 응대 중 · 00:44</span>
+          <button type="button" style="font: inherit; font-weight: 600; cursor: pointer; min-height: 40px; padding: 0 14px; border-radius: 9px; border: 1px solid #D5D8DF; background: #FFFFFF;">통화 듣기</button>
+          <button type="button" style="font: inherit; font-weight: 600; cursor: pointer; min-height: 40px; padding: 0 14px; border-radius: 9px; border: 0; background: #15171C; color: #FFFFFF;">상담사가 넘겨받기</button>
+        </header>
+
+        <section aria-label="대화" style="background: #FFFFFF; border: 1px solid #E3E5EA; border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px;">
+          <sc-for list="{{turns}}" as="t" hint-placeholder-count="6">
+            <sc-if value="{{t.ev}}" hint-placeholder-val="{{false}}">
+              <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: #8A4209;"><span style="flex-grow: 1; height: 1px; background: #F1DCC8;"></span>{{t.text}}<span style="flex-grow: 1; height: 1px; background: #F1DCC8;"></span></div>
+            </sc-if>
+            <sc-if value="{{t.msg}}" hint-placeholder-val="{{true}}">
+              <div style="display: grid; grid-template-columns: 64px minmax(0, 1fr) 40px; gap: 12px; align-items: baseline;">
+                <span style="font-size: 12px; font-weight: 600; color: {{t.wc}};">{{t.who}}</span>
+                <span style="color: {{t.tc}};">{{t.text}}</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8A909C; text-align: right;">{{t.at}}</span>
+              </div>
+            </sc-if>
+          </sc-for>
+          <div style="display: grid; grid-template-columns: 64px minmax(0, 1fr) 40px; gap: 12px; align-items: baseline; padding: 12px 14px; margin: 0 -14px; border-radius: 10px; background: #F5F8FE;">
+            <span style="font-size: 12px; font-weight: 600; color: #1A3687;">AI · 말하는 중</span>
+            <span>월 구독을 해지하시면 다음 결제일인 11월 2일부터 자동 결제가 중단되고, 그 전날까지는 계속 이용하실 수 있습니다. 이미 결제된 이번 달 요금은 환불되지 않습니다. 이대로 해지를 진행해 드릴까요?</span>
+            <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8A909C; text-align: right;">0:44</span>
+          </div>
+        </section>
+      </main>
+
+      <aside aria-label="상담 정보" style="flex: 1 1 280px; max-width: 320px; box-sizing: border-box; padding: 20px 24px 28px 0; display: flex; flex-direction: column; gap: 14px;">
+        <section aria-label="진행 단계" style="background: #FFFFFF; border: 1px solid #E3E5EA; border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px;">
+          <h2 style="margin: 0; font-size: 15px; font-weight: 600;">진행 단계</h2>
+          <sc-for list="{{steps}}" as="s" hint-placeholder-count="4">
+            <div style="display: flex; align-items: center; gap: 10px; font-size: 13px;">
+              <span aria-hidden="true" style="width: 18px; height: 18px; border-radius: 50%; box-sizing: border-box; border: 2px solid {{s.c}}; background: {{s.f}}; color: #FFFFFF; font-size: 11px; display: flex; align-items: center; justify-content: center;">{{s.i}}</span>
+              <span style="flex-grow: 1; color: {{s.tc}};">{{s.n}}</span>
+              <span style="font-size: 12px; color: #5A6170;">{{s.s}}</span>
+            </div>
+          </sc-for>
+        </section>
+
+        <section aria-label="고객 정보" style="background: #FFFFFF; border: 1px solid #E3E5EA; border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px;">
+          <h2 style="margin: 0; font-size: 15px; font-weight: 600;">고객 정보</h2>
+          <sc-for list="{{facts}}" as="f" hint-placeholder-count="4">
+            <div style="display: flex; gap: 8px; font-size: 13px;"><span style="flex-grow: 1; color: #5A6170;">{{f.k}}</span><span style="font-weight: 500;">{{f.v}}</span></div>
+          </sc-for>
+        </section>
+
+        <section aria-label="안내 근거" style="background: #FFFFFF; border: 1px solid #E3E5EA; border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px;">
+          <h2 style="margin: 0; font-size: 15px; font-weight: 600;">안내 근거</h2>
+          <a href="Knowledge.dc.html" style="font-size: 13px; text-decoration: none;">이용약관 제7조 · 월 구독의 해지</a>
+          <a href="Knowledge.dc.html" style="font-size: 13px; text-decoration: none;">이용약관 제4조 · 결제와 자동 갱신</a>
+        </section>
+      </aside>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const calls = [
+      { n: '송하은', t: '00:44', topic: '해지 문의', s: 'AI 응대 중', sb: '#E8EEFB', sf: '#1A3687', on: 'true', bg: '#F5F8FE', bar: '#2449B8' },
+      { n: '임재원', t: '02:10', topic: '환불 문의 · 장애 보상', s: 'AI 응대 중', sb: '#E8EEFB', sf: '#1A3687', on: 'false', bg: '#FFFFFF', bar: 'transparent' },
+      { n: '한유진', t: '01:32', topic: '자녀 결제 취소', s: '상담사 연결 요청', sb: '#FFF4EC', sf: '#8A4209', on: 'false', bg: '#FFFFFF', bar: 'transparent' }
+    ];
+    const C = { msg: true, ev: false, who: '고객', wc: '#8A4209', tc: '#15171C' };
+    const A = { msg: true, ev: false, who: 'AI', wc: '#1A3687', tc: '#15171C' };
+    const turns = [
+      Object.assign({}, C, { at: '0:03', text: '해지하려는 건 아니고요. 다음 결제가 언제 되는지만 알고 싶어서요.' }),
+      Object.assign({}, A, { at: '0:07', text: '결제일 확인을 위해 먼저 본인 확인을 도와드리겠습니다. 가입하신 휴대폰 번호를 말씀해 주시겠어요?' }),
+      Object.assign({}, C, { at: '0:20', text: '네, 010-0000-0016이에요.' }),
+      Object.assign({}, C, { at: '0:35', text: '인증번호는 0016이에요.' }),
+      Object.assign({}, C, { at: '0:41', text: '아 그냥 해지할게요. 요즘 잘 안 봐서요.' }),
+      { msg: false, ev: true, text: '고객이 요청을 바꿔 결제일 안내 대신 해지 안내로 전환' }
+    ];
+    const done = { c: '#1F7A4D', f: '#1F7A4D', i: '✓', tc: '#15171C' };
+    const now = { c: '#2449B8', f: '#FFFFFF', i: '', tc: '#15171C' };
+    const todo = { c: '#D5D8DF', f: '#FFFFFF', i: '', tc: '#8A909C' };
+    const steps = [
+      Object.assign({ n: '본인 확인', s: '완료' }, done),
+      Object.assign({ n: '구독·결제 조회', s: '완료' }, done),
+      Object.assign({ n: '해지 조건 안내', s: '진행 중' }, now),
+      Object.assign({ n: '해지 접수', s: '고객 동의 후' }, todo)
+    ];
+    const facts = [
+      { k: '요금제', v: '월 구독 9,900원' },
+      { k: '최근 결제', v: '10월 2일 · 카드' },
+      { k: '다음 결제일', v: '11월 2일' },
+      { k: '최근 이용', v: '10월 3일' }
+    ];
+    return { calls: calls, turns: turns, steps: steps, facts: facts };
+  }
+}
+</script>
+</body>
+</html>

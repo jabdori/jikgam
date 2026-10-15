@@ -1,12 +1,14 @@
-"""웹 서버 실행.
+"""웹 서버 실행(ADR 0021).
 
-    uv run python -m jikgam.web --bizapi-url http://127.0.0.1:8101 --start-bizapi
-    uv run python -m jikgam.web --results-root <다른 작업 사본>/results     # 다른 위치의 결과 폴더로 대시보드·타임라인
+    uv run python -m jikgam.web                       # 127.0.0.1:8100, /app(고객사 콘솔), /admin(관리 콘솔)
+    uv run python -m jikgam.web --allow-holdout       # 미공개 시나리오 실행도 계산·표시(설정 고정 뒤에만)
 
---bizapi-url은 환경 변수 JIKGAM_BIZAPI_URL로 넘긴다(조직 설정의 bizapi_url보다 우선, docs/engine.md §9).
---start-bizapi는 모의 업무 API(Go)를 임시 폴더에 빌드해 그 주소에서 자식 프로세스로 띄우고, 서버가 끝나면 그 프로세스만
-끝낸다. 띄우지 않으면 따로 실행해 둔다: cd bizapi && go run ./cmd/bizapi -addr 127.0.0.1:8101
-콘솔 세션의 이벤트 로그는 --console-dir(기본 results/engine/console, git에 넣지 않음)에 남는다.
+계정은 저장소 밖 .env 또는 환경 변수 JIKGAM_WEB_ACCOUNTS에 둔다(jikgam/web/auth.py). 없으면 관리자 하나와 고객사마다
+하나씩 임의 비밀번호로 만들고 이 터미널에만 보여 준다.
+
+화면은 결과 폴더의 원본 로그와 녹음을 읽기만 한다. 엔진과 외부 API를 부르지 않는다. 예외는 관리 콘솔에서 확인을 거쳐
+시작하는 벤치마크 실행이다(하위 프로세스, 출력은 outputs/benchmarks/). 상담 시나리오·음성 재생 벤치마크는 모의 업무
+API(Go)를 임시로 빌드해 띄운다(start_bizapi).
 """
 
 import argparse
@@ -28,7 +30,7 @@ def start_bizapi(url: str) -> tuple[subprocess.Popen, Path]:
     """모의 업무 API를 임시 폴더에 빌드해 띄운다. (프로세스, 임시 폴더)."""
     parts = urlsplit(url)
     if parts.hostname not in ("127.0.0.1", "localhost") or not parts.port:
-        raise SystemExit(f"--start-bizapi는 로컬 주소와 포트가 있는 URL에만 쓴다: {url}")
+        raise SystemExit(f"모의 업무 API는 로컬 주소와 포트가 있는 URL에만 띄운다: {url}")
     go = shutil.which("go")
     if go is None:
         raise SystemExit("go가 없어 모의 업무 API를 빌드할 수 없다")
@@ -48,43 +50,35 @@ def start_bizapi(url: str) -> tuple[subprocess.Popen, Path]:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="상담 콘솔, 턴 상세 타임라인, 평가 대시보드")
-    ap.add_argument("--org", default="org_a")
+    ap = argparse.ArgumentParser(description="고객사 콘솔(/app)과 관리 콘솔(/admin)")
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--port", type=int, default=8100)
-    ap.add_argument("--bizapi-url", help="모의 업무 API 주소(JIKGAM_BIZAPI_URL로 넘긴다)")
-    ap.add_argument("--start-bizapi", action="store_true", help="--bizapi-url 주소에 모의 업무 API를 자식 프로세스로 띄운다")
-    ap.add_argument("--results-root", type=Path, default=ROOT / "results")
-    ap.add_argument("--console-dir", type=Path, default=ROOT / "results/engine/console")
+    ap.add_argument("--root", type=Path, default=ROOT, help="결과 폴더와 설정을 읽을 저장소 루트")
     ap.add_argument("--allow-holdout", action="store_true",
-                    help="보류용 시나리오 실행도 계산·표시한다(엔진 설정 고정 뒤에만, data/scenarios/HOLDOUT.md)")
+                    help="미공개 시나리오 실행도 계산·표시한다(엔진 설정 고정 뒤에만, data/scenarios/HOLDOUT.md)")
     args = ap.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")
-    if args.bizapi_url:
-        os.environ["JIKGAM_BIZAPI_URL"] = args.bizapi_url
-    if args.start_bizapi and not args.bizapi_url:
-        raise SystemExit("--start-bizapi에는 --bizapi-url이 필요하다")
 
     import uvicorn
 
-    from jikgam.engine.org import load_org
+    from jikgam.decision.registry import secrets
 
+    from . import auth
     from .app import WebConfig, create_app
+    from .data.tenants import load_tenants
 
-    org = load_org(args.org)
-    proc, tmp = start_bizapi(org.bizapi_url) if args.start_bizapi else (None, None)
-    try:
-        cfg = WebConfig(org, results_root=args.results_root.resolve(), console_dir=args.console_dir.resolve(),
-                        allow_holdout=args.allow_holdout)
-        print(f"조직 {org.org}, 모의 업무 API {org.bizapi_url}, 결과 폴더 {cfg.results_root}")
-        print(f"http://{args.host}:{args.port}/console  /timeline  /dashboard")
-        # SSE 연결은 스스로 끝나지 않으므로 종료 대기를 짧게 둔다(남은 콘솔 세션은 lifespan 종료에서 닫는다)
-        uvicorn.run(create_app(cfg), host=args.host, port=args.port, log_level="warning", timeout_graceful_shutdown=2)
-    finally:
-        if proc is not None:
-            proc.terminate()
-            proc.wait(timeout=10)
-            shutil.rmtree(tmp, ignore_errors=True)
+    spec = os.environ.get(auth.ENV) or secrets().get(auth.ENV)  # 환경 변수가 .env보다 우선
+    if spec:
+        accounts = auth.parse_accounts(spec)
+        print(f"계정 {len(accounts)}개({auth.ENV})")
+    else:
+        accounts = auth.generate_accounts(list(load_tenants(args.root.resolve())))
+        print(f"{auth.ENV}가 없어 이번 실행에만 쓰는 계정을 만들었다:")
+        for a in accounts.values():
+            print(f"  {a.name} / {a.password}  ({a.role}{' ' + a.org if a.org else ''})")
+    cfg = WebConfig(root=args.root.resolve(), allow_holdout=args.allow_holdout, accounts=accounts)
+    print(f"http://{args.host}:{args.port}/app  /admin")
+    uvicorn.run(create_app(cfg), host=args.host, port=args.port, log_level="warning", timeout_graceful_shutdown=2)
 
 
 if __name__ == "__main__":

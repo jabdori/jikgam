@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>직감 Admin · 고객사 관리</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+KR:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E1014}
+a{color:#8FB0FF}a:hover{color:#B7CCFF}
+</style>
+</helmet>
+<div style="min-height: 1060px; display: flex; flex-wrap: wrap; background: #0E1014; color: #E6E8EC; font-family: 'IBM Plex Sans KR', system-ui, sans-serif; font-size: 14px; line-height: 1.5;">
+
+  <nav aria-label="관리 메뉴" style="flex: 1 1 220px; max-width: 240px; min-width: 200px; box-sizing: border-box; background: #08090C; border-right: 1px solid #22262E; padding: 20px 14px; display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 6px;">
+      <div aria-hidden="true" style="width: 28px; height: 28px; border-radius: 7px; background: #E6E8EC; color: #08090C; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px;">직</div>
+      <div style="font-weight: 700; font-size: 16px;">직감 <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; color: #F2A65A; border: 1px solid #5A3A1A; border-radius: 5px; padding: 1px 5px; margin-left: 2px;">ADMIN</span></div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <div style="font-size: 11px; font-weight: 600; color: #6B7280; padding: 0 10px 4px; letter-spacing: 0.04em;">엔진</div>
+      <a href="Quality.dc.html" style="padding: 8px 10px; border-radius: 7px; color: #C3C8D2; text-decoration: none;">모델·벤치마크</a>
+      <a href="Trace.dc.html" style="padding: 8px 10px; border-radius: 7px; color: #C3C8D2; text-decoration: none;">통화 리플레이</a>
+      <div style="font-size: 11px; font-weight: 600; color: #6B7280; padding: 14px 10px 4px; letter-spacing: 0.04em;">고객사</div>
+      <a href="Tenants.dc.html" aria-current="page" style="padding: 8px 10px; border-radius: 7px; background: #1B2130; color: #FFFFFF; font-weight: 600; text-decoration: none;">고객사 관리</a>
+    </div>
+    <div style="margin-top: auto; font-size: 12px; color: #9AA1AE; padding: 10px; border-radius: 8px; border: 1px solid #22262E;">직감 팀 내부용 · 고객사에는 보이지 않습니다.</div>
+  </nav>
+
+  <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column;">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 28px; border-bottom: 1px solid #22262E; background: #0B0D11; font-size: 13px;">
+      <span style="color: #9AA1AE;">고객사 관리</span><span style="color: #4B5260;">/</span><span>책솔</span>
+      <span aria-label="사용자 김현성" style="margin-left: auto; width: 28px; height: 28px; border-radius: 50%; background: #2A2F3A; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;">김</span>
+    </div>
+
+    <main style="box-sizing: border-box; padding: 20px 28px 32px; display: flex; flex-direction: column; gap: 14px;">
+      <section aria-label="고객사 목록" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
+        <sc-for list="{{tenants}}" as="t" hint-placeholder-count="2">
+          <div style="background: {{t.bg}}; border: 1px solid {{t.bd}}; border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px;">
+            <div style="display: flex; align-items: center; gap: 8px;"><span style="font-weight: 600;">{{t.n}}</span><span style="margin-left: auto; font-size: 12px; padding: 1px 8px; border-radius: 999px; background: {{t.sb}}; color: {{t.sf}};">{{t.s}}</span></div>
+            <div style="font-size: 12px; color: #9AA1AE;">{{t.d}}</div>
+          </div>
+        </sc-for>
+      </section>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 14px;">
+        <section aria-label="온보딩" style="background: #151820; border: 1px solid #22262E; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+          <h2 style="margin: 0; font-size: 14px; font-weight: 600;">책솔 온보딩</h2>
+          <sc-for list="{{steps}}" as="s" hint-placeholder-count="6">
+            <div style="display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; font-size: 13px;">
+              <span aria-hidden="true" style="color: {{s.c}}; font-weight: 700;">{{s.i}}</span>
+              <div><div>{{s.n}}</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #9AA1AE;">{{s.f}}</div></div>
+            </div>
+          </sc-for>
+        </section>
+
+        <section aria-label="엔진 변경" style="background: #151820; border: 1px solid #22262E; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; align-items: baseline;"><h2 style="margin: 0; font-size: 14px; font-weight: 600;">붙이면서 바꾼 엔진 코드</h2><span style="margin-left: auto; font-size: 12px; color: #F2A65A;">2건 · 목표는 0건</span></div>
+          <div style="border-left: 3px solid #F2A65A; padding-left: 12px; font-size: 13px;"><div style="font-weight: 600;">일반화</div><div style="color: #C3C8D2;">중복 결제 판단의 "같은 날" 기준이 엔진에 박혀 있던 것을 설정으로 옮김</div></div>
+          <div style="border-left: 3px solid #F07167; padding-left: 12px; font-size: 13px;"><div style="font-weight: 600;">버그</div><div style="color: #C3C8D2;">문장 끝 마침표 앞의 인증번호를 읽지 못함 (조직 무관)</div></div>
+          <div style="font-size: 12px; color: #9AA1AE;">둘 다 별담 플러스 동작은 바꾸지 않음. 판별·기준선·시뮬레이터 코드는 그대로.</div>
+        </section>
+      </div>
+
+      <section aria-label="고객사 차이" style="background: #151820; border: 1px solid #22262E; border-radius: 10px; overflow: hidden;">
+        <div style="padding: 14px 16px 8px; display: flex; align-items: baseline;"><h2 style="margin: 0; font-size: 14px; font-weight: 600;">설정으로 표현한 차이</h2><span style="margin-left: auto; font-size: 12px; color: #9AA1AE;">config/orgs/*.toml</span></div>
+        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+          <thead><tr style="color: #9AA1AE; text-align: left; font-size: 12px;">
+            <th scope="col" style="padding: 7px 16px; font-weight: 500;">항목</th>
+            <th scope="col" style="padding: 7px 12px; font-weight: 500;">별담 플러스</th>
+            <th scope="col" style="padding: 7px 16px; font-weight: 500;">책솔</th>
+          </tr></thead>
+          <tbody>
+            <sc-for list="{{diff}}" as="r" hint-placeholder-count="7">
+              <tr style="border-top: 1px solid #22262E;">
+                <th scope="row" style="text-align: left; padding: 8px 16px; font-weight: 500; color: #C3C8D2;">{{r.k}}</th>
+                <td style="padding: 8px 12px;">{{r.a}}</td>
+                <td style="padding: 8px 16px;">{{r.b}}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1060}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const tenants = [
+      { n: '별담 플러스', d: '영상 구독 · 표준 배포', s: '운영 중', sb: '#14281E', sf: '#6FD3A0', bg: '#151820', bd: '#22262E' },
+      { n: '책솔', d: '전자책·오디오북 구독', s: '온보딩', sb: '#1B2540', sf: '#8FB0FF', bg: '#171C28', bd: '#34436A' }
+    ];
+    const ok = { i: '✓', c: '#6FD3A0' }, todo = { i: '○', c: '#6B7280' };
+    const steps = [
+      Object.assign({ n: '설정 파일', f: 'config/orgs/org_b.toml' }, ok),
+      Object.assign({ n: '약관·규칙 문서', f: 'domain/org_b/' }, ok),
+      Object.assign({ n: '업무 API 어댑터', f: 'bizapi/internal/orgbgw' }, ok),
+      Object.assign({ n: '평가 질문 세트', f: 'q-2026.10.14-mix-orgb.json' }, ok),
+      Object.assign({ n: '벤치마크 실행', f: '모델·벤치마크에서 실행' }, todo),
+      Object.assign({ n: '고객사 콘솔 계정 발급', f: '—' }, todo)
+    ];
+    const diff = [
+      { k: '청약철회', a: '결제일로부터 7일', b: '결제일로부터 14일' },
+      { k: '연 구독 중도 해지', a: '이용 개월 차감 + 위약금 10%', b: '남은 일수 일할 환불' },
+      { k: '장애', a: '4시간 이상이면 전액 환불', b: '환불 없음 · 기간 연장' },
+      { k: '중복 결제', a: '같은 날 결제', b: '같은 이용 기간' },
+      { k: '상담사 연결', a: '본인 확인 2회 실패 등', b: '본인 확인 3회 실패, 12개월 환불 2회 이상 등' },
+      { k: '승인 기준', a: '50,000원 초과', b: '30,000원 이상' },
+      { k: '환불 방법', a: '카드, 휴대폰, 간편결제', b: '카드, 휴대폰, 책솔 포인트' }
+    ];
+    return { tenants: tenants, steps: steps, diff: diff };
+  }
+}
+</script>
+</body>
+</html>

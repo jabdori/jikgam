@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>직감 · 운영 리포트</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+KR:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F5F7}
+a{color:#2449B8}a:hover{color:#1A3687}
+</style>
+</helmet>
+<div style="min-height: 1000px; display: flex; flex-wrap: wrap; background: #F4F5F7; color: #15171C; font-family: 'IBM Plex Sans KR', system-ui, sans-serif; font-size: 14px; line-height: 1.5;">
+
+  <nav aria-label="주 메뉴" style="flex: 1 1 232px; max-width: 260px; min-width: 220px; box-sizing: border-box; background: #FFFFFF; border-right: 1px solid #E3E5EA; padding: 20px 16px; display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 4px;">
+      <div aria-hidden="true" style="width: 28px; height: 28px; border-radius: 7px; background: #15171C; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px;">직</div>
+      <div style="font-weight: 700; font-size: 17px;">직감</div>
+    </div>
+    <button type="button" style="all: unset; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #E3E5EA; border-radius: 10px; background: #F9FAFB;">
+      <div aria-hidden="true" style="width: 30px; height: 30px; border-radius: 8px; background: #E8EEFB; color: #2449B8; display: flex; align-items: center; justify-content: center; font-weight: 700;">별</div>
+      <div style="flex-grow: 1;"><div style="font-weight: 600;">별담 플러스</div><div style="font-size: 12px; color: #5A6170;">고객센터</div></div>
+    </button>
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <div style="font-size: 11px; font-weight: 600; color: #8A909C; padding: 0 12px 4px; letter-spacing: 0.04em;">운영</div>
+      <a href="Main.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">실시간 통화</a>
+      <a href="Compare.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">통화 기록</a>
+      <a href="Report.dc.html" style="padding: 9px 12px; border-radius: 8px; background: #E8EEFB; color: #1A3687; font-weight: 600; text-decoration: none;">운영 리포트</a>
+      <div style="font-size: 11px; font-weight: 600; color: #8A909C; padding: 14px 12px 4px; letter-spacing: 0.04em;">설정</div>
+      <a href="Knowledge.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">지식·정책</a>
+      <a href="Integrations.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">연동</a>
+    </div>
+    <div style="margin-top: auto; font-size: 12px; color: #5A6170; padding: 10px 12px; border-radius: 8px; background: #F4F5F7;">데모 데이터: AI 고객과 나눈 합성 상담입니다.</div>
+  </nav>
+
+  <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column;">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px 28px; background: #FFFFFF; border-bottom: 1px solid #E3E5EA;">
+      <label for="q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">검색</label>
+      <input id="q" type="search" placeholder="고객 이름, 전화번호, 발화 내용 검색" style="flex: 1 1 280px; max-width: 420px; font: inherit; min-height: 40px; padding: 0 12px; border: 1px solid #D5D8DF; border-radius: 9px; background: #F9FAFB;">
+      <span aria-label="사용자 상담 운영팀" style="margin-left: auto; width: 32px; height: 32px; border-radius: 50%; background: #2449B8; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600;">운</span>
+    </div>
+
+    <main style="box-sizing: border-box; padding: 22px 28px 32px; display: flex; flex-direction: column; gap: 16px;">
+      <header style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px;">
+        <div style="flex-grow: 1;">
+          <h1 style="margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em;">운영 리포트</h1>
+          <div style="font-size: 13px; color: #5A6170;">2026-10-14 · 상담 30건</div>
+        </div>
+        <div role="group" aria-label="기간" style="display: flex; border: 1px solid #D5D8DF; border-radius: 9px; overflow: hidden; background: #FFFFFF;">
+          <button type="button" aria-pressed="true" style="font: inherit; font-size: 13px; cursor: pointer; min-height: 38px; padding: 0 14px; border: 0; background: #15171C; color: #FFFFFF; font-weight: 600;">오늘</button>
+          <button type="button" aria-pressed="false" style="font: inherit; font-size: 13px; cursor: pointer; min-height: 38px; padding: 0 14px; border: 0; background: #FFFFFF; color: #3A404C;">7일</button>
+          <button type="button" aria-pressed="false" style="font: inherit; font-size: 13px; cursor: pointer; min-height: 38px; padding: 0 14px; border: 0; background: #FFFFFF; color: #3A404C;">30일</button>
+        </div>
+      </header>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px;">
+        <sc-for list="{{kpis}}" as="k" hint-placeholder-count="5">
+          <div style="background: #FFFFFF; border: 1px solid #E3E5EA; border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 2px;">
+            <div style="font-size: 12px; color: #5A6170;">{{k.k}}</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 24px; font-weight: 500;">{{k.v}}</div>
+            <div style="font-size: 12px; color: #5A6170;">{{k.s}}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <section aria-label="처리 결과" style="background: #FFFFFF; border: 1px solid #E3E5EA; border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px;">
+        <h2 style="margin: 0; font-size: 15px; font-weight: 600;">처리 결과</h2>
+        <div role="img" aria-label="해지·환불 접수 19건, 안내 완료 5건, 상담사 연결 4건, 보류 2건" style="display: flex; height: 28px; border-radius: 6px; overflow: hidden; gap: 2px;">
+          <div style="flex: 19; background: #2449B8;"></div>
+          <div style="flex: 5; background: #8DA3DD;"></div>
+          <div style="flex: 4; background: #B4590E;"></div>
+          <div style="flex: 2; background: #B9BEC8;"></div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 13px;">
+          <sc-for list="{{legend}}" as="l" hint-placeholder-count="4">
+            <span style="display: inline-flex; align-items: center; gap: 6px;"><span aria-hidden="true" style="width: 10px; height: 10px; border-radius: 2px; background: {{l.c}};"></span>{{l.n}} <span style="font-family: 'IBM Plex Mono', monospace; color: #5A6170;">{{l.v}}</span></span>
+          </sc-for>
+        </div>
+      </section>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+        <sc-for list="{{lists}}" as="g" hint-placeholder-count="3">
+          <section aria-label="{{g.t}}" style="background: #FFFFFF; border: 1px solid #E3E5EA; border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; align-items: baseline;">
+              <h2 style="margin: 0; font-size: 15px; font-weight: 600;">{{g.t}}</h2>
+              <span style="margin-left: auto; font-size: 12px; color: #5A6170;">{{g.s}}</span>
+            </div>
+            <sc-for list="{{g.rows}}" as="r" hint-placeholder-count="3">
+              <div style="display: grid; grid-template-columns: minmax(0, 1fr) 90px 28px; gap: 10px; align-items: center; font-size: 13px;">
+                <span style="color: #3A404C;">{{r.n}}</span>
+                <div aria-hidden="true" style="height: 8px; border-radius: 4px; background: #F4F5F7;"><div style="height: 8px; border-radius: 4px; width: {{r.w}}; background: {{g.c}};"></div></div>
+                <span style="font-family: 'IBM Plex Mono', monospace; text-align: right;">{{r.v}}</span>
+              </div>
+            </sc-for>
+          </section>
+        </sc-for>
+      </div>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const kpis = [
+      { k: 'AI가 끝까지 처리', v: '86.7%', s: '30건 중 26건' },
+      { k: '상담사 연결', v: '4건', s: '모두 약관상 연결 사유' },
+      { k: '접수', v: '해지 16 · 환불 15', s: '확정 환불 안내 191,880원' },
+      { k: '고객이 요청을 바꾼 상담', v: '8건', s: '모두 바뀐 요청대로 안내 · 잘못된 안내 0건' },
+      { k: '평균 상담 시간', v: '29초', s: '고객 평균 5.6턴' }
+    ];
+    const legend = [
+      { n: '해지·환불 접수', v: '19', c: '#2449B8' },
+      { n: '안내 완료', v: '5', c: '#8DA3DD' },
+      { n: '상담사 연결', v: '4', c: '#B4590E' },
+      { n: '보류', v: '2', c: '#B9BEC8' }
+    ];
+    function rows(list, max) { return list.map(function (r) { return { n: r[0], v: r[1], w: Math.round(r[1] / max * 100) + '%' }; }); }
+    const lists = [
+      { t: '상담사 연결 사유', s: '4건', c: '#B4590E', rows: rows([['미성년자 결제 취소', 2], ['카드사 이의 제기 진행 중', 1], ['본인 확인 2회 실패', 1]], 2) },
+      { t: '보류 사유', s: '2건', c: '#8A909C', rows: rows([['업무 시스템 응답 지연', 1], ['계정을 찾을 수 없는 번호', 1]], 1) },
+      { t: '안내만 하고 끝난 상담', s: '5건', c: '#8DA3DD', rows: rows([['약관상 환불 불가', 2], ['본인이 아닌 요청', 2], ['요금제 변경 문의', 1]], 2) }
+    ];
+    return { kpis: kpis, legend: legend, lists: lists };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+# 공용 컴포넌트
+
+> 처음 읽는다면: [디자인 하네스](README.md) · [ADR 0022](../adr/0022-디자인-하네스.md)
+
+화면 코드(`jikgam/web/saas/`, `jikgam/web/admin/`)는 이 컴포넌트와 숫자 형식(`jikgam/web/ui/fmt.py`)만 써서 화면을 만든다.
+
+- 구현: `jikgam/web/ui/components.py`
+- 모양: `jikgam/web/static/components.css`(토큰만 쓴다)
+
+새 모양이 필요하면 컴포넌트를 더하고 아래 표에 이유를 적는다.
+
+## 기본 컴포넌트(지시에 정한 일곱 가지)
+
+| 컴포넌트 | 쓰는 곳 |
+|---|---|
+| `shell` | 모든 화면의 문서, 메뉴, 상단바(검색 또는 경로 표시), 본문 건너뛰기 링크. `theme`으로 고객사·관리 테마를 고른다 |
+| `card` | 테두리 있는 묶음. 제목·보조 글자·오른쪽 글자·버튼 자리가 있고, `flush`면 표를 꽉 채운다 |
+| `table` (`Col`, `Row`) | 첫 칸이 행 제목인 표. 줄 링크, 고른 줄, 숫자 칸, 좁은 화면에서 숨길 칸이 있다 |
+| `badge` | 처리 결과, 판정, 상태. 색은 `neutral`·`muted`·`accent`·`positive`·`caution`·`negative` 여섯 가지 |
+| `metric` | 지표 칸(이름, 값, 보조 글자) |
+| `empty` | 빈 상태 |
+| `drawer` | 목록 옆 상세. 열리면 제목으로 포커스가 가고 Escape나 닫기로 닫힌다 |
+
+## 더한 컴포넌트
+
+| 컴포넌트 | 더한 이유 |
+|---|---|
+| `stack`, `row`, `grid`, `columns`, `split`, `spacer`, `anchor` | 배치. 화면 코드가 HTML을 직접 쓰지 않게 하려면 배치도 컴포넌트여야 한다 |
+| `text`, `para`, `code`, `link`, `heading`, `subheading`, `sr_only`, `joined` | 글자. 색·크기·고정폭을 토큰 클래스로만 고르게 한다 |
+| `notice` | 눈에 띄게 둘 짧은 안내(데모 자료, 예상 비용, 경고) |
+| `button`, `chips` (`Chip`) | 시안의 버튼과 필터 칩, 기간 고르기 |
+| `page_header`, `pane_head` | 화면 제목 줄과 세로 목록의 제목. 한 화면에 h1이 둘 생기지 않게 낮출 수 있다 |
+| `keyvals`, `tags`, `ordered`, `link_list` | 고객 정보·설정 값, 짧은 꼬리표, 약관 조항의 항, 안내 근거 조항 링크 |
+| `steps` (`Step`) | 실시간 통화의 진행 단계, 통화 기록의 처리 내역, 지식·정책의 처리 단계 |
+| `disclosure` | 다 끝난 처리 단계처럼 평소에 볼 일이 적은 내용을 한 줄로 접는다(지식·정책 리뷰 지적 2) |
+| `bar`, `bar_list`, `stack_bar` (`Part`) | 운영 리포트의 사유별 건수와 처리 결과 비율 |
+| `conversation` (`Turn`, `Divider`) | 대화와 그 사이의 "요청 변경" 한 줄, 녹음 위치에 맞춘 강조, 말 아래 근거 조항 |
+| `item_list` (`ListItem`) | 진행 중인 통화 목록, 고객사 고르기(가로 카드) |
+| `player`, `listen_source`, `toggle` | 녹음 재생(다시 듣기는 기본 컨트롤, 리플레이는 재생 버튼), 실시간 통화의 통화 듣기, 판단 시점마다 멈춤 |
+| `live`, `slot` | 실시간 통화의 갱신. 서버가 만든 문서를 다시 받아 지정한 영역만 바꾼다(JS는 글자를 만들지 않는다) |
+| `lanes` (`Lane`, `Seg`, `Mark`), `playlist` (`PlayItem`) | 통화 리플레이의 재생 띠(화자별 구간, 판단 표시, 끼어들기, 지금 위치)와 재생 목록 |
+| `rank_bars` (`RankRow`), `heatmap` (`HeatCell`), `version_block` | 통화 리플레이의 조항 순위와 직전 대비 변화, 조항 × 판단 순위 표, 무효가 된 답과 새 답 |
+| `check_list` | 고객사 관리의 온보딩 체크 |
+| `form`, `field_text`, `field_select`, `field_checks`, `hidden` | 모델 추가와 벤치마크 실행 폼. `field_text(show_for=…)`는 어댑터에 필요한 칸만 보인다 |

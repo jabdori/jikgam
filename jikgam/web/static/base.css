@@ -1,0 +1,53 @@
+/* 기본 스타일. 값은 tokens.css의 변수만 쓴다. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { background: var(--color-bg); }
+
+body {
+  margin: var(--space-0);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+a { color: var(--color-accent); }
+a:hover { color: var(--color-accent-strong); }
+
+h1, h2, h3, h4, p, dl, dd, ol, ul, figure { margin: var(--space-0); }
+ol, ul { padding: var(--space-0); list-style: none; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+
+:focus-visible {
+  outline: var(--size-focus) solid var(--color-focus);
+  outline-offset: var(--size-focus);
+}
+
+.sr-only {
+  position: absolute;
+  width: var(--size-hairline);
+  height: var(--size-hairline);
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip {
+  position: absolute;
+  left: var(--space-4);
+  top: calc(var(--space-14) * -2);
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--radius-md);
+  background: var(--color-inverse);
+  color: var(--color-on-inverse);
+  z-index: 10;
+}
+.skip:focus { top: var(--space-4); }
+
+.num { font-variant-numeric: tabular-nums; }

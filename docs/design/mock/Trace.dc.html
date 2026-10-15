@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>직감 Admin · 통화 리플레이</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+KR:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E1014}
+a{color:#8FB0FF}a:hover{color:#B7CCFF}
+</style>
+</helmet>
+<div style="min-height: 1240px; display: flex; flex-wrap: wrap; background: #0E1014; color: #E6E8EC; font-family: 'IBM Plex Sans KR', system-ui, sans-serif; font-size: 14px; line-height: 1.5;">
+
+  <nav aria-label="관리 메뉴" style="flex: 1 1 220px; max-width: 240px; min-width: 200px; box-sizing: border-box; background: #08090C; border-right: 1px solid #22262E; padding: 20px 14px; display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 6px;">
+      <div aria-hidden="true" style="width: 28px; height: 28px; border-radius: 7px; background: #E6E8EC; color: #08090C; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px;">직</div>
+      <div style="font-weight: 700; font-size: 16px;">직감 <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; color: #F2A65A; border: 1px solid #5A3A1A; border-radius: 5px; padding: 1px 5px; margin-left: 2px;">ADMIN</span></div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <div style="font-size: 11px; font-weight: 600; color: #6B7280; padding: 0 10px 4px; letter-spacing: 0.04em;">엔진</div>
+      <a href="Quality.dc.html" style="padding: 8px 10px; border-radius: 7px; color: #C3C8D2; text-decoration: none;">모델·벤치마크</a>
+      <a href="Trace.dc.html" aria-current="page" style="padding: 8px 10px; border-radius: 7px; background: #1B2130; color: #FFFFFF; font-weight: 600; text-decoration: none;">통화 리플레이</a>
+      <div style="font-size: 11px; font-weight: 600; color: #6B7280; padding: 14px 10px 4px; letter-spacing: 0.04em;">고객사</div>
+      <a href="Tenants.dc.html" style="padding: 8px 10px; border-radius: 7px; color: #C3C8D2; text-decoration: none;">고객사 관리</a>
+    </div>
+    <div style="margin-top: auto; font-size: 12px; color: #9AA1AE; padding: 10px; border-radius: 8px; border: 1px solid #22262E;">직감 팀 내부용 · 고객사에는 보이지 않습니다.</div>
+  </nav>
+
+  <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column;">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 28px; border-bottom: 1px solid #22262E; background: #0B0D11; font-size: 13px;">
+      <span style="color: #9AA1AE;">통화 리플레이</span><span style="color: #4B5260;">/</span>
+      <span>별담 플러스</span><span style="color: #4B5260;">/</span>
+      <span style="font-family: 'IBM Plex Mono', monospace;">voice-r2 · s20</span>
+      <span style="font-size: 12px; color: #9AA1AE;">해지 아니라던 고객이 해지 요청으로 번복</span>
+      <span aria-label="사용자 김현성" style="margin-left: auto; width: 28px; height: 28px; border-radius: 50%; background: #2A2F3A; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;">김</span>
+    </div>
+
+    <section aria-label="재생" style="padding: 14px 28px; border-bottom: 1px solid #22262E; background: #12151B; display: flex; flex-direction: column; gap: 10px;">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px;">
+        <button type="button" aria-label="일시정지" style="width: 40px; height: 40px; border-radius: 50%; border: 0; background: #E6E8EC; cursor: pointer; display: flex; align-items: center; justify-content: center;"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14"><rect x="2" y="1" width="3.5" height="12" fill="#0E1014"/><rect x="8.5" y="1" width="3.5" height="12" fill="#0E1014"/></svg></button>
+        <button type="button" style="font: inherit; font-size: 12px; cursor: pointer; min-height: 32px; padding: 0 10px; border: 1px solid #2A2F3A; border-radius: 7px; background: transparent; color: #C3C8D2;">◀ 이전 판단</button>
+        <button type="button" style="font: inherit; font-size: 12px; cursor: pointer; min-height: 32px; padding: 0 10px; border: 1px solid #2A2F3A; border-radius: 7px; background: transparent; color: #C3C8D2;">다음 판단 ▶</button>
+        <span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px;">0:48.8 <span style="color: #6B7280;">/ 2:17.3</span></span>
+        <label style="margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 12px; color: #C3C8D2;"><input type="checkbox" checked style="width: 15px; height: 15px;">판단 시점마다 멈춤</label>
+        <span style="font-size: 12px; padding: 3px 9px; border: 1px solid #2A2F3A; border-radius: 7px; font-family: 'IBM Plex Mono', monospace;">1.0×</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 56px minmax(0, 1fr); row-gap: 6px; column-gap: 10px; align-items: center; font-size: 11px; color: #9AA1AE;">
+        <span>고객</span>
+        <div style="position: relative; height: 16px; background: #1A1D24; border-radius: 4px;">
+          <sc-for list="{{cust}}" as="s" hint-placeholder-count="6"><div style="position: absolute; top: 0; bottom: 0; left: {{s.l}}; width: {{s.w}}; background: #F2A65A; border-radius: 3px;"></div></sc-for>
+        </div>
+        <span>AI</span>
+        <div style="position: relative; height: 16px; background: #1A1D24; border-radius: 4px;">
+          <sc-for list="{{ai}}" as="s" hint-placeholder-count="6"><div style="position: absolute; top: 0; bottom: 0; left: {{s.l}}; width: {{s.w}}; background: {{s.c}}; border-radius: 3px;"></div></sc-for>
+          <div style="position: absolute; left: 33.1%; top: -3px; bottom: -3px; width: 2px; background: #F07167;"></div>
+        </div>
+        <span>판단</span>
+        <div style="position: relative; height: 18px;">
+          <sc-for list="{{vmarks}}" as="v" hint-placeholder-count="9"><span style="position: absolute; left: {{v.l}}; top: 0; transform: translateX(-50%); font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 0 3px; border-radius: 3px; background: {{v.bg}}; color: {{v.c}};">{{v.n}}</span></sc-for>
+        </div>
+        <span></span>
+        <div style="position: relative; height: 12px;">
+          <div style="position: absolute; left: 35.5%; top: -64px; bottom: 0; width: 2px; background: #E6E8EC;"></div>
+          <div style="display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #6B7280;"><span>0:00</span><span>0:30</span><span>1:00</span><span>1:30</span><span>2:00</span><span>2:17</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div style="flex-grow: 1; display: flex; flex-wrap: wrap;">
+      <section aria-label="재생 목록" style="flex: 1 1 300px; max-width: 360px; box-sizing: border-box; border-right: 1px solid #22262E; display: flex; flex-direction: column;">
+        <div style="padding: 12px 16px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #22262E;">재생 목록 <span style="font-weight: 400; color: #9AA1AE;">· 음성에 맞춰 이동</span></div>
+        <sc-for list="{{playlist}}" as="p" hint-placeholder-count="14">
+          <button type="button" aria-current="{{p.cur}}" style="all: unset; cursor: pointer; display: grid; grid-template-columns: 46px 52px minmax(0, 1fr); gap: 8px; padding: 7px 16px; font-size: 12px; background: {{p.bg}}; box-shadow: inset 3px 0 0 {{p.bar}}; opacity: {{p.op}};">
+            <span style="font-family: 'IBM Plex Mono', monospace; color: #9AA1AE;">{{p.t}}</span>
+            <span style="color: {{p.kc}}; font-weight: 600;">{{p.k}}</span>
+            <span style="color: #E6E8EC; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{p.x}}</span>
+          </button>
+        </sc-for>
+      </section>
+
+      <main style="flex: 999 1 520px; min-width: 0; box-sizing: border-box; padding: 18px 24px 28px; display: flex; flex-direction: column; gap: 14px;">
+        <header style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px;">
+          <h1 style="margin: 0; font-size: 18px; font-weight: 700;">v6 판단 · 0:48.8</h1>
+          <span style="font-size: 12px; padding: 2px 8px; border-radius: 999px; background: #2A1E10; color: #F2A65A;">의도 변경 결제일 문의 → 해지</span>
+          <span style="font-size: 12px; color: #9AA1AE;">Jev 256ms · 답변 결정 · 정보 충분</span>
+        </header>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 14px;">
+          <section aria-label="조항 순위" style="background: #151820; border: 1px solid #22262E; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: baseline;"><h2 style="margin: 0; font-size: 14px; font-weight: 600;">조항 순위</h2><span style="margin-left: auto; font-size: 12px; color: #9AA1AE;">v5 대비 · 흐린 막대 = v5 값</span></div>
+            <sc-for list="{{rank}}" as="r" hint-placeholder-count="8">
+              <div style="display: grid; grid-template-columns: 18px 40px 38px minmax(0, 1fr) 36px; gap: 8px; align-items: center; font-size: 12px;">
+                <span style="font-family: 'IBM Plex Mono', monospace; color: #9AA1AE;">{{r.i}}</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; color: {{r.tc}};">{{r.id}}</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; color: {{r.dc}};">{{r.d}}</span>
+                <div style="position: relative; height: 8px; border-radius: 2px; background: #1F232C;">
+                  <div style="position: absolute; left: 0; top: 0; bottom: 0; width: {{r.pw}}; background: #3A404C; border-radius: 2px;"></div>
+                  <div style="position: absolute; left: 0; top: 2px; bottom: 2px; width: {{r.w}}; background: {{r.bar}}; border-radius: 2px;"></div>
+                  <div style="position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: #6B7280;"></div>
+                </div>
+                <span style="font-family: 'IBM Plex Mono', monospace; text-align: right; color: {{r.tc}};">{{r.p}}</span>
+              </div>
+            </sc-for>
+            <div style="font-size: 12px; color: #9AA1AE; border-top: 1px solid #22262E; padding-top: 8px;">선택 A-07, A-04 · 시나리오 정답 A-07·A-04·A-06·A-20 중 상위 4위 안 <span style="color: #E6E8EC;">2개</span></div>
+          </section>
+
+          <section aria-label="답변 버전" style="background: #151820; border: 1px solid #22262E; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px;">
+            <h2 style="margin: 0; font-size: 14px; font-weight: 600;">답변 버전</h2>
+            <div style="border-left: 3px solid #F07167; padding-left: 12px; display: flex; flex-direction: column; gap: 4px;">
+              <div style="font-size: 12px; color: #F07167; font-family: 'IBM Plex Mono', monospace;">s3 · v5 기준 · 1.66초 재생 후 끼어들기로 중단</div>
+              <div style="font-size: 13px; color: #9AA1AE; text-decoration: line-through;">본인 확인이 완료되었습니다. 이용 중이신 월 구독의 다음 결제 예정일은 2026-11-02입니다…</div>
+              <div style="font-size: 12px; color: #9AA1AE; font-family: 'IBM Plex Mono', monospace;">무효화 사유: condition_changed · intent billing_inquiry→cancel</div>
+            </div>
+            <div style="border-left: 3px solid #7AA2FF; padding-left: 12px; display: flex; flex-direction: column; gap: 4px;">
+              <div style="font-size: 12px; color: #8FB0FF; font-family: 'IBM Plex Mono', monospace;">s4 · v6 기준 · 2.4초 뒤 재생 시작</div>
+              <div style="font-size: 13px;">제7조에 따라 월 구독을 해지하시면 다음 결제일인 2026-11-02부터 자동 결제가 중단되며…</div>
+            </div>
+          </section>
+        </div>
+
+        <section aria-label="순위 변화" style="background: #151820; border: 1px solid #22262E; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px;"><h2 style="margin: 0; font-size: 14px; font-weight: 600;">통화 전체 순위 변화</h2><span style="font-size: 12px; color: #9AA1AE;">칸 안 숫자 = 그 판단에서의 순위, 색 = 적용 확률 · 굵은 테두리 = 선택(≥0.5)</span></div>
+          <div style="display: grid; grid-template-columns: 96px repeat(9, minmax(0, 1fr)); gap: 3px; font-size: 11px;">
+            <span></span>
+            <sc-for list="{{vcols}}" as="v" hint-placeholder-count="9"><span style="text-align: center; font-family: 'IBM Plex Mono', monospace; color: {{v.c}}; font-weight: {{v.fw}};">{{v.n}}</span></sc-for>
+            <sc-for list="{{heat}}" as="h" hint-placeholder-count="7">
+              <span style="font-family: 'IBM Plex Mono', monospace; color: #C3C8D2; align-self: center;">{{h.id}} <span style="color: #F2A65A;">{{h.gold}}</span></span>
+              <sc-for list="{{h.cells}}" as="c" hint-placeholder-count="9">
+                <span style="height: 24px; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; background: {{c.bg}}; color: {{c.fg}}; box-shadow: inset 0 0 0 {{c.ring}} #E6E8EC;">{{c.r}}</span>
+              </sc-for>
+            </sc-for>
+            <span style="color: #9AA1AE; align-self: center;">의도</span>
+            <sc-for list="{{intents}}" as="t" hint-placeholder-count="9"><span style="text-align: center; color: #C3C8D2;">{{t}}</span></sc-for>
+            <span style="color: #9AA1AE; align-self: center;">정답 일치</span>
+            <sc-for list="{{agree}}" as="a" hint-placeholder-count="9"><span style="text-align: center; font-family: 'IBM Plex Mono', monospace; color: #E6E8EC;">{{a}}/4</span></sc-for>
+          </div>
+          <div style="font-size: 12px; color: #9AA1AE;">★ 시나리오 정답 조항. 정답 일치 = 정답 4개 중 상위 4위 안에 든 개수. v6에서 A-07이 4위→1위로 올라서고, 환불을 물은 v7부터 A-20·A-06이 올라와 끝에는 3/4. A-04는 해지 이후 후보에서 빠졌다가 v9에 5위로 돌아옴.</div>
+        </section>
+      </main>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const T = 137.3;
+    function pct(s) { return (s / T * 100).toFixed(2) + '%'; }
+    function seg(a, b, c) { return { l: pct(a), w: pct(b - a), c: c || '#7AA2FF' }; }
+    const cust = [seg(3.65, 7.43), seg(22.1, 24.5), seg(37.6, 39.2), seg(45.5, 47.8), seg(75.9, 78.4), seg(112.5, 113.6)];
+    const ai = [seg(10.5, 20.3), seg(27.7, 36.3), seg(43.1, 45.5, '#4A5A80'), seg(51.2, 74.9), seg(81.8, 110.9), seg(117.1, 137.3)];
+    const vt = [8.4, 25.6, 40.3, 40.5, 40.7, 48.8, 79.4, 114.6, 114.9];
+    const vmarks = vt.filter(function (t, i) { return i !== 2 && i !== 3 && i !== 8; }).map(function (t) {
+      const n = 'v' + (vt.indexOf(t) + 1) + (t === 40.7 ? '' : '');
+      return { l: pct(t), n: t === 40.7 ? 'v3–5' : t === 114.6 ? 'v8–9' : n, bg: t === 48.8 ? '#E6E8EC' : '#22262E', c: t === 48.8 ? '#0E1014' : '#C3C8D2' };
+    });
+
+    const C = '#F2A65A', A = '#8FB0FF', D = '#C3C8D2', X = '#F07167', W = '#6FD3A0';
+    function p(t, k, kc, x, state) {
+      const cur = state === 'cur', past = state === 'past';
+      return { t: t, k: k, kc: kc, x: x, cur: cur ? 'true' : 'false', bg: cur ? '#1B2130' : 'transparent', bar: cur ? '#E6E8EC' : 'transparent', op: past || cur ? '1' : '0.55' };
+    }
+    const playlist = [
+      p('0:03.6', '고객', C, '해지하려는 건 아니고요. 다음 결제가 언제…', 'past'),
+      p('0:08.4', 'v1', D, '결제일 문의 · 본인 확인 필요 → 번호 요청', 'past'),
+      p('0:10.5', 'AI', A, '결제 예정일 확인을 위해 먼저 본인 확인을…', 'past'),
+      p('0:22.1', '고객', C, '네, 010-0000-0016이에요.', 'past'),
+      p('0:25.6', 'v2', D, '인증번호 요청', 'past'),
+      p('0:37.6', '고객', C, '인증 번호는 0016이에요.', 'past'),
+      p('0:40.3', 'v3–5', D, '본인 확인 → 조회 5건 → 결제일 답변 결정', 'past'),
+      p('0:43.1', 'AI', A, '본인 확인이 완료되었습니다. 다음 결제 예정일은…', 'past'),
+      p('0:45.5', '끼어듦', X, 'AI 음성 1.66초 만에 중단', 'past'),
+      p('0:47.8', '고객', C, '아 그냥 해지할게요. 요즘 잘 안 봐서요.', 'past'),
+      p('0:48.8', 'v6', W, '의도 변경 → 이전 답변 무효화 · 해지 안내', 'cur'),
+      p('0:51.2', 'AI', A, '제7조에 따라 월 구독을 해지하시면…', ''),
+      p('1:15.9', '고객', C, '근데 이번 달 낸 건 환불 안 되나요?', ''),
+      p('1:19.4', 'v7', D, '해지+환불 문의 · A-09·A-20 부상', ''),
+      p('1:21.8', 'AI', A, '제7조 제3항에 따라 이미 결제된 월 요금은…', ''),
+      p('1:52.5', '고객', C, '네, 그래도 해지해 주세요.', ''),
+      p('1:54.6', 'v8–9', D, '동의 확인 → 해지 접수(create_cancellation)', ''),
+      p('1:57.1', 'AI', A, '해지 접수가 완료되었습니다…', '')
+    ];
+
+    const v5 = { 'A-04': [1, .67], 'A-02': [2, .22], 'A-19': [3, .15], 'A-07': [4, .10], 'A-05': [5, .10], 'A-03': [6, .10], 'A-11': [7, .07], 'A-18': [8, .06] };
+    const v6 = [['A-07', .81], ['A-04', .62], ['A-05', .27], ['A-02', .25], ['A-06', .20], ['A-19', .15], ['A-03', .08], ['A-11', .08]];
+    const rank = v6.map(function (r, i) {
+      const prev = v5[r[0]], on = r[1] >= 0.5;
+      let d = '신규', dc = '#F2A65A';
+      if (prev) { const k = prev[0] - (i + 1); d = k > 0 ? '▲' + k : k < 0 ? '▼' + (-k) : '–'; dc = k > 0 ? '#6FD3A0' : k < 0 ? '#F07167' : '#6B7280'; }
+      return { i: i + 1, id: r[0], d: d, dc: dc, p: r[1].toFixed(2), w: Math.round(r[1] * 100) + '%', pw: prev ? Math.round(prev[1] * 100) + '%' : '0%', bar: on ? '#7AA2FF' : '#6B7280', tc: on ? '#E6E8EC' : '#9AA1AE' };
+    });
+
+    const V = [
+      { 'A-15': .19, 'A-07': .14, 'A-04': .67, 'A-02': .36, 'A-18': .12, 'A-08': .16, 'A-05': .18, 'A-06': .14 },
+      { 'A-04': .61, 'A-02': .28, 'A-07': .10, 'A-05': .07, 'A-18': .08, 'A-19': .19, 'A-03': .10, 'A-11': .13 },
+      { 'A-04': .68, 'A-02': .32, 'A-07': .09, 'A-05': .08, 'A-18': .09, 'A-19': .21, 'A-03': .11, 'A-11': .12 },
+      { 'A-04': .67, 'A-02': .30, 'A-07': .10, 'A-05': .08, 'A-18': .10, 'A-19': .18, 'A-03': .11, 'A-11': .16 },
+      { 'A-04': .67, 'A-02': .22, 'A-07': .10, 'A-05': .10, 'A-18': .06, 'A-19': .15, 'A-03': .10, 'A-11': .07 },
+      { 'A-04': .62, 'A-02': .25, 'A-07': .81, 'A-05': .27, 'A-19': .15, 'A-03': .08, 'A-11': .08, 'A-06': .20 },
+      { 'A-20': .55, 'A-09': .59, 'A-07': .72, 'A-01': .11, 'A-05': .48, 'A-06': .47, 'A-16': .11, 'A-14': .39 },
+      { 'A-14': .27, 'A-20': .54, 'A-09': .48, 'A-07': .75, 'A-01': .09, 'A-05': .33, 'A-06': .35, 'A-16': .10 },
+      { 'A-07': .76, 'A-20': .46, 'A-09': .59, 'A-01': .10, 'A-05': .33, 'A-06': .38, 'A-16': .11, 'A-04': .34 }
+    ];
+    const gold = { 'A-07': 1, 'A-04': 1, 'A-06': 1, 'A-20': 1 };
+    const rows = ['A-07', 'A-04', 'A-20', 'A-06', 'A-09', 'A-05', 'A-02'];
+    const heat = rows.map(function (id) {
+      return { id: id, gold: gold[id] ? '★' : '', cells: V.map(function (m) {
+        if (m[id] === undefined) return { r: '·', bg: '#14171D', fg: '#4B5260', ring: '0' };
+        const order = Object.keys(m).sort(function (a, b) { return m[b] - m[a]; });
+        const pr = m[id], a = 0.12 + pr * 0.88;
+        return { r: order.indexOf(id) + 1, bg: 'rgba(122,162,255,' + a.toFixed(2) + ')', fg: pr > 0.45 ? '#0E1014' : '#E6E8EC', ring: pr >= 0.5 ? '2px' : '0' };
+      }) };
+    });
+    const vcols = V.map(function (m, i) { return { n: 'v' + (i + 1), c: i === 5 ? '#FFFFFF' : '#9AA1AE', fw: i === 5 ? '700' : '400' }; });
+    const intents = ['결제일', '결제일', '결제일', '결제일', '결제일', '해지', '해지+환불', '해지', '해지'];
+    const agree = V.map(function (m) {
+      const top = Object.keys(m).sort(function (a, b) { return m[b] - m[a]; }).slice(0, 4);
+      return top.filter(function (k) { return gold[k]; }).length;
+    });
+    return { cust: cust, ai: ai, vmarks: vmarks, playlist: playlist, rank: rank, heat: heat, vcols: vcols, intents: intents, agree: agree };
+  }
+}
+</script>
+</body>
+</html>

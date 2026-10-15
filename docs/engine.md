@@ -190,6 +190,8 @@ required_notices = ["환불 예정액과 산정 근거", "환불 방법과 예�
 
 웹 화면(`jikgam/web/`, ADR 0005)은 엔진 동작을 바꾸지 않고 엔진 세션을 그대로 쓴다.
 
+> 보완(2026-10-15): 웹 화면을 고객사 콘솔과 관리 콘솔로 나누면서(ADR 0021) 화면은 엔진 세션을 붙이지 않고 결과 폴더의 로그와 녹음만 읽게 됐다. 아래의 이벤트 구독(`jikgam/web/live.py`의 `ObservedLog`)은 지웠다. `Session.request_handoff`는 엔진에 그대로 있다.
+
 - **이벤트 구독**: 엔진 코드에 훅을 두지 않았다. 콘솔이 세션의 `log`(EventLog)를 감싸 줄을 쓸 때마다 화면 상태를 갱신한다(`jikgam/web/live.py`의 `ObservedLog`). 로그 파일에는 같은 줄이 그대로 남고, 화면 쪽 오류는 엔진으로 올리지 않는다.
 - **상담사 인계 진입점**: `Session.request_handoff(reason="agent_request")`를 더했다. 콘솔의 인계 버튼이 부른다. 인계 사유를 시스템 사실(`facts.handoff_reason`)에 두고(이미 있으면 그 사유를 쓴다) 버전을 올린 뒤 마지막 고객 발화로 다시 진행하므로, `create_handoff` 호출과 안내 문구는 정책 규칙 1과 생성이 정한다. 통화자가 제3자면 규칙 0(거절)이 앞선다.
 

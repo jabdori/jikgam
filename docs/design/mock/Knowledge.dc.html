@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>직감 · 지식·정책</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+KR:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F5F7}
+a{color:#2449B8}a:hover{color:#1A3687}
+</style>
+</helmet>
+<div style="min-height: 1060px; display: flex; flex-wrap: wrap; background: #F4F5F7; color: #15171C; font-family: 'IBM Plex Sans KR', system-ui, sans-serif; font-size: 14px; line-height: 1.5;">
+
+  <nav aria-label="주 메뉴" style="flex: 1 1 232px; max-width: 260px; min-width: 220px; box-sizing: border-box; background: #FFFFFF; border-right: 1px solid #E3E5EA; padding: 20px 16px; display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 4px;">
+      <div aria-hidden="true" style="width: 28px; height: 28px; border-radius: 7px; background: #15171C; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px;">직</div>
+      <div style="font-weight: 700; font-size: 17px;">직감</div>
+    </div>
+    <button type="button" style="all: unset; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #E3E5EA; border-radius: 10px; background: #F9FAFB;">
+      <div aria-hidden="true" style="width: 30px; height: 30px; border-radius: 8px; background: #E8EEFB; color: #2449B8; display: flex; align-items: center; justify-content: center; font-weight: 700;">별</div>
+      <div style="flex-grow: 1;"><div style="font-weight: 600;">별담 플러스</div><div style="font-size: 12px; color: #5A6170;">고객센터</div></div>
+    </button>
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <div style="font-size: 11px; font-weight: 600; color: #8A909C; padding: 0 12px 4px; letter-spacing: 0.04em;">운영</div>
+      <a href="Main.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">실시간 통화</a>
+      <a href="Compare.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">통화 기록</a>
+      <a href="Report.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">운영 리포트</a>
+      <div style="font-size: 11px; font-weight: 600; color: #8A909C; padding: 14px 12px 4px; letter-spacing: 0.04em;">설정</div>
+      <a href="Knowledge.dc.html" aria-current="page" style="padding: 9px 12px; border-radius: 8px; background: #E8EEFB; color: #1A3687; font-weight: 600; text-decoration: none;">지식·정책</a>
+      <a href="Integrations.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">연동</a>
+    </div>
+    <div style="margin-top: auto; font-size: 12px; color: #5A6170; padding: 10px 12px; border-radius: 8px; background: #F4F5F7;">데모 데이터: AI 고객과 나눈 합성 상담입니다.</div>
+  </nav>
+
+  <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column;">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px 28px; background: #FFFFFF; border-bottom: 1px solid #E3E5EA;">
+      <label for="q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">검색</label>
+      <input id="q" type="search" placeholder="문서, 조항, 내용 검색" style="flex: 1 1 280px; max-width: 420px; font: inherit; min-height: 40px; padding: 0 12px; border: 1px solid #D5D8DF; border-radius: 9px; background: #F9FAFB;">
+      <span aria-label="사용자 상담 운영팀" style="margin-left: auto; width: 32px; height: 32px; border-radius: 50%; background: #2449B8; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600;">운</span>
+    </div>
+
+    <main style="box-sizing: border-box; padding: 22px 28px 32px; display: flex; flex-direction: column; gap: 16px;">
+      <header style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px;">
+        <div style="flex-grow: 1;">
+          <h1 style="margin: 0; font-size: 22px; font-weight: 700;">지식·정책</h1>
+          <div style="font-size: 13px; color: #5A6170;">AI는 게시된 문서만 근거로 안내합니다.</div>
+        </div>
+        <button type="button" style="font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; min-height: 38px; padding: 0 14px; border: 0; border-radius: 9px; background: #15171C; color: #FFFFFF;">문서 업로드</button>
+      </header>
+
+      <section aria-label="문서" style="background: #FFFFFF; border: 1px solid #E3E5EA; border-radius: 12px; overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+          <thead><tr style="background: #F9FAFB; color: #5A6170; text-align: left;">
+            <th scope="col" style="padding: 9px 18px; font-weight: 500;">문서</th>
+            <th scope="col" style="padding: 9px 12px; font-weight: 500;">종류</th>
+            <th scope="col" style="padding: 9px 12px; font-weight: 500;">시행일</th>
+            <th scope="col" style="padding: 9px 12px; font-weight: 500; text-align: right;">구간</th>
+            <th scope="col" style="padding: 9px 18px; font-weight: 500;">상태</th>
+          </tr></thead>
+          <tbody>
+            <sc-for list="{{docs}}" as="d" hint-placeholder-count="4">
+              <tr style="border-top: 1px solid #F0F1F4; background: {{d.bg}};">
+                <th scope="row" style="text-align: left; padding: 10px 18px; font-weight: 500;">{{d.n}}<div style="font-size: 12px; font-weight: 400; color: #5A6170;">{{d.f}}</div></th>
+                <td style="padding: 10px 12px; color: #3A404C;">{{d.k}}</td>
+                <td style="padding: 10px 12px; font-family: 'IBM Plex Mono', monospace; color: #3A404C;">{{d.e}}</td>
+                <td style="padding: 10px 12px; text-align: right; font-family: 'IBM Plex Mono', monospace;">{{d.c}}</td>
+                <td style="padding: 10px 18px;"><span style="font-size: 12px; padding: 2px 9px; border-radius: 999px; background: {{d.sb}}; color: {{d.sf}};">{{d.s}}</span></td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </section>
+
+      <section aria-label="처리 단계" style="background: #FFFFFF; border: 1px solid #E3E5EA; border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px;">
+        <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px;">
+          <h2 style="margin: 0; font-size: 15px; font-weight: 600;">환불 정책 개정안 처리 중</h2>
+          <span style="font-size: 12px; color: #5A6170;">업로드한 문서는 아래 순서로 정리된 뒤 검토를 거쳐 게시됩니다.</span>
+        </div>
+        <ol style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px;">
+          <sc-for list="{{steps}}" as="s" hint-placeholder-count="5">
+            <li style="border: 1px solid {{s.b}}; background: {{s.bg}}; border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px;">
+              <span style="font-size: 12px; color: {{s.sc}}; font-weight: 600;">{{s.s}}</span>
+              <span style="font-weight: 600;">{{s.n}}</span>
+              <span style="font-size: 12px; color: #5A6170;">{{s.d}}</span>
+            </li>
+          </sc-for>
+        </ol>
+      </section>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start;">
+        <section aria-label="구간 상세" style="flex: 1 1 440px; min-width: 0; background: #FFFFFF; border: 1px solid #E3E5EA; border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px;">
+            <div>
+              <div style="font-size: 12px; color: #5A6170;">이용약관 2026.07 · 구간 7 / 23</div>
+              <h2 style="margin: 2px 0 0; font-size: 17px; font-weight: 700;">제7조 월 구독의 해지</h2>
+            </div>
+            <button type="button" style="margin-left: auto; font: inherit; font-size: 13px; cursor: pointer; min-height: 34px; padding: 0 12px; border: 1px solid #D5D8DF; border-radius: 8px; background: #FFFFFF;">구간 경계 수정</button>
+          </div>
+          <ol style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; color: #2A2E36; line-height: 1.7;">
+            <li>회원은 언제든지 월 구독을 해지할 수 있다.</li>
+            <li>해지하면 다음 결제일부터 자동 결제가 중단되고, 다음 결제일 전날까지 서비스를 계속 이용할 수 있다.</li>
+            <li>이미 결제한 월 요금은 환불하지 않는다. 다만 제5조에 따른 청약철회 요건을 갖춘 경우에는 제5조에 따른다.</li>
+          </ol>
+          <div style="padding: 10px 12px; border-radius: 8px; background: #F4F5F7; font-size: 13px;"><span style="font-weight: 600;">요약</span> · 월 구독은 언제든 해지 가능, 다음 결제일부터 결제 중단, 이미 낸 요금은 청약철회 요건이 아니면 환불 없음.</div>
+        </section>
+
+        <section aria-label="메타데이터" style="flex: 1 1 300px; min-width: 0; background: #FFFFFF; border: 1px solid #E3E5EA; border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px;">
+          <h2 style="margin: 0; font-size: 15px; font-weight: 600;">메타데이터</h2>
+          <sc-for list="{{meta}}" as="m" hint-placeholder-count="5">
+            <div style="display: flex; gap: 10px; font-size: 13px;"><span style="color: #5A6170; min-width: 72px;">{{m.k}}</span><span style="flex-grow: 1;">{{m.v}}</span></div>
+          </sc-for>
+          <div style="font-size: 13px; color: #5A6170; padding-top: 6px; border-top: 1px solid #F0F1F4;">고객 표현</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px;">
+            <span style="padding: 3px 8px; border-radius: 6px; background: #F4F5F7;">그만 볼래요</span>
+            <span style="padding: 3px 8px; border-radius: 6px; background: #F4F5F7;">해제해 주세요</span>
+            <span style="padding: 3px 8px; border-radius: 6px; background: #F4F5F7;">자동결제 끊어주세요</span>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1060}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const live = ['#E9F5EE', '#1F6B45'], run = ['#E8EEFB', '#1A3687'], rev = ['#FFF4EC', '#8A4209'];
+    function d(n, f, k, e, c, s, st, sel) { return { n: n, f: f, k: k, e: e, c: c, s: s, sb: st[0], sf: st[1], bg: sel ? '#F5F8FE' : '#FFFFFF' }; }
+    const docs = [
+      d('이용약관', '별담플러스_이용약관_2026.07.pdf', '약관', '2026-07-01', '23', '게시 중', live, true),
+      d('상담 처리 규칙', '상담매뉴얼_v4.docx', '내부 규칙', '2026-09-15', '—', '게시 중', live, false),
+      d('필수 안내 문구', '고지문구_2026.xlsx', '필수 안내', '2026-07-01', '—', '게시 중', live, false),
+      d('환불 정책 개정안', '환불정책_개정안_2026.11.pdf', '약관 개정', '2026-11-01', '—', '처리 중', run, false)
+    ];
+    const done = { s: '완료', sc: '#1F6B45', b: '#E3E5EA', bg: '#FFFFFF' };
+    const now = { s: '진행 중', sc: '#1A3687', b: '#9FB0DD', bg: '#F5F8FE' };
+    const next = { s: '대기', sc: '#8A909C', b: '#E3E5EA', bg: '#FFFFFF' };
+    const steps = [
+      Object.assign({ n: '텍스트 추출', d: '본문·표·각주, 스캔본은 OCR' }, done),
+      Object.assign({ n: '문맥 단위 분할', d: '주제가 바뀌는 지점에서 구간을 나눔' }, done),
+      Object.assign({ n: '요약·메타데이터', d: '조항 번호, 적용 대상, 시행일, 참조 조항' }, now),
+      Object.assign({ n: '색인', d: '키워드와 의미 검색을 함께 사용' }, next),
+      Object.assign({ n: '검토 후 게시', d: '기존 약관과 달라진 조항 확인' }, next)
+    ];
+    const meta = [
+      { k: '유형', v: '일반 규정' },
+      { k: '적용 대상', v: '월 구독 회원' },
+      { k: '시행일', v: '2026-07-01' },
+      { k: '참조 조항', v: '제4조 결제와 자동 갱신, 제5조 청약철회' },
+      { k: '변경 이력', v: 'r2 (10-12) 해지 후 이용 마지막 날 명확화' }
+    ];
+    return { docs: docs, steps: steps, meta: meta };
+  }
+}
+</script>
+</body>
+</html>

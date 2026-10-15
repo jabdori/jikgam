@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>직감 · 통화 기록</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+KR:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F5F7}
+a{color:#2449B8}a:hover{color:#1A3687}
+</style>
+</helmet>
+<div style="min-height: 1000px; display: flex; flex-wrap: wrap; background: #F4F5F7; color: #15171C; font-family: 'IBM Plex Sans KR', system-ui, sans-serif; font-size: 14px; line-height: 1.5;">
+
+  <nav aria-label="주 메뉴" style="flex: 1 1 232px; max-width: 260px; min-width: 220px; box-sizing: border-box; background: #FFFFFF; border-right: 1px solid #E3E5EA; padding: 20px 16px; display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 4px;">
+      <div aria-hidden="true" style="width: 28px; height: 28px; border-radius: 7px; background: #15171C; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px;">직</div>
+      <div style="font-weight: 700; font-size: 17px;">직감</div>
+    </div>
+    <button type="button" style="all: unset; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #E3E5EA; border-radius: 10px; background: #F9FAFB;">
+      <div aria-hidden="true" style="width: 30px; height: 30px; border-radius: 8px; background: #E8EEFB; color: #2449B8; display: flex; align-items: center; justify-content: center; font-weight: 700;">별</div>
+      <div style="flex-grow: 1;"><div style="font-weight: 600;">별담 플러스</div><div style="font-size: 12px; color: #5A6170;">고객센터</div></div>
+    </button>
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <div style="font-size: 11px; font-weight: 600; color: #8A909C; padding: 0 12px 4px; letter-spacing: 0.04em;">운영</div>
+      <a href="Main.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">실시간 통화</a>
+      <a href="Compare.dc.html" style="padding: 9px 12px; border-radius: 8px; background: #E8EEFB; color: #1A3687; font-weight: 600; text-decoration: none;">통화 기록</a>
+      <a href="Report.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">운영 리포트</a>
+      <div style="font-size: 11px; font-weight: 600; color: #8A909C; padding: 14px 12px 4px; letter-spacing: 0.04em;">설정</div>
+      <a href="Knowledge.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">지식·정책</a>
+      <a href="Integrations.dc.html" style="padding: 9px 12px; border-radius: 8px; color: #3A404C; text-decoration: none;">연동</a>
+    </div>
+    <div style="margin-top: auto; font-size: 12px; color: #5A6170; padding: 10px 12px; border-radius: 8px; background: #F4F5F7;">데모 데이터: AI 고객과 나눈 합성 상담입니다.</div>
+  </nav>
+
+  <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column;">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px 28px; background: #FFFFFF; border-bottom: 1px solid #E3E5EA;">
+      <label for="q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">통화 검색</label>
+      <input id="q" type="search" placeholder="고객 이름, 전화번호, 발화 내용 검색" style="flex: 1 1 280px; max-width: 420px; font: inherit; min-height: 40px; padding: 0 12px; border: 1px solid #D5D8DF; border-radius: 9px; background: #F9FAFB;">
+      <span aria-label="사용자 상담 운영팀" style="margin-left: auto; width: 32px; height: 32px; border-radius: 50%; background: #2449B8; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600;">운</span>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; flex-grow: 1; align-items: stretch;">
+      <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 22px 28px 28px; display: flex; flex-direction: column; gap: 16px;">
+        <header style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px;">
+          <div style="flex-grow: 1;">
+            <h1 style="margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em;">통화 기록</h1>
+            <div style="font-size: 13px; color: #5A6170;">2026-10-14 · 30건</div>
+          </div>
+          <button type="button" style="font: inherit; font-weight: 500; cursor: pointer; min-height: 40px; padding: 0 14px; border-radius: 9px; border: 1px solid #D5D8DF; background: #FFFFFF;">기간: 오늘</button>
+          <button type="button" style="font: inherit; font-weight: 500; cursor: pointer; min-height: 40px; padding: 0 14px; border-radius: 9px; border: 1px solid #D5D8DF; background: #FFFFFF;">내보내기</button>
+        </header>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+          <sc-for list="{{filters}}" as="f" hint-placeholder-count="6">
+            <button type="button" style="font: inherit; font-size: 13px; cursor: pointer; min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid {{f.bd}}; background: {{f.bg}}; color: {{f.fg}}; font-weight: 500;">{{f.n}} <span style="font-family: 'IBM Plex Mono', monospace; opacity: 0.8;">{{f.c}}</span></button>
+          </sc-for>
+        </div>
+
+        <section aria-label="통화 목록" style="background: #FFFFFF; border: 1px solid #E3E5EA; border-radius: 12px; overflow: hidden;">
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px; min-width: 760px;">
+              <thead>
+                <tr style="text-align: left; color: #5A6170; font-size: 12px; background: #F9FAFB;">
+                  <th scope="col" style="padding: 10px 14px; font-weight: 500;">고객</th>
+                  <th scope="col" style="padding: 10px 14px; font-weight: 500;">문의</th>
+                  <th scope="col" style="padding: 10px 14px; font-weight: 500;">처리 결과</th>
+                  <th scope="col" style="padding: 10px 14px; font-weight: 500; text-align: right;">환불 안내액</th>
+                  <th scope="col" style="padding: 10px 14px; font-weight: 500; text-align: right;">상담 시간</th>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{rows}}" as="r" hint-placeholder-count="12">
+                  <tr style="background: {{r.rowBg}}; border-top: 1px solid #F0F1F4;">
+                    <th scope="row" style="text-align: left; padding: 11px 14px; font-weight: 500; white-space: nowrap;">{{r.name}}</th>
+                    <td style="padding: 11px 14px; color: #3A404C;">{{r.topic}}</td>
+                    <td style="padding: 11px 14px;"><span style="font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; background: {{r.pillBg}}; color: {{r.pillFg}}; white-space: nowrap;">{{r.result}}</span></td>
+                    <td style="padding: 11px 14px; text-align: right; font-family: 'IBM Plex Mono', monospace;">{{r.amt}}</td>
+                    <td style="padding: 11px 14px; text-align: right; font-family: 'IBM Plex Mono', monospace; color: #3A404C;">{{r.dur}}</td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+          <div style="display: flex; align-items: center; padding: 10px 14px; border-top: 1px solid #E3E5EA; font-size: 13px; color: #5A6170;">
+            <span>30건 중 1–12</span>
+            <span style="margin-left: auto; display: flex; gap: 6px;">
+              <button type="button" disabled style="font: inherit; min-height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid #E3E5EA; background: #F4F5F7; color: #8A909C;">이전</button>
+              <button type="button" style="font: inherit; cursor: pointer; min-height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid #D5D8DF; background: #FFFFFF;">다음</button>
+            </span>
+          </div>
+        </section>
+      </main>
+
+      <aside aria-label="통화 상세" style="flex: 1 1 360px; max-width: 440px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border-left: 1px solid #E3E5EA; padding: 22px 22px 28px; display: flex; flex-direction: column; gap: 18px;">
+        <div style="display: flex; align-items: flex-start; gap: 8px;">
+          <div style="flex-grow: 1;">
+            <div style="font-size: 12px; color: #5A6170;">2026-10-14 · 상담 39초 · 고객 7턴</div>
+            <h2 style="margin: 2px 0 0; font-size: 18px; font-weight: 700;">송하은 고객</h2>
+          </div>
+          <button type="button" aria-label="닫기" style="cursor: pointer; width: 36px; height: 36px; border-radius: 8px; border: 1px solid #E3E5EA; background: #FFFFFF; display: flex; align-items: center; justify-content: center;"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3A404C" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <h3 style="margin: 0; font-size: 14px; font-weight: 600;">요약</h3>
+          <p style="margin: 0; color: #3A404C;">다음 결제일을 문의한 뒤 해지로 마음을 바꿨습니다. 월 구독 해지를 접수했고, 이미 결제된 월 요금은 약관 제7조에 따라 환불되지 않는다고 안내했습니다. 이용 가능한 마지막 날은 2026-11-01입니다.</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <h3 style="margin: 0; font-size: 14px; font-weight: 600;">처리 내역</h3>
+          <sc-for list="{{steps}}" as="s" hint-placeholder-count="4">
+            <div style="display: flex; gap: 10px; align-items: center; font-size: 13px;">
+              <span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: {{s.c}};"></span>
+              <span style="flex-grow: 1;">{{s.x}}</span>
+              <span style="color: #5A6170;">{{s.r}}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <h3 style="margin: 0; font-size: 14px; font-weight: 600;">안내 근거</h3>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+            <span style="font-size: 12px; padding: 3px 8px; border-radius: 6px; background: #F4F5F7;">제4조 결제와 자동 갱신</span>
+            <span style="font-size: 12px; padding: 3px 8px; border-radius: 6px; background: #F4F5F7;">제7조 월 구독의 해지</span>
+            <span style="font-size: 12px; padding: 3px 8px; border-radius: 6px; background: #F4F5F7;">제15조 본인 확인</span>
+            <span style="font-size: 12px; padding: 3px 8px; border-radius: 6px; background: #F4F5F7;">제20조 안내 의무</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <h3 style="margin: 0; font-size: 14px; font-weight: 600;">고객이 말을 바꾼 순간</h3>
+          <div style="border: 1px solid #E3E5EA; border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; font-size: 13px;">
+            <div><span style="color: #8A4209; font-weight: 600;">고객</span> 아 그냥 해지할게요, 요즘 잘 안 봐서요.</div>
+            <div style="color: #3A404C;">AI가 하던 결제일 안내를 멈추고 해지 안내로 바꿨습니다. 잘못된 안내는 나가지 않았습니다.</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto;">
+          <button type="button" style="font: inherit; font-weight: 600; cursor: pointer; min-height: 44px; padding: 0 16px; border-radius: 9px; border: 0; background: #15171C; color: #FFFFFF;">대화 전체 보기</button>
+          <button type="button" style="font: inherit; font-weight: 500; cursor: pointer; min-height: 44px; padding: 0 16px; border-radius: 9px; border: 1px solid #D5D8DF; background: #FFFFFF;">녹취 듣기</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const filters = [
+      { n: '전체', c: '30', bg: '#15171C', fg: '#FFFFFF', bd: '#15171C' },
+      { n: '해지·환불 접수', c: '19', bg: '#FFFFFF', fg: '#15171C', bd: '#D5D8DF' },
+      { n: '안내 완료', c: '5', bg: '#FFFFFF', fg: '#15171C', bd: '#D5D8DF' },
+      { n: '상담사 연결', c: '4', bg: '#FFFFFF', fg: '#15171C', bd: '#D5D8DF' },
+      { n: '보류', c: '2', bg: '#FFFFFF', fg: '#15171C', bd: '#D5D8DF' },
+      { n: '말 바꿈 있음', c: '8', bg: '#FFFFFF', fg: '#15171C', bd: '#D5D8DF' }
+    ];
+    const S = {
+      done: ['#E9F5EE', '#1F6B45'],
+      info: ['#F0F1F4', '#3A404C'],
+      hand: ['#E8EEFB', '#1A3687'],
+      hold: ['#FFF4EC', '#8A4209']
+    };
+    const raw = [
+      ['김하늘', '결제일만 묻다가 해지·환불로 번복', '해지·환불 접수', 'done', '9,900원', '31초'],
+      ['정민준', '딸이 걸었다가 본인이 이어받은 연 구독 해지', '해지·환불 접수', 'done', '19,800원', '36초'],
+      ['한예린', '미성년 회원 본인의 결제 취소', '상담사 연결', 'hand', '—', '14초'],
+      ['송하은', '장애를 이유로 환불 요구', '환불 불가 안내', 'info', '—', '52초'],
+      ['황서윤', '부가 상품 문의 후 구독 전체 해지', '해지 접수', 'done', '—', '29초'],
+      ['미등록 번호', '계정이 없는 번호로 환불 요청', '보류', 'hold', '—', '19초'],
+      ['박서연', '즉시 확정을 요구하는 연 구독 해지', '해지·환불 접수', 'done', '—', '32초'],
+      ['강수아', '세 번 결제됐다고 기억하는 중복 결제', '환불 접수', 'done', '9,900원', '33초'],
+      ['신유나', '성인 자녀의 체험 해지를 대신 요청', '본인 아님 안내', 'info', '—', '16초'],
+      ['오시우', '장애 보상 문의에서 해지·환불로 전환', '해지·환불 접수', 'done', '9,900원', '29초'],
+      ['송하은', '결제일 문의에서 해지 요청으로 번복', '해지 접수', 'done', '—', '39초'],
+      ['최지호', '환불 견적 조회 중 업무 시스템 지연', '보류', 'hold', '—', '29초']
+    ];
+    const rows = raw.map(function (r, i) {
+      return { name: r[0], topic: r[1], result: r[2], pillBg: S[r[3]][0], pillFg: S[r[3]][1], amt: r[4], dur: r[5],
+        rowBg: i === 10 ? '#F5F8FE' : '#FFFFFF' };
+    });
+    const steps = [
+      { x: '본인 확인', r: '휴대폰 인증 완료', c: '#1F7A4D' },
+      { x: '구독·결제·이용 내역 조회', r: '4건', c: '#1F7A4D' },
+      { x: '해지 접수', r: '완료', c: '#1F7A4D' },
+      { x: '환불', r: '대상 아님 (제7조)', c: '#8A909C' }
+    ];
+    return { filters: filters, rows: rows, steps: steps };
+  }
+}
+</script>
+</body>
+</html>

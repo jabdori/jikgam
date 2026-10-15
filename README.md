@@ -115,6 +115,29 @@ Qwen3.5-2B를 Unsloth로 이 PC의 RTX 3090 Ti에서 학습시켰다.
 - D는 C보다 근거 갱신이 약 0.1초 빨랐지만 판별 호출이 4.7배였다. 잠정 판단의 42.5%(313건 중 133건)는 확정 자막과 달라 다시 판단했다. D에서는 확정 자막을 짝짓는 결함도 찾았다. 음성 기본 방식은 C로 둔다.
 - 고객이 듣는 첫 응답까지는 C·D 모두 약 4.6~4.9초였고, 대부분 답 생성과 TTS 시간이다.
 
+## 웹 콘솔 (2026-10-15)
+
+웹 화면은 두 제품으로 나뉜다([결정 기록 0021](docs/adr/0021-웹-콘솔-분리.md)).
+
+- **고객사 콘솔:** 상담 운영팀이 쓰는 화면이다. 실시간 통화, 통화 기록과 녹음 다시 듣기, 운영 리포트, 지식·정책, 연동이 있다. 엔진 용어와 수치는 넣지 않는다.
+- **관리 콘솔:** 직감 팀이 쓰는 화면이다. 모델·벤치마크, 통화 리플레이(판단마다 조항 순위와 무효가 된 답을 따라감), 고객사 관리가 있다.
+
+화면 수치는 모두 결과 폴더의 원본 로그에서 화면을 열 때 계산한다. 자료는 합성 상담이다.
+
+화면을 만들기 전에 디자인 하네스를 먼저 만들었다([결정 기록 0022](docs/adr/0022-디자인-하네스.md), [안내](docs/design/README.md)). 하네스는 다음을 검사한다.
+
+- 토큰 밖 색·px 금지
+- 공용 컴포넌트만 쓰기
+- 고객사 화면 금지어
+- 숫자 출처
+- 1440·390px 스크린샷
+- axe와 키보드
+- 화면별 독립 리뷰
+
+![고객사 콘솔 통화 기록](docs/design/screens/saas-calls-1440.png)
+
+![관리 콘솔 통화 리플레이](docs/design/screens/admin-replay-1440.png)
+
 ## 한계
 
 - 모두 가상 회사, 가상 고객, AI가 만든 대화로 잰 결과다.
@@ -135,7 +158,8 @@ uv run python -m jikgam.eval.run_decisions --split val --backends jev,gemini-fla
 uv run python -m jikgam.eval.report results/decisions/val/<run_id>                  # 원본 로그로 표 생성
 uv run python -m jikgam.sim.runner --org org_a --scenarios all --policy C           # AI 고객 시나리오 실행(모의 업무 API와 .env 키 필요)
 uv run python -m jikgam.sim.report results/engine/scenarios/<run_id>               # 시나리오 판정, 근거 갱신 시간, 무효 노출, 비용
-uv run python -m jikgam.web --bizapi-url http://127.0.0.1:8101 --start-bizapi      # 웹 화면: /console, /timeline, /dashboard (127.0.0.1:8100)
+uv run python -m jikgam.web                                                         # 웹 콘솔: /app(고객사), /admin(관리) (127.0.0.1:8100)
+uv run python scripts/ui_check.py                                                   # 디자인 하네스의 브라우저 검사와 스크린샷
 uv run python -m jikgam.voice.replay --replays s01 s20 s21 --bizapi-url http://127.0.0.1:8096  # 음성 재생(실제 STT·TTS, docs/voice.md)
 ```
 
@@ -153,6 +177,7 @@ uv run python -m jikgam.voice.replay --replays s01 s20 s21 --bizapi-url http://1
 | [docs/training.md](docs/training.md) | 한국어 판별 모델 학습과 재현 방법 |
 | [docs/voice.md](docs/voice.md) | 음성 연결(Pipecat, Gemini STT·TTS) |
 | [docs/evaluation-voice.md](docs/evaluation-voice.md) | 음성으로 돌리기 전에 고정한 음성 평가 기준(고치지 않는 문서) |
+| [docs/design/](docs/design/README.md) | 웹 콘솔 두 개와 디자인 하네스, 화면 수치의 정의, 독립 리뷰 기록 |
 | [docs/org-b.md](docs/org-b.md) | 두 번째 가상 회사를 설정과 어댑터만으로 붙인 기록 |
 | [docs/data-format.md](docs/data-format.md) | 판별 데이터 형식과 정답(라벨) 기준 |
 | [docs/adr/](docs/adr/README.md) | 결정 기록(ADR): 무엇을 왜 정했는지 |
