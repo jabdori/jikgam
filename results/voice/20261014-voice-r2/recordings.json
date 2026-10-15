@@ -1,0 +1,47 @@
+{
+ "run_dir": "results/voice/20261014-voice-r2",
+ "recordings": [
+  {
+   "session": "s01-voice-20261014-voice-r2",
+   "file": "results/voice/20261014-voice-r2/s01-voice-20261014-voice-r2.wav",
+   "sha256_16": "d320bea3ebd4d2ae",
+   "duration_ms": 74169.1,
+   "sample_rate": 16000,
+   "channels": {
+    "left": "customer",
+    "right": "agent"
+   },
+   "t0_ms": 4769.7,
+   "t0_source": "estimated: first customer speech onset in the left channel aligned to the first voice.segment speech_start_ms",
+   "segment_onset_error_ms_max": 11.3
+  },
+  {
+   "session": "s20-voice-20261014-voice-r2",
+   "file": "results/voice/20261014-voice-r2/s20-voice-20261014-voice-r2.wav",
+   "sha256_16": "55a62cf4d69410e8",
+   "duration_ms": 135301.8,
+   "sample_rate": 16000,
+   "channels": {
+    "left": "customer",
+    "right": "agent"
+   },
+   "t0_ms": 83792.1,
+   "t0_source": "estimated: first customer speech onset in the left channel aligned to the first voice.segment speech_start_ms",
+   "segment_onset_error_ms_max": 19.6
+  },
+  {
+   "session": "s21-voice-20261014-voice-r2",
+   "file": "results/voice/20261014-voice-r2/s21-voice-20261014-voice-r2.wav",
+   "sha256_16": "86a0923c98f3bf77",
+   "duration_ms": 100108.2,
+   "sample_rate": 16000,
+   "channels": {
+    "left": "customer",
+    "right": "agent"
+   },
+   "t0_ms": 225390.1,
+   "t0_source": "estimated: first customer speech onset in the left channel aligned to the first voice.segment speech_start_ms",
+   "segment_onset_error_ms_max": 20.5
+  }
+ ]
+}
