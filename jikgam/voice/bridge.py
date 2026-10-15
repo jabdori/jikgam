@@ -40,6 +40,9 @@ provisional(기본 False, 정책 D, docs/evaluation-voice.md §9.2):
 - VAD가 말 끝을 판정했을 때 이 발화의 미확정 자막이 있으면 확정 자막을 기다리지 않고 그 자막을 확정 발화로 엔진에 넘긴다
   (잠정 확정, voice.provisional). 그 발화는 확정 자막을 기다리지 않으므로 응답도 붙잡지 않는다. 자막에 숫자(아라비아 숫자,
   한글 숫자 읽기 세 글자 이상)가 있으면 잠정 확정하지 않고 확정 자막을 기다린다.
+- 마지막 미확정 자막이 VAD 끝 판정보다 PROVISIONAL_FRESH_MS(250ms) 넘게 먼저 왔으면 끝말이 빠졌을 수 있으므로 다음 미확정
+  자막을 기다려 그것으로 잠정 확정한다. 확정 자막이 먼저 오면 확정 자막으로 진행한다(개발용 s20·s21 점검, 2026-10-15:
+  250ms를 넘은 자막은 7개 중 6개가 끝말이 빠졌다).
 - 확정 자막이 오면 먼저 넘긴 잠정 문장과 비교한다(공백·문장부호를 뺀 글자). 같으면 엔진에 다시 넘기지 않는다. 다르면 확정
   자막을 새 발화 ID로 엔진에 넘긴다(버전이 올라 잠정 문장으로 하던 작업이 취소되고 지난 답은 위 규칙으로 버려지거나 끊긴다).
 - 잠정 확정 뒤 고객이 다시 말을 시작하기 전에 늦게 온 미확정 자막은 끝난 말의 것이므로 새 발화로 보지 않고, 끼어들기나
@@ -79,6 +82,7 @@ BARGE_IN = "voice.barge_in"
 VOICE_ERROR = "voice.error"
 PROVISIONAL = "voice.provisional"  # 정책 D: 미확정 자막으로 잠정 확정해 엔진에 넘겼다
 PROVISIONAL_DROPPED = "voice.provisional_unconfirmed"  # 잠정 확정한 발화의 확정 자막이 끝내 오지 않았다
+PROVISIONAL_FRESH_MS = 250.0  # 잠정 확정에 바로 쓸 미확정 자막의 나이 상한(VAD 끝 판정 기준)
 _DIGITS = re.compile(r"\d|[공영일이삼사오육칠팔구]{3,}")
 _NORM = re.compile(r"[\s.,!?~·…\"'“”‘’]")
 
@@ -128,6 +132,7 @@ class _Utterance:
     first_partial_ms: float | None = None
     partials: int = 0
     text: str = ""  # 마지막 미확정 자막(누적 문장)
+    last_partial_ms: float | None = None  # 마지막 미확정 자막을 받은 시각
     prejudged: str = ""  # 마지막으로 선판단을 부른 자막
 
 
@@ -168,6 +173,7 @@ class EngineBridge(FrameProcessor):
         self.provisional = provisional
         self._pending_prov: deque[dict[str, Any]] = deque()  # 잠정 확정해 넘기고 확정 자막을 기다리는 발화
         self._prov_open = False  # 잠정 확정 뒤 고객이 아직 다시 말하지 않았다(늦게 온 미확정 자막은 끝난 말의 것)
+        self._prov_wait: float | None = None  # 끝말이 빠졌을 수 있어 다음 미확정 자막을 기다리는 VAD 끝(발화 종료)
         self.playbacks: list[Playback] = []
         self.turn_outputs: list[dict[str, Any]] = []  # 세션 handle()이 돌려준 이벤트(실행기가 상담사 연결 등을 본다)
         self.finals: list[dict[str, Any]] = []
@@ -264,6 +270,7 @@ class EngineBridge(FrameProcessor):
         start = round(vad_ms - start_secs * 1000, 3)
         self._vad_speaking = True
         self._prov_open = False
+        self._prov_wait = None
         self._seg_start_ms = start
         self._final_in_seg = False
         self._awaiting_since = None
@@ -284,13 +291,17 @@ class EngineBridge(FrameProcessor):
             self._awaiting_since = now_ms()
         self._emit(VAD_STOP, vad_ms=vad_ms, speech_end_ms=end, awaiting_final=self._awaiting_since is not None)
         if self.provisional and self._utt is not None and self._utt.text and not has_digits(self._utt.text):
-            await self._send_provisional(end)
+            if self._utt.last_partial_ms is not None and vad_ms - self._utt.last_partial_ms <= PROVISIONAL_FRESH_MS:
+                await self._send_provisional(end)
+            else:
+                self._prov_wait = end
         await self._notify()
 
     async def _send_provisional(self, end: float) -> None:
         """정책 D: 지금 발화의 마지막 미확정 자막을 확정 발화로 엔진에 넘긴다(확정 자막을 기다리지 않는다)."""
         utt = self._utt
         self._utt = None
+        self._prov_wait = None
         self._stop_fresh = False  # 이 VAD 끝 판정은 이 발화에 썼다
         self._final_in_seg = True
         self._awaiting_since = None
@@ -339,8 +350,16 @@ class EngineBridge(FrameProcessor):
             await self._interrupt(pb, "barge_in", trigger="transcript", text=text)
         utt = self._utt
         utt.text = text
+        utt.last_partial_ms = t
         await self.session.handle({"type": "utterance", "utt_id": utt.utt_id, "speaker": "customer",
                                    "text": text, "final": False})
+        if self._prov_wait is not None and not self._vad_speaking:  # 끝말을 기다리던 잠정 확정
+            if has_digits(text):
+                self._prov_wait = None
+            else:
+                await self._send_provisional(self._prov_wait)
+                await self._notify()
+                return
         prejudge = getattr(self.session, "prejudge", None)
         if self.provisional and prejudge is not None and not same_text(text, utt.prejudged):
             utt.prejudged = text
@@ -348,6 +367,7 @@ class EngineBridge(FrameProcessor):
 
     async def _on_final(self, text: str, result: Any = None) -> None:
         t = now_ms()
+        self._prov_wait = None  # 확정 자막이 먼저 왔다(잠정 확정하지 않는다)
         if self._pending_prov:
             prov = self._pending_prov.popleft()
             later = self._stop_fresh and self._seg_end_ms is not None and self._seg_end_ms > prov["t_end_ms"]

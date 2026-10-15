@@ -367,3 +367,26 @@ def test_no_provisional_when_the_caption_has_digits(tmp_path):
     run(s, b, sp, script)
     log = ev.read_log(tmp_path / "d-digits.jsonl")
     assert not types(log, vb.PROVISIONAL) and len(types(log, ev.UTTERANCE_END)) == 1
+
+
+def test_provisional_waits_for_a_fresh_caption_when_the_last_one_is_old(tmp_path):
+    s = d_session(tmp_path, "d-fresh")
+    b = EngineBridge(s, provisional=True)
+    sp = FakeSpeaker()
+
+    async def script(w):
+        await w.queue_frame(vad_start())
+        await w.queue_frame(partial("그래도 그냥 해지해"))
+        await asyncio.sleep(0.35)  # 마지막 자막이 VAD 끝 판정보다 250ms 넘게 먼저 왔다
+        await w.queue_frame(vad_stop())
+        await asyncio.sleep(0.05)
+        assert not types(ev.read_log(tmp_path / "d-fresh.jsonl"), vb.PROVISIONAL)  # 끝말을 기다린다
+        await w.queue_frame(partial("그래도 그냥 해지해 주세요"))
+        assert await b.wait_until(lambda: any(p.done for p in b.playbacks), 5)
+        await w.queue_frame(stt_final("그래도 그냥 해지해 주세요."))
+        await asyncio.sleep(0.1)
+
+    run(s, b, sp, script)
+    log = ev.read_log(tmp_path / "d-fresh.jsonl")
+    assert [e["text"] for e in types(log, vb.PROVISIONAL)] == ["그래도 그냥 해지해 주세요"]
+    assert types(log, ev.STT_FINAL)[0]["confirms_provisional"] is True
