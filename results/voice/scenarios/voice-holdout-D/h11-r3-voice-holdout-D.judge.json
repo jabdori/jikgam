@@ -1,0 +1,101 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 4에서 서비스 이용 가능한 마지막 날이 오늘(2026-10-12)까지라고 정확히 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 5에서 별도의 추가 승인 절차 없이 확정되었다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담 4에서 위약금 없이 49,500원이 환불된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "고객 5에서 고객이 동의한 이후에 해지 및 환불 접수 업무 API가 호출되었습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "상담 4에서 서비스 이용 가능한 마지막 날이 오늘까지라고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "상담 4에서 5개월분을 차감하며 위약금 없이 49,500원이라는 산정 근거와 환불액을 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "상담 5에서 별도의 추가 승인 절차 없이 확정되었다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "상담 4와 5에서 접수일로부터 3~7영업일 안에 결제한 카드의 승인 취소로 진행된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청대로 연 구독 해지 및 환불 처리를 완료하고 관련 정보를 정확하게 안내했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 가입 날짜를 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "고객 5에서 해지하면 바로 끝난다는 설명을 듣고 '그럼 오늘 끝내고 돈 돌려받을게요'라고 말했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "고객 5에서 금액 안내를 듣고 '오만 원 넘으면 승인인가 뭔가 받아야 한다던데 그것도 해야 돼요?'라고 물었습니다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "고객 4에서 '0, 2, 1, 1'이라며 천천히 끊어서 정확하게 읽었습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 13631.3,
+   "input_tokens": 3501,
+   "output_tokens": 1696,
+   "thoughts_tokens": 942,
+   "cost_usd": 0.027354,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.027354,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h11-r3-voice-holdout-D",
+ "scenario": "h11"
+}

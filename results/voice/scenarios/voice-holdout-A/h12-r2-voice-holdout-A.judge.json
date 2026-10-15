@@ -1,0 +1,112 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 6에서 월 구독으로 변경하려면 해지 후 새로 가입해야 한다고 안내하여 위반하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 3에서 오늘 즉시 환불이 확정되지 않고 상담사 승인을 거친다고 안내하여 위반하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담 2와 5에서 승인 취소 기간은 해당 간편결제 서비스의 절차에 따른다고 올바르게 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "상담 2에서 환불 예정액(53,460원)과 4개월 이용액, 위약금 차감 등 산정 근거를 구체적으로 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "상담 2와 3에서 접수 후 상담사 승인을 거쳐 확정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "상담 6에서 월 구독으로 변경하시려면 연 구독을 해지한 후 새로 가입해야 한다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "상담 2에서 간편결제 승인 취소로 진행되며 해당 결제 서비스의 절차에 따른다고 환불 방법을 안내했습니다."
+   },
+   {
+    "index": 4,
+    "said": true,
+    "reason": "상담 2에서 서비스 이용은 오늘(2026-10-12) 종료된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 연 구독 해지 및 환불을 정상적으로 접수하고 월 구독 전환 방법에 대한 질문에도 올바른 답변을 제공하여 상담을 성공적으로 마쳤습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "상담 2와 3에서 해지 및 환불 금액을 안내하며 진행 여부를 물었고, 고객 3에서 동의('알겠습니다')를 표한 후 API가 호출되었습니다."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "상담 2와 3에서 해지 및 환불 금액을 안내하며 진행 여부를 물었고, 고객 3에서 동의('알겠습니다')를 표한 후 API가 호출되었습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "고객 2에서 오늘 바로 확정되지 않는지 물어보았으며, 상담 3의 설명을 듣고 고객 3에서 수용하는 반응을 보였습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "상담 6에서 해지 후 새로 가입해야 한다는 안내를 듣고 고객 6에서 지시된 문장대로 발화했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "상담 1의 본인 확인 요청에 따라 고객 2에서 휴대폰 번호와 인증번호를 정확하게 제시했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "고객 5에서 사건 실행 표시와 함께 해지 말고 월 구독으로 바꾸는 것으로 주제를 변경하는 발화를 정상적으로 수행했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 36314.4,
+   "input_tokens": 3546,
+   "output_tokens": 5127,
+   "thoughts_tokens": 4169,
+   "cost_usd": 0.068616,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.068616,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h12-r2-voice-holdout-A",
+ "scenario": "h12"
+}

@@ -1,0 +1,101 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 4]에서 서비스 이용은 오늘인 2026년 10월 12일까지 가능하다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 5]에서 기준 금액을 넘지 않아 별도의 승인 없이 정상적으로 접수되었다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 4]에서 위약금 없이 49,500원이 환불된다고 정확히 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 4]에서 안내 후 [고객 5]가 오늘 끝내고 돈을 돌려받겠다고 동의한 뒤 해지 및 환불 접수 API를 호출했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 4]에서 서비스 이용은 오늘(신청일)까지 가능하다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4]에서 결제 금액 99,000원에서 5개월 요금을 차감하고 위약금 없이 49,500원이 환불된다고 산정 근거와 환불액을 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 5]에서 환불액이 기준 금액을 넘지 않아 별도의 승인 없이 확정된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 4]와 [상담 5]에서 결제하신 카드로 3~7영업일 안에 승인 취소된다고 환불 방법 및 기간을 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청에 따라 연 구독 해지 및 환불 금액, 처리 기간 등을 올바르게 안내하고 상담사 연결 없이 정상적으로 처리를 완료했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 가입 날짜를 묻는 질문을 하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[상담 4]의 안내를 듣고 [고객 5]에서 '그럼 오늘 끝내고 돈 돌려받을게요'라고 정해진 대로 반응했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 4]에서 금액을 들은 후 [고객 5]에서 5만 원이 넘으면 승인을 받아야 하는지 규칙대로 질문했습니다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "[고객 4]에서 문자로 받은 본인 확인 번호(0211)를 정확히 읽어주었습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 23669.6,
+   "input_tokens": 3461,
+   "output_tokens": 3133,
+   "thoughts_tokens": 2297,
+   "cost_usd": 0.044518,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.044518,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h11-r1-voice-holdout-D",
+ "scenario": "h11"
+}

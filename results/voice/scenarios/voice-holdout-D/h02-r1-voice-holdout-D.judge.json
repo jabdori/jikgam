@@ -1,0 +1,97 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 5]에서 위약금이 면제된다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 5]에서 2026년 6월 30일 결제 건을 기준으로 산정하여 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 5]에서 정상 월 요금 9,900원을 기준으로 차감액을 산정했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "대화 내용 중 상담사 승인이 필요하다는 안내는 없었습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 5]에서 환불 예정액(39,400원)과 산정 근거(4개월, 정상 월 요금 기준, 위약금 면제)를 정확히 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 5]에서 신용카드로 3~7영업일 안에 승인 취소된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 5]에서 서비스 이용이 2026-10-12에 종료된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청대로 위약금 없이 해지 및 환불 접수를 완료하고 최종적으로 처리 결과를 안내했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 가입 시기를 묻지 않아 정해진 답변을 할 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "[상담 5]에서 상담원이 위약금이 면제된다고 안내하였으므로, 위약금이 생긴 것을 체념하며 답할 상황이 아니었습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 2]에서 휴대폰 번호를, [고객 5]에서 인증번호를 요청받은 대로 정확하게 말했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 6]에서 지시된 사건의 내용대로 6월 마지막 날 밤에 가입했다고 스스로 정정하여 말했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 29566.4,
+   "input_tokens": 3542,
+   "output_tokens": 3962,
+   "thoughts_tokens": 3238,
+   "cost_usd": 0.054628,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.054628,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h02-r1-voice-holdout-D",
+ "scenario": "h02"
+}

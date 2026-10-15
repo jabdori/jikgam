@@ -1,0 +1,102 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 2]와 [상담 3]에서 장애가 아닌 유료 결제 후 이용 이력이 없는 청약철회 요건에 따라 환불된다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 4]에서 체험 기간 중의 이용은 결제 후 이용 이력에 포함되지 않아 전액 환불된다고 정확히 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 2]에서 다음 결제일 전날이 아닌 오늘(2026-10-12) 서비스 이용이 종료된다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 2]에서 9,900원 전액 환불을 안내하고, [상담 4]에서 무료 체험 기간 중 이용은 결제 후 이용 이력에 포함되지 않아 환불 가능하다고 산정 근거를 설명했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 2]에서 환불 방법(카드 승인 취소)과 예상 소요 기간(3~7영업일)을 정확히 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 2]에서 서비스 이용이 2026-10-12에 종료된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청대로 9,900원 전액 환불 및 결제 취소 처리를 정상적으로 완료하고 안내했습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 2]에서 서비스 종료일과 환불 내용을 안내한 후 결제 취소 및 환불 진행 여부를 물었고, [고객 3]에서 '네, 취소해 주세요'라고 동의한 뒤 해지 API가 호출되었습니다."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "[상담 2]에서 환불 예정액 및 소요 기간 등을 안내하고 확인을 구한 뒤 [고객 3]에서 동의하여 환불 접수 API가 호출되었습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 이용 여부를 묻지 않고 자체적으로 이용 이력을 조회했기 때문에 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담원이 장애 시간을 구체적으로 묻지 않아 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 1]에서 번호 및 인증번호를 요청받고 [고객 2]에서 본인 확인 번호를 정확히 답변했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4] 메시지에 사건 #0 실행 표시가 있으며, 지시된 내용대로 체험 때 시청한 사실에 대해 걱정하는 발화를 했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 19550.2,
+   "input_tokens": 3385,
+   "output_tokens": 2464,
+   "thoughts_tokens": 1572,
+   "cost_usd": 0.036338,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.036338,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h01-r2-voice-holdout-A",
+ "scenario": "h01"
+}

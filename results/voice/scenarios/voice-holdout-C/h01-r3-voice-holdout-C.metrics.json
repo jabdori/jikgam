@@ -1,0 +1,187 @@
+{
+ "session": "h01-r3-voice-holdout-C",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "저기요, 체험 끝나자마자 그 구천구백 원 빠져나간 거요, 그거 취소해 주세요. 결제된 날 저녁에 아예 안 나오던데요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "저기요. / 회원 끝나자마자 그 9,900원 빠져나간 거요. 그거 취소해 주세요.결제된 날 저녁에 아예 안 나오던데요.",
+   "finals": 2,
+   "utt_ids": [
+    "u1",
+    "u2"
+   ],
+   "first_partial_ms": 729.2,
+   "final_ms": 856.6,
+   "t_end_error_ms": 12.5,
+   "t_end_source": "vad",
+   "first_audio_ms": 4431.9,
+   "first_audio_from_t_end_ms": 4419.4,
+   "engine_ms": 2473.6,
+   "tts_ms": 1101.7,
+   "reply_suggestion": "h01-r3-voice-holdout-C-s2",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "제 번호는 010-0000-0201이에요. 이름은 배수진이고요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호는 010-0000-0201이에요. 이름은 배수진이고요.",
+   "finals": 1,
+   "utt_ids": [
+    "u3"
+   ],
+   "first_partial_ms": 602.3,
+   "final_ms": 904.5,
+   "t_end_error_ms": 7.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 4685.8,
+   "first_audio_from_t_end_ms": 4678.3,
+   "engine_ms": 2751.1,
+   "tts_ms": 1030.0,
+   "reply_suggestion": "h01-r3-voice-holdout-C-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "문자로 0201이라고 왔는데요, 이거 맞죠?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "문자로 0201이라고 왔는데요. 이거 맞죠?",
+   "finals": 1,
+   "utt_ids": [
+    "u4"
+   ],
+   "first_partial_ms": 1014.9,
+   "final_ms": 801.4,
+   "t_end_error_ms": 18.7,
+   "t_end_source": "vad",
+   "first_audio_ms": 5624.2,
+   "first_audio_from_t_end_ms": 5605.6,
+   "engine_ms": 3660.9,
+   "tts_ms": 1161.8,
+   "reply_suggestion": "h01-r3-voice-holdout-C-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "네, 그렇게 접수해 주세요. 근데 체험 때 많이 본 것 때문에 안 되는 거 아니에요?",
+   "marker": {
+    "condition_change": false,
+    "invalidates_prior": false,
+    "event": "h01#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "네, 그렇게 접수해 주세요. 근데 체험 때 많이 본 것 때문에 안 되는 거 아니에요?",
+   "finals": 1,
+   "utt_ids": [
+    "u5"
+   ],
+   "first_partial_ms": 507.8,
+   "final_ms": 805.2,
+   "t_end_error_ms": 3.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 5738.8,
+   "first_audio_from_t_end_ms": 5735.5,
+   "engine_ms": 3825.4,
+   "tts_ms": 1107.8,
+   "reply_suggestion": "h01-r3-voice-holdout-C-s5",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "아, 다행이네요. 네, 안내해 주신 대로 바로 취소랑 환불 접수해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아, 다행이네요. 네, 안내해 주신 대로 바로 취소랑 환불 접수해 주세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u6"
+   ],
+   "first_partial_ms": 700.0,
+   "final_ms": 845.6,
+   "t_end_error_ms": -50.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 5441.7,
+   "first_audio_from_t_end_ms": 5491.8,
+   "engine_ms": 3499.0,
+   "tts_ms": 1096.6,
+   "reply_suggestion": "h01-r3-voice-holdout-C-s6",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "네, 알겠습니다. 처리해 주셔서 감사해요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 알겠습니다. 처리해 주셔서 감사해요.",
+   "finals": 1,
+   "utt_ids": [
+    "u7"
+   ],
+   "first_partial_ms": 844.8,
+   "final_ms": 864.9,
+   "t_end_error_ms": 23.7,
+   "t_end_source": "vad",
+   "first_audio_ms": 5253.6,
+   "first_audio_from_t_end_ms": 5229.9,
+   "engine_ms": 3400.4,
+   "tts_ms": 988.2,
+   "reply_suggestion": "h01-r3-voice-holdout-C-s7",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-C/h01-r3-voice-holdout-C.wav",
+  "t0_ms": 10570253.555,
+  "sha256_16": "6624926dfde719a3",
+  "duration_ms": 241192.8
+ },
+ "playbacks": {
+  "total": 6,
+  "exposed": 6,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 147826.7
+ },
+ "voice_discarded": 1,
+ "voice_held": 1,
+ "voice_errors": [],
+ "engine_errors": []
+}

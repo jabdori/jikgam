@@ -1,0 +1,166 @@
+{
+ "session": "h20-r3-voice-holdout-C",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "아니 작년에 칠만 구천 원에 연간 했는데 이번에 구만 구천 원이 빠져나갔더라고요. 이거 뭐예요? 그냥 해지하고 돈 돌려주소.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아니. / 작년에 79,000원에 연간 했는데 이번에 99,000원이 빠져나갔더라고요. / 이거 뭐예요? 그냥 해지하고 돈 돌려주쇼.",
+   "finals": 3,
+   "utt_ids": [
+    "u1",
+    "u2",
+    "u3"
+   ],
+   "first_partial_ms": 1377.2,
+   "final_ms": 1081.5,
+   "t_end_error_ms": 3.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 4516.3,
+   "first_audio_from_t_end_ms": 4512.8,
+   "engine_ms": 2509.5,
+   "tts_ms": 925.3,
+   "reply_suggestion": "h20-r3-voice-holdout-C-s2",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "010-0000-0220인데, 아니 돈이 왜 더 나갔는지부터 빨리 확인해 봐요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "010-0000-0220인데 아니 돈이 왜 더 나갔는지부터 빨리 확인해 봐요.",
+   "finals": 1,
+   "utt_ids": [
+    "u4"
+   ],
+   "first_partial_ms": 1307.9,
+   "final_ms": 836.9,
+   "t_end_error_ms": 3.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 4429.0,
+   "first_audio_from_t_end_ms": 4425.6,
+   "engine_ms": 2589.1,
+   "tts_ms": 1002.9,
+   "reply_suggestion": "h20-r3-voice-holdout-C-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "문자로 0220이라고 왔는데 이거 맞지요? 빨리 확인하고 처리 좀 해줘요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "문자로 0220이라고 왔는데 이거 맞지요? / 빨리 확인하고 처리 좀 해줘요.",
+   "finals": 2,
+   "utt_ids": [
+    "u5",
+    "u6"
+   ],
+   "first_partial_ms": 1028.2,
+   "final_ms": 769.4,
+   "t_end_error_ms": 3.7,
+   "t_end_source": "vad",
+   "first_audio_ms": 5457.0,
+   "first_audio_from_t_end_ms": 5453.2,
+   "engine_ms": 3573.3,
+   "tts_ms": 1114.1,
+   "reply_suggestion": "h20-r3-voice-holdout-C-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "전액 다 돌려준다니까 접수는 해주시고요. 근데 갱신된다는 문자도 못 받았어요. 그것도 그쪽 잘못 아니에요?",
+   "marker": {
+    "condition_change": false,
+    "invalidates_prior": false,
+    "event": "h20#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "전액 다 돌려준다니까 접수는 해 주세요. 근데 갱신된다는 문자도 못 받았어요. 그것도 그쪽 잘못 아니에요?",
+   "finals": 1,
+   "utt_ids": [
+    "u7"
+   ],
+   "first_partial_ms": 992.5,
+   "final_ms": 811.1,
+   "t_end_error_ms": -17.8,
+   "t_end_source": "vad",
+   "first_audio_ms": 5602.2,
+   "first_audio_from_t_end_ms": 5620.0,
+   "engine_ms": 3702.2,
+   "tts_ms": 1088.8,
+   "reply_suggestion": "h20-r3-voice-holdout-C-s5",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "알겠으니까 승인 빨리 내서 돈이나 제대로 취소해 주소. 끊어요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "알겠으니까 승인 빨리 내서 돈이나 제대로 취소해 주소.",
+   "finals": 1,
+   "utt_ids": [
+    "u8"
+   ],
+   "first_partial_ms": 976.6,
+   "final_ms": 824.5,
+   "t_end_error_ms": -7.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 5660.0,
+   "first_audio_from_t_end_ms": 5667.1,
+   "engine_ms": 3836.8,
+   "tts_ms": 998.6,
+   "reply_suggestion": "h20-r3-voice-holdout-C-s6",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-C/h20-r3-voice-holdout-C.wav",
+  "t0_ms": 15534139.997,
+  "sha256_16": "d0cad55deb8c4b03",
+  "duration_ms": 215734.7
+ },
+ "playbacks": {
+  "total": 5,
+  "exposed": 5,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 126455.5
+ },
+ "voice_discarded": 1,
+ "voice_held": 1,
+ "voice_errors": [],
+ "engine_errors": []
+}

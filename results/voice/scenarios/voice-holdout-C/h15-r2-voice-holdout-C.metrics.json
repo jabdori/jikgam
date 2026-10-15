@@ -1,0 +1,263 @@
+{
+ "session": "h15-r2-voice-holdout-C",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "동생 계정 해지 좀 하려고요. 이번 달 거 결제된 지 일주일밖에 안 됐는데 환불도 되죠?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "동생 계정 해지 좀 하려고요. / 이번 달 거 결제된지 일주일밖에 안 됐는데 환불도 되죠?",
+   "finals": 2,
+   "utt_ids": [
+    "u1",
+    "u2"
+   ],
+   "first_partial_ms": 1139.2,
+   "final_ms": 863.1,
+   "t_end_error_ms": 4.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 5212.6,
+   "first_audio_from_t_end_ms": 5207.6,
+   "engine_ms": 3285.2,
+   "tts_ms": 1063.7,
+   "reply_suggestion": "h15-r2-voice-holdout-C-s2",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "제3자 아니고 제 명의라니까요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제3자 아니고 제 명의라니까요.",
+   "finals": 1,
+   "utt_ids": [
+    "u3"
+   ],
+   "first_partial_ms": 833.6,
+   "final_ms": 764.9,
+   "t_end_error_ms": 7.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 11799.7,
+   "first_audio_from_t_end_ms": 11792.2,
+   "engine_ms": 10000.9,
+   "tts_ms": 1033.8,
+   "reply_suggestion": "h15-r2-voice-holdout-C-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "아 동생 계정이라고 한 건 동생이 쓴다는 거고요, 가입이랑 결제는 다 제 명의예요. 번호도 제 거예요.",
+   "marker": {
+    "condition_change": true,
+    "invalidates_prior": true,
+    "event": "h15#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "아 동생 계정이라고 한 건 동생이 쓴다는 거고요. 가입이랑 결제는 다 제 명의예요. 번호도 제 거예요.",
+   "finals": 1,
+   "utt_ids": [
+    "u4"
+   ],
+   "first_partial_ms": 1115.2,
+   "final_ms": 820.0,
+   "t_end_error_ms": -10.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 4371.4,
+   "first_audio_from_t_end_ms": 4382.1,
+   "engine_ms": 2517.6,
+   "tts_ms": 1033.8,
+   "reply_suggestion": "h15-r2-voice-holdout-C-s4",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "010-0000-0215요. 이름은 방태오입니다.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "010 / 0 / 0215요. / 이름은 방태호입니다.",
+   "finals": 4,
+   "utt_ids": [
+    "u5",
+    "u6",
+    "u7",
+    "u8"
+   ],
+   "first_partial_ms": 4558.4,
+   "final_ms": 783.6,
+   "t_end_error_ms": -10.5,
+   "t_end_source": "vad",
+   "first_audio_ms": 4296.6,
+   "first_audio_from_t_end_ms": 4307.2,
+   "engine_ms": 2422.8,
+   "tts_ms": 1090.2,
+   "reply_suggestion": "h15-r2-voice-holdout-C-s6",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "010-0000-0215 맞는데요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "01000000215 맞는데요?",
+   "finals": 1,
+   "utt_ids": [
+    "u9"
+   ],
+   "first_partial_ms": 1138.5,
+   "final_ms": 812.9,
+   "t_end_error_ms": 42.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 4400.5,
+   "first_audio_from_t_end_ms": 4357.9,
+   "engine_ms": 2540.4,
+   "tts_ms": 1047.1,
+   "reply_suggestion": "h15-r2-voice-holdout-C-s7",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "인증번호 0215요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "인증번호 0215요.",
+   "finals": 1,
+   "utt_ids": [
+    "u10"
+   ],
+   "first_partial_ms": 1267.1,
+   "final_ms": 766.2,
+   "t_end_error_ms": -13.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 4923.2,
+   "first_audio_from_t_end_ms": 4936.5,
+   "engine_ms": 3208.0,
+   "tts_ms": 948.9,
+   "reply_suggestion": "h15-r2-voice-holdout-C-s8",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 7,
+   "utt_file": null,
+   "script": "환불은 안 되더라도 해지는 그냥 진행해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "환불은 안 되더라도 해지는 그냥 진행해 주세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u11"
+   ],
+   "first_partial_ms": 1348.5,
+   "final_ms": 836.9,
+   "t_end_error_ms": 12.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 5637.8,
+   "first_audio_from_t_end_ms": 5625.6,
+   "engine_ms": 3857.7,
+   "tts_ms": 943.1,
+   "reply_suggestion": "h15-r2-voice-holdout-C-s9",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 8,
+   "utt_file": null,
+   "script": "네, 알겠습니다. 수고하세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 알겠습니다. 수고하세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u12"
+   ],
+   "first_partial_ms": 757.9,
+   "final_ms": 764.3,
+   "t_end_error_ms": 14.5,
+   "t_end_source": "vad",
+   "first_audio_ms": 4869.7,
+   "first_audio_from_t_end_ms": 4855.1,
+   "engine_ms": 3006.9,
+   "tts_ms": 1098.2,
+   "reply_suggestion": "h15-r2-voice-holdout-C-s10",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [
+  {
+   "session": "h15-r2-voice-holdout-C",
+   "event": "h15#0",
+   "utt_id": "u4",
+   "version": 4,
+   "t0": 9057614.563,
+   "t1": 9058668.541,
+   "latency_ms": 1053.978,
+   "invalidates_prior": true,
+   "latency_from_speech_end_ms": 1043.3
+  }
+ ],
+ "new_condition_audio": [
+  {
+   "event": "h15#0",
+   "utt_id": "u4",
+   "version": 4,
+   "invalidates_prior": true,
+   "suggestion_id": "h15-r2-voice-holdout-C-s4",
+   "from_speech_end_ms": 4371.4,
+   "from_t0_ms": 4382.1
+  }
+ ],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 6,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": [
+   {
+    "event": "h15#0",
+    "invalid_exposures": 0
+   }
+  ]
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-C/h15-r2-voice-holdout-C.wav",
+  "t0_ms": 8998076.203,
+  "sha256_16": "39b3196daaa17882",
+  "duration_ms": 236792.4
+ },
+ "playbacks": {
+  "total": 7,
+  "exposed": 7,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 130748.0
+ },
+ "voice_discarded": 3,
+ "voice_held": 3,
+ "voice_errors": [],
+ "engine_errors": []
+}

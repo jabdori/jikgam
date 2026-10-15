@@ -1,0 +1,96 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 4]에서 중도 해지 금액이 아닌 청약철회로 전액 79,000원이 환불된다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "대화 내용 중 위약금을 차감한다는 안내가 없습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "업무 API 호출 기록상 환불 접수(create_refund_request)가 단 1회만 호출되어 중복 접수되지 않았습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 4]에서 환불 예정액이 기준 금액을 넘어 상담사 승인 후 환불이 확정된다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 4]에서 결제일로부터 7일 이내 및 이용 이력 없음을 근거로 청약철회에 따른 전액 79,000원 환불을 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4]에서 상담사 승인 후 환불이 확정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 4]에서 환불 접수일로부터 3~7영업일 안에 카드 승인이 취소된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 4]에서 청약철회 시 이용 가능한 마지막 날은 2026-10-12까지라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청대로 전액 환불 및 해지 접수를 정상적으로 처리하고 상담사 승인 대기 상태임을 안내하여 answer에 해당합니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 고객의 이용 여부를 묻지 않고 API로 확인하여 직접 안내했기 때문에 적용될 상황이 없었습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "환불 접수 과정에서 상담 엔진이 오류 안내를 하지 않아 규칙이 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 3]의 인증번호 요청에 대해 [고객 4]에서 '0217'이라고 정확히 답변했습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 22236.8,
+   "input_tokens": 3409,
+   "output_tokens": 2681,
+   "thoughts_tokens": 1936,
+   "cost_usd": 0.03899,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.03899,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h17-r3-voice-holdout-C",
+ "scenario": "h17"
+}

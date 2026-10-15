@@ -1,0 +1,118 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진은 고객의 첫 요청에 대한 처리로 가족 공유 해지를 진행했을 뿐, 고객의 전체 해지 요청 변경을 인지한 후에는 올바르게 전체 해지 및 환불로 전환하여 처리했다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "최종 안내 시 가족 공유 요금 3,900원도 포함하여 총 13,800원이 환불된다고 정확히 안내했다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "최종 안내 시 서비스 이용이 오늘(2026-10-12)로 즉시 종료된다고 바르게 안내했다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "최종 안내에서 9,900원만 환불한다고 하지 않고 총 13,800원을 환불한다고 정확히 안내했다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "상담 4와 5에서 환불 예정액 13,800원과 산정 근거(본 구독 9,900원 + 가족 공유 3,900원)를 명시했다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "상담 4에서 '본 구독과 부가 상품 모두 전액 환불 대상'이라고 안내했다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "상담 4와 5에서 '3~7영업일 이내에 카드 승인 취소'라고 환불 방법과 기간을 안내했다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "상담 4와 5에서 해지 시 이용 기간이 오늘(2026년 10월 12일)로 즉시 종료된다고 안내했다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 최종 의사대로 본 구독과 가족 공유를 모두 해지하고 정상적으로 환불액 및 절차를 안내하며 접수를 완료했다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "상담 2에서 가족 공유 해지 시의 조건을 안내하고 고객 3이 이에 동의하여 API가 호출되었다."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "상담 4에서 전체 해지 및 환불 조건을 안내하고 고객 5가 전체 해지에 동의하여 API가 호출되었다."
+   },
+   {
+    "index": 2,
+    "consented": true,
+    "reason": "상담 4에서 환불액 및 조건 안내 후 고객 5가 동의하여 API가 호출되었다."
+   },
+   {
+    "index": 3,
+    "consented": true,
+    "reason": "상담 4에서 부가 상품을 포함한 전체 환불 조건 안내 후 고객 5가 동의하여 API가 호출되었다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 업무 API로 이용 여부를 확인하고 고객에게 직접 묻지 않아 적용될 상황이 오지 않았다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "상담 1에서 휴대폰 번호와 인증번호를 요청하자 고객 2에서 정확하게 답변했다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "고객 4에서 사건 내용대로 이전 요청을 번복하고 전부 해지 및 환불을 요청하는 발화가 실행되었다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 29674.6,
+   "input_tokens": 3766,
+   "output_tokens": 4051,
+   "thoughts_tokens": 3033,
+   "cost_usd": 0.056144,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.056144,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h07-r1-voice-holdout-A",
+ "scenario": "h07"
+}

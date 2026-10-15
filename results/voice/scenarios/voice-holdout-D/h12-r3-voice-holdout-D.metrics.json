@@ -1,0 +1,390 @@
+{
+ "session": "h12-r3-voice-holdout-D",
+ "provisional": {
+  "sent": 8,
+  "confirmed": 5,
+  "replaced": 3,
+  "unconfirmed": 0,
+  "prejudge_calls": 91,
+  "prejudged_used": 7
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "연간 구독 해지하려고요. 결제는 간편결제로 했고요, 환불 바로 되죠?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "연간 구독 해지하려고요. 결제는 간편 결제로 했고요. 환불 바로 되죠?",
+   "finals": 1,
+   "utt_ids": [
+    "u2"
+   ],
+   "first_partial_ms": 1279.8,
+   "final_ms": 829.0,
+   "t_end_error_ms": 19.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 8533.7,
+   "first_audio_from_t_end_ms": 8514.5,
+   "engine_ms": 6601.9,
+   "tts_ms": 1102.7,
+   "reply_suggestion": "h12-r3-voice-holdout-D-s1",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "제 번호는 010-0000-0212예요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호는 / 010 / 0 / 021이에요.",
+   "finals": 4,
+   "utt_ids": [
+    "u3",
+    "u4",
+    "u5",
+    "u6"
+   ],
+   "first_partial_ms": 670.3,
+   "final_ms": 832.3,
+   "t_end_error_ms": 33.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 4710.6,
+   "first_audio_from_t_end_ms": 4677.3,
+   "engine_ms": 2788.0,
+   "tts_ms": 1090.2,
+   "reply_suggestion": "h12-r3-voice-holdout-D-s2",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "010-0000-0212 맞는데요, 다시 말씀드려요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "010-0000-021이 맞는데요. / 다시 말씀드려요?",
+   "finals": 2,
+   "utt_ids": [
+    "u7",
+    "u8"
+   ],
+   "first_partial_ms": 1220.3,
+   "final_ms": 810.9,
+   "t_end_error_ms": 8.7,
+   "t_end_source": "vad",
+   "first_audio_ms": 4205.3,
+   "first_audio_from_t_end_ms": 4196.6,
+   "engine_ms": 2431.5,
+   "tts_ms": 962.7,
+   "reply_suggestion": "h12-r3-voice-holdout-D-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "010-0000-0212 맞다니까요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "010-0000-021이 맞다니까요.",
+   "finals": 1,
+   "utt_ids": [
+    "u9"
+   ],
+   "first_partial_ms": 975.9,
+   "final_ms": 822.7,
+   "t_end_error_ms": 10.8,
+   "t_end_source": "vad",
+   "first_audio_ms": 4277.2,
+   "first_audio_from_t_end_ms": 4266.4,
+   "engine_ms": 2547.4,
+   "tts_ms": 907.0,
+   "reply_suggestion": "h12-r3-voice-holdout-D-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "아니, 제 번호 010-0000-0212 맞다니까 왜 자꾸 물어보세요? 탁준영이고요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아니, 제 번호 010-0000-0001이 맞다니까요. 왜 자꾸 물어보세요?",
+   "finals": 1,
+   "utt_ids": [
+    "u10"
+   ],
+   "first_partial_ms": 792.9,
+   "final_ms": -442.5,
+   "t_end_error_ms": -1286.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 6994.4,
+   "first_audio_from_t_end_ms": 8280.5,
+   "engine_ms": 3780.0,
+   "tts_ms": 947.6,
+   "reply_suggestion": "h12-r3-voice-holdout-D-s5",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "아 그러면 해지 말고 월 구독으로 바꾸는 건요? 그게 낫지 않아요?",
+   "marker": {
+    "condition_change": true,
+    "invalidates_prior": false,
+    "event": "h12#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "탁준혁이고요. / 아 그러면 해지 말고 월 구독으로 바꾸는 거요? 그게 낫지 않아요?",
+   "finals": 2,
+   "utt_ids": [
+    "u12",
+    "u14"
+   ],
+   "first_partial_ms": 1133.5,
+   "final_ms": 851.5,
+   "t_end_error_ms": 18.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 4062.9,
+   "first_audio_from_t_end_ms": 4044.0,
+   "engine_ms": 2338.5,
+   "tts_ms": 872.8,
+   "reply_suggestion": "h12-r3-voice-holdout-D-s6",
+   "replies_held": 1,
+   "replies_discarded": 0
+  },
+  {
+   "line": 7,
+   "utt_file": null,
+   "script": "인증번호 0212로 왔어요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "인증번호 012로 왔어요.",
+   "finals": 1,
+   "utt_ids": [
+    "u15"
+   ],
+   "first_partial_ms": 718.8,
+   "final_ms": 770.2,
+   "t_end_error_ms": -10.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 3774.6,
+   "first_audio_from_t_end_ms": 3784.7,
+   "engine_ms": 2094.5,
+   "tts_ms": 909.5,
+   "reply_suggestion": "h12-r3-voice-holdout-D-s7",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 8,
+   "utt_file": null,
+   "script": "인증번호 0212 맞는데요. 다시 확인해 보세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "인증번호 021이 맞는데요. / 다시 확인해 보세요.",
+   "finals": 2,
+   "utt_ids": [
+    "u16",
+    "u17"
+   ],
+   "first_partial_ms": 1176.9,
+   "final_ms": 809.6,
+   "t_end_error_ms": -17.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 4224.3,
+   "first_audio_from_t_end_ms": 4241.6,
+   "engine_ms": 2493.3,
+   "tts_ms": 921.4,
+   "reply_suggestion": "h12-r3-voice-holdout-D-s8",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 9,
+   "utt_file": null,
+   "script": "문자로 0212라고 왔는데 이게 안 맞나요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "문자로 021이라고 왔는데 / 이게 안 맞나요?",
+   "finals": 2,
+   "utt_ids": [
+    "u18",
+    "u19"
+   ],
+   "first_partial_ms": 1323.9,
+   "final_ms": 811.9,
+   "t_end_error_ms": -16.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 4252.7,
+   "first_audio_from_t_end_ms": 4268.8,
+   "engine_ms": 2465.4,
+   "tts_ms": 975.3,
+   "reply_suggestion": "h12-r3-voice-holdout-D-s9",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 10,
+   "utt_file": null,
+   "script": "아니, 문자로 0212 네 자리 온 거 맞다니까요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아니 문자로 011이 네 자리 온 거 맞다니까요.",
+   "finals": 1,
+   "utt_ids": [
+    "u20"
+   ],
+   "first_partial_ms": 530.9,
+   "final_ms": 925.2,
+   "t_end_error_ms": 29.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 4593.2,
+   "first_audio_from_t_end_ms": 4564.1,
+   "engine_ms": 2571.2,
+   "tts_ms": 1096.7,
+   "reply_suggestion": "h12-r3-voice-holdout-D-s10",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 11,
+   "utt_file": null,
+   "script": "아니 몇 번을 말해요, 0212 맞다고요. 왜 계속 똑같은 말만 반복하세요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아니 몇 번을 말해요. 021이 맞다고요. 왜 계속 똑같은 말만 반복하세요?",
+   "finals": 1,
+   "utt_ids": [
+    "u21"
+   ],
+   "first_partial_ms": 1326.6,
+   "final_ms": 832.0,
+   "t_end_error_ms": -7.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 4432.8,
+   "first_audio_from_t_end_ms": 4440.4,
+   "engine_ms": 2540.5,
+   "tts_ms": 1060.2,
+   "reply_suggestion": "h12-r3-voice-holdout-D-s11",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 12,
+   "utt_file": null,
+   "script": "아 그러면 상담원 연결을 해 주시든가요. 0212 맞는데 왜 계속 안 넘어가는 건데요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아 그러면 상담원 연결을 해 주시던가요. / 021이 맞는데 왜 계속 안 넘어가는 건데요?",
+   "finals": 2,
+   "utt_ids": [
+    "u22",
+    "u23"
+   ],
+   "first_partial_ms": 667.6,
+   "final_ms": 819.9,
+   "t_end_error_ms": -4.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 5271.9,
+   "first_audio_from_t_end_ms": 5276.7,
+   "engine_ms": 3436.5,
+   "tts_ms": 1015.3,
+   "reply_suggestion": "h12-r3-voice-holdout-D-s13",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 13,
+   "utt_file": null,
+   "script": "0212 맞다고 계속 말씀드렸잖아요. 더 진행이 안 되면 그냥 끊을게요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "021이 맞다고 계속 말씀드렸잖아요. / 더 진행이 안 되면 그냥 끊을게요.",
+   "finals": 2,
+   "utt_ids": [
+    "u24",
+    "u25"
+   ],
+   "first_partial_ms": 1062.3,
+   "final_ms": 803.1,
+   "t_end_error_ms": 27.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 3925.8,
+   "first_audio_from_t_end_ms": 3898.5,
+   "engine_ms": 2103.1,
+   "tts_ms": 1019.4,
+   "reply_suggestion": "h12-r3-voice-holdout-D-s14",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [
+  {
+   "session": "h12-r3-voice-holdout-D",
+   "event": "h12#0",
+   "utt_id": "u14",
+   "version": 14,
+   "t0": 13853715.216,
+   "t1": 13854754.369,
+   "latency_ms": 1039.153,
+   "invalidates_prior": false,
+   "latency_from_speech_end_ms": 1058.1
+  }
+ ],
+ "new_condition_audio": [
+  {
+   "event": "h12#0",
+   "utt_id": "u14",
+   "version": 14,
+   "invalidates_prior": false,
+   "suggestion_id": "h12-r3-voice-holdout-D-s6",
+   "from_speech_end_ms": 4062.9,
+   "from_t0_ms": 4044.0
+  }
+ ],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 1,
+  "cases": [
+   {
+    "kind": "unconfirmed",
+    "suggestion_id": "h12-r3-voice-holdout-D-s5",
+    "basis_version": 12,
+    "start": 13855341.265,
+    "events": [
+     "h12#0"
+    ],
+    "played_ms": 1.3,
+    "interrupted": "version"
+   }
+  ],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-D/h12-r3-voice-holdout-D.wav",
+  "t0_ms": 13726029.264,
+  "sha256_16": "d517990bb60ffe09",
+  "duration_ms": 324324.1
+ },
+ "playbacks": {
+  "total": 13,
+  "exposed": 13,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 1,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 134793.0
+ },
+ "voice_discarded": 1,
+ "voice_held": 2,
+ "voice_errors": [],
+ "engine_errors": []
+}

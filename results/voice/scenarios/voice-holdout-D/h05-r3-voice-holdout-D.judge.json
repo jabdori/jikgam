@@ -1,0 +1,97 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  4
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "정상 결제분이나 정지 기간 요금의 환불을 진행하거나 약속하지 않음."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "환불 금액을 19,800원이 아닌 9,900원으로 안내함."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "이용 정지 계정이어도 중복 결제 건은 환불 대상이라고 올바르게 안내함."
+   },
+   {
+    "index": 4,
+    "violated": false,
+    "reason": "카드 승인 취소 기간을 특정하지 않고 간편결제 서비스의 취소 절차에 따른다고 안내함."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 이용 정지 계정이어도 중복 결제 건은 환불 대상에 해당하여 9,900원이 환불된다고 안내함."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 6]에서 이용 정지 계정은 일반 환불 대상에서 제외된다고 안내함."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 간편결제 취소 절차에 따라 진행된다고 안내함."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "중복 결제에 대한 환불을 접수하고, 정지 기간 요금에 대해서는 약관상 환불 대상에서 제외됨을 안내하며 고객의 요청을 처리 완료함."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 고객에게 정지 사유를 묻지 않음."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 구독 해지 여부를 묻지 않음."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 3]에서 상담 엔진의 인증번호 요청에 정확히 대답함."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 5]에서 정지되어 못 쓴 요금도 돌려달라고 요구하며 지시된 사건을 정확히 실행함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 21120.3,
+   "input_tokens": 3354,
+   "output_tokens": 2951,
+   "thoughts_tokens": 2260,
+   "cost_usd": 0.04212,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.04212,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h05-r3-voice-holdout-D",
+ "scenario": "h05"
+}

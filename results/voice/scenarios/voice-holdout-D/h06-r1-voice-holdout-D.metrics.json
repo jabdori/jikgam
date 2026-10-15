@@ -1,0 +1,114 @@
+{
+ "session": "h06-r1-voice-holdout-D",
+ "provisional": {
+  "sent": 2,
+  "confirmed": 0,
+  "replaced": 2,
+  "unconfirmed": 0,
+  "prejudge_calls": 20,
+  "prejudged_used": 3
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "안녕하세요… 연간으로 결제한 게 있는데 해지하면 얼마나 돌려받을 수 있는지 궁금해서요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "어, 안녕하세요. 연간으로 결제한 게 있는데 / 해지하면 얼마나 돌려받을 수 있는지 궁금해서요.",
+   "finals": 2,
+   "utt_ids": [
+    "u2",
+    "u4"
+   ],
+   "first_partial_ms": 1318.9,
+   "final_ms": 770.7,
+   "t_end_error_ms": 4.5,
+   "t_end_source": "vad",
+   "first_audio_ms": 3667.5,
+   "first_audio_from_t_end_ms": 3663.0,
+   "engine_ms": 1950.0,
+   "tts_ms": 946.3,
+   "reply_suggestion": "h06-r1-voice-holdout-D-s2",
+   "replies_held": 1,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "제 번호는 010-0000-0206이에요…",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호는 010-0000-0206이에요.",
+   "finals": 1,
+   "utt_ids": [
+    "u5"
+   ],
+   "first_partial_ms": 477.9,
+   "final_ms": 786.4,
+   "t_end_error_ms": -30.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 3785.5,
+   "first_audio_from_t_end_ms": 3816.1,
+   "engine_ms": 2122.9,
+   "tts_ms": 876.1,
+   "reply_suggestion": "h06-r1-voice-holdout-D-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "인증번호 0206 왔어요…",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "인증번호 0206 왔어요.",
+   "finals": 1,
+   "utt_ids": [
+    "u6"
+   ],
+   "first_partial_ms": 983.2,
+   "final_ms": 791.3,
+   "t_end_error_ms": 22.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 4984.6,
+   "first_audio_from_t_end_ms": 4962.4,
+   "engine_ms": 3181.7,
+   "tts_ms": 1011.3,
+   "reply_suggestion": "h06-r1-voice-holdout-D-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-D/h06-r1-voice-holdout-D.wav",
+  "t0_ms": 1644683.652,
+  "sha256_16": "77683148d7ec65e4",
+  "duration_ms": 81213.8
+ },
+ "playbacks": {
+  "total": 4,
+  "exposed": 4,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 1,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 41378.5
+ },
+ "voice_discarded": 0,
+ "voice_held": 1,
+ "voice_errors": [],
+ "engine_errors": []
+}

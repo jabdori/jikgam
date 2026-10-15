@@ -1,0 +1,91 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "장애가 아닌 결제 후 이용 이력이 없음을 근거로 전액 환불 대상임을 올바르게 안내함."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "무료 체험 기간 중의 이용은 이용 이력에 포함되지 않는다고 명확히 안내함."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "서비스 이용이 다음 결제일 전날이 아닌 오늘(2026-10-12) 종료된다고 정확히 안내함."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "상담 4에서 체험 기간 이용은 이력에서 제외됨을 설명하고 환불 예정액 9,900원을 안내함."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "상담 4에서 환불 접수일로부터 3~7영업일 안에 카드 승인이 취소된다고 안내함."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "상담 4에서 청약철회에 따라 서비스 이용이 오늘(2026-10-12) 종료된다고 안내함."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청대로 구독 해지 및 9,900원 전액 환불 접수를 완료하고 결과를 안내함."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 이용 여부를 묻지 않고 시스템 조회를 통해 이용 이력이 없음을 먼저 안내함."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담원이 대화 중 장애 시간에 대해 질문하지 않음."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "상담 3에서 인증번호를 요청받고 고객 4에서 '0201'이라고 정확히 답변함."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "고객 4 메시지에서 사건 실행 표시와 함께 지시된 내용대로 체험 기간 이용에 대한 걱정을 질문함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 32140.4,
+   "input_tokens": 3652,
+   "output_tokens": 4344,
+   "thoughts_tokens": 3691,
+   "cost_usd": 0.059432,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.059432,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h01-r1-voice-holdout-C",
+ "scenario": "h01"
+}

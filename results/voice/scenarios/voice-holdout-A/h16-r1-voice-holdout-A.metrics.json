@@ -1,0 +1,321 @@
+{
+ "session": "h16-r1-voice-holdout-A",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "연간 구독 해지하려고 전화했어요. 제 명의로 돼 있어요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "연간 구독 해지하려고 전화했어요. / 제 명의로 돼 있어요.",
+   "finals": 2,
+   "utt_ids": [
+    "u1",
+    "u2"
+   ],
+   "first_partial_ms": 984.6,
+   "final_ms": 754.1,
+   "t_end_error_ms": 7.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 15161.2,
+   "first_audio_from_t_end_ms": 15153.6,
+   "engine_ms": 2794.2,
+   "tts_ms": 707.8,
+   "reply_suggestion": "h16-r1-voice-holdout-A-s2",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "제 번호는 010-0000-0216이고, 인증번호는 0216이에요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호는 010-0000-0216이고 인증 번호는 0216이에요.",
+   "finals": 1,
+   "utt_ids": [
+    "u3"
+   ],
+   "first_partial_ms": 821.1,
+   "final_ms": 809.6,
+   "t_end_error_ms": 9.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 11601.0,
+   "first_audio_from_t_end_ms": 11591.7,
+   "engine_ms": 9843.5,
+   "tts_ms": 947.9,
+   "reply_suggestion": "h16-r1-voice-holdout-A-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "아 네, 잠시만요. 남편이 자세히 말할게요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "",
+   "finals": 0,
+   "utt_ids": [],
+   "first_partial_ms": 801.2,
+   "final_ms": null,
+   "t_end_error_ms": null,
+   "t_end_source": null,
+   "first_audio_ms": null,
+   "first_audio_from_t_end_ms": null,
+   "engine_ms": null,
+   "tts_ms": null,
+   "reply_suggestion": null,
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "여보세요, 남편인데요. 아내가 해지하라고 했으니까 지금 바로 접수해 주시고 얼마 나오는지 다시 말해 주세요.",
+   "marker": {
+    "condition_change": true,
+    "invalidates_prior": true,
+    "event": "h16#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "아 네 잠시만요. 남편이 자세히 말할게요. / 여보세요, 남편인데요. / 아내가 해제하라고 했으니까 / 지금 바로 접수해 주시고 얼마 나오는지 다시 말해 주세요.",
+   "finals": 4,
+   "utt_ids": [
+    "u4",
+    "u5",
+    "u6",
+    "u7"
+   ],
+   "first_partial_ms": 843.1,
+   "final_ms": 799.9,
+   "t_end_error_ms": 22.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 27921.2,
+   "first_audio_from_t_end_ms": 27898.6,
+   "engine_ms": 2189.1,
+   "tts_ms": 933.3,
+   "reply_suggestion": "h16-r1-voice-holdout-A-s7",
+   "replies_held": 2,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "아 그래요? 그럼 아내 다시 바꿔줄게요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아, 그래요? 그럼 안에 다시 바꿔 줄게요.",
+   "finals": 1,
+   "utt_ids": [
+    "u8"
+   ],
+   "first_partial_ms": 1215.2,
+   "final_ms": 745.5,
+   "t_end_error_ms": -17.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 6673.0,
+   "first_audio_from_t_end_ms": 6690.6,
+   "engine_ms": 5048.3,
+   "tts_ms": 878.3,
+   "reply_suggestion": "h16-r1-voice-holdout-A-s9",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "네 저예요, 아까 말씀하신 대로 진행해 주세요.",
+   "marker": {
+    "condition_change": true,
+    "invalidates_prior": true,
+    "event": "h16#1"
+   },
+   "barge_in_planned": false,
+   "transcript": "네, 저예요. / 가 말씀하신 대로 진행해 주세요.",
+   "finals": 2,
+   "utt_ids": [
+    "u9",
+    "u10"
+   ],
+   "first_partial_ms": 810.0,
+   "final_ms": 1086.1,
+   "t_end_error_ms": 17.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 34813.2,
+   "first_audio_from_t_end_ms": 34795.8,
+   "engine_ms": 6307.8,
+   "tts_ms": 911.5,
+   "reply_suggestion": "h16-r1-voice-holdout-A-s10",
+   "replies_held": 1,
+   "replies_discarded": 0
+  },
+  {
+   "line": 7,
+   "utt_file": null,
+   "script": "네, 확인했습니다. 처리해 주셔서 감사합니다.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 확인했습니다. 처리해 주셔서 감사합니다.",
+   "finals": 1,
+   "utt_ids": [
+    "u11"
+   ],
+   "first_partial_ms": 811.0,
+   "final_ms": 776.1,
+   "t_end_error_ms": 9.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 4223.2,
+   "first_audio_from_t_end_ms": 4214.1,
+   "engine_ms": 2546.8,
+   "tts_ms": 900.0,
+   "reply_suggestion": "h16-r1-voice-holdout-A-s11",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [
+  {
+   "session": "h16-r1-voice-holdout-A",
+   "event": "h16#0",
+   "utt_id": "u7",
+   "version": 7,
+   "t0": 3348435.072,
+   "t1": 3351401.322,
+   "latency_ms": 2966.25,
+   "invalidates_prior": true,
+   "latency_from_speech_end_ms": 2988.9
+  },
+  {
+   "session": "h16-r1-voice-holdout-A",
+   "event": "h16#1",
+   "utt_id": "u10",
+   "version": 10,
+   "t0": 3413290.064,
+   "t1": 3420666.493,
+   "latency_ms": 7376.429,
+   "invalidates_prior": true,
+   "latency_from_speech_end_ms": 7393.8
+  }
+ ],
+ "new_condition_audio": [
+  {
+   "event": "h16#0",
+   "utt_id": "u7",
+   "version": 7,
+   "invalidates_prior": true,
+   "suggestion_id": "h16-r1-voice-holdout-A-s7",
+   "from_speech_end_ms": 27921.2,
+   "from_t0_ms": 27898.6
+  },
+  {
+   "event": "h16#1",
+   "utt_id": "u10",
+   "version": 10,
+   "invalidates_prior": true,
+   "suggestion_id": "h16-r1-voice-holdout-A-s10",
+   "from_speech_end_ms": 34813.2,
+   "from_t0_ms": 34795.8
+  }
+ ],
+ "barge_ins": [
+  {
+   "suggestion_id": "h16-r1-voice-holdout-A-s4",
+   "trigger": "transcript",
+   "started": false,
+   "played_ms": null,
+   "line": 4,
+   "detect_ms": 4569.1,
+   "stop_ms": 4569.1,
+   "new_audio_ms": 27921.2
+  },
+  {
+   "suggestion_id": "h16-r1-voice-holdout-A-s5",
+   "trigger": "transcript",
+   "started": false,
+   "played_ms": null,
+   "line": 4,
+   "detect_ms": 8647.8,
+   "stop_ms": 8647.8,
+   "new_audio_ms": 27921.2
+  },
+  {
+   "suggestion_id": "h16-r1-voice-holdout-A-s8",
+   "trigger": "transcript",
+   "started": false,
+   "played_ms": null,
+   "line": 6,
+   "detect_ms": 3874.6,
+   "stop_ms": 3874.6,
+   "new_audio_ms": 34813.2
+  }
+ ],
+ "stale_voice": {
+  "invalid": 2,
+  "denominator": 5,
+  "unconfirmed": 0,
+  "cases": [
+   {
+    "kind": "invalid",
+    "suggestion_id": "h16-r1-voice-holdout-A-s6",
+    "basis_version": 6,
+    "start": 3350248.607,
+    "events": [
+     "h16#0"
+    ],
+    "played_ms": 25151.5,
+    "interrupted": null
+   },
+   {
+    "kind": "invalid",
+    "suggestion_id": "h16-r1-voice-holdout-A-s9",
+    "basis_version": 9,
+    "start": 3415734.01,
+    "events": [
+     "h16#1"
+    ],
+    "played_ms": 31440.3,
+    "interrupted": null
+   }
+  ],
+  "events": [
+   {
+    "event": "h16#0",
+    "invalid_exposures": 1
+   },
+   {
+    "event": "h16#1",
+    "invalid_exposures": 1
+   }
+  ]
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-A/h16-r1-voice-holdout-A.wav",
+  "t0_ms": 3227785.911,
+  "sha256_16": "2fb70b1e93c317ea",
+  "duration_ms": 266341.9
+ },
+ "playbacks": {
+  "total": 11,
+  "exposed": 8,
+  "interrupted": {
+   "barge_in": 3,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 178390.4
+ },
+ "voice_discarded": 0,
+ "voice_held": 3,
+ "voice_errors": [],
+ "engine_errors": []
+}

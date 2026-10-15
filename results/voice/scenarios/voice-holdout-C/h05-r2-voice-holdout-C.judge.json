@@ -1,0 +1,107 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  4
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 4]에서 이용이 정지된 계정은 일반 환불 대상에서 제외된다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "대화 전체에 걸쳐 19,800원이 아닌 9,900원의 환불로 정확히 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 3]과 [상담 5]에서 이용 정지 계정이더라도 중복 결제 환불은 정상 적용된다고 안내했습니다."
+   },
+   {
+    "index": 4,
+    "violated": false,
+    "reason": "카드 승인 취소 기간(3~7영업일)에 대한 언급을 하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 이용 정지 계정이더라도 중복 결제 건에 대해 9,900원의 환불이 가능하다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4]에서 이용이 정지된 계정은 일반 환불 대상에서 제외된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3], [상담 5] 등에서 간편결제 서비스의 취소 절차에 따라 진행된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청대로 9,900원에 대한 중복 결제 환불 접수를 완료하고 이를 안내하며 대화를 마쳤으므로 기대 결과에 부합합니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "대화 중 상담원이 정지 사유를 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "대화 중 상담원이 구독 해지 의사를 묻지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 2]와 [고객 3]에서 상담원의 요청에 따라 휴대폰 번호와 본인 확인 번호를 정확히 제공했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4] 메시지에 사건 실행 표시가 있으며, 정지되어 쓰지 못한 요금도 돌려달라는 지시된 내용을 정확하게 발화했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 17835.6,
+   "input_tokens": 3475,
+   "output_tokens": 2270,
+   "thoughts_tokens": 1555,
+   "cost_usd": 0.03419,
+   "attempts": 1,
+   "error": null
+  },
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 23221.3,
+   "input_tokens": 3475,
+   "output_tokens": 3260,
+   "thoughts_tokens": 2529,
+   "cost_usd": 0.04607,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.08026,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h05-r2-voice-holdout-C",
+ "scenario": "h05"
+}

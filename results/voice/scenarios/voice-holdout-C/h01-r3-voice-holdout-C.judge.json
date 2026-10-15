@@ -1,0 +1,91 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "장애를 환불 근거로 언급하지 않고, 결제 후 이용 이력이 없어서 전액 청약철회 대상이라고 안내함 ([상담 3])."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "무료 체험 기간 중의 이용은 이용 이력에 포함되지 않아 청약철회 대상이 맞다고 올바르게 안내함 ([상담 4])."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "이번 환불로 이용 기간이 오늘(2026-10-12) 종료된다고 명확히 안내함 ([상담 3], [상담 4])."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "환불 예정액 9,900원과 체험 기간 중의 이용은 이용 이력에 포함되지 않아 청약철회 대상이 된다는 점을 안내함 ([상담 3], [상담 4])."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "결제된 카드로 접수일로부터 3~7영업일 안에 승인 취소된다고 환불 방법과 기간을 안내함 ([상담 3], [상담 4])."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "이용 가능한 마지막 날이 오늘(2026-10-12)이라고 안내함 ([상담 3], [상담 4])."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청대로 청약철회에 의한 환불 및 해지 처리를 완료하고 결과를 정상적으로 안내함 ([상담 5], [상담 6])."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 고객의 이용 여부를 묻지 않음."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담원이 장애 시간에 대해 묻지 않음."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 2]에서 본인 확인 인증번호를 요청받고 [고객 3]에서 '0201'이라고 정확히 답변함."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4] 메시지에 (사건 #0 실행 표시)가 있으며, 지시된 대로 체험 때 많이 본 것 때문에 환불이 불가한지 질문함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 24503.5,
+   "input_tokens": 3670,
+   "output_tokens": 3739,
+   "thoughts_tokens": 3002,
+   "cost_usd": 0.052208,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.052208,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h01-r3-voice-holdout-C",
+ "scenario": "h01"
+}

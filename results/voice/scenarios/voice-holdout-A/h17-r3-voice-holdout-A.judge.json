@@ -1,0 +1,107 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 2에서 중도 해지 금액이 아닌 79,000원 환불로 정확히 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 2에서 위약금 차감이 아닌 청약철회로 전액 환불된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "API 호출 내역에서 환불 접수(create_refund_request)가 1건만 정상적으로 수행되었습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "상담 2와 상담 3에서 상담사 승인 후 환불이 확정된다고 올바르게 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "상담 2에서 청약철회로 결제 금액 전액인 79,000원이 환불 예정이라고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "상담 2에서 환불 예정액이 50,000원을 초과하여 상담사 승인 후 확정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "상담 2에서 환불은 카드 승인 취소로 진행되며 영업일 기준 3~7일 소요된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "상담 2와 상담 3에서 서비스 이용이 오늘(2026년 10월 12일) 종료된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 해지 및 환불 요청을 성공적으로 접수하고 필요한 안내를 모두 마친 후 대화를 정상적으로 종료했습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "상담 2에서 해지 관련 내용을 상세히 안내하며 접수 의사를 물었고, 고객 3에서 고객이 동의한 뒤 API가 호출되었습니다."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "상담 2에서 환불 관련 내용을 안내하고 접수에 대한 동의를 구한 뒤, 고객 3에서 동의를 얻고 API가 호출되었습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 이용 여부를 묻지 않고 본인 확인 후 시스템을 통해 확인하여 질문 상황이 발생하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "접수 중 오류가 발생하지 않아 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "상담 1의 휴대폰 번호와 인증번호 요청에 대해 고객 2에서 정확히 답변했습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 26559.1,
+   "input_tokens": 3047,
+   "output_tokens": 3674,
+   "thoughts_tokens": 2829,
+   "cost_usd": 0.050182,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.050182,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h17-r3-voice-holdout-A",
+ "scenario": "h17"
+}

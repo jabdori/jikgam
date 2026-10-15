@@ -1,0 +1,112 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 1]에서 해지 신청일에 즉시 종료된다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 4]에서 별도의 상담사 승인 절차 없이 확정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 2]에서 위약금 면제가 적용된 금액이라고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 2]에서 진행 여부를 물어 [고객 3]에서 동의를 얻은 후 해지 접수 API가 호출되었습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 1]에서 중도 해지 시 이용 기간이 해지 신청일에 즉시 종료된다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 2]에서 결제 금액에서 5개월 이용분을 차감하고 위약금 면제가 적용된 49,500원이라고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 4]에서 50,000원을 초과하지 않아 상담사 승인 없이 즉시 확정되었다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 2]에서 결제한 신용카드로 3~7영업일 이내에 승인 취소된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청대로 구독 해지 및 환불 접수를 완료하고 안내했습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 2]에서 해지 안내를 하고 [고객 3]에서 동의를 받은 후 쓰기 API가 호출되었습니다."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "[상담 2]에서 환불 안내를 하고 [고객 3]에서 동의를 받은 후 쓰기 API가 호출되었습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 가입 날짜를 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[상담 1]의 설명을 듣고 [고객 2]에서 오늘 끝내고 환불받겠다고 말했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 2]에서 금액 안내를 들은 후 [고객 3]에서 오만 원이 넘으면 승인을 받아야 하는지 물었습니다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "[고객 2]에서 문자로 온 인증번호 0211을 정확히 제공했습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 18664.7,
+   "input_tokens": 3332,
+   "output_tokens": 2652,
+   "thoughts_tokens": 1789,
+   "cost_usd": 0.038488,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.038488,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h11-r2-voice-holdout-A",
+ "scenario": "h11"
+}

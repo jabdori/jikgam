@@ -1,0 +1,171 @@
+{
+ "session": "h14-r2-voice-holdout-C",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "여보세요? 그 별담인가 뭔가, 테레비 보는 거, 그거 인자 안 볼라 그러는데 끊어 줘요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "여보세요? / 그 별담인가 뭔가 텔레비전 보는 거 그거인지 안 보려고 그러는데 끊어줘요.",
+   "finals": 2,
+   "utt_ids": [
+    "u1",
+    "u2"
+   ],
+   "first_partial_ms": 1018.0,
+   "final_ms": 816.9,
+   "t_end_error_ms": 17.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 3872.3,
+   "first_audio_from_t_end_ms": 3854.9,
+   "engine_ms": 2164.1,
+   "tts_ms": 891.1,
+   "reply_suggestion": "h14-r2-voice-holdout-C-s2",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "내 전화번호는 010-0000-0214요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "내 전화번호는 / 010 / 0 / 0 2 1 4요.",
+   "finals": 4,
+   "utt_ids": [
+    "u3",
+    "u4",
+    "u5",
+    "u6"
+   ],
+   "first_partial_ms": 1304.5,
+   "final_ms": 815.7,
+   "t_end_error_ms": 6.8,
+   "t_end_source": "vad",
+   "first_audio_ms": 4119.1,
+   "first_audio_from_t_end_ms": 4112.3,
+   "engine_ms": 2236.3,
+   "tts_ms": 1067.0,
+   "reply_suggestion": "h14-r2-voice-holdout-C-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "아니 내 번호 맞는데, 공 일 공, 영 영 영 영, 공 이 일 사요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아니, 내 번호 맞는데. 010-0000-0214요.",
+   "finals": 1,
+   "utt_ids": [
+    "u7"
+   ],
+   "first_partial_ms": 479.1,
+   "final_ms": 1005.4,
+   "t_end_error_ms": -27.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 4683.5,
+   "first_audio_from_t_end_ms": 4710.9,
+   "engine_ms": 2778.2,
+   "tts_ms": 899.7,
+   "reply_suggestion": "h14-r2-voice-holdout-C-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "문자가 와 있는디, 숫자가 칠 삼 일 공 써 있네.",
+   "marker": {
+    "condition_change": false,
+    "invalidates_prior": false,
+    "event": "h14#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "문자가 와 있는데 숫자가 7310 써 있네?",
+   "finals": 1,
+   "utt_ids": [
+    "u8"
+   ],
+   "first_partial_ms": 1006.2,
+   "final_ms": 738.2,
+   "t_end_error_ms": -39.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 4591.3,
+   "first_audio_from_t_end_ms": 4630.7,
+   "engine_ms": 2911.1,
+   "tts_ms": 941.9,
+   "reply_suggestion": "h14-r2-voice-holdout-C-s5",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "아 이건가, 공 칠 삼 일 적혀 있는디요.",
+   "marker": {
+    "condition_change": false,
+    "invalidates_prior": false,
+    "event": "h14#1"
+   },
+   "barge_in_planned": false,
+   "transcript": "아, 이건가? 0731 적혀 있는데요.",
+   "finals": 1,
+   "utt_ids": [
+    "u9"
+   ],
+   "first_partial_ms": 603.2,
+   "final_ms": 828.3,
+   "t_end_error_ms": 29.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 5501.7,
+   "first_audio_from_t_end_ms": 5472.0,
+   "engine_ms": 3544.1,
+   "tts_ms": 1129.1,
+   "reply_suggestion": "h14-r2-voice-holdout-C-s6",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-C/h14-r2-voice-holdout-C.wav",
+  "t0_ms": 8831057.01,
+  "sha256_16": "52ef09a304e559d0",
+  "duration_ms": 146209.1
+ },
+ "playbacks": {
+  "total": 5,
+  "exposed": 5,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 70948.9
+ },
+ "voice_discarded": 1,
+ "voice_held": 1,
+ "voice_errors": [],
+ "engine_errors": []
+}

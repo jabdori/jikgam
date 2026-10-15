@@ -1,0 +1,98 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 1]에서 제3자 요청으로는 해지 및 환불 접수와 계정 정보 확인이 어렵다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 3]에서 기간 경과로 환불 대상에 해당하지 않음을 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 3]에서 오늘(10월 12일)은 청약철회 기간이 경과했다고 정확히 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 3] 및 [상담 4]에서 11월 3일까지 이용 후 해지된다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 결제일 다음 날부터 7일째인 10월 11일까지가 기한이라 오늘(10월 12일)은 경과하여 환불이 불가하다고 설명했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3] 및 [상담 4]에서 11월 3일까지 서비스를 계속 이용할 수 있다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청대로 월 구독 해지 절차를 안내하고 처리하여 대화를 완료했습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 3]에서 11월 3일까지 이용 후 해지된다는 점을 안내했고, [고객 5]에서 고객이 해지 진행에 동의한 후 [상담 4] 직후 해지 API가 호출되었습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 2]에서 기한에 대한 설명을 듣고 '4일 결제니까 오늘이 딱 일주일 아니에요?'라고 따졌습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 5]에서 환불이 불가하다는 안내를 수용하며 해지를 진행해 달라고 요청했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 4]에서 요청받은 휴대폰 번호와 인증번호를 정확하게 말했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 3]에서 명의와 관련된 정정 내용을 사건에 지시된 대로 정확히 발화했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 18898.3,
+   "input_tokens": 3261,
+   "output_tokens": 2407,
+   "thoughts_tokens": 1647,
+   "cost_usd": 0.035406,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.035406,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h15-r1-voice-holdout-A",
+ "scenario": "h15"
+}

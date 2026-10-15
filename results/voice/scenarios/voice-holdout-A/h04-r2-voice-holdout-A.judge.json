@@ -1,0 +1,108 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "해지 접수 API(create_cancellation)를 호출하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 2]와 [상담 3]에서 작년 중복 결제 건은 기한 경과로 환불 불가함을 명확히 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "19,800원이 아닌 9,900원의 환불만 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 4]에서 해지가 진행되지 않고 정기 구독이 유지됨을 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 2]와 [상담 3]에서 2026년 9월 9일 중복 결제 건에 대해 9,900원이 전액 환불된다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 2]와 [상담 3]에서 2025년 10월 9일 결제 건은 1년이 지나 환불 처리가 어렵다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 2], [상담 3], [상담 4]에서 3~7영업일 내 카드 승인 취소 방식으로 환불된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 4]에서 정기 구독은 계속 유지되므로 서비스 중단이 없다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 최종 번복 의사를 반영하여 구독은 유지한 채 9,900원의 중복 결제 건만 성공적으로 환불 접수를 완료하고 안내했습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 3]에서 9,900원 환불을 안내하고 동의를 구한 뒤 [고객 4]와 [고객 5]에서 고객의 환불 진행 동의를 얻은 후 API를 호출했습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "고객 확인 후 상담 엔진이 직접 결제 내역을 확인하여 중복 결제 날짜를 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[상담 2]의 환불 불가 안내에 대해 [고객 3]에서 추가로 요구한 뒤, [상담 3]의 설명을 듣고 [고객 4]에서 받아들였습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 2]에서 휴대폰 번호와 인증번호를 정확하게 제시했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 5]에서 지시된 문장대로 구독 유지를 번복하는 발언을 정확히 실행했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 20122.2,
+   "input_tokens": 3474,
+   "output_tokens": 2875,
+   "thoughts_tokens": 1970,
+   "cost_usd": 0.041448,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.041448,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h04-r2-voice-holdout-A",
+ "scenario": "h04"
+}

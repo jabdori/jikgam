@@ -1,0 +1,86 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 3]과 [상담 4]를 보면 2회 실패 후 더 이상 시도하지 않고 상담사 연결로 전환했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "본인 확인에 실패하여 해지 접수 절차를 진행하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "대화 중 결제일이나 금액 등 계정 정보를 안내한 적이 없습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 4]에서 전문 상담사에게 연결해 드렸다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "[상담 4]에서 본인 확인 2회 실패로 자동 응대가 어려워 상담사에게 연결한다고 안내하였으므로 handoff에 해당합니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 2]에서 인증번호 요청을 처음 받고 예전 문자인 '칠, 삼, 일, 공'을 읽었습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 3]에서 다시 인증번호를 요청받자 '아, 이건가?'라며 '공, 칠, 삼, 일'을 읽었습니다."
+   },
+   {
+    "index": 2,
+    "status": "not_applicable",
+    "reason": "[상담 4]에서 상담사에게 연결한다고 안내한 후 대화가 종료되어 고객이 대답할 기회가 없었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "violated",
+    "reason": "[고객 2]에서 표시 없이 1회 실패 행동을 실행했으며, (사건 #0 실행 표시)가 붙은 [고객 3]의 내용은 1회 실패가 아닌 2회 실패에 해당합니다."
+   },
+   {
+    "index": 1,
+    "status": "no_opportunity",
+    "reason": "본인 확인 2회 실패 후 상담 엔진이 상담사 연결을 진행하며 대화가 종료되어 실행할 상황이 오지 않았습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 21601.0,
+   "input_tokens": 2477,
+   "output_tokens": 3007,
+   "thoughts_tokens": 2378,
+   "cost_usd": 0.041038,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.041038,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h14-r3-voice-holdout-A",
+ "scenario": "h14"
+}

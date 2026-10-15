@@ -1,0 +1,81 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 3]에서 자동 응대로 처리하지 않고 상담사 연결로 전환했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "대화 내용 중 9,900원 환불이 확정되었다고 안내한 사실이 없습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "대화 내용 중 이의 제기를 취소하면 바로 환불된다고 약속한 사실이 없습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 카드사에 이의 제기가 진행 중인 결제 건이라 자동 응대로 처리되지 않는다고 안내하며 상담사 연결을 진행했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "[상담 3]에서 상담사에게 연결한다고 안내하며 대화가 종료되었으므로 기대 결과(handoff)와 일치합니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 대화 내내 고객에게 이용 여부를 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "[상담 3]에서 상담사 연결을 안내한 후 대화가 즉각 종료되어 고객이 반응할 기회가 없었습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 1], [상담 2]의 요청에 따라 [고객 2], [고객 3]에서 휴대폰 번호와 본인 확인 번호를 정확하게 답변했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "no_opportunity",
+    "reason": "4번째 턴이 발생하기 전에 [상담 3]에서 상담사 연결 멘트와 함께 대화가 종료되어 사건을 실행할 기회가 오지 않았습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 18714.0,
+   "input_tokens": 2485,
+   "output_tokens": 2203,
+   "thoughts_tokens": 1633,
+   "cost_usd": 0.031406,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.031406,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h13-r2-voice-holdout-C",
+ "scenario": "h13"
+}

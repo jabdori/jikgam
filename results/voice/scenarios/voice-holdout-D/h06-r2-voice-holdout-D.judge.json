@@ -1,0 +1,97 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "대화 내에서 연 구독 중도 해지로 환불이나 해지 접수를 진행하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "현재 성인이라 취소 대상이 아니라는 안내를 하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "환불 금액에 대해 71,280원이라고 안내한 적이 없습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "99,000원 전액 환불을 자동 응대로 확정하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 미성년자 결제 취소 요청은 서류 확인이 필요하여 상담사에게 연결해 드린다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "결제 당시 나이를 기준으로 판단한다는 점을 명시적으로 안내하지 않았습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "[상담 3]에서 상담사 연결을 안내하며 대화를 마무리하여 expected.action인 handoff와 일치합니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 1]에서 미성년자라는 사실을 말하지 않고 일반적인 연간 결제 해지로 문의했습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 고객에게 생년월일을 묻지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 3]에서 본인 확인 번호인 0206을 정확하게 말했습니다."
+   },
+   {
+    "index": 3,
+    "status": "not_applicable",
+    "reason": "[상담 3]의 상담사 연결 안내 직후 대화가 종료되어 대답할 기회가 없었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "no_opportunity",
+    "reason": "상담 엔진이 환불 금액을 안내하지 않고 미성년자 취소 사유로 바로 상담사 연결을 진행하여 이벤트를 실행할 상황이 오지 않았습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 26388.6,
+   "input_tokens": 2805,
+   "output_tokens": 3633,
+   "thoughts_tokens": 2955,
+   "cost_usd": 0.049206,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.049206,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h06-r2-voice-holdout-D",
+ "scenario": "h06"
+}

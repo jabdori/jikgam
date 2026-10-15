@@ -1,0 +1,138 @@
+{
+ "session": "h06-r3-voice-holdout-C",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "안녕하세요… 연간으로 결제한 게 있는데 해지하면 얼마나 돌려받을 수 있는지 궁금해서요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "안녕하세요. 연간으로 결제한 게 있는데 해지하면 얼마나 돌려받을 수 있는지 궁금해서요.",
+   "finals": 1,
+   "utt_ids": [
+    "u1"
+   ],
+   "first_partial_ms": 1219.8,
+   "final_ms": 834.2,
+   "t_end_error_ms": 12.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 4403.7,
+   "first_audio_from_t_end_ms": 4391.1,
+   "engine_ms": 2555.6,
+   "tts_ms": 1013.7,
+   "reply_suggestion": "h06-r3-voice-holdout-C-s1",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "제 번호는 010-0000-0206이에요…",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호는 010-0000- / 0206이에요.",
+   "finals": 2,
+   "utt_ids": [
+    "u2",
+    "u3"
+   ],
+   "first_partial_ms": 1171.2,
+   "final_ms": 829.1,
+   "t_end_error_ms": 14.7,
+   "t_end_source": "vad",
+   "first_audio_ms": 4156.0,
+   "first_audio_from_t_end_ms": 4141.2,
+   "engine_ms": 2332.0,
+   "tts_ms": 994.6,
+   "reply_suggestion": "h06-r3-voice-holdout-C-s2",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "010-0000-0206 맞는데요…",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "01000000206 / 안는데요.",
+   "finals": 2,
+   "utt_ids": [
+    "u4",
+    "u5"
+   ],
+   "first_partial_ms": 1468.3,
+   "final_ms": 761.5,
+   "t_end_error_ms": -10.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 4256.6,
+   "first_audio_from_t_end_ms": 4267.4,
+   "engine_ms": 2489.2,
+   "tts_ms": 1005.7,
+   "reply_suggestion": "h06-r3-voice-holdout-C-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "문자 왔어요, 0206이에요…",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "문자 왔어요. 0206이에요.",
+   "finals": 1,
+   "utt_ids": [
+    "u6"
+   ],
+   "first_partial_ms": 1299.5,
+   "final_ms": 839.8,
+   "t_end_error_ms": 15.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 5262.7,
+   "first_audio_from_t_end_ms": 5247.3,
+   "engine_ms": 3417.3,
+   "tts_ms": 1005.5,
+   "reply_suggestion": "h06-r3-voice-holdout-C-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-C/h06-r3-voice-holdout-C.wav",
+  "t0_ms": 11974266.017,
+  "sha256_16": "0c9a24382ac05dcb",
+  "duration_ms": 101374.2
+ },
+ "playbacks": {
+  "total": 4,
+  "exposed": 4,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 47209.8
+ },
+ "voice_discarded": 0,
+ "voice_held": 0,
+ "voice_errors": [],
+ "engine_errors": []
+}

@@ -1,0 +1,212 @@
+{
+ "provisional": {
+  "sent": 4,
+  "confirmed": 0,
+  "replaced": 3,
+  "unconfirmed": 1,
+  "prejudge_calls": 18,
+  "prejudged_used": 2
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": "data/voice/s21/u1.wav",
+   "script": "목요일에 서비스 몇 시간 안 됐잖아요. 그거 보상 같은 거 없어요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "목요일에 서비스 몇 시간 안 됐잖아요.그거 보상 같은 거 없어요?",
+   "finals": 1,
+   "utt_ids": [
+    "u3"
+   ],
+   "first_partial_ms": 1281.9,
+   "final_ms": 770.9,
+   "t_end_error_ms": -1842.8,
+   "t_end_source": "vad",
+   "first_audio_ms": 4377.2,
+   "first_audio_from_t_end_ms": 6220.0,
+   "engine_ms": 2253.8,
+   "tts_ms": 1352.3,
+   "reply_suggestion": "s21-D-r1-voice-voice-barge-D-s1",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": "data/voice/s21/u2.wav",
+   "script": "010-0000-0010이요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "010-0000-0110요.",
+   "finals": 1,
+   "utt_ids": [
+    "u4"
+   ],
+   "first_partial_ms": 1436.7,
+   "final_ms": 802.0,
+   "t_end_error_ms": 8.7,
+   "t_end_source": "vad",
+   "first_audio_ms": 4193.9,
+   "first_audio_from_t_end_ms": 4185.2,
+   "engine_ms": 2412.9,
+   "tts_ms": 978.8,
+   "reply_suggestion": "s21-D-r1-voice-voice-barge-D-s2",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": "data/voice/s21/u3.wav",
+   "script": "공공일공이요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "공공일공이요.",
+   "finals": 1,
+   "utt_ids": [
+    "u5"
+   ],
+   "first_partial_ms": null,
+   "final_ms": 757.3,
+   "t_end_error_ms": -8.8,
+   "t_end_source": "vad",
+   "first_audio_ms": 4322.2,
+   "first_audio_from_t_end_ms": 4331.1,
+   "engine_ms": 2666.2,
+   "tts_ms": 898.6,
+   "reply_suggestion": "s21-D-r1-voice-voice-barge-D-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": "data/voice/s21/u4.wav",
+   "script": "연장 말고요, 그냥 해지하고 돈으로 돌려받을 수 있어요?",
+   "marker": {
+    "condition_change": true,
+    "invalidates_prior": true,
+    "event": "s21#0"
+   },
+   "barge_in_planned": true,
+   "transcript": "연장 말고요, 그냥 해지하고 돈으로 돌려받을 수 있어요?",
+   "finals": 1,
+   "utt_ids": [
+    "u7"
+   ],
+   "first_partial_ms": 1255.0,
+   "final_ms": 794.1,
+   "t_end_error_ms": 5.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 4208.3,
+   "first_audio_from_t_end_ms": 4203.1,
+   "engine_ms": 2456.9,
+   "tts_ms": 957.2,
+   "reply_suggestion": "s21-D-r1-voice-voice-barge-D-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": "data/voice/s21/u5.wav",
+   "script": "네, 그렇게 해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 그렇게 해주세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u9"
+   ],
+   "first_partial_ms": 892.8,
+   "final_ms": 1005.7,
+   "t_end_error_ms": 12.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 4194.8,
+   "first_audio_from_t_end_ms": 4182.1,
+   "engine_ms": 2104.5,
+   "tts_ms": 1084.1,
+   "reply_suggestion": "s21-D-r1-voice-voice-barge-D-s5",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [
+  {
+   "session": "s21-D-r1-voice-voice-barge-D",
+   "event": "s21#0",
+   "utt_id": "u7",
+   "version": 8,
+   "t0": 199761.916,
+   "t1": 200771.179,
+   "latency_ms": 1009.263,
+   "invalidates_prior": true,
+   "latency_from_speech_end_ms": 1014.4
+  }
+ ],
+ "new_condition_audio": [
+  {
+   "event": "s21#0",
+   "utt_id": "u7",
+   "version": 8,
+   "invalidates_prior": true,
+   "suggestion_id": "s21-D-r1-voice-voice-barge-D-s4",
+   "from_speech_end_ms": 4208.3,
+   "from_t0_ms": 4203.1
+  }
+ ],
+ "barge_ins": [
+  {
+   "suggestion_id": "s21-D-r1-voice-voice-barge-D-s3",
+   "trigger": "vad",
+   "started": true,
+   "played_ms": 1549.1,
+   "line": 4,
+   "detect_ms": 332.1,
+   "stop_ms": 334.3,
+   "new_audio_ms": 4208.3
+  }
+ ],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 2,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": [
+   {
+    "event": "s21#0",
+    "invalid_exposures": 0
+   }
+  ]
+ },
+ "recording": {
+  "file": "results/voice/voice-barge-D/s21-D-r1-voice-voice-barge-D.wav",
+  "t0_ms": 150808.838,
+  "sha256_16": "e96191c0c9c45b96",
+  "duration_ms": 91117.4
+ },
+ "playbacks": {
+  "total": 5,
+  "exposed": 5,
+  "interrupted": {
+   "barge_in": 1,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 52509.9
+ },
+ "voice_discarded": 0,
+ "voice_held": 0,
+ "voice_errors": [],
+ "engine_errors": [],
+ "replay": "s21",
+ "session": "s21-D-r1-voice-voice-barge-D",
+ "policy": "D",
+ "rep": 1,
+ "notes": [],
+ "stt_stream_min": 1.54,
+ "tts_audio_s": 45.0,
+ "cost_usd": {
+  "engine": 0.01454,
+  "stt_estimate": 0.01382,
+  "tts_estimate": 0.00675
+ }
+}

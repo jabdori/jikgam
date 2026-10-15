@@ -1,0 +1,185 @@
+{
+ "session": "h10-r2-voice-holdout-D",
+ "provisional": {
+  "sent": 7,
+  "confirmed": 3,
+  "replaced": 4,
+  "unconfirmed": 0,
+  "prejudge_calls": 40,
+  "prejudged_used": 4
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "친구가 미성년자 때 결제한 건 다 취소된다던데요, 저 이번 달 초에 결제했거든요. 그거 취소해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "친구가 미성년자 때 결제한 건 다 취소된다던데요? 저 이번 달 초에 결제했거든요. 그거 취소해 주세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u2"
+   ],
+   "first_partial_ms": 1057.3,
+   "final_ms": 845.5,
+   "t_end_error_ms": -32.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 4257.0,
+   "first_audio_from_t_end_ms": 4289.6,
+   "engine_ms": 2308.4,
+   "tts_ms": 1102.5,
+   "reply_suggestion": "h10-r2-voice-holdout-D-s1",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "저 남이 아니라 제 계정인데요. 제 이름 차예솔이고 본인 맞아요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "저 남이 아니라 / 계정인데요. / 제 이름 채예슬이고 본인 맞아요.",
+   "finals": 3,
+   "utt_ids": [
+    "u3",
+    "u5",
+    "u7"
+   ],
+   "first_partial_ms": 1168.4,
+   "final_ms": 831.5,
+   "t_end_error_ms": 39.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 4271.2,
+   "first_audio_from_t_end_ms": 4231.3,
+   "engine_ms": 2470.6,
+   "tts_ms": 969.1,
+   "reply_suggestion": "h10-r2-voice-holdout-D-s3",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "제 번호는 010-0000-0210이에요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호는 010-0000-0210이에요.",
+   "finals": 1,
+   "utt_ids": [
+    "u8"
+   ],
+   "first_partial_ms": 714.3,
+   "final_ms": 811.0,
+   "t_end_error_ms": -18.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 4475.5,
+   "first_audio_from_t_end_ms": 4494.4,
+   "engine_ms": 2586.5,
+   "tts_ms": 1077.8,
+   "reply_suggestion": "h10-r2-voice-holdout-D-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "인증번호 0210이에요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "인증번호 0210이에요.",
+   "finals": 1,
+   "utt_ids": [
+    "u9"
+   ],
+   "first_partial_ms": 960.8,
+   "final_ms": 849.4,
+   "t_end_error_ms": 42.5,
+   "t_end_source": "vad",
+   "first_audio_ms": 4681.7,
+   "first_audio_from_t_end_ms": 4639.2,
+   "engine_ms": 2807.0,
+   "tts_ms": 1025.1,
+   "reply_suggestion": "h10-r2-voice-holdout-D-s5",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "생일 지나고 이틀밖에 안 됐는데 그래도 안 돼요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "생일 지나고 이틀 밖에 안 됐는데 그래도 안 돼요?",
+   "finals": 1,
+   "utt_ids": [
+    "u10"
+   ],
+   "first_partial_ms": 1010.3,
+   "final_ms": 834.8,
+   "t_end_error_ms": 34.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 4484.4,
+   "first_audio_from_t_end_ms": 4450.0,
+   "engine_ms": 2682.0,
+   "tts_ms": 967.4,
+   "reply_suggestion": "h10-r2-voice-holdout-D-s6",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "아, 그래요? 그럼 환불 안 되면 그냥 계속 쓸게요. 해지는 안 할래요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아, 그래요? / 환불 안 되면 그냥 계속 쓸게요. 해지는 안 할래요.",
+   "finals": 2,
+   "utt_ids": [
+    "u11",
+    "u13"
+   ],
+   "first_partial_ms": 1218.9,
+   "final_ms": 806.4,
+   "t_end_error_ms": -4.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 4440.7,
+   "first_audio_from_t_end_ms": 4444.9,
+   "engine_ms": 2612.6,
+   "tts_ms": 1021.6,
+   "reply_suggestion": "h10-r2-voice-holdout-D-s8",
+   "replies_held": 1,
+   "replies_discarded": 1
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-D/h10-r2-voice-holdout-D.wav",
+  "t0_ms": 7892869.541,
+  "sha256_16": "776d4fa76381148f",
+  "duration_ms": 194240.2
+ },
+ "playbacks": {
+  "total": 6,
+  "exposed": 6,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 107258.6
+ },
+ "voice_discarded": 2,
+ "voice_held": 2,
+ "voice_errors": [],
+ "engine_errors": []
+}

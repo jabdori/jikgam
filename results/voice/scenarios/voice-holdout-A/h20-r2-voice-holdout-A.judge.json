@@ -1,0 +1,124 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": true,
+    "reason": "상담원이 [상담 2]와 [상담 3]에서 환불 금액을 80,190원으로 안내하고 해당 금액으로 접수했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 3]에서 이용 이력으로 인해 전액 청약철회가 불가하다고 안내했으나, 중도 해지로 부분 환불을 진행하여 환불 불가로 확정하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 2]에서 99,000원을 기준으로 1개월 이용료와 위약금을 차감하여 환불액을 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 2]와 [상담 3]에서 환불 예정액이 50,000원을 초과하여 상담사 승인 후 확정된다고 안내했습니다."
+   },
+   {
+    "index": 4,
+    "violated": false,
+    "reason": "고객이 [고객 3]에서 갱신 문자를 못 받았다고 항의했으나, 약관에 없는 보상이나 추가 환불을 약속하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 1]과 [상담 3]에서 갱신 시 정상 요금으로 결제된다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "장애 환불로 인한 99,000원 전액 환불이 아닌, 중도 해지로 인한 80,190원 환불을 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 2]와 [상담 3]에서 상담사 승인 후 확정된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 2]에서 카드 승인 취소로 3~7영업일이 소요된다고 환불 방법과 기간을 안내했습니다."
+   },
+   {
+    "index": 4,
+    "said": true,
+    "reason": "[상담 2]와 [상담 3]에서 이용 기간이 오늘(2026-10-12) 종료된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "상담원이 거절이나 보류 없이 고객의 환불 및 해지 요청을 접수하고 답변을 제공하며 대화를 마쳤습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 2]에서 해지 접수에 대해 안내하고 동의를 구한 뒤, [고객 3]에서 고객이 해지 접수를 해달라고 동의한 후 API가 호출되었습니다."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "[상담 2]에서 환불액(80,190원)을 포함해 접수에 대해 안내하고 동의를 구한 뒤, [고객 3]에서 고객이 동의한 후 환불 API가 호출되었습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 시스템 확인을 통해 이용 이력을 먼저 파악하여, 고객에게 이용 여부를 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담원이 장애와 관련된 내용을 언급하지 않아 고객이 답변할 상황이 오지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 1]에서 본인 확인 정보를 요청받고 [고객 2]에서 휴대폰 번호와 인증번호를 정확히 제공했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 3]에서 사건 실행 표시와 함께 갱신 문자를 받지 못했다고 항의하는 내용을 발화했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 30408.3,
+   "input_tokens": 3852,
+   "output_tokens": 3805,
+   "thoughts_tokens": 2682,
+   "cost_usd": 0.053364,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.053364,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h20-r2-voice-holdout-A",
+ "scenario": "h20"
+}

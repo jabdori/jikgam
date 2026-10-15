@@ -1,0 +1,212 @@
+{
+ "session": "h18-r1-voice-holdout-D",
+ "provisional": {
+  "sent": 5,
+  "confirmed": 4,
+  "replaced": 1,
+  "unconfirmed": 0,
+  "prejudge_calls": 34,
+  "prejudged_used": 3
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "토요일에 결제된 월 구독 취소하고 환불받으려고요. 한 번도 안 봤어요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "토요일에 결제된 월 구독 취소하고 환불 받으려고요. / 한 번도 안 봤어요.",
+   "finals": 2,
+   "utt_ids": [
+    "u2",
+    "u3"
+   ],
+   "first_partial_ms": 1112.8,
+   "final_ms": 898.5,
+   "t_end_error_ms": -22.7,
+   "t_end_source": "vad",
+   "first_audio_ms": 3970.2,
+   "first_audio_from_t_end_ms": 3992.9,
+   "engine_ms": 2212.4,
+   "tts_ms": 859.2,
+   "reply_suggestion": "h18-r1-voice-holdout-D-s1",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "010-0000-0218이에요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "010-0000-018이에요.",
+   "finals": 1,
+   "utt_ids": [
+    "u4"
+   ],
+   "first_partial_ms": 1656.9,
+   "final_ms": 688.3,
+   "t_end_error_ms": -78.5,
+   "t_end_source": "vad",
+   "first_audio_ms": 3855.5,
+   "first_audio_from_t_end_ms": 3934.0,
+   "engine_ms": 2096.8,
+   "tts_ms": 1069.9,
+   "reply_suggestion": "h18-r1-voice-holdout-D-s2",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "010-0000-0218 맞아요. 빨리 좀 처리해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "010-0000-0218 맞아요. / 빨리 좀 처리해 주세요.",
+   "finals": 2,
+   "utt_ids": [
+    "u5",
+    "u6"
+   ],
+   "first_partial_ms": 1291.2,
+   "final_ms": 852.6,
+   "t_end_error_ms": 3.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 4442.9,
+   "first_audio_from_t_end_ms": 4439.5,
+   "engine_ms": 2638.2,
+   "tts_ms": 951.9,
+   "reply_suggestion": "h18-r1-voice-holdout-D-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "이름이랑 생년월일 다 말씀드릴 테니까 그걸로 처리해 주세요. 1993년 6월 17일이요",
+   "marker": {
+    "condition_change": false,
+    "invalidates_prior": false,
+    "event": "h18#1"
+   },
+   "barge_in_planned": false,
+   "transcript": "이름이랑 생년월일 다 말씀드릴 테니까 그걸로 처리해 주세요. / 1993년 6월 17일이요.",
+   "finals": 2,
+   "utt_ids": [
+    "u7",
+    "u8"
+   ],
+   "first_partial_ms": 971.3,
+   "final_ms": 805.6,
+   "t_end_error_ms": 27.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 3939.9,
+   "first_audio_from_t_end_ms": 3912.7,
+   "engine_ms": 2025.3,
+   "tts_ms": 1108.9,
+   "reply_suggestion": "h18-r1-voice-holdout-D-s5",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "인증번호 0218이에요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "인증 번호 0218이에요.",
+   "finals": 1,
+   "utt_ids": [
+    "u9"
+   ],
+   "first_partial_ms": 933.4,
+   "final_ms": 731.7,
+   "t_end_error_ms": -22.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 5116.3,
+   "first_audio_from_t_end_ms": 5139.2,
+   "engine_ms": 3285.9,
+   "tts_ms": 1098.7,
+   "reply_suggestion": "h18-r1-voice-holdout-D-s6",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "언제 다시 하면 돼요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "언제 다시 하면 돼요?",
+   "finals": 1,
+   "utt_ids": [
+    "u10"
+   ],
+   "first_partial_ms": 1295.1,
+   "final_ms": 1047.9,
+   "t_end_error_ms": 0.5,
+   "t_end_source": "vad",
+   "first_audio_ms": 4150.4,
+   "first_audio_from_t_end_ms": 4149.9,
+   "engine_ms": 2077.2,
+   "tts_ms": 1024.9,
+   "reply_suggestion": "h18-r1-voice-holdout-D-s7",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 7,
+   "utt_file": null,
+   "script": "알겠습니다. 나중에 다시 전화할게요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "알겠습니다. 나중에 다시 전화할게요.",
+   "finals": 1,
+   "utt_ids": [
+    "u11"
+   ],
+   "first_partial_ms": 1174.9,
+   "final_ms": 751.1,
+   "t_end_error_ms": -5.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 4293.0,
+   "first_audio_from_t_end_ms": 4298.9,
+   "engine_ms": 2617.9,
+   "tts_ms": 923.9,
+   "reply_suggestion": "h18-r1-voice-holdout-D-s8",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-D/h18-r1-voice-holdout-D.wav",
+  "t0_ms": 4702897.934,
+  "sha256_16": "cb8d39df61aebfa2",
+  "duration_ms": 191114.8
+ },
+ "playbacks": {
+  "total": 7,
+  "exposed": 7,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 99171.5
+ },
+ "voice_discarded": 1,
+ "voice_held": 1,
+ "voice_errors": [],
+ "engine_errors": []
+}

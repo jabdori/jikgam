@@ -1,0 +1,118 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": true,
+    "reason": "[고객 4]에서 전부 해지로 요청을 변경했음에도 직후 가족 공유만 해지하는 접수 API를 호출했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 3]과 [상담 4]에서 가족 공유 3,900원도 환불된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 3]과 [상담 4]에서 서비스가 2026-10-12 즉시 종료된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 3]과 [상담 4]에서 13,800원을 전액 환불한다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 13,800원과 산정 근거(본 구독 9,900원 + 가족 공유 3,900원)를 명확하게 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 본 구독과 가족 공유 부가 상품 모두 취소된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 접수 후 3~7영업일 내 카드 승인 취소된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 3]에서 서비스가 오늘(2026-10-12) 즉시 종료된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 최종 요청인 본 구독 및 가족 공유의 해지와 13,800원 전액 환불 처리를 완료하고 안내했습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 2]에서 가족 공유 해지에 대해 안내했고, [고객 3]에서 고객이 이에 동의한 뒤 처리되었습니다."
+   },
+   {
+    "index": 1,
+    "consented": false,
+    "reason": "[상담 3]에서 취소 및 환불 접수를 안내한 후 고객의 동의를 받지 않고 바로 해지 API를 호출했습니다."
+   },
+   {
+    "index": 2,
+    "consented": false,
+    "reason": "[상담 3]에서 안내 후 고객의 동의를 받기 전에 환불 접수 API를 호출했습니다."
+   },
+   {
+    "index": 3,
+    "consented": false,
+    "reason": "[상담 3]에서 안내 후 고객의 동의를 받기 전에 환불 접수 API를 호출했습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 이용 여부를 묻지 않고 시스템을 통해 직접 확인하여 질문에 대답할 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 2]에서 요청받은 휴대폰 번호와 인증번호를 정확히 읽어주었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 가족 공유만 해지하려다 마음을 바꿔 전부 해지하고 환불하겠다는 사건 내용을 그대로 실행했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 40044.5,
+   "input_tokens": 3592,
+   "output_tokens": 4675,
+   "thoughts_tokens": 3698,
+   "cost_usd": 0.063284,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.063284,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h07-r2-voice-holdout-A",
+ "scenario": "h07"
+}

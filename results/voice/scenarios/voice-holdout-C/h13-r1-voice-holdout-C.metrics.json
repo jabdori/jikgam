@@ -1,0 +1,239 @@
+{
+ "session": "h13-r1-voice-holdout-C",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "금요일에 결제된 거 안 쓸 거라서 카드사에 이의 신청했는데 처리가 너무 느려서요. 그냥 여기서 바로 환불해 주시면 안 돼요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "금요일에 결제된 거 안 쓸 거라서 카드사에 이의 신청했는데 / 허리가 너무 느려서요. / 그냥 여기서 바로 환불해 주시면 안 돼요?",
+   "finals": 3,
+   "utt_ids": [
+    "u1",
+    "u2",
+    "u3"
+   ],
+   "first_partial_ms": 1087.9,
+   "final_ms": 783.9,
+   "t_end_error_ms": 28.5,
+   "t_end_source": "vad",
+   "first_audio_ms": 3961.1,
+   "first_audio_from_t_end_ms": 3932.6,
+   "engine_ms": 2153.0,
+   "tts_ms": 1024.2,
+   "reply_suggestion": "h13-r1-voice-holdout-C-s2",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "010-0000-0213이에요. 빨리 좀 처리해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "010-0000-0213이에요. / 빨리 좀 처리해 주세요.",
+   "finals": 2,
+   "utt_ids": [
+    "u4",
+    "u5"
+   ],
+   "first_partial_ms": 942.1,
+   "final_ms": 722.0,
+   "t_end_error_ms": -26.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 3995.9,
+   "first_audio_from_t_end_ms": 4022.0,
+   "engine_ms": 2310.7,
+   "tts_ms": 962.6,
+   "reply_suggestion": "h13-r1-voice-holdout-C-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "인증번호 0213 왔어요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "인증번호 0214 맞아요.",
+   "finals": 1,
+   "utt_ids": [
+    "u6"
+   ],
+   "first_partial_ms": 987.8,
+   "final_ms": 812.6,
+   "t_end_error_ms": 4.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 4383.9,
+   "first_audio_from_t_end_ms": 4379.6,
+   "engine_ms": 2466.8,
+   "tts_ms": 1104.0,
+   "reply_suggestion": "h13-r1-voice-holdout-C-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "제 번호 010-0000-0213 맞고요, 방금 온 인증번호 0213 맞는데 왜 안 된다는 거죠? 다시 확인해 보세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호 010-0000-013 맞고요. 방금 온 인증번호 013 맞는데. / 왜 안된다는 거죠? / 다시 확인해 보세요.",
+   "finals": 3,
+   "utt_ids": [
+    "u7",
+    "u8",
+    "u9"
+   ],
+   "first_partial_ms": 543.6,
+   "final_ms": 790.3,
+   "t_end_error_ms": 9.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 4031.1,
+   "first_audio_from_t_end_ms": 4022.0,
+   "engine_ms": 2234.5,
+   "tts_ms": 1005.7,
+   "reply_suggestion": "h13-r1-voice-holdout-C-s5",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "이의 신청은 제가 취소할게요, 그러니까 지금 바로 환불해 주세요.",
+   "marker": {
+    "condition_change": false,
+    "invalidates_prior": false,
+    "event": "h13#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "이 신청은 제가 취소할게요. 그러니까 지금 바로 환불해 주세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u10"
+   ],
+   "first_partial_ms": 484.1,
+   "final_ms": 809.8,
+   "t_end_error_ms": 45.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 4109.0,
+   "first_audio_from_t_end_ms": 4063.8,
+   "engine_ms": 2263.9,
+   "tts_ms": 1035.2,
+   "reply_suggestion": "h13-r1-voice-holdout-C-s6",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "제 번호 010-0000-0213 맞고 인증번호도 0213 맞게 보고 부른 건데 자꾸 왜 안 된다는 거예요? 답답하니까 그냥 상담사 연결해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호 010-0000-0013 맞고 / 인증 번호도 013 맞게 보고 부른 건데 자꾸 왜 안 된다는 거예요? / 답하니까 그냥 상담사 연결해 주세요.",
+   "finals": 3,
+   "utt_ids": [
+    "u11",
+    "u12",
+    "u13"
+   ],
+   "first_partial_ms": 1041.7,
+   "final_ms": 777.1,
+   "t_end_error_ms": 7.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 4326.4,
+   "first_audio_from_t_end_ms": 4319.1,
+   "engine_ms": 2514.5,
+   "tts_ms": 1034.7,
+   "reply_suggestion": "h13-r1-voice-holdout-C-s8",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 7,
+   "utt_file": null,
+   "script": "문자로 0213 왔다고요. 똑바로 확인하고 사람 연결해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "문자로 013 왔다고요. 똑바로 확인하고 사람 연결해 주세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u14"
+   ],
+   "first_partial_ms": 1165.8,
+   "final_ms": 773.9,
+   "t_end_error_ms": -17.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 3789.1,
+   "first_audio_from_t_end_ms": 3806.2,
+   "engine_ms": 2089.0,
+   "tts_ms": 926.1,
+   "reply_suggestion": "h13-r1-voice-holdout-C-s9",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 8,
+   "utt_file": null,
+   "script": "아니, 인증번호 0213 맞다니까요! 자꾸 똑같은 말만 반복하지 말고 사람 상담사 연결해 달라고요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아니, 인증번호 0213 맞다니까요. 자꾸 똑같은 말만 반복하지 말고 사람 상담사 연결해 달라고요.",
+   "finals": 1,
+   "utt_ids": [
+    "u15"
+   ],
+   "first_partial_ms": 642.8,
+   "final_ms": 752.9,
+   "t_end_error_ms": -52.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 5190.3,
+   "first_audio_from_t_end_ms": 5242.8,
+   "engine_ms": 3352.2,
+   "tts_ms": 1085.1,
+   "reply_suggestion": "h13-r1-voice-holdout-C-s10",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-C/h13-r1-voice-holdout-C.wav",
+  "t0_ms": 3399373.984,
+  "sha256_16": "9aecde595397853e",
+  "duration_ms": 239143.2
+ },
+ "playbacks": {
+  "total": 8,
+  "exposed": 8,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 106363.3
+ },
+ "voice_discarded": 2,
+ "voice_held": 2,
+ "voice_errors": [],
+ "engine_errors": []
+}

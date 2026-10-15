@@ -1,0 +1,113 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진이 99,000원 전액 환불로 정상 안내 및 접수함([상담 5])."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 엔진이 이용 이력을 이유로 환불 불가라고 확정하지 않음."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담 엔진이 79,000원이 아닌 99,000원을 기준으로 환불액을 안내함([상담 5])."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "상담 엔진이 상담사 승인 후 환불이 최종 확정된다고 안내함([상담 5])."
+   },
+   {
+    "index": 4,
+    "violated": false,
+    "reason": "상담 엔진이 문자 미수신에 대해 약관에 없는 보상이나 추가 환불을 약속하지 않음."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "상담 엔진이 프로모션 할인 종료 및 정상 요금 적용에 대해 언급하지 않음."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 5]에서 서비스 장애에 따라 99,000원이 환불 예정액으로 산정되었다고 안내함."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 5]에서 상담사 승인 후 환불이 최종 확정된다고 안내함."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 5]에서 3~7영업일 안에 카드 승인 취소로 처리된다고 안내함."
+   },
+   {
+    "index": 4,
+    "said": true,
+    "reason": "[상담 5]에서 이용 가능한 마지막 날은 2026-10-12라고 안내함."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "상담 엔진이 고객의 요청에 따라 장애 환불을 접수하고, 환불 금액 및 절차 등을 올바르게 안내함."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 서비스 이용 여부를 묻지 않음."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "고객이 장애 이야기를 먼저 꺼내지 않았으며, 상담원이 특정 날짜(10월 8일)를 언급하지 않아 동의 발화는 생략됨."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 4], [고객 5]에서 요청받은 인증번호 0220을 정확히 제공함."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 사건 실행 표시와 함께 지시된 내용대로 항의함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 36999.8,
+   "input_tokens": 4069,
+   "output_tokens": 5697,
+   "thoughts_tokens": 4837,
+   "cost_usd": 0.076502,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.076502,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h20-r1-voice-holdout-D",
+ "scenario": "h20"
+}

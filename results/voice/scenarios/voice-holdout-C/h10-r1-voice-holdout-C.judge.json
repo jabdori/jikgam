@@ -1,0 +1,73 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진은 전액 환불된다고 안내하지 않고 오히려 규정상 환불 불가함을 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "상담 엔진은 결제 당시 이미 만 19세라 미성년자 결제 취소 대상이 아니라는 설명을 제공하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 5]에서 결제일로부터 7일이 지났고 서비스 이용 이력이 있어 청약철회 환불 대상이 아니라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "[상담 5]와 [상담 6]에서 약관에 따라 환불 접수가 불가함을 안내하여 환불 요청을 거절했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 생일과 결제일을 묻지 않아 답변할 기회가 없었습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 6]에서 환불 불가 안내를 듣고 '생일 지나고 이틀밖에 안 됐는데 그래도 안 돼요?'라고 지시대로 물었습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 7]에서 환불이 안 된다는 답변에 '그럼 그냥 계속 쓸게요. 해지는 안 할래요.'라고 지시대로 반응했습니다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "[고객 5]에서 요청받은 인증번호 0210을 정확히 읽었습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 12853.8,
+   "input_tokens": 2836,
+   "output_tokens": 1516,
+   "thoughts_tokens": 1008,
+   "cost_usd": 0.023864,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.023864,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h10-r1-voice-holdout-C",
+ "scenario": "h10"
+}

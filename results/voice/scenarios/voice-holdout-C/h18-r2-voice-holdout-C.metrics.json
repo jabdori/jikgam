@@ -1,0 +1,188 @@
+{
+ "session": "h18-r2-voice-holdout-C",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "토요일에 결제된 월 구독 취소하고 환불받으려고요. 한 번도 안 봤어요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "토요일에 결제된 월 구독 취소하고 환불 받으려고요. / 한 번도 안 봤어요.",
+   "finals": 2,
+   "utt_ids": [
+    "u1",
+    "u2"
+   ],
+   "first_partial_ms": 1301.5,
+   "final_ms": 804.3,
+   "t_end_error_ms": 29.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 4136.0,
+   "first_audio_from_t_end_ms": 4106.9,
+   "engine_ms": 2426.7,
+   "tts_ms": 904.9,
+   "reply_suggestion": "h18-r2-voice-holdout-C-s1",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "010-0000-0218이요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "01000000218",
+   "finals": 1,
+   "utt_ids": [
+    "u3"
+   ],
+   "first_partial_ms": 1092.7,
+   "final_ms": 831.7,
+   "t_end_error_ms": -6.7,
+   "t_end_source": "vad",
+   "first_audio_ms": 4556.9,
+   "first_audio_from_t_end_ms": 4563.6,
+   "engine_ms": 2667.9,
+   "tts_ms": 1057.2,
+   "reply_suggestion": "h18-r2-voice-holdout-C-s2",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "0218이요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "0218이야.",
+   "finals": 1,
+   "utt_ids": [
+    "u4"
+   ],
+   "first_partial_ms": 1141.1,
+   "final_ms": 816.4,
+   "t_end_error_ms": -1.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 4783.7,
+   "first_audio_from_t_end_ms": 4785.3,
+   "engine_ms": 2956.3,
+   "tts_ms": 1010.9,
+   "reply_suggestion": "h18-r2-voice-holdout-C-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "이름이랑 생년월일 다 말씀드릴 테니까 그걸로 처리해 주세요. 1993년 6월 17일이요.",
+   "marker": {
+    "condition_change": false,
+    "invalidates_prior": false,
+    "event": "h18#1"
+   },
+   "barge_in_planned": false,
+   "transcript": "이름이랑 생년월일 다 말씀드릴 테니까 그걸로 처리해 주세요. / 1993년 6월 17일이요.",
+   "finals": 2,
+   "utt_ids": [
+    "u5",
+    "u6"
+   ],
+   "first_partial_ms": 1020.9,
+   "final_ms": 834.6,
+   "t_end_error_ms": 13.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 4427.0,
+   "first_audio_from_t_end_ms": 4413.8,
+   "engine_ms": 2610.5,
+   "tts_ms": 981.7,
+   "reply_suggestion": "h18-r2-voice-holdout-C-s5",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "그럼 언제 다시 하면 돼요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "그럼 언제 다시 하면 돼요?",
+   "finals": 1,
+   "utt_ids": [
+    "u7"
+   ],
+   "first_partial_ms": 996.6,
+   "final_ms": 787.9,
+   "t_end_error_ms": 27.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 4674.5,
+   "first_audio_from_t_end_ms": 4646.6,
+   "engine_ms": 2830.9,
+   "tts_ms": 1055.6,
+   "reply_suggestion": "h18-r2-voice-holdout-C-s6",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "네, 알겠습니다. 나중에 다시 전화할게요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 알겠습니다. 나중에 다시 전화할게요.",
+   "finals": 1,
+   "utt_ids": [
+    "u8"
+   ],
+   "first_partial_ms": 600.6,
+   "final_ms": 783.1,
+   "t_end_error_ms": 14.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 5074.7,
+   "first_audio_from_t_end_ms": 5060.3,
+   "engine_ms": 3324.5,
+   "tts_ms": 967.0,
+   "reply_suggestion": "h18-r2-voice-holdout-C-s7",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-C/h18-r2-voice-holdout-C.wav",
+  "t0_ms": 9907428.439,
+  "sha256_16": "b26d29ce7d861a86",
+  "duration_ms": 194766.9
+ },
+ "playbacks": {
+  "total": 6,
+  "exposed": 6,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 115881.8
+ },
+ "voice_discarded": 1,
+ "voice_held": 1,
+ "voice_errors": [],
+ "engine_errors": []
+}

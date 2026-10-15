@@ -1,0 +1,96 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진은 [상담 4]에서 79,000원 전액 환불로 정확하게 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 엔진은 위약금이 발생하거나 차감된다고 안내하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "환불 접수 생성 API(create_refund_request)가 한 번만 성공적으로 호출되었습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 4]에서 상담사 승인 후 환불이 확정된다고 정확히 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 4]에서 결제 후 이용 이력이 없어 청약철회로 79,000원 전액이 환불된다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4]에서 환불 금액이 5만원을 초과하여 상담사 승인 후 최종 확정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 4]에서 결제하신 카드의 승인 취소로 3~7영업일 내 처리될 예정이라고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 4]에서 이용 가능한 마지막 날이 2026년 10월 12일까지라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청에 따라 정상적으로 환불 및 해지 접수를 완료하고 안내했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 이용 여부를 묻지 않고 API 결과를 바탕으로 먼저 안내하여 규칙이 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "환불 접수 중 오류가 발생하지 않아 해당 규칙이 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 4]에서 본인 확인 번호를 요청받고 인증번호를 정확히 말했습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 15548.4,
+   "input_tokens": 3438,
+   "output_tokens": 1879,
+   "thoughts_tokens": 1184,
+   "cost_usd": 0.029424,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.029424,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h17-r2-voice-holdout-C",
+ "scenario": "h17"
+}

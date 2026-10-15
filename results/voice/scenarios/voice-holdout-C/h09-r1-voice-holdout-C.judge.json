@@ -1,0 +1,102 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 5]에서 '수정해 주신 본인 명의 계좌로' 처리한다고 안내하여 정정 전 계좌번호로 등록하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 3]에서 결제한 달이 지나 계좌 입금으로 진행된다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 4], [상담 5] 등에서 상담사 승인 후 환불이 확정된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 4], [상담 5]에서 정상 월 요금 9,900원을 차감한다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 5]에서 정상 월 요금 9,900원과 위약금 차감을 근거로 환불 예정액 62,190원을 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4]부터 지속적으로 상담사 승인 후 환불이 확정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 4], [상담 5]에서 본인 명의 계좌로 5영업일 안에 입금될 예정임을 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 4]부터 지속적으로 이용 가능한 마지막 날이 2026-10-12라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청에 따라 연 구독 해지 및 환불 접수를 완료하고 그 결과를 안내했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 4]에서 '하늘은행 302-1188-4455'라고 계좌번호 끝자리를 잘못 불렀습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 5]에서 할인가로 샀는데 왜 9,900원을 빼는지 질문했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 3]에서 요청받은 인증번호 0209를 정확히 제공했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 6]에서 실행 표시와 함께 계좌번호 끝자리를 4456으로 정정했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 31747.5,
+   "input_tokens": 3804,
+   "output_tokens": 4392,
+   "thoughts_tokens": 3604,
+   "cost_usd": 0.060312,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.060312,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h09-r1-voice-holdout-C",
+ "scenario": "h09"
+}

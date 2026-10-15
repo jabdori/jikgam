@@ -1,0 +1,96 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 3]에서 위약금을 차감한 35,460원을 환불 예정액으로 정확히 안내함."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 3]에서 결제일을 2026년 7월 1일로 확인하여 산정함."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담사 승인이 필요하다는 안내를 하지 않음."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 위약금 3,940원을 제한 환불 예정액이 35,460원이라고 안내함."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "[상담 4]와 [상담 5]에서 결제일이 7월 1일이라 부칙 면제 대상이 아니라고만 안내하고, 6월 30일 이전 결제에만 적용된다는 기준일은 명시하지 않음."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 환불은 3~7영업일 안에 카드 승인 취소로 진행된다고 안내함."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 3]에서 서비스 이용 가능한 마지막 날이 2026-10-12까지라고 안내함."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 연 구독 해지 및 환불 요청을 정상적으로 처리하고 결과를 안내함."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "violated",
+    "reason": "상담원이 결제 시각을 묻지 않았으나 [고객 4]에서 먼저 문자에 찍힌 시간과 결제 버튼을 누른 날짜를 말함."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[상담 2]의 인증번호 요청에 대해 [고객 3]에서 정확히 인증번호를 말함."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 5]에서 예외 적용이 안 된다는 안내를 듣고 [고객 6]에서 지시된 문장대로 수용함."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 5]에서 사건 실행 표시와 함께 6월 30일로 예외 처리를 요구함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 35002.9,
+   "input_tokens": 3918,
+   "output_tokens": 5011,
+   "thoughts_tokens": 4473,
+   "cost_usd": 0.067968,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.067968,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h03-r1-voice-holdout-C",
+ "scenario": "h03"
+}

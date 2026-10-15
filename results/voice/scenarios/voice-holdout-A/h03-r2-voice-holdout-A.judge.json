@@ -1,0 +1,96 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 3]에서 위약금 3,940원과 환불액 35,460원을 정상적으로 안내하였으며 면제를 약속하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 3]에서 시스템 기록상 결제일이 2026년 7월 1일임을 명확히 하고 이에 따라 산정했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 5]에서 고객의 이의 제기로 인한 상담사 연결을 안내했을 뿐, 승인이 필요하다고 말하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 결제액 79,000원에서 4개월 이용료 39,600원과 위약금 3,940원을 차감해 35,460원이 환불된다고 산정 근거와 함께 정확히 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 약관 부칙의 위약금 면제 대상이 '6월 30일 이전 결제'에 해당한다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 환불은 접수 후 3~7영업일 내 카드 승인 취소로 진행된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 3]에서 서비스는 오늘(2026-10-12)까지 이용 가능하다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "기대 결과는 환불액과 조건 등을 안내하고 고객 요청을 처리하는 것(answer)이었으나, 상담 엔진은 고객의 이의 제기를 이유로 [상담 5]에서 상담사 연결(handoff)로 대화를 끝맺었습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[상담 3]에서 상담원이 결제일이 7월 1일이라고 안내하자, [고객 3]에서 먼저 질문을 받지 않았더라도 문자 수신 시각과 버튼 누른 날짜를 규칙의 뜻에 맞게 반박했습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[상담 1]과 [상담 2]의 본인 확인 요청에 대해 [고객 2]에서 휴대폰 번호와 인증번호를 정확히 답변했습니다."
+   },
+   {
+    "index": 2,
+    "status": "not_applicable",
+    "reason": "[상담 4]에서 예외가 안 된다고 안내한 직후 상담원이 곧바로 [상담 5]를 통해 상담사 연결을 진행하여 고객이 대답할 기회가 없었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "no_opportunity",
+    "reason": "턴 4([상담 4]) 직후에 사건을 실행해야 했으나, 상담원이 이어서 바로 상담사 연결([상담 5])을 진행하며 대화를 끝내어 실행할 상황이 오지 않았습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 30373.3,
+   "input_tokens": 3272,
+   "output_tokens": 4328,
+   "thoughts_tokens": 3425,
+   "cost_usd": 0.05848,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.05848,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h03-r2-voice-holdout-A",
+ "scenario": "h03"
+}

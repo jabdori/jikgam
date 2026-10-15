@@ -1,0 +1,92 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 1]과 [상담 2]에서 제3자 요청으로 판단하여 계정 정보를 안내하거나 접수하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "본인 확인에 실패하여 환불 접수나 약속을 하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "청약철회 기간에 대해 7일째라는 등 기한을 안내하지 않았습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "이용 종료일에 대한 안내를 하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "본인 확인에 실패해 환불이 없다는 점과 그 근거를 안내하지 못했습니다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "본인 확인 실패로 인해 마지막 이용 가능 날짜를 안내하지 못했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "예상 행동은 요청 처리 또는 답변 안내(answer)이나, 본인 확인 2회 실패로 인해 [상담 5]에서 상담사 연결(handoff)을 진행했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[상담 1]에서 기간 관련 안내를 들은 후 [고객 2]에서 '4일 결제니까 오늘이 딱 일주일 아니에요?'라고 규정된 대로 따졌습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "본인 확인 실패로 인해 환불 관련 설명을 듣지 못하여 적용할 상황이 오지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 5]와 [고객 6]에서 인증번호를 0215로 정확하게 발음하며 안내했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 사건 실행 표시와 함께 본인 명의와 번호임을 정확하게 정정했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 15155.1,
+   "input_tokens": 3007,
+   "output_tokens": 1765,
+   "thoughts_tokens": 1124,
+   "cost_usd": 0.027194,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.027194,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h15-r2-voice-holdout-A",
+ "scenario": "h15"
+}

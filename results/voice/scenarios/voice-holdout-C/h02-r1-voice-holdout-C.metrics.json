@@ -1,0 +1,231 @@
+{
+ "session": "h02-r1-voice-holdout-C",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "연간 구독 할인받아서 들었던 건데요, 이제 잘 안 봐서 해지하려고요. 남은 거 얼마나 돌려받을 수 있어요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "연간 구독 할인 받아서 들었던 건데요. 이제 잘 안 봐서 해지하려고요. / 남은 거 얼마나 돌려받을 수 있어요?",
+   "finals": 2,
+   "utt_ids": [
+    "u1",
+    "u2"
+   ],
+   "first_partial_ms": 955.2,
+   "final_ms": 1059.0,
+   "t_end_error_ms": 14.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 4439.2,
+   "first_audio_from_t_end_ms": 4424.9,
+   "engine_ms": 2395.4,
+   "tts_ms": 984.2,
+   "reply_suggestion": "h02-r1-voice-holdout-C-s2",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "제 번호는 010-0000-0202예요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호는 010-0000-0202이에요.",
+   "finals": 1,
+   "utt_ids": [
+    "u3"
+   ],
+   "first_partial_ms": 630.7,
+   "final_ms": 878.8,
+   "t_end_error_ms": 17.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 3943.3,
+   "first_audio_from_t_end_ms": 3926.0,
+   "engine_ms": 2162.2,
+   "tts_ms": 902.3,
+   "reply_suggestion": "h02-r1-voice-holdout-C-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "인증번호 0202로 왔어요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "인증번호 0201로 왔어요.",
+   "finals": 1,
+   "utt_ids": [
+    "u4"
+   ],
+   "first_partial_ms": 982.5,
+   "final_ms": 833.7,
+   "t_end_error_ms": 31.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 4674.4,
+   "first_audio_from_t_end_ms": 4643.1,
+   "engine_ms": 2866.9,
+   "tts_ms": 973.6,
+   "reply_suggestion": "h02-r1-voice-holdout-C-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "제 번호 010-0000-0202 맞고, 문자로 온 인증번호도 0202가 맞는데요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호 010-0000-0202 맞고 문자로 온 인증 번호도 0202가 맞는데요?",
+   "finals": 1,
+   "utt_ids": [
+    "u5"
+   ],
+   "first_partial_ms": 531.6,
+   "final_ms": 831.8,
+   "t_end_error_ms": 9.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 5949.8,
+   "first_audio_from_t_end_ms": 5940.7,
+   "engine_ms": 4080.8,
+   "tts_ms": 1037.0,
+   "reply_suggestion": "h02-r1-voice-holdout-C-s5",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "네, 그렇게 해지 진행해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "",
+   "finals": 0,
+   "utt_ids": [],
+   "first_partial_ms": 564.1,
+   "final_ms": null,
+   "t_end_error_ms": null,
+   "t_end_source": null,
+   "first_audio_ms": null,
+   "first_audio_from_t_end_ms": null,
+   "engine_ms": null,
+   "tts_ms": null,
+   "reply_suggestion": null,
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "아 잠깐만요, 생각해 보니 6월 마지막 날 밤에 했던 것 같아요. 행사 마지막 날이라서요.",
+   "marker": {
+    "condition_change": true,
+    "invalidates_prior": false,
+    "event": "h02#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "네, 그렇게 해지 진행해 주세요. / 아, 잠깐만요. 생각해보니 6월 마지막 날 밤에 했던 것 같아요. 행사 마지막 날이라서요.",
+   "finals": 2,
+   "utt_ids": [
+    "u6",
+    "u7"
+   ],
+   "first_partial_ms": 559.6,
+   "final_ms": 814.6,
+   "t_end_error_ms": 14.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 5157.7,
+   "first_audio_from_t_end_ms": 5143.1,
+   "engine_ms": 3485.1,
+   "tts_ms": 857.9,
+   "reply_suggestion": "h02-r1-voice-holdout-C-s7",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 7,
+   "utt_file": null,
+   "script": "네, 확인해 주셔서 감사합니다. 수고하세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 확인해 주셔서 감사합니다. 수고하세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u8"
+   ],
+   "first_partial_ms": 901.8,
+   "final_ms": 1100.8,
+   "t_end_error_ms": 15.8,
+   "t_end_source": "vad",
+   "first_audio_ms": 5564.8,
+   "first_audio_from_t_end_ms": 5549.0,
+   "engine_ms": 3524.2,
+   "tts_ms": 939.7,
+   "reply_suggestion": "h02-r1-voice-holdout-C-s8",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [
+  {
+   "session": "h02-r1-voice-holdout-C",
+   "event": "h02#0",
+   "utt_id": "u7",
+   "version": 12,
+   "t0": 421354.36,
+   "t1": 422380.9,
+   "latency_ms": 1026.54,
+   "invalidates_prior": false,
+   "latency_from_speech_end_ms": 1041.2
+  }
+ ],
+ "new_condition_audio": [
+  {
+   "event": "h02#0",
+   "utt_id": "u7",
+   "version": 12,
+   "invalidates_prior": false,
+   "suggestion_id": "h02-r1-voice-holdout-C-s7",
+   "from_speech_end_ms": 5157.7,
+   "from_t0_ms": 5143.1
+  }
+ ],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-C/h02-r1-voice-holdout-C.wav",
+  "t0_ms": 286723.356,
+  "sha256_16": "c59eea0040db4d60",
+  "duration_ms": 228092.2
+ },
+ "playbacks": {
+  "total": 6,
+  "exposed": 6,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 132578.9
+ },
+ "voice_discarded": 2,
+ "voice_held": 2,
+ "voice_errors": [],
+ "engine_errors": []
+}

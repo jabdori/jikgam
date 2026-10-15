@@ -1,0 +1,86 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": true,
+    "reason": "[상담 4]부터 [상담 10]까지 본인 확인을 3회 이상 반복해서 요구했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "해지 접수 절차를 진행하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "결제일이나 금액 등 계정 정보를 안내한 바가 없습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "본인 확인 2회 실패 후에도 상담사 연결을 안내하지 않았습니다."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "본인 확인 2회 실패 시 상담사 연결(handoff)을 안내해야 하나, 끝까지 인증번호 입력을 요구하며 보류나 상담사 연결 없이 답변을 끝냈습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 3]에서 첫 인증번호 요청 시 '7310 맞소?'라며 지시대로 숫자를 읽었습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 4]에서 다시 요청받자 '아 이건가, 공 칠 삼 일'이라며 지시대로 반응했습니다."
+   },
+   {
+    "index": 2,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 상담사 연결을 제안하거나 안내하지 않아 규칙을 적용할 기회가 없었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 3] 메시지에 사건 실행 표시가 있으며, 내용대로 인증번호 대신 다른 숫자를 읽었습니다."
+   },
+   {
+    "index": 1,
+    "status": "executed",
+    "reason": "[고객 4] 메시지에 사건 실행 표시가 있으며, 다시 엉뚱한 숫자를 읽었습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 19241.3,
+   "input_tokens": 3275,
+   "output_tokens": 2464,
+   "thoughts_tokens": 1891,
+   "cost_usd": 0.036118,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.036118,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h14-r1-voice-holdout-D",
+ "scenario": "h14"
+}

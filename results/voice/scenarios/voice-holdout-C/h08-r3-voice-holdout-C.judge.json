@@ -1,0 +1,97 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진이 대화 중 환불 계좌를 요구하거나 계좌 등록을 진행하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 엔진은 요청이 바뀐 뒤 서비스 이용이 오늘(2026-10-12) 종료된다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담 엔진이 해지뿐만 아니라 9,900원 전액 환불까지 접수하여 처리했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "상담 엔진은 카드 승인 취소가 아닌 휴대폰 소액결제 승인 취소로 정확하게 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 결제일로부터 7일 이내이며 이용 이력이 없어 전액 청약철회가 가능하고, 환불 예정액이 9,900원이라고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]과 [상담 5]에서 휴대폰 소액결제 승인 취소로 처리되며, 별도의 계좌 정보가 필요 없다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3] 등에서 서비스 이용이 오늘(2026-10-12) 종료된다고 이용 가능한 마지막 날을 명시하여 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청대로 즉시 해지 및 전액 환불 접수를 완료하고 이를 정상적으로 안내하며 대화를 마쳤습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 이용 여부를 묻기 전에 고객이 먼저 [고객 4]에서 안 봤다고 언급했으므로 규칙 적용 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 5]에서 환불 진행 이야기가 나오자 고객이 '계좌 불러 드려야 돼요?'라고 지시대로 질문했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 2]와 [고객 3]에서 상담 엔진의 요청에 따라 휴대폰 번호와 본인 확인 번호를 정확하게 대답했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 실행 표시와 함께 안 본 거면 돈을 돌려받고 오늘 끊겠다며 환불 요청으로 대화 방향을 바꾸었습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 18652.0,
+   "input_tokens": 3146,
+   "output_tokens": 2327,
+   "thoughts_tokens": 1543,
+   "cost_usd": 0.034216,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.034216,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h08-r3-voice-holdout-C",
+ "scenario": "h08"
+}

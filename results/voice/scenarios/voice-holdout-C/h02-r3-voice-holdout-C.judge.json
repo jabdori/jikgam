@@ -1,0 +1,97 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 4, 5, 6에서 위약금 없이 결제 금액에서 차감한다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 엔진은 고객이 날짜를 말하기 전 시스템 조회 결과에 따라 2026-06-30 이전 결제로 산정했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담 4 등에서 정상 월 요금 9,900원으로 차감한다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "대화 중 상담사 승인이 필요하다는 안내가 없습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "상담 4, 5, 6에서 환불 예정액 39,400원과 4개월 이용에 대한 월 9,900원 차감, 그리고 6월 30일 이전 결제에 따른 위약금 면제를 명확히 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "상담 4 등에서 환불은 결제 카드로 진행되며 3~7영업일 안에 승인 취소된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "상담 4 등에서 서비스 이용은 2026-10-12에 종료된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "상담 엔진이 고객의 연간 구독 해지 및 환불 요청을 접수하고 관련 내용을 올바르게 안내했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 가입 시기를 묻지 않아 고객이 답변할 기회가 없었습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "위약금이 발생하지 않는다고 안내되어 위약금 체념에 대한 규칙을 적용할 상황이 오지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "고객 3에서 본인 확인 번호를 0202로 정확하게 읽었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "고객 6에서 6월 마지막 날 밤에 가입했다고 스스로 정정하는 발언을 했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 12138.4,
+   "input_tokens": 3501,
+   "output_tokens": 1527,
+   "thoughts_tokens": 799,
+   "cost_usd": 0.025326,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.025326,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h02-r3-voice-holdout-C",
+ "scenario": "h02"
+}

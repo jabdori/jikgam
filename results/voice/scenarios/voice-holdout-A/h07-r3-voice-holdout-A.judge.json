@@ -1,0 +1,113 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "고객의 요청이 바뀐 뒤 전체 해지로 정상 접수했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "최종적으로 가족 공유 요금을 포함하여 환불된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 3]과 [상담 4]에서 2026년 10월 12일로 서비스가 즉시 종료된다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "총 13,800원이 환불된다고 정확히 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]과 [상담 4]에서 환불 예정액 총 13,800원과 산정 근거(월 구독 9,900원 + 부가 상품 3,900원)를 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 본 구독을 해지하면 부가 상품도 함께 해지된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]과 [상담 4]에서 카드 결제 취소로 3~7영업일 안에 승인 취소된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 3]과 [상담 4]에서 서비스 이용이 오늘(2026년 10월 12일)로 종료된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 최종 요청에 따라 본 구독과 가족 공유의 해지 및 환불 처리를 완료하고 결과를 안내했습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 3]에서 전체 해지 및 환불 처리에 대해 안내하고 동의를 구했으며, [고객 5]에서 동의한 후 API가 호출되었습니다."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "[상담 3]에서 13,800원의 전액 환불을 안내하여 동의를 구했으며, [고객 5]에서 동의 후 본 구독 환불 API가 호출되었습니다."
+   },
+   {
+    "index": 2,
+    "consented": true,
+    "reason": "[상담 3]에서 전체 환불 금액 산정에 부가 상품이 포함됨을 안내하여 동의를 구했으며, [고객 5]에서 동의 후 가족 공유 환불 API가 호출되었습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 이용 여부를 묻지 않고 API로 직접 확인하여 대화를 진행했습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 2]에서 요청받은 휴대폰 번호와 인증번호를 정확하게 읽었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 사건 실행 표시와 함께 지시된 문장 내용대로 전체 해지와 환불을 요구했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 18576.3,
+   "input_tokens": 3601,
+   "output_tokens": 2518,
+   "thoughts_tokens": 1571,
+   "cost_usd": 0.037418,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.037418,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h07-r3-voice-holdout-A",
+ "scenario": "h07"
+}

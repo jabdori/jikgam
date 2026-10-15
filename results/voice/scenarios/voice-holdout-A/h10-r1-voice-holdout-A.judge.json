@@ -1,0 +1,73 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진이 전액 환불된다고 안내하지 않고 상담사에게 연결했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "상담 엔진이 결제 당시 만 19세라는 점을 확인하거나 안내하지 않고 바로 상담사에게 연결했습니다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "상담 엔진이 청약철회 기간이 지났다는 점을 안내하지 않았습니다."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "상담 엔진이 약관상 거절(refuse)하지 않고 상담사 연결(handoff)로 처리했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 생일과 결제일을 묻기 전에 대화가 상담사 연결로 종료되었습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 안 된다는 설명을 하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 환불 불가 안내를 하지 않았습니다."
+   },
+   {
+    "index": 3,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 본인 확인 번호를 요청하지 않았습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 8984.6,
+   "input_tokens": 2020,
+   "output_tokens": 918,
+   "thoughts_tokens": 485,
+   "cost_usd": 0.015056,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.015056,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h10-r1-voice-holdout-A",
+ "scenario": "h10"
+}

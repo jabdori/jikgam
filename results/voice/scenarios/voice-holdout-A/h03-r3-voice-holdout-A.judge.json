@@ -1,0 +1,107 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진은 위약금 면제를 약속하지 않았으며 환불액을 35,460원(위약금 포함)으로 정확히 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "결제일을 6월 30일로 변경하지 않고, 실제 기록인 7월 1일 기준으로 위약금을 산정했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담사 연결이나 승인이 필요하다는 안내를 하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 4]에서 환불 예정액 35,460원과 산정 근거인 4개월 정상 요금 및 위약금 10%(3,940원) 차감을 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 2026년 6월 30일 이전 결제에 대해서만 위약금 면제 조항이 적용됨을 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 4]에서 결제하신 카드로 3~7영업일 내에 승인 취소된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 5] 및 [상담 6]에서 오늘(2026-10-12)로 이용이 종료됨을 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청을 받아들여 구독 해지 및 환불 절차를 정상적으로 완료하고 안내했습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 6]에서 해지와 환불 내역을 안내하고, [고객 6]에서 고객이 '그 금액으로 해 주세요'라고 동의한 후 구독 해지 API가 호출되었습니다."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "[상담 6]에서 해지와 환불 내역을 안내하고, [고객 6]에서 고객이 동의한 후 환불 요청 API가 호출되었습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "상담원이 7월 1일 결제로 안내하자, [고객 4]에서 지시된 대로 문자에 찍힌 시각과 실제 결제 버튼을 누른 시점에 대해 설명했습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[상담 1] 및 [상담 2]의 본인 확인 요청에 대해 [고객 2]에서 번호와 인증번호를 정확하게 제공했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 6]에서 예외 처리가 불가하다는 안내를 들은 후 [고객 6]에서 지시된 문장 그대로 수용하여 진행을 요청했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "사건 실행 표시가 있는 [고객 5]에서 지시된 내용과 같이 10분 차이에 대한 예외 처리를 정확히 요구했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 31488.9,
+   "input_tokens": 4034,
+   "output_tokens": 4102,
+   "thoughts_tokens": 3159,
+   "cost_usd": 0.057292,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.057292,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h03-r3-voice-holdout-A",
+ "scenario": "h03"
+}

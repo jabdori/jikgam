@@ -1,0 +1,237 @@
+{
+ "session": "h03-r3-voice-holdout-D",
+ "provisional": {
+  "sent": 6,
+  "confirmed": 4,
+  "replaced": 2,
+  "unconfirmed": 0,
+  "prejudge_calls": 78,
+  "prejudged_used": 7
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "올해 여름에 연간 할인으로 가입한 거 해지하려고 하는데요. 6월 30일까지 결제한 사람은 위약금 없다면서요? 저 그날 밤에 결제했거든요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "올해 여름에 연간 할인으로 가입한 거 해지하려고 하는데요. / 6월 30일까지 결제한 사람은 위약금 없다면서요? 저 그날 밤에 결제했거든요.",
+   "finals": 2,
+   "utt_ids": [
+    "u2",
+    "u3"
+   ],
+   "first_partial_ms": 1258.8,
+   "final_ms": 844.0,
+   "t_end_error_ms": -6.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 3705.5,
+   "first_audio_from_t_end_ms": 3712.1,
+   "engine_ms": 1938.3,
+   "tts_ms": 922.9,
+   "reply_suggestion": "h03-r3-voice-holdout-D-s2",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "제 번호는 010-0000-0203이고 이름은 남현우입니다.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호는 010-0000-0203이고 / 이름은 남현우입니다.",
+   "finals": 2,
+   "utt_ids": [
+    "u4",
+    "u5"
+   ],
+   "first_partial_ms": 544.1,
+   "final_ms": 718.4,
+   "t_end_error_ms": -57.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 3682.8,
+   "first_audio_from_t_end_ms": 3740.0,
+   "engine_ms": 2054.3,
+   "tts_ms": 910.0,
+   "reply_suggestion": "h03-r3-voice-holdout-D-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "문자로 인증번호 0203이라고 왔네요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "문자로 인증번호 0203이라고 왔네요.",
+   "finals": 1,
+   "utt_ids": [
+    "u6"
+   ],
+   "first_partial_ms": 1191.7,
+   "final_ms": 761.8,
+   "t_end_error_ms": -6.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 5555.8,
+   "first_audio_from_t_end_ms": 5562.0,
+   "engine_ms": 3628.2,
+   "tts_ms": 1165.7,
+   "reply_suggestion": "h03-r3-voice-holdout-D-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "아니, 위약금이 왜 들어가나요? 결제 문자에는 7월 1일 0시 10분으로 찍혀 있긴 한데, 결제 버튼은 분명 6월 30일에 눌렀거든요. 사실상 6월 30일 결제나 마찬가지인데 왜 위약금이 부과되죠?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아니 위약금이 왜 들어가나요? / 결제 문자에는 7월 1일 0시 10분으로 찍혀 있긴 한데 결제 버튼은 분명 6월 30일에 눌렀거든요. / 사실상 6월 30일 결제나 마찬가지인데 왜 위약금이 부과되죠?",
+   "finals": 3,
+   "utt_ids": [
+    "u7",
+    "u8",
+    "u9"
+   ],
+   "first_partial_ms": 860.6,
+   "final_ms": 792.6,
+   "t_end_error_ms": 20.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 4994.2,
+   "first_audio_from_t_end_ms": 4973.6,
+   "engine_ms": 3154.7,
+   "tts_ms": 1046.7,
+   "reply_suggestion": "h03-r3-voice-holdout-D-s7",
+   "replies_held": 2,
+   "replies_discarded": 2
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "10분 차이인데 6월 30일로 처리해 주시면 안 돼요? 그 10분 때문에 위약금 내는 건 너무하잖아요.",
+   "marker": {
+    "condition_change": false,
+    "invalidates_prior": false,
+    "event": "h03#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "10분 차인데 6월 30일로 처리해 주시면 안 돼요? 그 10분 때문에 위약금 내는 건 너무하잖아요.",
+   "finals": 1,
+   "utt_ids": [
+    "u10"
+   ],
+   "first_partial_ms": 1100.5,
+   "final_ms": 737.7,
+   "t_end_error_ms": -129.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 4575.6,
+   "first_audio_from_t_end_ms": 4705.2,
+   "engine_ms": 2960.0,
+   "tts_ms": 877.8,
+   "reply_suggestion": "h03-r3-voice-holdout-D-s8",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "아니, 안 하겠다는 게 아니라요. 알겠습니다, 그 금액으로 해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아니 안 하겠다는 게 아니라요. / 알겠습니다. 그 금액으로 해주세요.",
+   "finals": 2,
+   "utt_ids": [
+    "u11",
+    "u12"
+   ],
+   "first_partial_ms": 587.4,
+   "final_ms": 963.1,
+   "t_end_error_ms": 34.5,
+   "t_end_source": "vad",
+   "first_audio_ms": 4676.5,
+   "first_audio_from_t_end_ms": 4642.0,
+   "engine_ms": 2744.6,
+   "tts_ms": 968.8,
+   "reply_suggestion": "h03-r3-voice-holdout-D-s9",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 7,
+   "utt_file": null,
+   "script": "네, 맞으니까 그렇게 진행해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 맞으니까 그렇게 진행해 주세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u14"
+   ],
+   "first_partial_ms": 830.1,
+   "final_ms": 800.3,
+   "t_end_error_ms": 8.5,
+   "t_end_source": "vad",
+   "first_audio_ms": 4953.3,
+   "first_audio_from_t_end_ms": 4944.9,
+   "engine_ms": 3132.6,
+   "tts_ms": 1019.8,
+   "reply_suggestion": "h03-r3-voice-holdout-D-s10",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 8,
+   "utt_file": null,
+   "script": "네, 확인했습니다. 처리해 주셔서 감사합니다.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 확인했습니다. 처리해 주셔서 감사합니다.",
+   "finals": 1,
+   "utt_ids": [
+    "u15"
+   ],
+   "first_partial_ms": 519.6,
+   "final_ms": 799.5,
+   "t_end_error_ms": 12.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 4343.6,
+   "first_audio_from_t_end_ms": 4331.5,
+   "engine_ms": 2565.9,
+   "tts_ms": 978.1,
+   "reply_suggestion": "h03-r3-voice-holdout-D-s11",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-D/h03-r3-voice-holdout-D.wav",
+  "t0_ms": 11174490.251,
+  "sha256_16": "1c8c6927827e8807",
+  "duration_ms": 365334.3
+ },
+ "playbacks": {
+  "total": 8,
+  "exposed": 8,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 237950.5
+ },
+ "voice_discarded": 3,
+ "voice_held": 3,
+ "voice_errors": [],
+ "engine_errors": []
+}

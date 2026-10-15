@@ -1,0 +1,114 @@
+{
+ "session": "h01-r1-voice-holdout-A",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "저기요, 체험 끝나자마자 그 구천구백 원 빠져나간 거요, 그거 취소해 주세요. 결제된 날 저녁에 아예 안 나오던데요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "저기요, 체험 끝나자마자 그 9,900원 빠져나간 거요. 그거 취소해 주세요.결제된 날 저녁에 아예 안 나오던데요?",
+   "finals": 1,
+   "utt_ids": [
+    "u1"
+   ],
+   "first_partial_ms": 1224.6,
+   "final_ms": 792.3,
+   "t_end_error_ms": 31.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 5683.8,
+   "first_audio_from_t_end_ms": 5652.6,
+   "engine_ms": 3799.4,
+   "tts_ms": 1091.9,
+   "reply_suggestion": "h01-r1-voice-holdout-A-s1",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "제 번호는 010-0000-0201이고요, 문자로 온 거는 0201이에요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호는 010-5000-0201이고요. 문자로 온 거는 0201이에요.",
+   "finals": 1,
+   "utt_ids": [
+    "u2"
+   ],
+   "first_partial_ms": 490.6,
+   "final_ms": 816.3,
+   "t_end_error_ms": 2.0,
+   "t_end_source": "vad",
+   "first_audio_ms": 6059.8,
+   "first_audio_from_t_end_ms": 6057.8,
+   "engine_ms": 4351.8,
+   "tts_ms": 891.7,
+   "reply_suggestion": "h01-r1-voice-holdout-A-s2",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "문자에 0201이라고 와 있는데요? 제 번호 010-0000-0201 맞고 인증번호 0201 맞아요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "문자에 0201이라고 와 있는데요? / 제 번호 010-0000-0020을 맞고 인증번호 0201 맞아요.",
+   "finals": 2,
+   "utt_ids": [
+    "u3",
+    "u4"
+   ],
+   "first_partial_ms": 981.8,
+   "final_ms": 892.7,
+   "t_end_error_ms": 14.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 19486.1,
+   "first_audio_from_t_end_ms": 19471.5,
+   "engine_ms": 3856.7,
+   "tts_ms": 844.2,
+   "reply_suggestion": "h01-r1-voice-holdout-A-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-A/h01-r1-voice-holdout-A.wav",
+  "t0_ms": 8645.748,
+  "sha256_16": "146d935324b3daed",
+  "duration_ms": 131074.6
+ },
+ "playbacks": {
+  "total": 4,
+  "exposed": 4,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 77317.3
+ },
+ "voice_discarded": 0,
+ "voice_held": 0,
+ "voice_errors": [],
+ "engine_errors": []
+}

@@ -1,0 +1,114 @@
+{
+ "session": "h18-r2-voice-holdout-A",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "토요일에 결제된 월 구독 취소하고 환불받으려고요. 한 번도 안 봤어요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "토요일에 결제된 월 구독 취소하고 환불 받으려고요. 한 번도 안 봤어요.",
+   "finals": 1,
+   "utt_ids": [
+    "u1"
+   ],
+   "first_partial_ms": 1040.3,
+   "final_ms": 830.6,
+   "t_end_error_ms": 30.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 4328.9,
+   "first_audio_from_t_end_ms": 4298.3,
+   "engine_ms": 2627.9,
+   "tts_ms": 870.3,
+   "reply_suggestion": "h18-r2-voice-holdout-A-s1",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "제 번호는 010-0000-0218이고, 인증번호 0218 왔어요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호는 010-0000-0218이고 인증번호 0218 왔어요.",
+   "finals": 1,
+   "utt_ids": [
+    "u2"
+   ],
+   "first_partial_ms": 696.7,
+   "final_ms": 905.6,
+   "t_end_error_ms": 19.5,
+   "t_end_source": "vad",
+   "first_audio_ms": 6643.2,
+   "first_audio_from_t_end_ms": 6623.8,
+   "engine_ms": 4776.3,
+   "tts_ms": 961.2,
+   "reply_suggestion": "h18-r2-voice-holdout-A-s2",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "이름이랑 생년월일로 확인 안 되나요? 지금 바로 취소하고 싶은데요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "이름이랑 생년월일로 확인 안 되나요? / 지금 바로 취소하고 싶은데요.",
+   "finals": 2,
+   "utt_ids": [
+    "u3",
+    "u4"
+   ],
+   "first_partial_ms": 1138.9,
+   "final_ms": 776.2,
+   "t_end_error_ms": -8.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 35133.5,
+   "first_audio_from_t_end_ms": 35142.1,
+   "engine_ms": 4940.6,
+   "tts_ms": 943.0,
+   "reply_suggestion": "h18-r2-voice-holdout-A-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-A/h18-r2-voice-holdout-A.wav",
+  "t0_ms": 8484606.018,
+  "sha256_16": "9947440c7660054b",
+  "duration_ms": 128473.6
+ },
+ "playbacks": {
+  "total": 4,
+  "exposed": 4,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 85153.9
+ },
+ "voice_discarded": 0,
+ "voice_held": 0,
+ "voice_errors": [],
+ "engine_errors": []
+}

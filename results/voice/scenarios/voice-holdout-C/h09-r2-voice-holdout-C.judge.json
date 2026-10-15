@@ -1,0 +1,102 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "정정 전의 잘못된 계좌번호(4455)를 사용하여 계좌를 등록한 정황이 없음."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "결제한 달이 지나 본인 명의 계좌로 환불된다고 명확히 안내함."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "접수만 진행되며 상담사 승인 후 최종 확정된다고 안내함."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "할인가가 아닌 정상 월 요금인 9,900원을 기준으로 차감한다고 안내함."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "환불 예정액이 62,190원이며 정상 월 요금 9,900원과 위약금 6,910원을 제외했다는 산정 근거를 안내함."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "상담사 승인 후 최종 확정된다고 여러 차례 안내함."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "회원 본인 명의 계좌 정보를 받은 날부터 5영업일 안에 입금된다고 안내함."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "서비스 이용 가능한 마지막 날이 해지 신청일인 2026-10-12임을 안내함."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 연간 구독 해지 및 환불 요청을 성공적으로 접수하고 관련 금액과 승인 절차를 모두 안내하며 대화를 마침."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "고객 메시지 [고객 5]에서 요청을 받자 계좌번호 끝자리를 4455로 잘못 부름."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "고객 메시지 [고객 7]에서 상담원의 차감 기준 안내를 듣고 왜 9,900원씩 빼는지 질문함."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "고객 메시지 [고객 4]에서 인증번호 입력 요청을 받고 정확한 번호를 제공함."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "고객 메시지 [고객 6]에 사건 실행 표시가 있으며, 지시대로 계좌번호를 4456으로 바로 정정함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 35683.2,
+   "input_tokens": 3906,
+   "output_tokens": 4722,
+   "thoughts_tokens": 3947,
+   "cost_usd": 0.064476,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.064476,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h09-r2-voice-holdout-C",
+ "scenario": "h09"
+}

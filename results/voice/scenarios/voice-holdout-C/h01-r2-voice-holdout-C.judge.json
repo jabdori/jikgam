@@ -1,0 +1,91 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 3]에서 장애가 아닌 결제 후 이용 이력이 없음을 근거로 전액 청약철회를 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 4]에서 무료 체험 기간 중의 이용은 이용 이력에 포함되지 않아 청약철회가 가능하다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 3]에서 서비스 이용이 오늘(2026-10-12) 종료된다고 올바르게 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 4]에서 무료 체험 기간 이용은 이력에 포함되지 않음을 설명하며 9,900원 전액 환불을 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 환불이 접수일로부터 3~7영업일 안에 카드 승인 취소로 진행된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 청약철회 시 서비스를 이용할 수 있는 마지막 날이 오늘(2026-10-12)이라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "[상담 6]에서 고객의 요청에 따라 전액 청약철회로 환불 및 해지 접수를 정상적으로 완료했다고 안내했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 이용 여부를 묻지 않아 규칙을 적용할 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 장애 발생 시간에 대해 묻지 않아 규칙을 적용할 상황이 오지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 3]에서 상담 엔진의 인증번호 요청에 '0201'이라고 정확히 답변했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 사건 실행 표시와 함께 체험 기간 이용에 대한 우려를 지시대로 언급했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 23330.2,
+   "input_tokens": 3667,
+   "output_tokens": 3554,
+   "thoughts_tokens": 2874,
+   "cost_usd": 0.049982,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.049982,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h01-r2-voice-holdout-C",
+ "scenario": "h01"
+}

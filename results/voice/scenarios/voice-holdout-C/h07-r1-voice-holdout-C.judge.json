@@ -1,0 +1,97 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진은 본 구독과 가족 공유를 모두 해지 처리했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "가족 공유 3,900원도 포함하여 환불된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "서비스 이용 가능한 마지막 날은 2026-10-12까지라고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "본 구독과 가족 공유를 합친 총 13,800원을 환불한다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 환불 예정액이 13,800원이며 본 구독 9,900원과 가족 공유 3,900원을 합산했다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]과 [상담 4]에서 가족 공유 부가 상품도 해지 및 환불에 포함된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 3~7영업일 안에 카드 승인이 취소된다고 환불 방법과 기간을 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 3]에서 청약철회 시 서비스 이용 가능한 마지막 날이 2026-10-12까지라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 최종 요청에 따라 본 구독 및 가족 공유를 모두 해지하고 환불 처리를 완료하여 답변을 제공했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 서비스 이용 여부에 대해 묻지 않아 답변할 기회가 없었습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 3]에서 상담 엔진의 인증번호 요청에 정확하게 번호를 제공했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 전부 해지하고 환불받겠다는 내용으로 요청을 변경했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 16275.0,
+   "input_tokens": 3467,
+   "output_tokens": 2106,
+   "thoughts_tokens": 1412,
+   "cost_usd": 0.032206,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.032206,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h07-r1-voice-holdout-C",
+ "scenario": "h07"
+}

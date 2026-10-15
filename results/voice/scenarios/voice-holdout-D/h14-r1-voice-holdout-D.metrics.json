@@ -1,0 +1,262 @@
+{
+ "session": "h14-r1-voice-holdout-D",
+ "provisional": {
+  "sent": 9,
+  "confirmed": 2,
+  "replaced": 6,
+  "unconfirmed": 1,
+  "prejudge_calls": 81,
+  "prejudged_used": 6
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "여보세요? 그 별담인가 뭔가, 테레비 보는 거, 그거 인자 안 볼라 그러는데 끊어 줘요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "여보세요? 그 별담인가 뭔가 텔레비전 보는 거 그거 이제 안 보려고 그러는데 끊어줘요.",
+   "finals": 1,
+   "utt_ids": [
+    "u2"
+   ],
+   "first_partial_ms": 820.0,
+   "final_ms": 754.5,
+   "t_end_error_ms": -45.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 4017.3,
+   "first_audio_from_t_end_ms": 4063.2,
+   "engine_ms": 2243.2,
+   "tts_ms": 1019.5,
+   "reply_suggestion": "h14-r1-voice-holdout-D-s1",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "전화번호가 공 일 공, 공 공 공 공, 공 이 일 사요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "전화번호가 010-0000-0214요.",
+   "finals": 1,
+   "utt_ids": [
+    "u3"
+   ],
+   "first_partial_ms": 1035.8,
+   "final_ms": 806.0,
+   "t_end_error_ms": 13.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 4333.5,
+   "first_audio_from_t_end_ms": 4320.4,
+   "engine_ms": 2409.9,
+   "tts_ms": 1117.5,
+   "reply_suggestion": "h14-r1-voice-holdout-D-s2",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "문자가 와 있는디, 숫자가 7310 맞소?",
+   "marker": {
+    "condition_change": false,
+    "invalidates_prior": false,
+    "event": "h14#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "문자가 와 있는데 숫자가 7310 맞소?",
+   "finals": 1,
+   "utt_ids": [
+    "u4"
+   ],
+   "first_partial_ms": 1044.3,
+   "final_ms": 855.5,
+   "t_end_error_ms": 35.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 4572.1,
+   "first_audio_from_t_end_ms": 4536.7,
+   "engine_ms": 2714.7,
+   "tts_ms": 1001.3,
+   "reply_suggestion": "h14-r1-voice-holdout-D-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "아닌가? 아 이건가, 공 칠 삼 일, 0731 맞소?",
+   "marker": {
+    "condition_change": false,
+    "invalidates_prior": false,
+    "event": "h14#1"
+   },
+   "barge_in_planned": false,
+   "transcript": "아닌가? / 209507310731 맞어?",
+   "finals": 2,
+   "utt_ids": [
+    "u5",
+    "u6"
+   ],
+   "first_partial_ms": 721.3,
+   "final_ms": 752.3,
+   "t_end_error_ms": 11.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 4037.1,
+   "first_audio_from_t_end_ms": 4025.9,
+   "engine_ms": 2401.1,
+   "tts_ms": 883.3,
+   "reply_suggestion": "h14-r1-voice-holdout-D-s5",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "아이구, 문자가 하도 많이 쌓여 있어서 뭐가 뭔지 당최 모르겄네. 사람이랑 통화 좀 하게 해 줘요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아이고, 문자가 하도 많이 쌓여 있어서 뭐가 뭔지 당장 모르겠네. 사람이랑 통화 좀 하게 해 줘요.",
+   "finals": 1,
+   "utt_ids": [
+    "u8"
+   ],
+   "first_partial_ms": 548.9,
+   "final_ms": 851.7,
+   "t_end_error_ms": 9.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 4006.7,
+   "first_audio_from_t_end_ms": 3997.2,
+   "engine_ms": 2250.1,
+   "tts_ms": 904.5,
+   "reply_suggestion": "h14-r1-voice-holdout-D-s6",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "내가 눈도 어둡고 문자도 잘 볼 줄 몰라서 그러는데, 상담원 사람 좀 바꿔 주면 안 되겄소?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "내가 눈도 어둡고 문자도 잘 볼 줄 몰라서 그러는데상담원 사람 좀 바꿔 주면 안 되겠어?",
+   "finals": 1,
+   "utt_ids": [
+    "u11"
+   ],
+   "first_partial_ms": 831.6,
+   "final_ms": 777.8,
+   "t_end_error_ms": -2711.8,
+   "t_end_source": "vad",
+   "first_audio_ms": 4102.7,
+   "first_audio_from_t_end_ms": 6814.5,
+   "engine_ms": 2430.7,
+   "tts_ms": 893.7,
+   "reply_suggestion": "h14-r1-voice-holdout-D-s8",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 7,
+   "utt_file": null,
+   "script": "아이구, 나 혼자서는 문자를 못 찾겄는데 자꾸 그러네. 사람 상담사한테 연결 좀 해 줘 봐요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아이고, 나 혼자서는 문자를 못 찾겠는데 자꾸 그러네. / 사람상담사한테 연결 좀 해줘 봐요.",
+   "finals": 2,
+   "utt_ids": [
+    "u13",
+    "u15"
+   ],
+   "first_partial_ms": 839.5,
+   "final_ms": 801.2,
+   "t_end_error_ms": -3079.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 5684.3,
+   "first_audio_from_t_end_ms": 8763.3,
+   "engine_ms": 3935.0,
+   "tts_ms": 947.8,
+   "reply_suggestion": "h14-r1-voice-holdout-D-s10",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 8,
+   "utt_file": null,
+   "script": "번호는 010-0000-0214가 맞는데 문자를 도통 못 찾겠응게 사람 좀 바꿔 줘요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "번호는 010-0000-0214가 맞는데 문자를 도통 못 찾겠으니까 사람 좀 바꿔 줘요.",
+   "finals": 1,
+   "utt_ids": [
+    "u16"
+   ],
+   "first_partial_ms": 1055.3,
+   "final_ms": 852.8,
+   "t_end_error_ms": 9.0,
+   "t_end_source": "vad",
+   "first_audio_ms": 4107.9,
+   "first_audio_from_t_end_ms": 4098.8,
+   "engine_ms": 2321.6,
+   "tts_ms": 932.6,
+   "reply_suggestion": "h14-r1-voice-holdout-D-s11",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 9,
+   "utt_file": null,
+   "script": "아이구, 기계랑은 말이 안 통해서 안 되겄네. 사람 없으면 나중에 다시 걸라니까 끊어요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아이고, 기계랑은 말이 안 통해서 안 되겠네. / 사람 없으면 나중에 다시 걸라니까 끊어요.",
+   "finals": 2,
+   "utt_ids": [
+    "u17",
+    "u19"
+   ],
+   "first_partial_ms": 1011.1,
+   "final_ms": 783.1,
+   "t_end_error_ms": 11.0,
+   "t_end_source": "vad",
+   "first_audio_ms": 3841.3,
+   "first_audio_from_t_end_ms": 3830.3,
+   "engine_ms": 2148.5,
+   "tts_ms": 909.5,
+   "reply_suggestion": "h14-r1-voice-holdout-D-s13",
+   "replies_held": 1,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-D/h14-r1-voice-holdout-D.wav",
+  "t0_ms": 3424369.306,
+  "sha256_16": "f84170a63e0cc778",
+  "duration_ms": 286254.9
+ },
+ "playbacks": {
+  "total": 10,
+  "exposed": 10,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 1,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 140767.1
+ },
+ "voice_discarded": 3,
+ "voice_held": 4,
+ "voice_errors": [],
+ "engine_errors": []
+}

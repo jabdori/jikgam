@@ -1,0 +1,188 @@
+{
+ "session": "h20-r2-voice-holdout-D",
+ "provisional": {
+  "sent": 3,
+  "confirmed": 1,
+  "replaced": 2,
+  "unconfirmed": 0,
+  "prejudge_calls": 56,
+  "prejudged_used": 4
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "아니 작년에 칠만 구천 원에 연간 했는데 이번에 구만 구천 원이 빠져나갔더라고요. 이거 뭐예요? 그냥 해지하고 돈 돌려주소.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아니, 작년에 79,000원에 연간 했는데 이번에 99,000원이 빠져나갔더라고요. 이거 뭐예요? / 그냥 해지하고 돈 돌려주세요.",
+   "finals": 2,
+   "utt_ids": [
+    "u1",
+    "u2"
+   ],
+   "first_partial_ms": 739.2,
+   "final_ms": 778.7,
+   "t_end_error_ms": 20.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 4323.5,
+   "first_audio_from_t_end_ms": 4302.7,
+   "engine_ms": 2607.4,
+   "tts_ms": 937.3,
+   "reply_suggestion": "h20-r2-voice-holdout-D-s1",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "010-0000-0220입니다. 얼른 좀 확인해 보이소.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "010-0000-020입니다. 얼른 좀 확인해 보시오.",
+   "finals": 1,
+   "utt_ids": [
+    "u3"
+   ],
+   "first_partial_ms": 1004.3,
+   "final_ms": 897.0,
+   "t_end_error_ms": 20.5,
+   "t_end_source": "vad",
+   "first_audio_ms": 4586.0,
+   "first_audio_from_t_end_ms": 4565.5,
+   "engine_ms": 2621.6,
+   "tts_ms": 1067.3,
+   "reply_suggestion": "h20-r2-voice-holdout-D-s2",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "아니 방금 말했잖아요! 010-0000-0220이라고요. 제대로 좀 들으이소.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아니 방금 말했잖아요. 010-0000-0220이라고요. / 제대로 좀 들으시오.",
+   "finals": 2,
+   "utt_ids": [
+    "u4",
+    "u5"
+   ],
+   "first_partial_ms": 797.7,
+   "final_ms": 761.1,
+   "t_end_error_ms": -21.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 4854.1,
+   "first_audio_from_t_end_ms": 4875.2,
+   "engine_ms": 3087.1,
+   "tts_ms": 1005.8,
+   "reply_suggestion": "h20-r2-voice-holdout-D-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "인증번호 0220 왔네요. 갱신된다는 문자도 못 받았는데 그것도 그쪽 잘못 아니에요?",
+   "marker": {
+    "condition_change": false,
+    "invalidates_prior": false,
+    "event": "h20#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "인증번호 0220 왔네요. 갱신된다는 문자도 못 받았는데 그것도 그쪽 잘못 아니에요?",
+   "finals": 1,
+   "utt_ids": [
+    "u6"
+   ],
+   "first_partial_ms": 1374.7,
+   "final_ms": 864.9,
+   "t_end_error_ms": 27.0,
+   "t_end_source": "vad",
+   "first_audio_ms": 6161.5,
+   "first_audio_from_t_end_ms": 6134.5,
+   "engine_ms": 4250.0,
+   "tts_ms": 1046.2,
+   "reply_suggestion": "h20-r2-voice-holdout-D-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "전액 환불해 준다 카니까 그렇게 접수 진행해 주이소. 빨리 승인 나게 해 주고요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "전액 환불해 준다니까 그렇게 접수 진행해 주이소. 빨리 승인 나게 해 주고요.",
+   "finals": 1,
+   "utt_ids": [
+    "u8"
+   ],
+   "first_partial_ms": 1188.3,
+   "final_ms": 1054.1,
+   "t_end_error_ms": 6.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 5732.5,
+   "first_audio_from_t_end_ms": 5725.7,
+   "engine_ms": 3647.1,
+   "tts_ms": 1031.2,
+   "reply_suggestion": "h20-r2-voice-holdout-D-s5",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "알겠으니까 처리나 빨리 되게 신경 써 주쇼. 끊습니다.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "알겠으니까 처리나 빨리 되게 신경 써 주쇼.",
+   "finals": 1,
+   "utt_ids": [
+    "u10"
+   ],
+   "first_partial_ms": 1259.6,
+   "final_ms": 778.1,
+   "t_end_error_ms": 11.7,
+   "t_end_source": "vad",
+   "first_audio_ms": 5411.7,
+   "first_audio_from_t_end_ms": 5400.0,
+   "engine_ms": 3655.2,
+   "tts_ms": 978.3,
+   "reply_suggestion": "h20-r2-voice-holdout-D-s6",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-D/h20-r2-voice-holdout-D.wav",
+  "t0_ms": 10353957.819,
+  "sha256_16": "dfac1dc49e83e644",
+  "duration_ms": 246835.8
+ },
+ "playbacks": {
+  "total": 6,
+  "exposed": 6,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 141159.1
+ },
+ "voice_discarded": 0,
+ "voice_held": 0,
+ "voice_errors": [],
+ "engine_errors": []
+}

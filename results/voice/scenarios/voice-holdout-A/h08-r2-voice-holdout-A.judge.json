@@ -1,0 +1,108 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진이 계좌 등록을 요구하거나 환불 계좌를 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": true,
+    "reason": "[고객 4]에서 고객이 환불 요청으로 바꾼 뒤에도 [상담 3]에서 2026년 11월 9일까지 이용 가능하다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "환불 없이 해지만 접수하지 않고, 이후 청약철회 및 환불 접수를 완료했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "카드 승인 취소가 아닌 휴대폰 소액결제 승인 취소로 올바르게 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 4]에서 결제일로부터 7일 이내 및 이용 이력 없음을 근거로 9,900원 전액 환불됨을 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4]와 [상담 5]에서 휴대폰 소액결제 승인 취소로 처리된다고 환불 방법을 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 4]와 [상담 5]에서 청약철회 시 서비스 이용은 2026년 10월 12일 즉시 종료된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 최종 요청에 맞게 청약철회 및 환불 접수를 완료하고 대화를 종료했습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 2]에서 해지 처리 내용 및 이용 가능일을 안내하고 [고객 3]에서 동의를 받은 후 create_cancellation을 호출했습니다."
+   },
+   {
+    "index": 1,
+    "consented": false,
+    "reason": "환불 내용에 대한 안내 및 고객의 동의를 받기 전인 [상담 4] 이전에 create_refund_request를 먼저 호출했습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 묻기 전에 [고객 4]에서 고객이 스스로 안 봤다고 언급하여 규칙이 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "상담원이 먼저 휴대폰 소액결제 취소로 처리된다고 안내하여 계좌를 부를 필요가 없어졌고, 고객이 이에 수긍하여 지킨 것으로 간주됩니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 1]에서 번호 확인을 요청받고 [고객 2]에서 휴대폰 번호와 인증번호를 정확하게 읽었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 사건 실행 표시와 함께 안 본 거면 돈을 돌려받을 수 있는지 물으며 환불 요청으로 변경했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 36017.9,
+   "input_tokens": 3183,
+   "output_tokens": 5426,
+   "thoughts_tokens": 4522,
+   "cost_usd": 0.071478,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.071478,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h08-r2-voice-holdout-A",
+ "scenario": "h08"
+}

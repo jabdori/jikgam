@@ -1,0 +1,190 @@
+{
+ "session": "h08-r1-voice-holdout-A",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "별담 플러스 그거 해지하려고요. 토요일에 폰으로 결제됐는데 이번 달은 그냥 쓰고 끊을게요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "별단 플러스 그거 해지하려고요. 토요일에 폰으로 결제됐는데 이번 달은 그냥 쓰고 끊을게요.",
+   "finals": 1,
+   "utt_ids": [
+    "u1"
+   ],
+   "first_partial_ms": 1504.3,
+   "final_ms": 1110.7,
+   "t_end_error_ms": 26.5,
+   "t_end_source": "vad",
+   "first_audio_ms": 4177.6,
+   "first_audio_from_t_end_ms": 4151.1,
+   "engine_ms": 2185.2,
+   "tts_ms": 881.6,
+   "reply_suggestion": "h08-r1-voice-holdout-A-s1",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "010-0000-0208이고 인증번호 0208이에요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "010000002082고 인증번호 2082예요.",
+   "finals": 1,
+   "utt_ids": [
+    "u2"
+   ],
+   "first_partial_ms": 1478.3,
+   "final_ms": 1284.6,
+   "t_end_error_ms": 25.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 6012.8,
+   "first_audio_from_t_end_ms": 5986.9,
+   "engine_ms": 3802.1,
+   "tts_ms": 926.0,
+   "reply_suggestion": "h08-r1-voice-holdout-A-s2",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "문자에 0208이라고 와 있는데요, 다시 확인해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "",
+   "finals": 0,
+   "utt_ids": [],
+   "first_partial_ms": 1008.0,
+   "final_ms": null,
+   "t_end_error_ms": null,
+   "t_end_source": null,
+   "first_audio_ms": null,
+   "first_audio_from_t_end_ms": null,
+   "engine_ms": null,
+   "tts_ms": null,
+   "reply_suggestion": null,
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "아 근데 안 본 거면 돈 돌려받을 수 있는 거 아니에요? 그럼 그냥 오늘 끊고 환불받을래요.",
+   "marker": {
+    "condition_change": true,
+    "invalidates_prior": true,
+    "event": "h08#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "문자에 0208이라고 와 있는데요. 다시 확인해 주세요. / 아 근데 안 본 거면 돈 돌려받을 수 있는 거 아니에요? / 그럼 그냥 오늘 끊고 환불 받을래요.",
+   "finals": 3,
+   "utt_ids": [
+    "u3",
+    "u4",
+    "u5"
+   ],
+   "first_partial_ms": 796.3,
+   "final_ms": 773.9,
+   "t_end_error_ms": 1.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 50888.0,
+   "first_audio_from_t_end_ms": 50886.9,
+   "engine_ms": 3967.6,
+   "tts_ms": 1123.5,
+   "reply_suggestion": "h08-r1-voice-holdout-A-s5",
+   "replies_held": 1,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [
+  {
+   "session": "h08-r1-voice-holdout-A",
+   "event": "h08#0",
+   "utt_id": "u5",
+   "version": 5,
+   "t0": 1952839.348,
+   "t1": 1957579.766,
+   "latency_ms": 4740.418,
+   "invalidates_prior": true,
+   "latency_from_speech_end_ms": 4741.5
+  }
+ ],
+ "new_condition_audio": [
+  {
+   "event": "h08#0",
+   "utt_id": "u5",
+   "version": 5,
+   "invalidates_prior": true,
+   "suggestion_id": "h08-r1-voice-holdout-A-s5",
+   "from_speech_end_ms": 50888.0,
+   "from_t0_ms": 50886.9
+  }
+ ],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 2,
+  "denominator": 3,
+  "unconfirmed": 0,
+  "cases": [
+   {
+    "kind": "invalid",
+    "suggestion_id": "h08-r1-voice-holdout-A-s3",
+    "basis_version": 3,
+    "start": 1954292.798,
+    "events": [
+     "h08#0"
+    ],
+    "played_ms": 19280.1,
+    "interrupted": null
+   },
+   {
+    "kind": "invalid",
+    "suggestion_id": "h08-r1-voice-holdout-A-s4",
+    "basis_version": 4,
+    "start": 1974648.554,
+    "events": [
+     "h08#0"
+    ],
+    "played_ms": 27954.1,
+    "interrupted": null
+   }
+  ],
+  "events": [
+   {
+    "event": "h08#0",
+    "invalid_exposures": 2
+   }
+  ]
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-A/h08-r1-voice-holdout-A.wav",
+  "t0_ms": 1875990.123,
+  "sha256_16": "129625256d2536cb",
+  "duration_ms": 147140.1
+ },
+ "playbacks": {
+  "total": 5,
+  "exposed": 5,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 94851.3
+ },
+ "voice_discarded": 0,
+ "voice_held": 1,
+ "voice_errors": [],
+ "engine_errors": []
+}

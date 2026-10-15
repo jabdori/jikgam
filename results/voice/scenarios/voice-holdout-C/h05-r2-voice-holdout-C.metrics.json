@@ -1,0 +1,210 @@
+{
+ "session": "h05-r2-voice-holdout-C",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "계정 정지당한 것도 억울한데 이번 달에 돈이 두 번이나 빠졌어요. 정지된 사람한테 돈은 왜 받아요? 다 돌려줘요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "계정 정지 당한 것도 억울한데 이번 달에 돈이 두 번이나 빠졌어요. / 정지된 사람한테 돈은 왜 받아요? 다 돌려줘요.",
+   "finals": 2,
+   "utt_ids": [
+    "u1",
+    "u2"
+   ],
+   "first_partial_ms": 1442.9,
+   "final_ms": 798.4,
+   "t_end_error_ms": 15.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 4190.2,
+   "first_audio_from_t_end_ms": 4174.4,
+   "engine_ms": 2314.0,
+   "tts_ms": 1077.7,
+   "reply_suggestion": "h05-r2-voice-holdout-C-s2",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "010-0000-0205요. 빨리 확인 좀 해줘요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "010-0000-0205요. 빨리 확인 좀 해줘요.",
+   "finals": 1,
+   "utt_ids": [
+    "u3"
+   ],
+   "first_partial_ms": 1184.9,
+   "final_ms": 905.0,
+   "t_end_error_ms": -3.5,
+   "t_end_source": "vad",
+   "first_audio_ms": 4428.1,
+   "first_audio_from_t_end_ms": 4431.5,
+   "engine_ms": 2558.2,
+   "tts_ms": 964.8,
+   "reply_suggestion": "h05-r2-voice-holdout-C-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "인증번호 0205요. 됐죠?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "인증번호 0205요.",
+   "finals": 1,
+   "utt_ids": [
+    "u4"
+   ],
+   "first_partial_ms": 1467.9,
+   "final_ms": 456.0,
+   "t_end_error_ms": -740.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 6060.1,
+   "first_audio_from_t_end_ms": 6800.5,
+   "engine_ms": 4640.9,
+   "tts_ms": 963.0,
+   "reply_suggestion": "h05-r2-voice-holdout-C-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "아니, 중복으로 나간 건 일단 환불해 주시고요. 근데 두 번 나간 거 말고 이번 달 거 하나도 돌려줘요, 정지돼서 못 쓰잖아요.",
+   "marker": {
+    "condition_change": false,
+    "invalidates_prior": false,
+    "event": "h05#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "아니 중복으로 나간 건 일단 환불해 주시고요. 그때 두 번 나간 거 말고 이번 달 거 하나도 돌려줘요. 정지돼서 못 쓰잖아요.",
+   "finals": 1,
+   "utt_ids": [
+    "u5"
+   ],
+   "first_partial_ms": 729.8,
+   "final_ms": 940.0,
+   "t_end_error_ms": 15.5,
+   "t_end_source": "vad",
+   "first_audio_ms": 5385.3,
+   "first_audio_from_t_end_ms": 5369.8,
+   "engine_ms": 3399.2,
+   "tts_ms": 1045.9,
+   "reply_suggestion": "h05-r2-voice-holdout-C-s5",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "아니, 원하지 않는다고 한 적 없는데 왜 마음대로 접수를 안 해요? 중복 결제된 거는 당연히 환불 접수해 줘야죠.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아니 원하지 않는다고 한 적 없는데 왜 마음대로 접수를 안 해요? 중복 결제된 거는 당연히 환불 접수해 줘야죠.",
+   "finals": 1,
+   "utt_ids": [
+    "u6"
+   ],
+   "first_partial_ms": 896.8,
+   "final_ms": 899.8,
+   "t_end_error_ms": 27.0,
+   "t_end_source": "vad",
+   "first_audio_ms": 4712.1,
+   "first_audio_from_t_end_ms": 4685.1,
+   "engine_ms": 2748.1,
+   "tts_ms": 1064.1,
+   "reply_suggestion": "h05-r2-voice-holdout-C-s6",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "네, 그렇게 접수해 줘요. 얼른 취소해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 그렇게 접수해줘요. 얼른 취소해주세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u7"
+   ],
+   "first_partial_ms": 730.9,
+   "final_ms": 824.7,
+   "t_end_error_ms": 4.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 5960.8,
+   "first_audio_from_t_end_ms": 5956.7,
+   "engine_ms": 4079.0,
+   "tts_ms": 1057.0,
+   "reply_suggestion": "h05-r2-voice-holdout-C-s7",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 7,
+   "utt_file": null,
+   "script": "알겠어요. 추가 문의는 없으니까 끊을게요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "알겠어요. 추가 문의는 없으니까 끊을게요.",
+   "finals": 1,
+   "utt_ids": [
+    "u8"
+   ],
+   "first_partial_ms": 1149.6,
+   "final_ms": 823.5,
+   "t_end_error_ms": 29.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 5135.4,
+   "first_audio_from_t_end_ms": 5106.1,
+   "engine_ms": 3265.8,
+   "tts_ms": 1046.0,
+   "reply_suggestion": "h05-r2-voice-holdout-C-s8",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-C/h05-r2-voice-holdout-C.wav",
+  "t0_ms": 6685603.295,
+  "sha256_16": "0b6d1d3dd3aa0ea4",
+  "duration_ms": 263742.5
+ },
+ "playbacks": {
+  "total": 7,
+  "exposed": 7,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 153371.0
+ },
+ "voice_discarded": 1,
+ "voice_held": 1,
+ "voice_errors": [],
+ "engine_errors": []
+}

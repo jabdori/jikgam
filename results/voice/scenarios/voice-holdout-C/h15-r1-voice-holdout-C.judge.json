@@ -1,0 +1,92 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 1]과 [상담 2]에서 제3자 요청으로 판단하여 계정 정보 확인 및 처리가 불가하다고 안내하여 위반하지 않음."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 6]에서 환불 예정액이 없다고 안내하며 환불을 약속하거나 접수하지 않음."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 6] 등 대화 전체에서 오늘이 청약철회 기간 안이라고 안내한 적이 없음."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 6]에서 2026년 11월 3일까지 이용 가능하다고 안내하여 즉시 이용 종료로 안내하지 않음."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "[상담 6]에서 환불이 없다는 사실은 안내했으나, 결제 다음 날부터 세어 7일이 지났다는 근거를 말하지 않음."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 6]에서 서비스를 2026년 11월 3일까지 이용할 수 있다고 안내함."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "[상담 7]과 [상담 8]에서 고객의 요청대로 구독 해지 절차를 완료하고 결과를 안내함."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 2]에서 약관상 7일 이내 가능하다는 안내를 듣고 '4일 결제니까 오늘이 딱 일주일 아니에요?'라고 기한을 따짐."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 8]에서 환불 불가 안내를 수용하며 환불이 안 돼도 상관없으니 해지를 진행해 달라고 함."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 5], [고객 6], [고객 7]에서 요청받은 휴대폰 번호와 본인 확인 인증번호를 정확히 읽어줌."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 사건 실행 표시와 함께 동생 계정이 아니라 가입과 결제 모두 본인 명의임을 정정함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 22457.5,
+   "input_tokens": 3299,
+   "output_tokens": 2864,
+   "thoughts_tokens": 2148,
+   "cost_usd": 0.040966,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.040966,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h15-r1-voice-holdout-C",
+ "scenario": "h15"
+}

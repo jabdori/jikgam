@@ -1,0 +1,73 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진은 미성년자 결제 취소 대상이 아니며 환불이 불가하다고 정확히 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]과 [상담 4]에서 결제 당시 만 19세라 미성년자 결제 취소 대상이 아니라고 명확히 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 결제일로부터 7일이 경과하여 청약철회 및 환불이 불가하다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "약관에 따른 환불 거절 사유를 안내하고, 환불이 안 되면 해지하지 않겠다는 고객의 요청에 따라 구독을 유지하는 것으로 올바르게 안내를 마쳤습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 생일과 결제일을 묻지 않고 API 연동을 통해 확인했으므로 해당 규칙이 적용될 상황이 없었습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 3]에서 환불 불가 안내를 듣고 지시된 문장대로 질문했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 4]에서 환불이 안 되면 해지하지 않고 계속 쓰겠다고 명확히 말했습니다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "[고객 2]에서 본인 확인 번호 및 인증번호를 정확히 말했습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 11554.6,
+   "input_tokens": 2866,
+   "output_tokens": 1354,
+   "thoughts_tokens": 844,
+   "cost_usd": 0.02198,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.02198,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h10-r3-voice-holdout-A",
+ "scenario": "h10"
+}

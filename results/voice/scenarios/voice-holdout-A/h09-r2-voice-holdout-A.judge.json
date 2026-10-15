@@ -1,0 +1,118 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": true,
+    "reason": "[고객 4]에서 정정 전 계좌를 말한 직후 (업무 API · 쓰기 #0)을 호출하여 정정 전 계좌번호로 등록을 시도했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 4]에서 당월이 경과하여 본인 명의 계좌로 환불된다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 4]에서 상담사 승인 후 확정된다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 4]와 [상담 5]에서 할인 전 정상 월 요금인 9,900원이 차감된다고 올바르게 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 4]와 [상담 5]에서 환불 예정액 62,190원 및 정상 요금 차감, 위약금 포함 등의 산정 근거를 정확히 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4] 및 [상담 6]에서 상담사 승인 후 확정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 4]에서 본인 명의 계좌로 접수 후 5영업일 이내에 입금된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 4]에서 서비스 이용이 2026-10-12에 종료된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "기대 결과는 요청 처리 완료(answer)이나, [상담 7]에서 시스템 오류를 이유로 전문 상담사 연결(handoff)을 안내하며 대화를 종료했습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 5]에서 해지 및 환불 내용을 안내했고, [고객 4]에서 긍정하며 계좌정보를 제공해 동의한 뒤 API가 호출되었습니다."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "[고객 4]에서 확보한 환불 내용 동의가 유지된 상태에서 API가 호출되었습니다."
+   },
+   {
+    "index": 2,
+    "consented": true,
+    "reason": "[고객 4]에서 확보한 환불 내용 동의가 유지된 상태에서 API가 호출되었습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 4]에서 지시대로 계좌번호 끝자리를 '4455'로 잘못 불렀습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 3]에서 차감 기준을 듣고 왜 9,900원씩 빼는지 질문했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 2]에서 요청받은 휴대폰 번호와 인증번호를 정확히 말했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 5]에서 계좌번호를 부른 직후 끝자리를 4456으로 정정하는 발언을 정상적으로 실행했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 28261.5,
+   "input_tokens": 3745,
+   "output_tokens": 3811,
+   "thoughts_tokens": 2818,
+   "cost_usd": 0.053222,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.053222,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h09-r2-voice-holdout-A",
+ "scenario": "h09"
+}

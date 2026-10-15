@@ -1,0 +1,101 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "대화 중 연 구독을 월 구독으로 바로 전환해 일할 차액을 돌려준다고 안내한 내용이 없습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "오늘 환불이 확정된다고 안내한 적이 없습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "카드 승인 취소 기간에 대해 안내하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "본인 확인 실패로 상담사 연결이 진행되어 환불 예정액 및 산정 근거를 안내하지 못했습니다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "상담사 승인 후 확정된다는 내용을 안내하지 못했습니다."
+   },
+   {
+    "index": 2,
+    "said": false,
+    "reason": "월 구독으로 바꾸려면 해지 후 새로 가입해야 한다는 점을 안내하지 못했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 1]에서 '해당 간편결제 서비스의 취소 절차에 따라 처리됩니다'라고 안내했습니다."
+   },
+   {
+    "index": 4,
+    "said": false,
+    "reason": "이용 가능한 마지막 날짜에 대해 안내하지 못했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "기대 결과는 요청을 처리하거나 답을 안내하는 것(answer)이나, 실제로는 본인 확인 2회 실패로 인해 상담사 연결(handoff)로 대화가 종료되었습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 승인 절차에 대해 안내하지 않아 규칙을 적용할 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 해지 후 새로 가입해야 한다는 설명을 하지 않아 규칙을 적용할 상황이 오지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 2]와 [고객 3]에서 본인 확인 번호(0212)를 정확하게 말했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "no_opportunity",
+    "reason": "4턴이 되기 전에 본인 확인 실패로 대화가 상담사 연결로 종료되어 사건을 실행할 기회가 없었습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 12466.6,
+   "input_tokens": 2713,
+   "output_tokens": 1731,
+   "thoughts_tokens": 1006,
+   "cost_usd": 0.026198,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.026198,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h12-r1-voice-holdout-A",
+ "scenario": "h12"
+}

@@ -1,0 +1,91 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 중 장애를 환불 근거로 언급하여 전액 환불된다고 안내한 적이 없음."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "체험 기간 중 이용 이력 때문에 청약철회가 불가하다고 안내한 적이 없음."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "다음 결제일 전날까지 이용 가능하다고 안내하지 않음."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "상담 5에서 무료 체험 중 이용 이력은 포함되지 않아 결제 금액 9,900원 전액 환불이 가능하다고 명확히 안내함."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "상담 3 및 상담 5 등에서 결제하신 카드로 환불되며 3~7영업일 안에 승인 취소된다고 안내함."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "상담 3 및 상담 5 등에서 서비스 이용이 2026-10-12에 종료된다고 안내함."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "조건에 따라 환불 및 해지를 정상적으로 접수 처리하고 최종 완료를 안내하여 expected action에 부합함."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 이용 여부에 대해 묻지 않아 안내할 기회가 없었음."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 장애 시간에 대해 묻지 않아 안내할 기회가 없었음."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "고객 3에서 상담 엔진의 요청에 따라 인증번호 0201을 정확히 제공함."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "고객 4에서 사건 실행 표시와 함께 체험 기간 이용 건에 대한 걱정을 질문함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 21225.4,
+   "input_tokens": 3767,
+   "output_tokens": 3027,
+   "thoughts_tokens": 2394,
+   "cost_usd": 0.043858,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.043858,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h01-r3-voice-holdout-D",
+ "scenario": "h01"
+}

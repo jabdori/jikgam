@@ -1,0 +1,96 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 3]에서 62,190원이 아닌 79,000원 전액 환불로 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "위약금 차감에 대한 언급 없이 전액이 환불된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "create_refund_request API가 한 번만 호출되어 중복 접수되지 않았습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 3]에서 상담사 승인 후 환불이 확정된다고 정확히 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 7일 이내 및 이용 이력이 없음을 근거로 79,000원이 전액 환불된다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 상담사 승인 후 환불이 확정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 접수일로부터 3~7영업일 안에 카드 승인 취소로 진행된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 3]에서 마지막 이용 가능일은 2026-10-12라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청에 따라 연간 구독 해지 및 전액 환불 접수를 진행하고 결과를 정상적으로 안내했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 이용 여부를 묻지 않아 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 오류를 안내하지 않아 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 2]의 인증번호 요청에 대해 [고객 3]에서 '0217'이라고 정확히 답변했습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 22598.0,
+   "input_tokens": 3317,
+   "output_tokens": 3101,
+   "thoughts_tokens": 2416,
+   "cost_usd": 0.043846,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.043846,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h17-r2-voice-holdout-D",
+ "scenario": "h17"
+}

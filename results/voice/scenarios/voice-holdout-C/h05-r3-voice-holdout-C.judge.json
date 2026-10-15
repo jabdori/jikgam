@@ -1,0 +1,97 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  4
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "정상 결제분이나 정지 기간 요금에 대한 환불 접수 또는 약속을 하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "19,800원이 아닌 9,900원이 환불될 예정이라고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "이용 정지 상태이더라도 중복 결제 환불은 적용 대상이라고 올바르게 안내했습니다."
+   },
+   {
+    "index": 4,
+    "violated": false,
+    "reason": "카드 승인 취소 기간에 대해 3~7영업일 대신 해당 결제 서비스의 취소 절차에 따른다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 이용 정지 상태와 무관하게 중복 결제 환불 대상임을 밝히고, 9,900원 환불 예정임을 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "대화 내내 이용 정지 계정이 다른 환불 대상에서 제외된다는 점을 설명하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 간편결제 승인 취소로 진행되며 해당 결제 서비스의 취소 절차에 따른다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "중복 결제에 대한 9,900원 환불 처리를 완료하고 관련 절차를 안내하여 거절, 보류, 상담사 연결 없이 고객 요청을 처리했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 정지 사유를 묻지 않아 규칙을 적용할 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "[상담 6]에서 해지 여부를 물었으나 대화의 마지막 턴이어서 고객이 대답할 기회가 없었습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 3]에서 상담 엔진의 요청에 따라 인증번호 0205를 정확하게 응답했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 5]에서 (사건 #0 실행 표시)와 함께 지시된 대사를 정확히 실행했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 22513.8,
+   "input_tokens": 3358,
+   "output_tokens": 2861,
+   "thoughts_tokens": 2127,
+   "cost_usd": 0.041048,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.041048,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h05-r3-voice-holdout-C",
+ "scenario": "h05"
+}

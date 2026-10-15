@@ -1,0 +1,81 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 엔진이 이름과 생년월일로 본인 확인을 대신 처리하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "본인 확인이 완료되기 전에 결제·이용 내역이나 환불 예정액 등을 안내하지 않았습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "업무 API 호출 기록상 본인 확인(verify_identity)을 3회 이상 호출하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 2]에서 본인 확인 시스템에 일시적인 오류가 발생하여 인증 처리를 완료하지 못했다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 2]와 [상담 3]에서 잠시 후 다시 시도하거나 상담사 연결을 통해 처리해 주겠다는 이후 처리 방법을 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "기대 결과는 접수를 보류(hold)하는 것이나, 상담 엔진은 상담사 연결(handoff)로 처리하며 대화를 마쳤습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "[상담 2]에서 보류 안내와 동시에 상담사 연결 옵션을 제시하고, 고객의 발언 기회 없이 바로 [상담 3]으로 넘어가 대화를 종료했으므로 규칙을 적용할 기회가 없었습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 2]에서 상담 엔진의 요청에 따라 자신의 번호와 인증번호를 정확하게 말했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 1,
+    "status": "no_opportunity",
+    "reason": "3턴 이후에 실행되어야 하나, 그 전에 상담사 연결로 대화가 종료되어 실행할 기회가 없었습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 25262.8,
+   "input_tokens": 2307,
+   "output_tokens": 3079,
+   "thoughts_tokens": 2504,
+   "cost_usd": 0.041562,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.041562,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h18-r3-voice-holdout-A",
+ "scenario": "h18"
+}

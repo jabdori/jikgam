@@ -1,0 +1,278 @@
+{
+ "session": "h12-r1-voice-holdout-C",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "연간 구독 해지하려고요. 결제는 간편결제로 했고요, 환불 바로 되죠?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "연간 구독 해지하려고요. 결제는 간편결제로 했고요. 환불 바로 되죠?",
+   "finals": 1,
+   "utt_ids": [
+    "u1"
+   ],
+   "first_partial_ms": 971.8,
+   "final_ms": 844.8,
+   "t_end_error_ms": 39.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 4611.3,
+   "first_audio_from_t_end_ms": 4571.7,
+   "engine_ms": 2705.3,
+   "tts_ms": 1061.1,
+   "reply_suggestion": "h12-r1-voice-holdout-C-s1",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "010-0000-0212요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "010-0000-0211",
+   "finals": 1,
+   "utt_ids": [
+    "u2"
+   ],
+   "first_partial_ms": 1830.7,
+   "final_ms": 850.9,
+   "t_end_error_ms": 16.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 4226.9,
+   "first_audio_from_t_end_ms": 4210.8,
+   "engine_ms": 2441.3,
+   "tts_ms": 934.1,
+   "reply_suggestion": "h12-r1-voice-holdout-C-s2",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "0212요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "021이요.",
+   "finals": 1,
+   "utt_ids": [
+    "u3"
+   ],
+   "first_partial_ms": 1286.2,
+   "final_ms": 769.9,
+   "t_end_error_ms": 17.8,
+   "t_end_source": "vad",
+   "first_audio_ms": 3841.5,
+   "first_audio_from_t_end_ms": 3823.7,
+   "engine_ms": 2200.2,
+   "tts_ms": 870.9,
+   "reply_suggestion": "h12-r1-voice-holdout-C-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "문자로 0212라고 왔는데요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "문자로 01이라고 왔는데요.",
+   "finals": 1,
+   "utt_ids": [
+    "u4"
+   ],
+   "first_partial_ms": 1284.4,
+   "final_ms": 799.7,
+   "t_end_error_ms": 16.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 4060.5,
+   "first_audio_from_t_end_ms": 4044.2,
+   "engine_ms": 2183.9,
+   "tts_ms": 1076.7,
+   "reply_suggestion": "h12-r1-voice-holdout-C-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "인증번호 0212 맞는데요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "인증번호 021 맞는데요?",
+   "finals": 1,
+   "utt_ids": [
+    "u5"
+   ],
+   "first_partial_ms": 1020.4,
+   "final_ms": 755.6,
+   "t_end_error_ms": -17.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 9834.6,
+   "first_audio_from_t_end_ms": 9852.2,
+   "engine_ms": 7939.5,
+   "tts_ms": 1139.4,
+   "reply_suggestion": "h12-r1-voice-holdout-C-s6",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "아 그러면 해지 말고 월 구독으로 바꾸는 건요? 그게 낫지 않아요?",
+   "marker": {
+    "condition_change": true,
+    "invalidates_prior": false,
+    "event": "h12#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "아 그러면 해지 말고 월구독으로 바꾸는 거냐? / 이게 낫지 않아요?",
+   "finals": 2,
+   "utt_ids": [
+    "u6",
+    "u7"
+   ],
+   "first_partial_ms": 645.4,
+   "final_ms": 758.2,
+   "t_end_error_ms": 16.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 3886.5,
+   "first_audio_from_t_end_ms": 3869.6,
+   "engine_ms": 1988.8,
+   "tts_ms": 1139.4,
+   "reply_suggestion": "h12-r1-voice-holdout-C-s6",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 7,
+   "utt_file": null,
+   "script": "아니 인증번호 0212라고 계속 말씀드렸잖아요. 확인 안 돼요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아니, 인증 번호 021이라고 계속 말씀드렸잖아요. 확인 안 돼요?",
+   "finals": 1,
+   "utt_ids": [
+    "u8"
+   ],
+   "first_partial_ms": 550.2,
+   "final_ms": 804.2,
+   "t_end_error_ms": 3.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 4069.8,
+   "first_audio_from_t_end_ms": 4066.6,
+   "engine_ms": 2350.1,
+   "tts_ms": 915.4,
+   "reply_suggestion": "h12-r1-voice-holdout-C-s7",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 8,
+   "utt_file": null,
+   "script": "문자로 온 번호 0212 맞다니까요. 0, 2, 1, 2요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "문자로 온 번호 021이 맞다니까요. 0212요.",
+   "finals": 1,
+   "utt_ids": [
+    "u9"
+   ],
+   "first_partial_ms": 1033.4,
+   "final_ms": 844.4,
+   "t_end_error_ms": 0.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 4619.9,
+   "first_audio_from_t_end_ms": 4619.8,
+   "engine_ms": 2693.6,
+   "tts_ms": 1081.4,
+   "reply_suggestion": "h12-r1-voice-holdout-C-s8",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 9,
+   "utt_file": null,
+   "script": "휴대폰 번호 010-0000-0212 맞고 문자 온 것도 0212 맞는데 왜 안 되죠?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "휴대폰 번호 010-0000-0111이 맞고 문자 온 것도 0111이 맞는데 왜 안 되죠?",
+   "finals": 1,
+   "utt_ids": [
+    "u10"
+   ],
+   "first_partial_ms": 1042.0,
+   "final_ms": 905.1,
+   "t_end_error_ms": 24.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 4734.0,
+   "first_audio_from_t_end_ms": 4709.8,
+   "engine_ms": 2763.8,
+   "tts_ms": 1064.6,
+   "reply_suggestion": "h12-r1-voice-holdout-C-s9",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [
+  {
+   "session": "h12-r1-voice-holdout-C",
+   "event": "h12#0",
+   "utt_id": "u7",
+   "version": 7,
+   "t0": 3264111.002,
+   "t1": 3265039.605,
+   "latency_ms": 928.603,
+   "invalidates_prior": false,
+   "latency_from_speech_end_ms": 945.5
+  }
+ ],
+ "new_condition_audio": [
+  {
+   "event": "h12#0",
+   "utt_id": "u7",
+   "version": 7,
+   "invalidates_prior": false,
+   "suggestion_id": "h12-r1-voice-holdout-C-s6",
+   "from_speech_end_ms": 3886.5,
+   "from_t0_ms": 3869.6
+  }
+ ],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-C/h12-r1-voice-holdout-C.wav",
+  "t0_ms": 3154490.227,
+  "sha256_16": "c0d05100548d6411",
+  "duration_ms": 217845.5
+ },
+ "playbacks": {
+  "total": 8,
+  "exposed": 8,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 106566.3
+ },
+ "voice_discarded": 1,
+ "voice_held": 1,
+ "voice_errors": [],
+ "engine_errors": []
+}

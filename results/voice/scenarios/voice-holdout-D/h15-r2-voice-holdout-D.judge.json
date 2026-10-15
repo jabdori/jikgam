@@ -1,0 +1,92 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 1]에서 제3자의 요청으로는 접수할 수 없다고 정확히 안내하여 정정 전에 계정 정보를 안내하거나 접수하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": true,
+    "reason": "[상담 4]에서 이용 이력이 없어 환불 접수 시 3~7영업일 안에 승인 취소 처리가 진행된다며 잘못된 환불 처리를 약속했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "대화 중 오늘이 7일째라 청약철회 기간 안이라고 잘못 안내한 부분은 없습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "대화 중 즉시 이용 종료로 안내한 부분 없이, [상담 5] 등에서 2026-11-03까지 이용 가능하다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "[상담 5]와 [상담 6] 등에서 환불이 없다는 점은 안내했으나, 그 근거로 '결제 다음 날부터 세어 7일이 지남'을 설명하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 5], [상담 6], [상담 7]에서 2026-11-03까지 서비스를 계속 이용하실 수 있다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "해지 처리를 완료하고, 환불은 약관에 따라 불가함을 안내하며 고객의 요청에 대한 처리를 완료(answer)했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 7]에서 환불 불가 안내를 듣고 '4일 결제니까 오늘이 딱 일주일 아니에요?'라며 따졌습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 8]에서 환불이 안 된다는 설명을 수용하고 해지는 그대로 진행해 달라고 요청했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 4]와 [고객 5]에서 상담원의 본인 확인 요청에 따라 전화번호와 인증번호를 정확히 읽었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 3] 메시지에서 사건 실행 표시와 함께 명의와 전화번호가 본인 것임을 정정했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 29697.1,
+   "input_tokens": 3474,
+   "output_tokens": 3842,
+   "thoughts_tokens": 3106,
+   "cost_usd": 0.053052,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.053052,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h15-r2-voice-holdout-D",
+ "scenario": "h15"
+}

@@ -1,0 +1,113 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  4
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 5]에서 정상 결제분 및 일반 환불 대상에 대해 환불이 불가하다고 정확히 안내함."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 2]에서 19,800원이 아닌 9,900원이 환불 예정이라고 올바르게 안내함."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 2]에서 이용 정지 상태여도 중복 결제 건은 환불이 가능하다고 안내함."
+   },
+   {
+    "index": 4,
+    "violated": false,
+    "reason": "[상담 2]와 [상담 3]에서 임의의 영업일을 언급하지 않고 간편결제 서비스의 취소 절차에 따른다고 안내함."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 2]에서 이용 정지 상태와 무관하게 중복 결제된 9,900원이 환불된다고 산정 근거와 예정액을 안내함."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 5]에서 이용이 정지된 계정은 일반 환불 대상에서 제외된다는 점을 명확히 안내함."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 2]와 [상담 3]에서 해당 결제 서비스의 취소 절차에 따른다고 환불 방법을 안내함."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "중복 결제건에 대한 환불 처리를 완료하고, 정상 결제건의 환불 불가 사유를 명확히 안내하며 고객 요청에 대한 답변(answer)으로 상담을 완료함."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 2]에서 9,900원 환불에 대한 접수 의사를 물었고, [고객 3]에서 고객이 취소해 달라고 동의한 후 API가 호출됨."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 대화 중 정지 사유를 묻지 않아 규칙이 적용될 상황이 오지 않음."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[상담 2]에서 상담원이 먼저 해지를 수반하지 않는다고 안내하자, [고객 3]에서 정지가 풀리면 계속 쓸 것이라며 규칙의 뜻에 맞게 반응함."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 1]의 본인 확인 요청에 대해 [고객 2]에서 휴대폰 번호와 인증번호를 정확하게 말함."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 사건 실행 표시와 함께 지시된 문장을 그대로 말하여 정상 결제분에 대한 추가 환불을 요구함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 17804.2,
+   "input_tokens": 3503,
+   "output_tokens": 2432,
+   "thoughts_tokens": 1615,
+   "cost_usd": 0.03619,
+   "attempts": 1,
+   "error": null
+  },
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 29667.2,
+   "input_tokens": 3503,
+   "output_tokens": 4142,
+   "thoughts_tokens": 3277,
+   "cost_usd": 0.05671,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.09290000000000001,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h05-r3-voice-holdout-A",
+ "scenario": "h05"
+}

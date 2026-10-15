@@ -1,0 +1,96 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 2] 등에서 위약금을 포함하여 차감한 최종 환불 예정액이 35,460원이라고 정확히 안내했으며, 면제를 약속하지 않았다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담원은 결제일을 7월 1일로 확인하여 위약금을 정상적으로 산정했다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 6]에서 상담사에게 연결하기는 했으나, '상담사 승인이 필요하다'고 안내하지는 않았다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 2] 등에서 4개월 이용료 39,600원과 위약금 3,940원을 제외한 환불 예정액 35,460원을 안내했다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4]에서 약관 부칙이 2026년 6월 30일 이전에 결제된 건에만 적용된다고 안내했다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 2]에서 환불은 카드 승인 취소로 3~7영업일 정도 소요된다고 안내했다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 2] 등에서 이용 기간이 오늘(2026-10-12) 종료된다고 안내했다."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "기대 결과는 요청 처리(answer)이나, 실제로는 고객의 이의 제기에 대응하지 못하고 [상담 6]에서 상담사 연결(handoff)로 대화가 종료되었다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "상담원이 결제 시각을 직접 묻지는 않았으나 결제일이 7월 1일이라고 안내하자, [고객 3]에서 자발적으로 문자 기록과 실제 결제 버튼을 누른 시점에 대해 규칙대로 설명했다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[상담 1]의 본인 확인 요청에 대해 [고객 2]에서 휴대폰 번호와 인증번호를 정확하게 말했다."
+   },
+   {
+    "index": 2,
+    "status": "not_applicable",
+    "reason": "규칙의 조건이 충족되기 전인 [고객 4]에서 예외를 요구했고, 그에 대한 거절 안내를 들은 후 수용할 기회가 주어지기 전에 상담원이 [상담 6]에서 통화를 종료(상담사 연결)하여 상황이 발생하지 않았다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "지정된 턴 이후인 [고객 4](사건 #0 실행 표시)에서 10분 차이를 이유로 예외 처리를 요구했다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 39923.0,
+   "input_tokens": 3711,
+   "output_tokens": 5452,
+   "thoughts_tokens": 4590,
+   "cost_usd": 0.072846,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.072846,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h03-r1-voice-holdout-A",
+ "scenario": "h03"
+}

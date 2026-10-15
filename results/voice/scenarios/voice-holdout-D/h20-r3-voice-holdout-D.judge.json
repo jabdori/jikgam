@@ -1,0 +1,113 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "연 구독 중도 해지 금액(80,190원)을 안내하거나 해당 금액으로 접수하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "이용 이력을 이유로 환불이 불가하다고 확정하여 안내하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "79,000원 기준으로 환불액을 안내하지 않았습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 4]에서 상담사 승인 후 환불이 확정된다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 4,
+    "violated": false,
+    "reason": "문자를 받지 못했다는 항의에 대해 약관에 없는 보상이나 별도의 환불을 약속하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "고객이 요금에 대해 항의했으나, 갱신 시에는 정상 요금이 적용된다는 사실을 대화 중 설명하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4]에서 서비스 장애로 인해 환불 예정액이 99,000원임을 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 4]에서 환불 금액으로 인해 접수만 되며 상담사 승인 후 확정된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 4]에서 3~7영업일 안에 카드 승인 취소로 환불이 진행된다고 안내했습니다."
+   },
+   {
+    "index": 4,
+    "said": true,
+    "reason": "[상담 4]에서 이용 기간이 2026년 10월 12일에 종료된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청대로 해지 및 환불 접수를 진행하고 향후 절차를 안내하며 대화를 마쳤습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 고객의 이용 여부를 묻지 않아 해당 지시를 수행할 기회가 없었습니다."
+   },
+   {
+    "index": 1,
+    "status": "violated",
+    "reason": "[상담 4]에서 상담원이 서비스 장애를 언급했으나, [고객 5]에서 지시된 대로 장애 내용에 대해 동의하는 발언을 하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 2]와 [고객 4]에서 상담원의 요청에 따라 휴대폰 번호와 본인 확인 인증번호를 정확하게 읽었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 사건 실행 표시와 함께 갱신 문자를 받지 못한 점을 항의하며 지시된 내용을 수행했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 44445.5,
+   "input_tokens": 3998,
+   "output_tokens": 5788,
+   "thoughts_tokens": 4901,
+   "cost_usd": 0.077452,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.077452,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h20-r3-voice-holdout-D",
+ "scenario": "h20"
+}

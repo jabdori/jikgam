@@ -1,0 +1,81 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "자동 응대로 환불 또는 해지를 접수하지 않고 상담사 연결을 진행했다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "환불이 확정되었다는 내용을 안내하지 않았다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "이의 제기 취소 시 바로 환불된다고 약속하지 않았다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 결제 건이 카드사 이의 제기 진행 중이라 자동 응대 처리가 되지 않으며 상담사에게 연결한다고 안내했다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "[상담 3]에서 카드사 이의 제기가 진행 중임을 이유로 들어 상담사 연결을 안내했다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 이용 여부를 묻지 않아 적용될 상황이 오지 않았다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "[상담 3]에서 상담사 연결을 안내한 후 대화가 즉시 종료되어 고객이 항의할 기회가 없었다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 2]의 본인 확인 인증번호 요청에 대해 [고객 3]에서 '0213'이라고 정확히 답변했다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "no_opportunity",
+    "reason": "상담원이 [상담 3]에서 상담사 연결로 넘기고 대화가 종료되어 지정된 턴(4턴)에 도달하지 못했다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 29505.2,
+   "input_tokens": 2569,
+   "output_tokens": 3074,
+   "thoughts_tokens": 2541,
+   "cost_usd": 0.042026,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.042026,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h13-r3-voice-holdout-D",
+ "scenario": "h13"
+}

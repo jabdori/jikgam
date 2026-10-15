@@ -1,0 +1,108 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "해지 접수 API(create_cancellation)를 호출하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "작년 10월 결제 건은 기한이 지나 환불이 불가하다고 명확히 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "전체 금액이 아닌 9,900원만 환불된다고 정확하게 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "중복 결제 환불은 구독 해지를 수반하지 않으며 계속 이용 가능하다고 올바르게 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 6]에서 2026년 9월 중복 결제 건에 대해 9,900원이 전액 환불 예정이라고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 6]에서 작년 10월 결제 건은 1년 신청 기한이 지나 환불이 불가하다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 5]와 [상담 6]에서 접수일로부터 3~7영업일 안에 카드 승인 취소로 진행된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 5]에서 구독은 해지되지 않고 유지된다고 명확히 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청에 따라 가능한 지난달 중복 결제건에 대한 환불 접수를 완료하고 불가한 건에 대한 사유를 적절히 안내하여 요청을 성공적으로 처리했습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "환불 접수(create_refund_request) API 호출 전 [상담 7]에서 환불 내역을 안내하며 동의를 구했고, [고객 9]에서 고객이 환불 접수를 요청하여 동의를 확인했습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 중복 결제 날짜를 묻지 않아 규칙이 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "작년 건의 기한 만료 안내 후 [고객 8]에서 한 번 더 요구한 뒤 [고객 9]에서 수긍하여 지시를 따랐습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 3]에서 본인 확인 번호를 요청받고 [고객 4]에서 0204를 정확히 말했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 5]에서 사건 실행 표시와 함께 해지 번복 및 중복 결제 환불만 요청하는 발화를 정확히 실행했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 20045.0,
+   "input_tokens": 4218,
+   "output_tokens": 2780,
+   "thoughts_tokens": 1892,
+   "cost_usd": 0.041796,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.041796,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h04-r3-voice-holdout-D",
+ "scenario": "h04"
+}

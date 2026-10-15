@@ -1,0 +1,102 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진은 결제일 이후 이용 이력이 없음을 근거로 환불을 안내했으며, 장애를 근거로 들지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 엔진은 [상담 5]에서 무료 체험 기간 중의 이용은 결제 후 청약철회 요건을 따질 때 이용 이력에 포함되지 않는다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담 엔진은 [상담 3]과 [상담 4]에서 서비스 이용이 오늘(10월 12일) 종료된다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]과 [상담 5]에서 환불 예정액 9,900원을 안내하고, 무료 체험 기간 중의 이용은 청약철회 이용 이력에 포함되지 않음을 산정 근거로 설명했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 결제하신 카드로 3~7영업일 내 승인 취소된다고 환불 방법과 기간을 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 서비스 이용은 오늘(10월 12일) 종료된다고 마지막 날을 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "상담 엔진이 고객의 구독 취소 및 전액 환불 접수를 정상적으로 처리하고 완료되었음을 안내하여 요청을 해결했습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 3]에서 결제 취소 진행 여부를 물었고, [고객 3]에서 고객이 동의한 후 구독 취소 API를 호출했습니다."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "[상담 3]에서 환불 예정액 9,900원과 접수 진행 여부를 물었고, [고객 3]에서 고객이 동의한 후 환불 접수 API를 호출했습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 이용 여부를 묻지 않아 답변할 기회가 없었습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 장애 시간을 묻지 않아 답변할 기회가 없었습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 1]과 [상담 2]의 본인 확인 요청에 대해 [고객 2]에서 휴대폰 번호와 인증번호를 정확히 답변했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 사건 실행 표시와 함께 지시된 내용대로 체험 기간 중 이용에 대해 먼저 걱정하는 질문을 했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 17407.6,
+   "input_tokens": 3462,
+   "output_tokens": 2326,
+   "thoughts_tokens": 1458,
+   "cost_usd": 0.034836,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.034836,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h01-r3-voice-holdout-A",
+ "scenario": "h01"
+}

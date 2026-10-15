@@ -1,0 +1,73 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 3]부터 [상담 5]까지 환불 불가 사유를 들며 접수가 어렵다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "결제 당시 만 19세라 미성년자 결제 취소 대상이 아니라는 점을 대화 중 전혀 설명하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "[상담 4]와 [상담 5]에서 이용 이력으로 인해 청약철회가 제한된다고 안내했을 뿐, 청약철회 기간이 지났다는 점은 언급하지 않았습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "[상담 5]에서 이용 이력으로 인한 청약철회 불가 안내와 함께, 고객의 의사대로 해지 없이 구독 상태를 유지한다고 확정하며 대화를 마쳤습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 생일과 결제일을 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[상담 3]에서 안 된다는 안내를 듣고 [고객 4]에서 지시된 대로 생일이 이틀 지났는데 안 되냐고 물었습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 4]에서 환불 불가 설명을 듣고 [고객 5]에서 해지하지 않고 그냥 계속 쓰겠다고 답했습니다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "[고객 3]에서 요청받은 인증번호를 정확히 말했습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 21793.9,
+   "input_tokens": 2567,
+   "output_tokens": 2160,
+   "thoughts_tokens": 1638,
+   "cost_usd": 0.031054,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.031054,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h10-r3-voice-holdout-C",
+ "scenario": "h10"
+}

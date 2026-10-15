@@ -1,0 +1,101 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진이 연 구독을 월 구독으로 바로 전환하여 차액을 돌려준다고 안내하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 엔진이 오늘 환불이 확정된다고 안내하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담 엔진이 카드 승인 취소가 3~7영업일 소요된다고 안내하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "본인 인증 실패로 상담사 연결로 넘어가 환불 예정액과 산정 근거를 안내하지 못했습니다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "본인 인증 실패로 상담사 연결로 넘어가 상담사 승인 후 확정된다는 내용을 안내하지 못했습니다."
+   },
+   {
+    "index": 2,
+    "said": false,
+    "reason": "본인 인증 실패로 상담사 연결로 넘어가 월 구독 전환 절차를 안내하지 못했습니다."
+   },
+   {
+    "index": 3,
+    "said": false,
+    "reason": "본인 인증 실패로 상담사 연결로 넘어가 환불 방법을 안내하지 못했습니다."
+   },
+   {
+    "index": 4,
+    "said": false,
+    "reason": "본인 인증 실패로 상담사 연결로 넘어가 이용 가능한 마지막 날을 안내하지 못했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "본인 확인에 지속적으로 실패하여 고객 요청을 처리하거나 답을 완료(answer)하지 못하고 상담사 연결(handoff)로 종료되었습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 승인 절차를 안내하는 단계까지 도달하지 않아 해당 규칙이 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 해지 후 새로 가입해야 한다는 점을 설명하지 못해 해당 규칙이 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 3], [고객 4], [고객 5], [고객 8]에서 요청받은 본인 확인 번호(0212)를 정확하게 읽었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 6]에서 '아 그러면 해지 말고 월 구독으로 바꾸는 건요? 그게 낫지 않아요?'라고 말하며 사건을 정상적으로 실행했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 18191.2,
+   "input_tokens": 3050,
+   "output_tokens": 2239,
+   "thoughts_tokens": 1470,
+   "cost_usd": 0.032968,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.032968,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h12-r1-voice-holdout-C",
+ "scenario": "h12"
+}

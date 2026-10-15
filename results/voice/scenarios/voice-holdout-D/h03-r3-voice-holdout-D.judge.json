@@ -1,0 +1,96 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "위약금을 면제하지 않고 3,940원이 부과된다고 안내함."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "결제일을 2026-07-01 기준으로 처리함."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담사 승인 안내 없이 직접 해지 및 환불 처리를 완료함."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 위약금 3,940원을 포함한 차감 금액과 환불 예정액 35,460원을 안내함."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4]에서 시스템 기록상 결제일이 2026-07-01이라 위약금 면제 기준에 해당하지 않는다고 안내함."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 카드 승인 취소로 3~7영업일 안에 처리된다고 안내함."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 3]에서 서비스 이용 가능한 마지막 날이 오늘(2026-10-12)이라고 안내함."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객 요청에 따라 연 구독 해지 및 환불 접수를 완료하고 그 결과를 안내함."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "violated",
+    "reason": "상담원이 결제 시각을 묻지 않았으나 [고객 4]에서 먼저 결제 문자 수신 시각을 말함."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 3]에서 상담원의 요청에 따라 인증번호를 정확히 답변함."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 6]에서 예외 불가 안내를 듣고 정해진 대사대로 수용함."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 5]에서 지정된 내용으로 예외 처리를 요구함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 35526.7,
+   "input_tokens": 4114,
+   "output_tokens": 4775,
+   "thoughts_tokens": 4091,
+   "cost_usd": 0.065528,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.065528,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h03-r3-voice-holdout-D",
+ "scenario": "h03"
+}

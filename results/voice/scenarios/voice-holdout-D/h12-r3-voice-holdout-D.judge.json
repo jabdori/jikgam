@@ -1,0 +1,101 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "본인 확인 절차에서 막혀 요금제 전환에 대한 안내를 하지 못함."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "본인 확인 절차에서 막혀 환불 확정 시기에 대한 안내를 하지 못함."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "본인 확인 절차에서 막혀 승인 취소 기간에 대한 안내를 하지 못함."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "본인 확인 단계에서 인식 오류로 대화가 진행되지 않아 환불 예정액을 안내하지 못함."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "본인 확인 단계에서 대화가 진행되지 않아 안내하지 못함."
+   },
+   {
+    "index": 2,
+    "said": false,
+    "reason": "본인 확인 단계에서 대화가 진행되지 않아 안내하지 못함."
+   },
+   {
+    "index": 3,
+    "said": false,
+    "reason": "본인 확인 단계에서 대화가 진행되지 않아 안내하지 못함."
+   },
+   {
+    "index": 4,
+    "said": false,
+    "reason": "본인 확인 단계에서 대화가 진행되지 않아 안내하지 못함."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "본인 확인 인증번호를 계속해서 묻는 상황에서 대화가 끝나 정상적인 처리나 안내, 보류, 상담사 연결 등 어떤 조치도 취하지 못함."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 승인 절차에 대해 안내하지 않아 적용될 상황이 오지 않음."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 해지 후 새로 가입해야 한다는 점을 설명하지 않아 적용될 상황이 오지 않음."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 2], [고객 7] 등에서 전화번호와 인증번호 등 본인 확인 번호를 정확히 읽어줌."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 6]에서 지시된 내용대로 월 구독으로 바꾸는 내용으로 주제를 변경함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 25632.7,
+   "input_tokens": 3478,
+   "output_tokens": 3467,
+   "thoughts_tokens": 2763,
+   "cost_usd": 0.04856,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.04856,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h12-r3-voice-holdout-D",
+ "scenario": "h12"
+}

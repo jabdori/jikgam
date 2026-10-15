@@ -1,0 +1,101 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 1]에서 해지 신청일에 바로 종료된다고 안내하여 위반하지 않음."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 4]에서 별도 승인 절차 없이 진행된다고 안내하여 위반하지 않음."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 3]에서 위약금이 적용되지 않는다고 안내하여 위반하지 않음."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[고객 5]에서 환불 및 해지에 대한 동의를 받은 후 API를 호출하여 위반하지 않음."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 1]에서 이용 기간이 해지 신청일에 바로 종료된다고 안내함."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 이용 개월 수 5개월을 차감하고 위약금 없이 49,500원이 환불된다고 안내함."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 4]에서 기준 금액을 넘지 않아 별도의 승인 절차 없이 진행된다고 안내함."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 3]에서 접수일로부터 3~7영업일 안에 카드 승인 취소로 진행된다고 안내함."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청대로 연 구독 해지 및 환불을 완료하고 결과를 안내함."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 가입 날짜를 묻지 않아 적용되지 않음."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 2]에서 즉시 종료된다는 안내를 듣고 오늘 끝내고 환불받겠다고 답변함."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 4]에서 환불 금액 안내를 들은 후 5만 원 초과 시 승인이 필요한지 질문함."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "[고객 3]에서 본인 확인 인증번호를 한 자리씩 천천히 읽어줌."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 22103.2,
+   "input_tokens": 3494,
+   "output_tokens": 2980,
+   "thoughts_tokens": 2251,
+   "cost_usd": 0.042748,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.042748,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h11-r3-voice-holdout-C",
+ "scenario": "h11"
+}

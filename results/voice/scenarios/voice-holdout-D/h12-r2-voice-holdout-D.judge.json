@@ -1,0 +1,101 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진이 연 구독을 월 구독으로 바로 전환해 일할 차액을 돌려준다고 안내하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 엔진이 오늘 환불이 확정된다고 안내하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담 엔진이 카드 승인 취소를 3~7영업일로 안내하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "본인 인증 단계를 통과하지 못하여 환불 예정액과 산정 근거를 안내하지 못했습니다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "본인 인증 단계를 통과하지 못하여 상담사 승인 후 확정된다는 내용을 안내하지 못했습니다."
+   },
+   {
+    "index": 2,
+    "said": false,
+    "reason": "본인 인증 단계를 통과하지 못하여 월 구독으로 바꾸려면 해지 후 새로 가입해야 한다는 점을 안내하지 못했습니다."
+   },
+   {
+    "index": 3,
+    "said": false,
+    "reason": "본인 인증 단계를 통과하지 못하여 환불 방법을 안내하지 못했습니다."
+   },
+   {
+    "index": 4,
+    "said": false,
+    "reason": "본인 인증 단계를 통과하지 못하여 이용 가능한 마지막 날을 안내하지 못했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "음성 인식 오류로 인한 본인 인증 반복으로 고객 요청 사항에 대한 답변이나 처리를 하지 못한 채 대화가 종료되었습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 승인 절차에 대해 언급하지 않아 해당 규칙이 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 해지 후 새로 가입해야 한다는 설명을 하지 않아 해당 규칙이 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 2]와 [고객 4] 등에서 요청받은 휴대폰 번호와 인증번호를 정확히 읽었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 6] 메시지에서 사건 실행 표시와 함께 월 구독으로 바꾸는 내용으로 주제를 변경했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 18028.7,
+   "input_tokens": 3251,
+   "output_tokens": 2370,
+   "thoughts_tokens": 1636,
+   "cost_usd": 0.034942,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.034942,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h12-r2-voice-holdout-D",
+ "scenario": "h12"
+}

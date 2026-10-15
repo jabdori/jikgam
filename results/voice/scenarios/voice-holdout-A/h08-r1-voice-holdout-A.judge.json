@@ -1,0 +1,97 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진이 계좌 등록을 요구하거나 환불 계좌를 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "요청이 바뀐 후 2026-11-09까지 이용 가능하다고 안내하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "환불 없이 해지만 접수하고 끝내지 않고 상담사 연결을 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "카드 승인 취소로 안내하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "환불 예정액 9,900원과 산정 근거를 안내하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "휴대폰 결제 취소로 환불되며 계좌가 필요 없다는 내용을 안내하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "said": false,
+    "reason": "이용 가능한 마지막 날(2026-10-12)을 안내하지 않았습니다."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "기대 결과는 요청을 처리하고 안내하는 것(answer)이나, 상담 엔진은 본인 확인 실패로 인해 상담사 연결(handoff)을 안내하며 대화를 종료했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 고객에게 이용 여부를 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 환불에 대해 언급했으나 곧바로 상담사 연결 안내가 이어져 대화가 종료되었으므로 질문할 상황이 아니었습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 2]에서 요청받은 휴대폰 번호와 본인 확인 번호를 정확하게 말했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 사건 내용대로 당일 해지 및 환불을 요구하도록 말을 바꾸었습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 24160.7,
+   "input_tokens": 2755,
+   "output_tokens": 3124,
+   "thoughts_tokens": 2455,
+   "cost_usd": 0.042998,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.042998,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h08-r1-voice-holdout-A",
+ "scenario": "h08"
+}

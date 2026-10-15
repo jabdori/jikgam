@@ -1,0 +1,112 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 1과 상담 3에서 해지 시 서비스 이용이 바로 종료된다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 4에서 50,000원을 넘지 않아 상담사 승인 없이 즉시 처리가 완료되었다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담 3에서 위약금이 없다고 명확히 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "상담 3에서 해지 및 환불 진행 의사를 묻고, 고객 3이 동의한 이후에 해지 접수 API가 호출되었습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "상담 1에서 연 구독을 중도 해지하면 서비스 이용 기간이 해지 신청일에 바로 종료된다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "상담 3에서 환불 예정액 49,500원과 함께 결제 금액에서 5개월분 차감 및 위약금 없음 등 산정 근거를 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "상담 4에서 50,000원을 넘지 않아 별도의 상담사 승인 없이 즉시 처리 완료되었다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "상담 3에서 결제하신 신용카드로 3~7영업일 이내에 승인 취소된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청대로 구독 해지 및 환불을 즉시 확정하고 성공적으로 처리 완료를 안내하며 대화를 마쳤습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "상담 3에서 환불 금액과 이용 종료일을 안내한 뒤 진행 여부를 물었고, 고객 3에서 동의한 후 구독 해지 API가 호출되었습니다."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "상담 3에서 환불 금액과 일정을 안내한 뒤 동의를 구했고, 고객 3에서 승낙한 후 환불 요청 API가 호출되었습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 가입 날짜를 묻지 않아 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "고객 2에서 해지 시 바로 끝난다는 설명을 들은 후 오늘 끝내고 돈을 돌려받겠다고 규칙대로 말했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "고객 3에서 상담원의 금액 안내를 듣고 5만 원이 넘으면 승인을 받아야 하는지 정해진 대로 질문했습니다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "고객 2에서 휴대폰 번호와 함께 인증번호를 명확히 제시하며 규칙을 지켰습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 21385.4,
+   "input_tokens": 3280,
+   "output_tokens": 2856,
+   "thoughts_tokens": 1933,
+   "cost_usd": 0.040832,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.040832,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h11-r1-voice-holdout-A",
+ "scenario": "h11"
+}

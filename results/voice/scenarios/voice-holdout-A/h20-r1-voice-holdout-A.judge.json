@@ -1,0 +1,124 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": true,
+    "reason": "[상담 2]부터 [상담 5]에 걸쳐 연 구독 중도 해지 금액인 80,190원으로 환불액을 안내하고 접수를 진행함."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "이용 이력을 이유로 환불이 불가하다고 안내한 바가 없음."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "79,000원을 기준으로 환불액을 안내하지 않음."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 3]과 [상담 5]에서 상담사 승인 후 확정된다고 안내함."
+   },
+   {
+    "index": 4,
+    "violated": false,
+    "reason": "갱신 문자를 받지 못했다는 항의에 대해 약관에 없는 보상이나 환불을 약속하지 않음."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 1]에서 갱신 시에는 정상 요금 99,000원으로 결제된다고 명확히 안내함."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "장애 발생을 반영한 99,000원 전액 환불 대신 중도 해지 위약금을 적용해 80,190원으로 잘못 안내함."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]과 [상담 5]에서 상담사 승인을 거쳐 처리된다고 안내함."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 3], [상담 5] 등에서 3~7영업일 이내에 카드 승인 취소로 환불된다고 안내함."
+   },
+   {
+    "index": 4,
+    "said": true,
+    "reason": "[상담 2]와 [상담 5]에서 서비스 이용이 오늘(2026-10-12) 종료된다고 안내함."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 해지 및 환불 요청을 거절이나 보류하지 않고 접수하여 안내를 완료함."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 4]에서 해지 및 환불 조건(80,190원)을 안내하고 의사를 물었으며, [고객 4]에서 진행해 달라고 명시적으로 동의함."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "[상담 4]에서 안내한 환불 조건에 대해 [고객 4]에서 접수해 달라고 동의함."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 이용 여부를 묻지 않고 시스템으로 조회 후 사실을 통보하여 규칙을 적용할 기회가 없었음."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "고객이 먼저 장애 이야기를 꺼내지 않았고, 상담 엔진도 언급하지 않아 규칙의 뜻을 준수함."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 1]의 본인 확인 요청에 대해 [고객 2]에서 휴대폰 번호와 인증번호를 정확히 제공함."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 3]에서 사건 실행 표시와 함께 갱신 문자를 받지 못했다고 항의하는 내용을 정상적으로 발화함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 26098.8,
+   "input_tokens": 3811,
+   "output_tokens": 3567,
+   "thoughts_tokens": 2522,
+   "cost_usd": 0.050426,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.050426,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h20-r1-voice-holdout-A",
+ "scenario": "h20"
+}

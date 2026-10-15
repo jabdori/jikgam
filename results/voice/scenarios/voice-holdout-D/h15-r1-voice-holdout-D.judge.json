@@ -1,0 +1,92 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 1과 상담 2에서 제3자 요청으로 간주하여 정보 안내 및 접수를 명확히 거절했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 5와 상담 6에서 이미 결제된 월 요금은 환불되지 않는다고 정확히 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담 6에서 7일이 지난 시점이라 청약철회 환불 대상에 해당하지 않는다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "상담 5와 상담 6에서 다음 결제일 전날인 2026년 11월 3일까지 서비스를 이용할 수 있다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "상담 6에서 결제일로부터 7일이 지나 환불 대상에 해당하지 않으며 환불 예정액이 없다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "상담 5, 6, 7에서 2026년 11월 3일까지 이용 가능하다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "환불 불가 사유를 정확하게 안내한 뒤 고객의 동의를 얻어 월 구독 해지를 정상적으로 접수했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "고객 7에서 결제일과 기한을 근거로 일주일이 아니냐고 지시대로 따졌습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "고객 8에서 환불이 어렵다는 상담원의 안내를 받아들이고 해지만 진행해 달라고 요청했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "고객 5와 고객 6에서 본인 확인용 휴대폰 번호와 인증번호를 정확하게 제공했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "고객 4 발화에 사건 실행 표시가 있으며, 지시된 대사대로 동생이 아닌 본인 명의임을 정정했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 21655.9,
+   "input_tokens": 3586,
+   "output_tokens": 2868,
+   "thoughts_tokens": 2188,
+   "cost_usd": 0.041588,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.041588,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h15-r1-voice-holdout-D",
+ "scenario": "h15"
+}

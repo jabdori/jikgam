@@ -1,0 +1,97 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 4]에서 위약금 차감 없이 환불 예정액을 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "고객이 말한 날짜를 근거로 산정하는 발언이 없었습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 5]에서 할인가가 아닌 정상 월 요금을 기준으로 차감한다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "상담사 승인이 필요하다는 언급이 없었습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 5]에서 환불 예정액 39,400원과 산정 근거(4개월 정상 월 요금 39,600원 차감 및 부칙에 따른 위약금 면제)를 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4]에서 결제한 카드로 환불 접수일로부터 3~7영업일 안에 승인이 취소된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 4]에서 서비스 이용 가능한 마지막 날이 오늘(2026-10-12)까지임을 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "해지 및 환불 요청을 성공적으로 처리하고 관련 결과를 상세히 안내하며 상담을 마무리했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 고객에게 가입 시기를 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담원이 위약금 없이 처리된다고 안내하여 위약금이 부과된다는 상황이 발생하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 3]과 [고객 4]에서 수신한 인증번호 0202를 정확히 답변했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 6]에서 지시된 내용대로 6월 마지막 날 가입했다고 스스로 정정하는 발언을 실행했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 28261.9,
+   "input_tokens": 3474,
+   "output_tokens": 3788,
+   "thoughts_tokens": 3086,
+   "cost_usd": 0.052404,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.052404,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h02-r1-voice-holdout-C",
+ "scenario": "h02"
+}

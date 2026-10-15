@@ -1,0 +1,68 @@
+{
+ "session": "h13-r2-voice-holdout-A",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "금요일에 결제된 거 안 쓸 거라서 카드사에 이의 신청했는데 처리가 너무 느려서요. 그냥 여기서 바로 환불해 주시면 안 돼요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "금요일에 결제된 거 안 쓸 거라서 카드사에 이의 신청했는데 / 처리가 너무 느려서요. 그냥 여기서 바로 환불해 주시면 안 돼요?",
+   "finals": 2,
+   "utt_ids": [
+    "u1",
+    "u2"
+   ],
+   "first_partial_ms": 983.0,
+   "final_ms": 823.2,
+   "t_end_error_ms": 30.0,
+   "t_end_source": "vad",
+   "first_audio_ms": 25767.9,
+   "first_audio_from_t_end_ms": 25737.9,
+   "engine_ms": 3034.3,
+   "tts_ms": 1151.0,
+   "reply_suggestion": "h13-r2-voice-holdout-A-s2",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-A/h13-r2-voice-holdout-A.wav",
+  "t0_ms": 7544421.107,
+  "sha256_16": "94ed55ba2578f6dd",
+  "duration_ms": 60418.2
+ },
+ "playbacks": {
+  "total": 2,
+  "exposed": 2,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 44465.1
+ },
+ "voice_discarded": 0,
+ "voice_held": 0,
+ "voice_errors": [],
+ "engine_errors": []
+}

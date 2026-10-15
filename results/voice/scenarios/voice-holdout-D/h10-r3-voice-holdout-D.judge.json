@@ -1,0 +1,73 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진이 미성년자 결제로 전액 환불된다고 안내하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "상담 엔진이 결제 당시 이미 만 19세여서 미성년자 결제 취소 대상이 아니라는 점을 안내하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "상담 엔진이 청약철회 기간이 지났다는 사실을 안내하지 않았습니다."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "약관상 환불 거절 사유(나이 및 기간 경과)를 안내하지 않고, 환불금 없이 해지할 것인지 묻는 데 그쳐 거절(refuse)로 적절히 처리하지 못했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 생일과 결제일을 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진으로부터 미성년자 결제 취소가 안 된다는 구체적인 설명을 듣지 못해 질문할 기회가 없었습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 6]에서 별도의 환불 금액이 없다는 안내를 듣고, [고객 6]에서 환불 안 나오면 취소하지 않고 계속 쓰겠다고 정확히 말했습니다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "[상담 4]와 [상담 5]에서 인증번호를 요청받고, [고객 4]와 [고객 5]에서 '0210'을 정확하게 대답했습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 18665.5,
+   "input_tokens": 2816,
+   "output_tokens": 2348,
+   "thoughts_tokens": 1810,
+   "cost_usd": 0.033808,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.033808,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h10-r3-voice-holdout-D",
+ "scenario": "h10"
+}

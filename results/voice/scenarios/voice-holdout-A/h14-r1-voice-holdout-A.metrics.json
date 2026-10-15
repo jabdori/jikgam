@@ -1,0 +1,120 @@
+{
+ "session": "h14-r1-voice-holdout-A",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "여보세요? 그 별담인가 뭔가, 테레비 보는 거, 그거 인자 안 볼라 그러는데 끊어 줘요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "여보세요. / 그 별담인가 뭔가 텔레비전 보는 거 그거 이제 안 보려고 그러는데 끊어줘요.",
+   "finals": 2,
+   "utt_ids": [
+    "u1",
+    "u2"
+   ],
+   "first_partial_ms": 1262.2,
+   "final_ms": 811.4,
+   "t_end_error_ms": 7.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 11658.9,
+   "first_audio_from_t_end_ms": 11651.7,
+   "engine_ms": 2006.4,
+   "tts_ms": 958.4,
+   "reply_suggestion": "h14-r1-voice-holdout-A-s2",
+   "replies_held": 1,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "전화번호는 010-0000-0214고, 문자에 번호가 칠 삼 일 공 써 있네.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "전화번호는 010-0000-0214고 / 문자에 번호가 7310 써있네?",
+   "finals": 2,
+   "utt_ids": [
+    "u3",
+    "u4"
+   ],
+   "first_partial_ms": 526.4,
+   "final_ms": 750.5,
+   "t_end_error_ms": -3.8,
+   "t_end_source": "vad",
+   "first_audio_ms": 12816.6,
+   "first_audio_from_t_end_ms": 12820.4,
+   "engine_ms": 3919.8,
+   "tts_ms": 865.9,
+   "reply_suggestion": "h14-r1-voice-holdout-A-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "아, 이게 아닌가 보네. 가만있어 봐요, 아 이건가, 공 칠 삼 일 적혀 있는데.",
+   "marker": {
+    "condition_change": false,
+    "invalidates_prior": false,
+    "event": "h14#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "아 이게 아닌가보네. / 가만 있어 봐요. 아, 이건가? 0731 적혀 있는데.",
+   "finals": 2,
+   "utt_ids": [
+    "u5",
+    "u6"
+   ],
+   "first_partial_ms": 1303.3,
+   "final_ms": 816.6,
+   "t_end_error_ms": 21.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 14663.9,
+   "first_audio_from_t_end_ms": 14642.6,
+   "engine_ms": 6685.1,
+   "tts_ms": 842.0,
+   "reply_suggestion": "h14-r1-voice-holdout-A-s6",
+   "replies_held": 1,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-A/h14-r1-voice-holdout-A.wav",
+  "t0_ms": 2811142.799,
+  "sha256_16": "57a2407224beb88e",
+  "duration_ms": 120798.7
+ },
+ "playbacks": {
+  "total": 6,
+  "exposed": 6,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 75380.9
+ },
+ "voice_discarded": 0,
+ "voice_held": 2,
+ "voice_errors": [],
+ "engine_errors": []
+}

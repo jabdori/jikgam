@@ -1,0 +1,107 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 2]에서 62,190원이 아닌 79,000원 전액 환불로 정확히 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 2]에서 위약금 없이 환불이 가능하다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "환불 접수(create_refund_request) API가 한 번만 호출되었습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 2]에서 접수 후 상담사 승인을 거쳐 확정된다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 2]에서 이용 이력이 없어 위약금 없이 79,000원 청약철회 환불이 가능하다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 2]에서 상담사 승인을 거쳐 확정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 2]에서 카드 승인 취소로 진행되며 3~7영업일이 소요된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 2]에서 서비스 이용은 오늘(2026-10-12) 즉시 종료된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청에 따라 청약철회를 통한 연간 구독 해지 및 79,000원 전액 환불 접수를 성공적으로 완료하고 관련 사항을 정확히 안내했습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 2]에서 해지 및 환불에 대한 상세 내용을 안내하고 진행 여부를 물었으며, [고객 3]이 동의한 후 API를 호출했습니다."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "[상담 2]에서 해지 및 환불에 대한 상세 내용을 안내하고 진행 여부를 물었으며, [고객 3]이 동의한 후 API를 호출했습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 이용 여부를 묻지 않고 API 조회를 통해 확인했기 때문에 질문받을 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "접수 중 오류가 발생하지 않아 해당 규칙이 적용될 상황이 없었습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 1]의 요청에 따라 [고객 2]에서 휴대폰 번호와 인증번호를 정확하게 답변했습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 18647.0,
+   "input_tokens": 3054,
+   "output_tokens": 2393,
+   "thoughts_tokens": 1547,
+   "cost_usd": 0.034824,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.034824,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h17-r2-voice-holdout-A",
+ "scenario": "h17"
+}

@@ -1,0 +1,92 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 1]에서 제3자 요청으로는 해지 및 환불 접수와 계정 정보 확인이 불가하다고 안내하며 접수를 거절했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 4], [상담 5], [상담 6]에서 이미 결제된 요금은 환불되지 않는다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "오늘이 7일째라서 청약철회 기간 안이라고 안내한 적이 없습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 4]에서 2026년 11월 3일까지 서비스를 계속 이용할 수 있다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "[상담 4] 등에서 환불이 불가하다는 점은 안내했으나, 그 근거(결제 다음 날부터 세어 7일이 지났기 때문)는 설명하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4], [상담 5], [상담 6]에서 2026년 11월 3일까지 서비스를 이용할 수 있다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "월 구독 해지를 접수하고 환불은 없으며 다음 결제일 전날까지 이용 가능하다고 안내하여 요청을 성공적으로 처리했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 2]에서 '4일 결제니까 오늘이 딱 일주일 아니에요?'라고 따졌습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 6]에서 환불 불가 안내를 듣고 '환불은 안 돼도 해지는 진행해 주세요'라고 말했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 4]와 [고객 5]에서 요청에 따라 본인 휴대폰 번호와 인증번호를 정확히 읽었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 3]에서 사건 실행 표시와 함께 명의가 본인 명의라고 정정하는 내용을 말했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 17984.1,
+   "input_tokens": 3104,
+   "output_tokens": 2031,
+   "thoughts_tokens": 1332,
+   "cost_usd": 0.03058,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.03058,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h15-r3-voice-holdout-C",
+ "scenario": "h15"
+}

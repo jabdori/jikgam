@@ -1,0 +1,1121 @@
+{
+ "runs": [
+  "results/voice/scenarios/voice-holdout-A",
+  "results/voice/scenarios/voice-holdout-C",
+  "results/voice/scenarios/voice-holdout-D"
+ ],
+ "policies": {
+  "A": {
+   "sessions": 60,
+   "valid": 52,
+   "invalid": 8,
+   "passed": 22,
+   "undetermined": 0,
+   "pass_rate": 0.4230769230769231,
+   "invalid_runs": [
+    {
+     "session": "h13-r2-voice-holdout-A",
+     "reasons": [
+      "reveal_rules#1 어김: [상담 1]과 [상담 2]에서 상담사 연결 안내를 받았음에도 항의하고 받아들이는 발언을 하지 않은 채 대화가 종료되었습니다."
+     ]
+    },
+    {
+     "session": "h14-r2-voice-holdout-A",
+     "reasons": [
+      "reveal_rules#2 어김: [상담 4]에서 상담사 연결을 안내했으나 고객이 정해진 답변을 하지 않은 채 대화가 종료되었습니다."
+     ]
+    },
+    {
+     "session": "h02-r3-voice-holdout-A",
+     "reasons": [
+      "사건 #0 어김: 고객이 [고객 4]에서 동의하며 대화를 스스로 마무리하는 바람에 정정하는 사건을 실행하지 못함."
+     ]
+    },
+    {
+     "session": "h06-r3-voice-holdout-A",
+     "reasons": [
+      "reveal_rules#3 어김: [상담 3], [상담 4]에서 상담사 연결을 안내받았으나, 기다리겠다는 대답을 하지 않은 채 대화가 종료되었습니다."
+     ]
+    },
+    {
+     "session": "h08-r3-voice-holdout-A",
+     "reasons": [
+      "reveal_rules#1 어김: 환불 이야기가 나왔음에도 고객이 '계좌 불러 드려야 돼요?'라고 질문하지 않고 대화를 종료함."
+     ]
+    },
+    {
+     "session": "h13-r3-voice-holdout-A",
+     "reasons": [
+      "reveal_rules#1 어김: [상담 1]에서 상담사 연결을 안내받았으나 고객이 항의하거나 받아들이는 발화를 하지 않고 대화가 종료되었다."
+     ]
+    },
+    {
+     "session": "h14-r3-voice-holdout-A",
+     "reasons": [
+      "사건 #0 어김: [고객 2]에서 표시 없이 1회 실패 행동을 실행했으며, (사건 #0 실행 표시)가 붙은 [고객 3]의 내용은 1회 실패가 아닌 2회 실패에 해당합니다."
+     ]
+    },
+    {
+     "session": "h20-r3-voice-holdout-A",
+     "reasons": [
+      "reveal_rules#1 어김: [상담 5]에서 상담 엔진이 장애를 언급했으나, [고객 4]에서 규칙에 지정된 대사인 '아 그날 오후 내내 안 됐어요'라고 동의하지 않았습니다.",
+      "사건 #0 어김: [고객 3]에서 실행 표시 없이 사건 내용(문자 미수신 항의)을 미리 발언했으며, 정작 (사건 #0 실행 표시)가 붙은 [고객 4]에서는 사건 내용과 전혀 다른 발언을 했습니다."
+     ]
+    }
+   ],
+   "end_reasons": {
+    "customer_done": 35,
+    "handoff": 25
+   },
+   "notes": [],
+   "valid_runs": {
+    "stale": {
+     "invalid": 19,
+     "denominator": 62,
+     "unconfirmed": 1,
+     "rate": 0.3064516129032258,
+     "played_ms_total": 446017.7,
+     "played_ms": [
+      19376.6,
+      25498.7,
+      19280.1,
+      27954.1,
+      29491.9,
+      25151.5,
+      31440.3,
+      21616.2,
+      32910.5,
+      18795.1,
+      26461.7,
+      23755.3,
+      22667.7,
+      11522.1,
+      6330.8,
+      28553.9,
+      26775.6,
+      26117.9,
+      22317.7
+     ],
+     "cases": [
+      {
+       "kind": "invalid",
+       "suggestion_id": "h06-r1-voice-holdout-A-s4",
+       "basis_version": 4,
+       "start": 1512945.162,
+       "events": [
+        "h06#0"
+       ],
+       "played_ms": 19376.6,
+       "interrupted": null,
+       "session": "h06-r1-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h07-r1-voice-holdout-A-s3",
+       "basis_version": 3,
+       "start": 1702080.446,
+       "events": [
+        "h07#0"
+       ],
+       "played_ms": 25498.7,
+       "interrupted": null,
+       "session": "h07-r1-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h08-r1-voice-holdout-A-s3",
+       "basis_version": 3,
+       "start": 1954292.798,
+       "events": [
+        "h08#0"
+       ],
+       "played_ms": 19280.1,
+       "interrupted": null,
+       "session": "h08-r1-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h08-r1-voice-holdout-A-s4",
+       "basis_version": 4,
+       "start": 1974648.554,
+       "events": [
+        "h08#0"
+       ],
+       "played_ms": 27954.1,
+       "interrupted": null,
+       "session": "h08-r1-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h09-r1-voice-holdout-A-s6",
+       "basis_version": 6,
+       "start": 2210514.871,
+       "events": [
+        "h09#0"
+       ],
+       "played_ms": 29491.9,
+       "interrupted": null,
+       "session": "h09-r1-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h16-r1-voice-holdout-A-s6",
+       "basis_version": 6,
+       "start": 3350248.607,
+       "events": [
+        "h16#0"
+       ],
+       "played_ms": 25151.5,
+       "interrupted": null,
+       "session": "h16-r1-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h16-r1-voice-holdout-A-s9",
+       "basis_version": 9,
+       "start": 3415734.01,
+       "events": [
+        "h16#1"
+       ],
+       "played_ms": 31440.3,
+       "interrupted": null,
+       "session": "h16-r1-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h06-r2-voice-holdout-A-s7",
+       "basis_version": 7,
+       "start": 5950438.269,
+       "events": [
+        "h06#0"
+       ],
+       "played_ms": 21616.2,
+       "interrupted": null,
+       "session": "h06-r2-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h07-r2-voice-holdout-A-s4",
+       "basis_version": 4,
+       "start": 6129640.218,
+       "events": [
+        "h07#0"
+       ],
+       "played_ms": 32910.5,
+       "interrupted": null,
+       "session": "h07-r2-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h08-r2-voice-holdout-A-s4",
+       "basis_version": 4,
+       "start": 6345157.88,
+       "events": [
+        "h08#0"
+       ],
+       "played_ms": 18795.1,
+       "interrupted": null,
+       "session": "h08-r2-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h08-r2-voice-holdout-A-s5",
+       "basis_version": 5,
+       "start": 6364970.614,
+       "events": [
+        "h08#0"
+       ],
+       "played_ms": 26461.7,
+       "interrupted": null,
+       "session": "h08-r2-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h09-r2-voice-holdout-A-s10",
+       "basis_version": 10,
+       "start": 6705023.406,
+       "events": [
+        "h09#0"
+       ],
+       "played_ms": 23755.3,
+       "interrupted": null,
+       "session": "h09-r2-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h16-r2-voice-holdout-A-s4",
+       "basis_version": 4,
+       "start": 8114517.294,
+       "events": [
+        "h16#0"
+       ],
+       "played_ms": 22667.7,
+       "interrupted": null,
+       "session": "h16-r2-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h16-r2-voice-holdout-A-s7",
+       "basis_version": 7,
+       "start": 8179971.733,
+       "events": [
+        "h16#1"
+       ],
+       "played_ms": 11522.1,
+       "interrupted": null,
+       "session": "h16-r2-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h16-r2-voice-holdout-A-s8",
+       "basis_version": 8,
+       "start": 8192301.596,
+       "events": [
+        "h16#1"
+       ],
+       "played_ms": 6330.8,
+       "interrupted": null,
+       "session": "h16-r2-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h04-r3-voice-holdout-A-s7",
+       "basis_version": 7,
+       "start": 10404051.013,
+       "events": [
+        "h04#0"
+       ],
+       "played_ms": 28553.9,
+       "interrupted": null,
+       "session": "h04-r3-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h09-r3-voice-holdout-A-s6",
+       "basis_version": 6,
+       "start": 11705778.909,
+       "events": [
+        "h09#0"
+       ],
+       "played_ms": 26775.6,
+       "interrupted": null,
+       "session": "h09-r3-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h16-r3-voice-holdout-A-s5",
+       "basis_version": 5,
+       "start": 13049496.249,
+       "events": [
+        "h16#0"
+       ],
+       "played_ms": 26117.9,
+       "interrupted": null,
+       "session": "h16-r3-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h16-r3-voice-holdout-A-s6",
+       "basis_version": 6,
+       "start": 13076702.468,
+       "events": [
+        "h16#0"
+       ],
+       "played_ms": 22317.7,
+       "interrupted": null,
+       "session": "h16-r3-voice-holdout-A"
+      }
+     ]
+    },
+    "refresh": {
+     "events": 24,
+     "p50": 5528.2495,
+     "p95": 18635.35565000001,
+     "misses": 0
+    },
+    "refresh_from_speech_end": {
+     "events": 24,
+     "p50": 5549.200000000001,
+     "p95": 18643.195000000007,
+     "misses": 0
+    },
+    "new_condition_audio": {
+     "events": 24,
+     "p50": 28061.1,
+     "p95": 51872.130000000005,
+     "misses": 1
+    },
+    "barge_ins": {
+     "count": 0,
+     "cancelled_before_audio": 49,
+     "detect": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     },
+     "stop": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     },
+     "new_audio": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     }
+    }
+   },
+   "all_runs": {
+    "stale": {
+     "invalid": 21,
+     "denominator": 67,
+     "unconfirmed": 1,
+     "rate": 0.31343283582089554,
+     "played_ms_total": 491011.5,
+     "played_ms": [
+      19376.6,
+      25498.7,
+      19280.1,
+      27954.1,
+      29491.9,
+      25151.5,
+      31440.3,
+      21616.2,
+      32910.5,
+      18795.1,
+      26461.7,
+      23755.3,
+      22667.7,
+      11522.1,
+      6330.8,
+      28553.9,
+      19924.2,
+      25069.6,
+      26775.6,
+      26117.9,
+      22317.7
+     ],
+     "cases": [
+      {
+       "kind": "invalid",
+       "suggestion_id": "h06-r1-voice-holdout-A-s4",
+       "basis_version": 4,
+       "start": 1512945.162,
+       "events": [
+        "h06#0"
+       ],
+       "played_ms": 19376.6,
+       "interrupted": null,
+       "session": "h06-r1-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h07-r1-voice-holdout-A-s3",
+       "basis_version": 3,
+       "start": 1702080.446,
+       "events": [
+        "h07#0"
+       ],
+       "played_ms": 25498.7,
+       "interrupted": null,
+       "session": "h07-r1-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h08-r1-voice-holdout-A-s3",
+       "basis_version": 3,
+       "start": 1954292.798,
+       "events": [
+        "h08#0"
+       ],
+       "played_ms": 19280.1,
+       "interrupted": null,
+       "session": "h08-r1-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h08-r1-voice-holdout-A-s4",
+       "basis_version": 4,
+       "start": 1974648.554,
+       "events": [
+        "h08#0"
+       ],
+       "played_ms": 27954.1,
+       "interrupted": null,
+       "session": "h08-r1-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h09-r1-voice-holdout-A-s6",
+       "basis_version": 6,
+       "start": 2210514.871,
+       "events": [
+        "h09#0"
+       ],
+       "played_ms": 29491.9,
+       "interrupted": null,
+       "session": "h09-r1-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h16-r1-voice-holdout-A-s6",
+       "basis_version": 6,
+       "start": 3350248.607,
+       "events": [
+        "h16#0"
+       ],
+       "played_ms": 25151.5,
+       "interrupted": null,
+       "session": "h16-r1-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h16-r1-voice-holdout-A-s9",
+       "basis_version": 9,
+       "start": 3415734.01,
+       "events": [
+        "h16#1"
+       ],
+       "played_ms": 31440.3,
+       "interrupted": null,
+       "session": "h16-r1-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h06-r2-voice-holdout-A-s7",
+       "basis_version": 7,
+       "start": 5950438.269,
+       "events": [
+        "h06#0"
+       ],
+       "played_ms": 21616.2,
+       "interrupted": null,
+       "session": "h06-r2-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h07-r2-voice-holdout-A-s4",
+       "basis_version": 4,
+       "start": 6129640.218,
+       "events": [
+        "h07#0"
+       ],
+       "played_ms": 32910.5,
+       "interrupted": null,
+       "session": "h07-r2-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h08-r2-voice-holdout-A-s4",
+       "basis_version": 4,
+       "start": 6345157.88,
+       "events": [
+        "h08#0"
+       ],
+       "played_ms": 18795.1,
+       "interrupted": null,
+       "session": "h08-r2-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h08-r2-voice-holdout-A-s5",
+       "basis_version": 5,
+       "start": 6364970.614,
+       "events": [
+        "h08#0"
+       ],
+       "played_ms": 26461.7,
+       "interrupted": null,
+       "session": "h08-r2-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h09-r2-voice-holdout-A-s10",
+       "basis_version": 10,
+       "start": 6705023.406,
+       "events": [
+        "h09#0"
+       ],
+       "played_ms": 23755.3,
+       "interrupted": null,
+       "session": "h09-r2-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h16-r2-voice-holdout-A-s4",
+       "basis_version": 4,
+       "start": 8114517.294,
+       "events": [
+        "h16#0"
+       ],
+       "played_ms": 22667.7,
+       "interrupted": null,
+       "session": "h16-r2-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h16-r2-voice-holdout-A-s7",
+       "basis_version": 7,
+       "start": 8179971.733,
+       "events": [
+        "h16#1"
+       ],
+       "played_ms": 11522.1,
+       "interrupted": null,
+       "session": "h16-r2-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h16-r2-voice-holdout-A-s8",
+       "basis_version": 8,
+       "start": 8192301.596,
+       "events": [
+        "h16#1"
+       ],
+       "played_ms": 6330.8,
+       "interrupted": null,
+       "session": "h16-r2-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h04-r3-voice-holdout-A-s7",
+       "basis_version": 7,
+       "start": 10404051.013,
+       "events": [
+        "h04#0"
+       ],
+       "played_ms": 28553.9,
+       "interrupted": null,
+       "session": "h04-r3-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h06-r3-voice-holdout-A-s4",
+       "basis_version": 4,
+       "start": 10948102.196,
+       "events": [
+        "h06#0"
+       ],
+       "played_ms": 19924.2,
+       "interrupted": null,
+       "session": "h06-r3-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h08-r3-voice-holdout-A-s5",
+       "basis_version": 5,
+       "start": 11387041.135,
+       "events": [
+        "h08#0"
+       ],
+       "played_ms": 25069.6,
+       "interrupted": null,
+       "session": "h08-r3-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h09-r3-voice-holdout-A-s6",
+       "basis_version": 6,
+       "start": 11705778.909,
+       "events": [
+        "h09#0"
+       ],
+       "played_ms": 26775.6,
+       "interrupted": null,
+       "session": "h09-r3-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h16-r3-voice-holdout-A-s5",
+       "basis_version": 5,
+       "start": 13049496.249,
+       "events": [
+        "h16#0"
+       ],
+       "played_ms": 26117.9,
+       "interrupted": null,
+       "session": "h16-r3-voice-holdout-A"
+      },
+      {
+       "kind": "invalid",
+       "suggestion_id": "h16-r3-voice-holdout-A-s6",
+       "basis_version": 6,
+       "start": 13076702.468,
+       "events": [
+        "h16#0"
+       ],
+       "played_ms": 22317.7,
+       "interrupted": null,
+       "session": "h16-r3-voice-holdout-A"
+      }
+     ]
+    },
+    "refresh": {
+     "events": 26,
+     "p50": 5697.62,
+     "p95": 18104.016750000003,
+     "misses": 0
+    },
+    "refresh_from_speech_end": {
+     "events": 26,
+     "p50": 5728.9,
+     "p95": 18113.325,
+     "misses": 0
+    },
+    "new_condition_audio": {
+     "events": 26,
+     "p50": 28061.1,
+     "p95": 51756.350000000006,
+     "misses": 1
+    },
+    "barge_ins": {
+     "count": 0,
+     "cancelled_before_audio": 57,
+     "detect": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     },
+     "stop": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     },
+     "new_audio": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     }
+    }
+   },
+   "cost_usd": {
+    "customer_usd": 0.3069,
+    "customer_tts_usd": 0.2417,
+    "engine_usd": 4.496,
+    "stt_estimate_usd": 1.8023,
+    "tts_estimate_usd": 0.9881,
+    "judge_usd": 3.0276
+   },
+   "cost_usd_total": 10.8626,
+   "provisional": {
+    "sent": 0,
+    "confirmed": 0,
+    "replaced": 0,
+    "unconfirmed": 0,
+    "prejudge_calls": 0,
+    "prejudged_used": 0
+   },
+   "decision_calls": 0,
+   "per_run": {
+    "1": {
+     "passed": 7,
+     "valid": 20
+    },
+    "2": {
+     "passed": 10,
+     "valid": 18
+    },
+    "3": {
+     "passed": 5,
+     "valid": 14
+    }
+   }
+  },
+  "C": {
+   "sessions": 60,
+   "valid": 57,
+   "invalid": 3,
+   "passed": 38,
+   "undetermined": 0,
+   "pass_rate": 0.6666666666666666,
+   "invalid_runs": [
+    {
+     "session": "h03-r1-voice-holdout-C",
+     "reasons": [
+      "reveal_rules#0 어김: 상담원이 결제 시각을 묻지 않았으나 [고객 4]에서 먼저 문자에 찍힌 시간과 결제 버튼을 누른 날짜를 말함."
+     ]
+    },
+    {
+     "session": "h20-r2-voice-holdout-C",
+     "reasons": [
+      "reveal_rules#1 어김: 상담원이 [상담 3]에서 서비스 장애를 언급했으나, 고객은 [고객 4]에서 정해진 대사('아 그날 오후 내내 안 됐어요')로 동의하지 않았습니다."
+     ]
+    },
+    {
+     "session": "h20-r3-voice-holdout-C",
+     "reasons": [
+      "reveal_rules#1 어김: [상담 3]에서 상담원이 장애를 언급했으나 [고객 4]에서 정해진 동의 발화를 하지 않음."
+     ]
+    }
+   ],
+   "end_reasons": {
+    "customer_done": 51,
+    "handoff": 9
+   },
+   "notes": [],
+   "valid_runs": {
+    "stale": {
+     "invalid": 0,
+     "denominator": 72,
+     "unconfirmed": 0,
+     "rate": 0.0,
+     "played_ms_total": 0,
+     "played_ms": [],
+     "cases": []
+    },
+    "refresh": {
+     "events": 27,
+     "p50": 1053.978,
+     "p95": 1230.5270999999998,
+     "misses": 0
+    },
+    "refresh_from_speech_end": {
+     "events": 27,
+     "p50": 1061.8,
+     "p95": 1240.42,
+     "misses": 0
+    },
+    "new_condition_audio": {
+     "events": 27,
+     "p50": 4921.3,
+     "p95": 5584.9800000000005,
+     "misses": 0
+    },
+    "barge_ins": {
+     "count": 0,
+     "cancelled_before_audio": 0,
+     "detect": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     },
+     "stop": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     },
+     "new_audio": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     }
+    }
+   },
+   "all_runs": {
+    "stale": {
+     "invalid": 0,
+     "denominator": 72,
+     "unconfirmed": 0,
+     "rate": 0.0,
+     "played_ms_total": 0,
+     "played_ms": [],
+     "cases": []
+    },
+    "refresh": {
+     "events": 27,
+     "p50": 1053.978,
+     "p95": 1230.5270999999998,
+     "misses": 0
+    },
+    "refresh_from_speech_end": {
+     "events": 27,
+     "p50": 1061.8,
+     "p95": 1240.42,
+     "misses": 0
+    },
+    "new_condition_audio": {
+     "events": 27,
+     "p50": 4921.3,
+     "p95": 5584.9800000000005,
+     "misses": 0
+    },
+    "barge_ins": {
+     "count": 0,
+     "cancelled_before_audio": 0,
+     "detect": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     },
+     "stop": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     },
+     "new_audio": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     }
+    }
+   },
+   "cost_usd": {
+    "customer_usd": 0.5133,
+    "customer_tts_usd": 0.295,
+    "engine_usd": 1.5287,
+    "stt_estimate_usd": 2.0611,
+    "tts_estimate_usd": 1.0339,
+    "judge_usd": 2.5432
+   },
+   "cost_usd_total": 7.9753,
+   "provisional": {
+    "sent": 0,
+    "confirmed": 0,
+    "replaced": 0,
+    "unconfirmed": 0,
+    "prejudge_calls": 0,
+    "prejudged_used": 0
+   },
+   "decision_calls": 747,
+   "per_run": {
+    "1": {
+     "passed": 13,
+     "valid": 19
+    },
+    "2": {
+     "passed": 13,
+     "valid": 19
+    },
+    "3": {
+     "passed": 12,
+     "valid": 19
+    }
+   }
+  },
+  "D": {
+   "sessions": 60,
+   "valid": 54,
+   "invalid": 6,
+   "passed": 39,
+   "undetermined": 0,
+   "pass_rate": 0.7222222222222222,
+   "invalid_runs": [
+    {
+     "session": "h03-r1-voice-holdout-D",
+     "reasons": [
+      "reveal_rules#0 어김: 상담사가 결제 시각을 묻지 않았음에도 [고객 4]에서 먼저 결제 시각에 대한 정보를 말함."
+     ]
+    },
+    {
+     "session": "h13-r1-voice-holdout-D",
+     "reasons": [
+      "reveal_rules#1 어김: 상담 3에서 상담사 연결을 안내받았으나, 항의하는 발화 없이 대화가 종료되었습니다."
+     ]
+    },
+    {
+     "session": "h04-r2-voice-holdout-D",
+     "reasons": [
+      "reveal_rules#1 어김: 상담원이 기한 만료를 안내하기 전인 [고객 4]에서 미리 해당 대사로 환불을 요구했으며, 정작 기한 만료를 안내받은 후인 [고객 6]에서는 다시 요구하지 않고 바로 수긍함."
+     ]
+    },
+    {
+     "session": "h20-r2-voice-holdout-D",
+     "reasons": [
+      "reveal_rules#1 어김: [상담 4]에서 상담원이 서비스 장애를 언급했으나, [고객 5]에서 장애 내용에 동의하는 정해진 반응을 하지 않고 환불 접수만 수락했습니다."
+     ]
+    },
+    {
+     "session": "h03-r3-voice-holdout-D",
+     "reasons": [
+      "reveal_rules#0 어김: 상담원이 결제 시각을 묻지 않았으나 [고객 4]에서 먼저 결제 문자 수신 시각을 말함."
+     ]
+    },
+    {
+     "session": "h20-r3-voice-holdout-D",
+     "reasons": [
+      "reveal_rules#1 어김: [상담 4]에서 상담원이 서비스 장애를 언급했으나, [고객 5]에서 지시된 대로 장애 내용에 대해 동의하는 발언을 하지 않았습니다."
+     ]
+    }
+   ],
+   "end_reasons": {
+    "customer_done": 51,
+    "handoff": 9
+   },
+   "notes": [],
+   "valid_runs": {
+    "stale": {
+     "invalid": 0,
+     "denominator": 74,
+     "unconfirmed": 1,
+     "rate": 0.0,
+     "played_ms_total": 0,
+     "played_ms": [],
+     "cases": []
+    },
+    "refresh": {
+     "events": 26,
+     "p50": 925.0235,
+     "p95": 1129.46325,
+     "misses": 1
+    },
+    "refresh_from_speech_end": {
+     "events": 26,
+     "p50": 964.3,
+     "p95": 1128.175,
+     "misses": 1
+    },
+    "new_condition_audio": {
+     "events": 26,
+     "p50": 4625.0,
+     "p95": 5541.2,
+     "misses": 0
+    },
+    "barge_ins": {
+     "count": 0,
+     "cancelled_before_audio": 1,
+     "detect": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     },
+     "stop": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     },
+     "new_audio": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     }
+    }
+   },
+   "all_runs": {
+    "stale": {
+     "invalid": 0,
+     "denominator": 77,
+     "unconfirmed": 1,
+     "rate": 0.0,
+     "played_ms_total": 0,
+     "played_ms": [],
+     "cases": []
+    },
+    "refresh": {
+     "events": 27,
+     "p50": 937.087,
+     "p95": 1128.3813,
+     "misses": 1
+    },
+    "refresh_from_speech_end": {
+     "events": 27,
+     "p50": 968.4,
+     "p95": 1128.07,
+     "misses": 1
+    },
+    "new_condition_audio": {
+     "events": 27,
+     "p50": 4628.7,
+     "p95": 5538.4,
+     "misses": 0
+    },
+    "barge_ins": {
+     "count": 0,
+     "cancelled_before_audio": 1,
+     "detect": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     },
+     "stop": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     },
+     "new_audio": {
+      "events": 0,
+      "p50": "nan",
+      "p95": "nan",
+      "misses": 0
+     }
+    }
+   },
+   "cost_usd": {
+    "customer_usd": 0.5314,
+    "customer_tts_usd": 0.2979,
+    "engine_usd": 2.1012,
+    "stt_estimate_usd": 2.0719,
+    "tts_estimate_usd": 1.043,
+    "judge_usd": 2.7779
+   },
+   "cost_usd_total": 8.8235,
+   "provisional": {
+    "sent": 316,
+    "confirmed": 180,
+    "replaced": 133,
+    "unconfirmed": 3,
+    "prejudge_calls": 2643,
+    "prejudged_used": 247
+   },
+   "decision_calls": 3521,
+   "per_run": {
+    "1": {
+     "passed": 12,
+     "valid": 18
+    },
+    "2": {
+     "passed": 13,
+     "valid": 18
+    },
+    "3": {
+     "passed": 14,
+     "valid": 18
+    }
+   }
+  }
+ },
+ "verdict": [
+  {
+   "policy": "C",
+   "condition": "근거 갱신: C p95 500ms 이하, A p95의 1/10 이하",
+   "value": "C 1,231ms, A 18,635ms, 비 0.066",
+   "ok": false
+  },
+  {
+   "policy": "C",
+   "condition": "이미 틀린 안내: C 무효 음성 노출률 5% 이하, A보다 10%p 이상 낮음",
+   "value": "C 0/72, A 19/62",
+   "ok": true
+  },
+  {
+   "policy": "C",
+   "condition": "업무 성공 보호: C 통과율이 A보다 5%p 넘게 낮지 않음",
+   "value": "C 38/57, A 22/52",
+   "ok": true
+  },
+  {
+   "policy": "D",
+   "condition": "근거 갱신: D p95 500ms 이하, A p95의 1/10 이하",
+   "value": "D 1,129ms, A 18,635ms, 비 0.061",
+   "ok": false
+  },
+  {
+   "policy": "D",
+   "condition": "이미 틀린 안내: D 무효 음성 노출률 5% 이하, A보다 10%p 이상 낮음",
+   "value": "D 0/74, A 19/62",
+   "ok": true
+  },
+  {
+   "policy": "D",
+   "condition": "업무 성공 보호: D 통과율이 A보다 5%p 넘게 낮지 않음",
+   "value": "D 39/54, A 22/52",
+   "ok": true
+  }
+ ]
+}

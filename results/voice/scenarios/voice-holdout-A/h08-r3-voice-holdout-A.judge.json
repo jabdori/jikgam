@@ -1,0 +1,108 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "계좌 등록이나 환불 계좌를 요구하지 않음."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "요청이 환불로 바뀐 뒤에는 2026-10-12에 즉시 종료된다고 올바르게 안내함."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "환불 없이 해지만 접수하고 끝내지 않고 전액 환불 접수로 진행함."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "카드 승인 취소가 아닌 휴대폰 소액결제 취소 방식으로 안내함."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 이용 이력이 없어 전액 청약철회가 가능하다고 산정 근거를 밝히고 9,900원 환불을 안내함."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "[상담 3]과 [상담 4]에서 휴대폰 소액결제 취소는 안내하였으나 계좌가 불필요하다는 내용은 명시하지 않음."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]과 [상담 4]에서 서비스 이용이 오늘(2026년 10월 12일) 종료됨을 정확하게 안내함."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 청약철회 조건을 확인한 후 9,900원 전액 환불과 휴대폰 결제 취소를 안내하고 접수를 완료함."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 2]에서 해지 시 이용 기간과 환불액 없음을 안내했고, [고객 3]에서 동의를 받은 뒤 쓰기 API가 호출됨."
+   },
+   {
+    "index": 1,
+    "consented": false,
+    "reason": "[상담 3]에서 청약철회 환불 조건을 안내하고 접수 여부를 물었으나, 고객이 대답하며 동의하기 전에 쓰기 API가 먼저 호출됨."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 이용 여부를 묻지 않고 자체적으로 시스템에서 이용 이력을 조회함."
+   },
+   {
+    "index": 1,
+    "status": "violated",
+    "reason": "환불 이야기가 나왔음에도 고객이 '계좌 불러 드려야 돼요?'라고 질문하지 않고 대화를 종료함."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 2]에서 상담원의 요청을 받고 휴대폰 번호와 인증번호를 정확하게 읽어줌."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 지정된 턴 이후 사건 실행 표시와 함께 환불 요청으로 말을 바꾸어 끼어듦."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 38309.8,
+   "input_tokens": 3194,
+   "output_tokens": 5019,
+   "thoughts_tokens": 4153,
+   "cost_usd": 0.066616,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.066616,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h08-r3-voice-holdout-A",
+ "scenario": "h08"
+}

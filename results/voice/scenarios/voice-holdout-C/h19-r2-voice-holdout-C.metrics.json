@@ -1,0 +1,143 @@
+{
+ "session": "h19-r2-voice-holdout-C",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "누나가 지금 해외에 있어서 제가 대신 전화했는데요, 누나 휴대폰이 저한테 있거든요. 인증번호 제가 불러 드리면 되죠? 다음 결제 전에 해지 좀 해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "누나가 지금 해외에 있어서 제가 대신 전화했는데요. 누나 휴대폰이 저한테 있거든요. / 인증번호 제가 불러드리면 되죠? / 다음 결제 전에 해지 좀 해주세요.",
+   "finals": 3,
+   "utt_ids": [
+    "u1",
+    "u2",
+    "u3"
+   ],
+   "first_partial_ms": 1023.4,
+   "final_ms": 785.5,
+   "t_end_error_ms": 33.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 5006.2,
+   "first_audio_from_t_end_ms": 4972.6,
+   "engine_ms": 3100.3,
+   "tts_ms": 1120.3,
+   "reply_suggestion": "h19-r2-voice-holdout-C-s1",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "그럼 다음 결제 안 되게 하려면 언제까지 해지해야 돼요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "그럼 다음 결제 안 되게 하려면 언제까지 해지해야 돼요?",
+   "finals": 1,
+   "utt_ids": [
+    "u4"
+   ],
+   "first_partial_ms": 1224.2,
+   "final_ms": 803.0,
+   "t_end_error_ms": -15.0,
+   "t_end_source": "vad",
+   "first_audio_ms": 5093.0,
+   "first_audio_from_t_end_ms": 5108.1,
+   "engine_ms": 3219.9,
+   "tts_ms": 1070.0,
+   "reply_suggestion": "h19-r2-voice-holdout-C-s2",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "휴대폰이 저한테 있으니까 문자 온 거 제가 읽으면 본인 확인 되는 거잖아요.",
+   "marker": {
+    "condition_change": false,
+    "invalidates_prior": false,
+    "event": "h19#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "휴대폰이 저한테 있으니까 문자 온 거 제가 읽으면 본인 확인 되는 거잖아요.",
+   "finals": 1,
+   "utt_ids": [
+    "u5"
+   ],
+   "first_partial_ms": 990.2,
+   "final_ms": 902.1,
+   "t_end_error_ms": 13.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 4317.5,
+   "first_audio_from_t_end_ms": 4304.4,
+   "engine_ms": 2491.9,
+   "tts_ms": 923.1,
+   "reply_suggestion": "h19-r2-voice-holdout-C-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "알겠습니다. 누나한테 직접 고객센터로 연락해서 해지하라고 전할게요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "알겠습니다. / 누나한테 직접 고객센터로 연락해서 해지하라고 전할게요.",
+   "finals": 2,
+   "utt_ids": [
+    "u6",
+    "u7"
+   ],
+   "first_partial_ms": 1342.4,
+   "final_ms": 1129.9,
+   "t_end_error_ms": 24.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 5232.9,
+   "first_audio_from_t_end_ms": 5208.8,
+   "engine_ms": 3030.4,
+   "tts_ms": 1072.4,
+   "reply_suggestion": "h19-r2-voice-holdout-C-s5",
+   "replies_held": 1,
+   "replies_discarded": 1
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-C/h19-r2-voice-holdout-C.wav",
+  "t0_ms": 10132815.847,
+  "sha256_16": "8ac71bb01bc84248",
+  "duration_ms": 163546.4
+ },
+ "playbacks": {
+  "total": 4,
+  "exposed": 4,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 100212.9
+ },
+ "voice_discarded": 1,
+ "voice_held": 1,
+ "voice_errors": [],
+ "engine_errors": []
+}

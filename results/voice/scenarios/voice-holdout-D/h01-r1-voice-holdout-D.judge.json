@@ -1,0 +1,91 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 3]에서 장애가 아닌 '유료 결제 후 이용 이력이 없어' 청약철회가 가능하다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 4]에서 무료 체험 기간 중의 이용은 이용 이력에 포함되지 않아 청약철회 대상이라고 올바르게 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 3]과 [상담 4]에서 이용 가능한 마지막 날을 2026-10-12까지라고 명확히 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 4]에서 무료 체험 기간 중 이용은 이용 이력에 포함되지 않음을 설명하며 환불 예정액이 9,900원이라고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3] 및 [상담 4]에서 카드 결제 취소로 환불 접수일로부터 3~7영업일 안에 승인 취소될 예정이라고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]과 [상담 4]에서 서비스 이용 가능한 마지막 날이 2026-10-12까지라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청대로 9,900원 전액 환불 및 구독 해지 접수를 완료하고 그 결과를 정확하게 안내했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 고객에게 이용 여부를 묻지 않고 자체적으로 시스템(API)을 통해 확인하여 규칙을 적용할 기회가 없었습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담원이 고객에게 장애 시간에 대해 질문하지 않아 규칙을 적용할 기회가 없었습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 2]에서 인증번호 요청을 받고 [고객 3]에서 '0201'이라고 정확히 답변했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4] 메시지에서 (사건 #0 실행 표시)와 함께 지시된 내용('근데 체험 때 많이 본 것 때문에 안 되는 거 아니에요?')을 정확히 실행했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 38849.1,
+   "input_tokens": 3643,
+   "output_tokens": 5330,
+   "thoughts_tokens": 4601,
+   "cost_usd": 0.071246,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.071246,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h01-r1-voice-holdout-D",
+ "scenario": "h01"
+}

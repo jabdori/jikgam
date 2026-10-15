@@ -1,0 +1,309 @@
+{
+ "session": "h04-r3-voice-holdout-D",
+ "provisional": {
+  "sent": 7,
+  "confirmed": 4,
+  "replaced": 3,
+  "unconfirmed": 0,
+  "prejudge_calls": 68,
+  "prejudged_used": 9
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "아 진짜… 카드 내역 보니까 별담 거 두 번 나간 게 또 있네요. 작년에도 그러더니. 그거 다 돌려주시고 그냥 해지해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아, 진짜. / 카드 내역 보니까 별다방고 두 번 나간 게 또 있네요. / 작년에도 그러더니 / 그거 다 돌려주시고 그냥 해지해주세요.",
+   "finals": 4,
+   "utt_ids": [
+    "u1",
+    "u3",
+    "u4",
+    "u5"
+   ],
+   "first_partial_ms": 1038.4,
+   "final_ms": 815.8,
+   "t_end_error_ms": 19.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 3647.1,
+   "first_audio_from_t_end_ms": 3627.3,
+   "engine_ms": 1811.4,
+   "tts_ms": 1019.8,
+   "reply_suggestion": "h04-r3-voice-holdout-D-s3",
+   "replies_held": 2,
+   "replies_discarded": 2
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "010-0000-0204요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "010 / 0204요.",
+   "finals": 2,
+   "utt_ids": [
+    "u6",
+    "u7"
+   ],
+   "first_partial_ms": 1256.1,
+   "final_ms": 820.0,
+   "t_end_error_ms": -5.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 4380.6,
+   "first_audio_from_t_end_ms": 4386.4,
+   "engine_ms": 2474.2,
+   "tts_ms": 1086.2,
+   "reply_suggestion": "h04-r3-voice-holdout-D-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "010-0000-0204 맞다니까요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "010-0000-0203 맞다니까요.",
+   "finals": 1,
+   "utt_ids": [
+    "u8"
+   ],
+   "first_partial_ms": 1754.7,
+   "final_ms": 840.5,
+   "t_end_error_ms": 1.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 4402.2,
+   "first_audio_from_t_end_ms": 4400.9,
+   "engine_ms": 2610.9,
+   "tts_ms": 950.7,
+   "reply_suggestion": "h04-r3-voice-holdout-D-s5",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "0204요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "",
+   "finals": 0,
+   "utt_ids": [],
+   "first_partial_ms": 1104.6,
+   "final_ms": null,
+   "t_end_error_ms": null,
+   "t_end_source": null,
+   "first_audio_ms": null,
+   "first_audio_from_t_end_ms": null,
+   "engine_ms": null,
+   "tts_ms": null,
+   "reply_suggestion": null,
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "아 근데 해지는 하지 마세요, 애가 매일 보는 거라… 두 번 나간 거만 돌려주세요.",
+   "marker": {
+    "condition_change": true,
+    "invalidates_prior": true,
+    "event": "h04#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "0204요. / 아 근데 해지는 하지 마세요. 애가 매일 보는 거라 두 번 나간 것만 돌려주세요.",
+   "finals": 2,
+   "utt_ids": [
+    "u9",
+    "u11"
+   ],
+   "first_partial_ms": 1015.8,
+   "final_ms": 890.3,
+   "t_end_error_ms": 13.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 4336.8,
+   "first_audio_from_t_end_ms": 4323.4,
+   "engine_ms": 2231.1,
+   "tts_ms": 1215.0,
+   "reply_suggestion": "h04-r3-voice-holdout-D-s7",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "번호 010-0000-0204 맞고, 문자로 온 인증번호 0204 맞는데 왜 안 된다는 거예요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "번호 010-0000-0204 맞고 문자로 온 인증번호 0204 맞는데 / 왜 안 된다는 거예요?",
+   "finals": 2,
+   "utt_ids": [
+    "u12",
+    "u13"
+   ],
+   "first_partial_ms": 1340.2,
+   "final_ms": 1113.9,
+   "t_end_error_ms": 41.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 5384.1,
+   "first_audio_from_t_end_ms": 5342.2,
+   "engine_ms": 3098.3,
+   "tts_ms": 1171.8,
+   "reply_suggestion": "h04-r3-voice-holdout-D-s8",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 7,
+   "utt_file": null,
+   "script": "네, 그렇게 접수해 주시고요, 작년 10월에 중복 결제된 것도 같이 돌려주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 그렇게 접수해 주시고요. 작년 10월에 중복 결제된 것도 같이 돌려주세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u14"
+   ],
+   "first_partial_ms": 1232.3,
+   "final_ms": 845.6,
+   "t_end_error_ms": -31.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 5029.0,
+   "first_audio_from_t_end_ms": 5060.9,
+   "engine_ms": 2973.3,
+   "tts_ms": 1210.0,
+   "reply_suggestion": "h04-r3-voice-holdout-D-s9",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 8,
+   "utt_file": null,
+   "script": "몰랐으니까 그것도 해 주세요. 그것까지 같이 안 돼요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "몰랐으니까 그것도 해주세요. 그것까지 같이. 안 돼요?",
+   "finals": 1,
+   "utt_ids": [
+    "u15"
+   ],
+   "first_partial_ms": 673.3,
+   "final_ms": 817.9,
+   "t_end_error_ms": 4.7,
+   "t_end_source": "vad",
+   "first_audio_ms": 7422.9,
+   "first_audio_from_t_end_ms": 7418.2,
+   "engine_ms": 5692.7,
+   "tts_ms": 911.8,
+   "reply_suggestion": "h04-r3-voice-holdout-D-s10",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 9,
+   "utt_file": null,
+   "script": "알겠어요. 그럼 아까 그거 지난달 것만이라도 환불 접수해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "알겠어요. 그럼 아까 그거 지난달 것만이라도 환불 접수해 주세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u17"
+   ],
+   "first_partial_ms": 1292.9,
+   "final_ms": 936.1,
+   "t_end_error_ms": 7.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 4882.9,
+   "first_audio_from_t_end_ms": 4875.4,
+   "engine_ms": 3016.1,
+   "tts_ms": 930.5,
+   "reply_suggestion": "h04-r3-voice-holdout-D-s11",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 10,
+   "utt_file": null,
+   "script": "네, 알겠습니다.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 알겠습니다.",
+   "finals": 1,
+   "utt_ids": [
+    "u18"
+   ],
+   "first_partial_ms": 649.0,
+   "final_ms": 771.5,
+   "t_end_error_ms": 19.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 4461.7,
+   "first_audio_from_t_end_ms": 4442.6,
+   "engine_ms": 2774.6,
+   "tts_ms": 915.2,
+   "reply_suggestion": "h04-r3-voice-holdout-D-s12",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [
+  {
+   "session": "h04-r3-voice-holdout-D",
+   "event": "h04#0",
+   "utt_id": "u11",
+   "version": 12,
+   "t0": 11692740.406,
+   "t1": 11693853.64,
+   "latency_ms": 1113.234,
+   "invalidates_prior": true,
+   "latency_from_speech_end_ms": 1126.6
+  }
+ ],
+ "new_condition_audio": [
+  {
+   "event": "h04#0",
+   "utt_id": "u11",
+   "version": 12,
+   "invalidates_prior": true,
+   "suggestion_id": "h04-r3-voice-holdout-D-s7",
+   "from_speech_end_ms": 4336.8,
+   "from_t0_ms": 4323.4
+  }
+ ],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 6,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": [
+   {
+    "event": "h04#0",
+    "invalid_exposures": 0
+   }
+  ]
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-D/h04-r3-voice-holdout-D.wav",
+  "t0_ms": 11595099.162,
+  "sha256_16": "9d2cf319acb6763b",
+  "duration_ms": 355140.2
+ },
+ "playbacks": {
+  "total": 9,
+  "exposed": 9,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 212748.0
+ },
+ "voice_discarded": 3,
+ "voice_held": 3,
+ "voice_errors": [],
+ "engine_errors": []
+}

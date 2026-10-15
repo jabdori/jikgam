@@ -1,0 +1,115 @@
+{
+ "session": "h13-r3-voice-holdout-D",
+ "provisional": {
+  "sent": 2,
+  "confirmed": 1,
+  "replaced": 1,
+  "unconfirmed": 0,
+  "prejudge_calls": 25,
+  "prejudged_used": 2
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "금요일에 결제된 거 안 쓸 거라서 카드사에 이의 신청했는데 처리가 너무 느려서요. 그냥 여기서 바로 환불해 주시면 안 돼요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "금요일에 결제된 거 안 쓸 거라서 카드사에 이의 신청했는데 처리가 너무 느려서요. / 그냥 여기서 바로 환불해 주시면 안 돼요?",
+   "finals": 2,
+   "utt_ids": [
+    "u2",
+    "u3"
+   ],
+   "first_partial_ms": 996.8,
+   "final_ms": 843.2,
+   "t_end_error_ms": 25.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 3917.7,
+   "first_audio_from_t_end_ms": 3891.8,
+   "engine_ms": 2159.8,
+   "tts_ms": 914.5,
+   "reply_suggestion": "h13-r3-voice-holdout-D-s2",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "제 번호는 010-0000-0213이에요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호는 010-0000-0213이에요.",
+   "finals": 1,
+   "utt_ids": [
+    "u4"
+   ],
+   "first_partial_ms": 513.9,
+   "final_ms": 805.7,
+   "t_end_error_ms": 10.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 4367.9,
+   "first_audio_from_t_end_ms": 4357.8,
+   "engine_ms": 2532.5,
+   "tts_ms": 1029.5,
+   "reply_suggestion": "h13-r3-voice-holdout-D-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "인증번호 0213이에요. 빨리 좀 부탁드려요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "인증 번호 0213이에요. / 빨리 좀 부탁드려요.",
+   "finals": 2,
+   "utt_ids": [
+    "u5",
+    "u6"
+   ],
+   "first_partial_ms": 1200.4,
+   "final_ms": 746.5,
+   "t_end_error_ms": -3.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 4388.0,
+   "first_audio_from_t_end_ms": 4391.4,
+   "engine_ms": 2731.8,
+   "tts_ms": 909.6,
+   "reply_suggestion": "h13-r3-voice-holdout-D-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-D/h13-r3-voice-holdout-D.wav",
+  "t0_ms": 14091626.557,
+  "sha256_16": "68488844541e9e6f",
+  "duration_ms": 89935.7
+ },
+ "playbacks": {
+  "total": 3,
+  "exposed": 3,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 44656.7
+ },
+ "voice_discarded": 1,
+ "voice_held": 1,
+ "voice_errors": [],
+ "engine_errors": []
+}

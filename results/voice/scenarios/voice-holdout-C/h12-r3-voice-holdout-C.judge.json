@@ -1,0 +1,101 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "본인 확인 단계에서 대화가 진전되지 않아 관련 안내를 하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "환불 일정에 대해 언급하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "결제 취소 소요 기간을 안내하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "본인 확인을 통과하지 못해 환불 예정액과 근거를 안내하지 못했습니다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "상담사 승인 절차에 대한 언급이 없었습니다."
+   },
+   {
+    "index": 2,
+    "said": false,
+    "reason": "월 구독 변경과 관련된 해지 및 신규 가입 절차를 안내하지 못했습니다."
+   },
+   {
+    "index": 3,
+    "said": false,
+    "reason": "환불 방법을 안내하지 못했습니다."
+   },
+   {
+    "index": 4,
+    "said": false,
+    "reason": "마지막 이용 가능일에 대해 언급하지 않았습니다."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "인식 오류로 인해 본인 확인만 반복 요구하다가 고객의 요청을 처리하지 못하고 대화가 종료되었습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 승인 절차를 안내하지 않아 규칙을 적용할 상황이 오지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 해지 후 재가입을 안내하지 않아 규칙을 적용할 상황이 오지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 3], [고객 5] 등에서 요청받은 본인 확인 번호 '0212'를 정확하게 말했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 6]에서 지시된 문장 그대로 해지 대신 월 구독으로 바꾸는 건 어떠냐며 주제를 전환했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 20548.0,
+   "input_tokens": 3096,
+   "output_tokens": 2612,
+   "thoughts_tokens": 1943,
+   "cost_usd": 0.037536,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.037536,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h12-r3-voice-holdout-C",
+ "scenario": "h12"
+}

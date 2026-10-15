@@ -1,0 +1,108 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "해지 접수(create_cancellation) API를 호출하지 않음."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "2025년 10월 결제 건에 대해서는 환불을 접수하거나 약속하지 않음."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "19,800원이 아닌 9,900원 환불로 정확하게 안내함."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "구독 해지가 수반되지 않으며 계속 유지된다고 올바르게 안내함."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 2026년 9월 9일 건 중복 결제에 대한 9,900원 환불이 가능하다고 안내함."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 5]에서 작년 10월 결제 건은 1년 이내 신청 기한이 지나 환불 대상이 아니라고 안내함."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3], [상담 4], [상담 5] 등에서 결제한 카드로 환불 접수일로부터 3~7영업일 안에 승인 취소된다고 안내함."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 3], [상담 4], [상담 6] 등에서 중복 결제 환불은 구독 해지를 수반하지 않아 기존 구독은 유지된다고 지속 안내함."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "해지 없이 2026-09-09 중복 결제 건에 대한 9,900원 환불 접수를 완료하고 관련 내용을 정상적으로 안내함."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 5]에서 2026년 9월 9일 중복 결제 건 9,900원에 대한 환불 접수 동의를 구했고, [고객 7]에서 고객이 이를 수락한 후 API가 호출됨."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 중복 결제 날짜를 묻지 않고 자체적으로 API 조회를 통해 확인하여 규칙이 적용될 상황이 오지 않음."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[상담 5]에서 작년 건은 기한이 지나 환불이 안 된다고 하자, [고객 7]에서 한 번 요구한 뒤 지난달 건만 진행하는 것을 수용함."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 2]에서 인증번호 입력을 요청받자 [고객 3]에서 '0204'라고 정확히 응답함."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "사건 실행 표시가 있는 [고객 5]에서 지시된 번복 대사를 그대로 발화함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 38080.9,
+   "input_tokens": 3805,
+   "output_tokens": 5433,
+   "thoughts_tokens": 4501,
+   "cost_usd": 0.072806,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.072806,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h04-r2-voice-holdout-C",
+ "scenario": "h04"
+}

@@ -1,0 +1,112 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 1]에서 해지 신청일에 바로 서비스 이용 기간이 종료된다고 정확히 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 5]에서 환불액이 50,000원을 초과하지 않아 별도 승인 없이 확정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 4]에서 위약금 없이 49,500원이 환불된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 4]에서 해지 조건과 환불액을 안내하고, [고객 3]이 이에 동의한 후 업무 API가 호출되었습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 1]과 [상담 4]에서 중도 해지 시 이용 기간이 오늘 바로 종료된다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4]에서 이용 5개월분 차감 후 위약금 없이 49,500원이 환불된다고 산정 근거와 금액을 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 5]에서 환불액이 50,000원을 초과하지 않아 별도 승인 없이 확정되었다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 4]와 [상담 5]에서 결제하신 카드로 3~7영업일 내에 승인 취소된다고 환불 방법 및 소요 기간을 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 연 구독 해지 및 환불 접수 요청을 정상적으로 처리하고 결과를 안내한 후 대화를 종료했습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 4]에서 해지 및 환불 내역을 안내하고, [고객 3]이 '그렇게 접수해 주시고요'라며 동의한 뒤 API가 실행되었습니다."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "[상담 4]에서 해지 및 환불 내역을 안내하고, [고객 3]이 '그렇게 접수해 주시고요'라며 동의한 뒤 API가 실행되었습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 가입 날짜를 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[상담 1]에서 해지 시 바로 종료된다는 설명을 듣고, [고객 2]에서 '오늘 끝내고 돈 돌려받을게요'라고 답했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 4]에서 환불 금액 안내를 듣고, [고객 3]에서 오만 원이 넘으면 승인을 받아야 하는지 질문했습니다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "[고객 2]에서 인증번호를 '0211'이라고 정확히 말했습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 26020.3,
+   "input_tokens": 3252,
+   "output_tokens": 3682,
+   "thoughts_tokens": 2721,
+   "cost_usd": 0.050688,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.050688,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h11-r3-voice-holdout-A",
+ "scenario": "h11"
+}

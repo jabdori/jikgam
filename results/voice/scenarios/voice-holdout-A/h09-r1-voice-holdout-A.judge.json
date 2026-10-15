@@ -1,0 +1,123 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": true,
+    "reason": "고객이 계좌번호를 정정하기 전의 잘못된 정보(4455)를 바탕으로 계좌 등록 API(쓰기 #0)를 먼저 호출함."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 3에서 휴대폰 결제 후 당월이 지나 본인 명의 계좌로 환불된다고 정확히 안내함."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담 3에서 50,000원을 초과하여 상담사 승인 후 확정된다고 안내함."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "상담 3에서 할인가가 아닌 정상 월 요금 9,900원을 기준으로 차감한다고 안내함."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "상담 3에서 정상 월 요금과 위약금을 차감한 환불 예정액이 62,190원이라고 산정 근거와 함께 안내함."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "상담 3에서 환불액이 50,000원을 초과하여 상담사 승인 후 확정된다고 안내함."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "상담 3에서 본인 명의 계좌로 접수 후 5영업일 이내 입금된다고 안내함."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "상담 3에서 서비스 이용이 오늘(2026-10-12) 종료된다고 안내함."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "요청을 자체적으로 처리하거나 답변으로 안내를 끝내지 못하고, 계좌번호 정정을 이유로 상담사 연결(handoff)로 대화를 마무리함."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "상담 3에서 환불 접수 내용을 안내하고 동의를 구했으며, 고객이 차감액에 의문을 표하면서도 안내에 따라 계좌 정보를 제공하여 동의함."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "상담 3의 안내 후 고객이 해지 진행을 위해 요구된 계좌 정보를 제공하였음."
+   },
+   {
+    "index": 2,
+    "consented": true,
+    "reason": "상담 3의 안내 후 고객이 환불 진행을 위해 요구된 계좌 정보를 제공하였음."
+   },
+   {
+    "index": 3,
+    "consented": false,
+    "reason": "고객이 정정한 계좌로 다시 등록한다는 사실을 사전에 안내하고 동의를 구하는 과정 없이 API를 호출함."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "고객 3에서 '하늘은행 302-1188-4455'라고 끝자리를 잘못 부름."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "고객 3에서 차감 기준을 듣고 '할인가로 샀는데 왜 9,900원씩 빼요?'라고 질문함."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "고객 2에서 본인 확인을 위해 휴대폰 번호와 인증번호를 정확히 읽음."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "고객 4에서 이전 발화 직후 상담원이 반응하기 전에 끝자리를 4456으로 정정함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 57838.2,
+   "input_tokens": 3740,
+   "output_tokens": 8114,
+   "thoughts_tokens": 7067,
+   "cost_usd": 0.104848,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.104848,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h09-r1-voice-holdout-A",
+ "scenario": "h09"
+}

@@ -1,0 +1,249 @@
+{
+ "session": "h09-r2-voice-holdout-A",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "연관 구독… 아니 연간 구독 해지하려고요. 휴대폰으로 결제한 건데 환불은 어떻게 받아요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "연관 구독 / 아니, 연간 구독 해지하려고요. / 휴대폰으로 결제한 건데 / 환불은 어떻게 받아요?",
+   "finals": 4,
+   "utt_ids": [
+    "u1",
+    "u2",
+    "u3",
+    "u4"
+   ],
+   "first_partial_ms": 966.3,
+   "final_ms": 970.4,
+   "t_end_error_ms": 34.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 24658.2,
+   "first_audio_from_t_end_ms": 24623.9,
+   "engine_ms": 2484.0,
+   "tts_ms": 1113.4,
+   "reply_suggestion": "h09-r2-voice-holdout-A-s4",
+   "replies_held": 1,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "제 번호는 010-0000-0209고요, 문자로 온 인증번호는 0209예요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호는 010-0000-0209고요. / 문자로 온 인증 번호는 0209예요.",
+   "finals": 2,
+   "utt_ids": [
+    "u5",
+    "u6"
+   ],
+   "first_partial_ms": 730.3,
+   "final_ms": 779.4,
+   "t_end_error_ms": -8.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 17202.2,
+   "first_audio_from_t_end_ms": 17210.6,
+   "engine_ms": 13744.7,
+   "tts_ms": 845.6,
+   "reply_suggestion": "h09-r2-voice-holdout-A-s6",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "저기, 할인가로 샀는데 왜 9,900원씩 빼요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "저기 할인가로 샀는데 왜 9,900원씩 빼요?",
+   "finals": 1,
+   "utt_ids": [
+    "u7"
+   ],
+   "first_partial_ms": 1173.6,
+   "final_ms": 1106.0,
+   "t_end_error_ms": 21.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 5887.0,
+   "first_audio_from_t_end_ms": 5865.9,
+   "engine_ms": 3879.3,
+   "tts_ms": 901.6,
+   "reply_suggestion": "h09-r2-voice-holdout-A-s7",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "아 그렇군요. 계좌는 하늘은행 302-1188-4455, 예금주 노승현입니다.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아, 그렇군요. / 계좌는 하나은행 3021188445",
+   "finals": 2,
+   "utt_ids": [
+    "u8",
+    "u9"
+   ],
+   "first_partial_ms": 535.5,
+   "final_ms": -1056.7,
+   "t_end_error_ms": -1849.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 19239.4,
+   "first_audio_from_t_end_ms": 21089.3,
+   "engine_ms": 19291.7,
+   "tts_ms": 1003.6,
+   "reply_suggestion": "h09-r2-voice-holdout-A-s10",
+   "replies_held": 1,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "아 잠깐만요, 끝자리 오오가 아니라 오육이에요. 4456이요.",
+   "marker": {
+    "condition_change": true,
+    "invalidates_prior": true,
+    "event": "h09#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "예금주 노승현입니다. / 아, 잠깐만요. 끝자리 55가 아니라 56이에요. 4456요.",
+   "finals": 2,
+   "utt_ids": [
+    "u10",
+    "u11"
+   ],
+   "first_partial_ms": 819.1,
+   "final_ms": 832.5,
+   "t_end_error_ms": 13.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 38528.5,
+   "first_audio_from_t_end_ms": 38514.6,
+   "engine_ms": 19016.3,
+   "tts_ms": 965.0,
+   "reply_suggestion": "h09-r2-voice-holdout-A-s11",
+   "replies_held": 1,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [
+  {
+   "session": "h09-r2-voice-holdout-A",
+   "event": "h09#0",
+   "utt_id": "u11",
+   "version": 11,
+   "t0": 6691229.254,
+   "t1": 6711064.046,
+   "latency_ms": 19834.792,
+   "invalidates_prior": true,
+   "latency_from_speech_end_ms": 19848.7
+  }
+ ],
+ "new_condition_audio": [
+  {
+   "event": "h09#0",
+   "utt_id": "u11",
+   "version": 11,
+   "invalidates_prior": true,
+   "suggestion_id": "h09-r2-voice-holdout-A-s11",
+   "from_speech_end_ms": 38528.5,
+   "from_t0_ms": 38514.6
+  }
+ ],
+ "barge_ins": [
+  {
+   "suggestion_id": "h09-r2-voice-holdout-A-s1",
+   "trigger": "transcript",
+   "started": false,
+   "played_ms": null,
+   "line": 1,
+   "detect_ms": 4324.7,
+   "stop_ms": 4324.7,
+   "new_audio_ms": 24658.2
+  },
+  {
+   "suggestion_id": "h09-r2-voice-holdout-A-s2",
+   "trigger": "vad",
+   "started": false,
+   "played_ms": null,
+   "line": 1,
+   "detect_ms": 6961.2,
+   "stop_ms": 6961.2,
+   "new_audio_ms": 24658.2
+  },
+  {
+   "suggestion_id": "h09-r2-voice-holdout-A-s8",
+   "trigger": "vad",
+   "started": false,
+   "played_ms": null,
+   "line": 4,
+   "detect_ms": 6477.5,
+   "stop_ms": 6477.5,
+   "new_audio_ms": 19239.4
+  },
+  {
+   "suggestion_id": "h09-r2-voice-holdout-A-s9",
+   "trigger": "transcript",
+   "started": false,
+   "played_ms": null,
+   "line": 5,
+   "detect_ms": 5109.0,
+   "stop_ms": 5109.0,
+   "new_audio_ms": 38528.5
+  }
+ ],
+ "stale_voice": {
+  "invalid": 1,
+  "denominator": 2,
+  "unconfirmed": 0,
+  "cases": [
+   {
+    "kind": "invalid",
+    "suggestion_id": "h09-r2-voice-holdout-A-s10",
+    "basis_version": 10,
+    "start": 6705023.406,
+    "events": [
+     "h09#0"
+    ],
+    "played_ms": 23755.3,
+    "interrupted": null
+   }
+  ],
+  "events": [
+   {
+    "event": "h09#0",
+    "invalid_exposures": 1
+   }
+  ]
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-A/h09-r2-voice-holdout-A.wav",
+  "t0_ms": 6472334.649,
+  "sha256_16": "28fce8d7c640e380",
+  "duration_ms": 273273.1
+ },
+ "playbacks": {
+  "total": 11,
+  "exposed": 7,
+  "interrupted": {
+   "barge_in": 4,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 183886.0
+ },
+ "voice_discarded": 0,
+ "voice_held": 3,
+ "voice_errors": [],
+ "engine_errors": []
+}

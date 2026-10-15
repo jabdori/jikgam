@@ -1,0 +1,97 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진은 계좌 등록이나 환불 계좌를 요구하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 4]에서 2026-10-12까지로 서비스 이용 기간이 종료된다고 정확히 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "해지와 함께 전액 환불 접수를 정상적으로 진행했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 4]에서 카드 승인 취소가 아닌 휴대폰 소액결제 취소로 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 4]에서 이용 이력이 없다는 근거를 들어 9,900원 환불을 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "[상담 4]와 [상담 5]에서 휴대폰 결제 취소로 처리된다고 안내했으나, 계좌가 불필요하다는 사실은 명시하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 4]에서 이용 가능한 마지막 날이 2026-10-12라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청에 따라 전액 환불 및 해지 처리를 완료했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 이용 여부를 묻기 전에 [고객 4]에서 고객이 먼저 안 봤다고 말했습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[상담 4]에서 환불 이야기를 들은 후 [고객 6]에서 계좌를 불러드려야 하는지 질문했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 3]과 [고객 5]에서 요청받은 본인 확인 번호를 정확히 읽었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 지시된 내용대로 오늘 끊고 환불받겠다는 요청을 실행했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 40281.2,
+   "input_tokens": 3352,
+   "output_tokens": 5487,
+   "thoughts_tokens": 5007,
+   "cost_usd": 0.072548,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.072548,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h08-r2-voice-holdout-C",
+ "scenario": "h08"
+}

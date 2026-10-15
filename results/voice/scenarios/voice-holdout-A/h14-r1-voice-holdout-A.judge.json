@@ -1,0 +1,86 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 4]와 [상담 6] 이전에 총 2회만 본인 확인을 시도한 후 상담사 연결로 전환했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "본인 확인에 실패하여 해지 접수를 진행하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "결제일이나 금액 등 어떠한 계정 정보도 안내하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 6]에서 자동 응대로 처리가 어려워 전문 상담사에게 연결해 드리겠다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "[상담 6]에서 본인 확인 2회 실패를 이유로 들며 전문 상담사에게 연결하겠다고 안내하며(handoff) 대화를 종료했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 2]에서 인증번호 요청을 처음 받자 '칠 삼 일 공 써 있네'라며 규칙대로 응답했습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 3]에서 다시 인증번호를 요청받자 '아 이건가, 공 칠 삼 일 적혀 있는데'라며 규칙대로 응답했습니다."
+   },
+   {
+    "index": 2,
+    "status": "not_applicable",
+    "reason": "[상담 6]에서 상담사 연결을 안내한 직후 대화가 종료되어 고객이 대답할 차례가 오지 않았습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 3]에서 사건 실행 표시와 함께 인증번호 대신 다른 숫자인 '공 칠 삼 일'을 읽어 사건 내용을 수행했습니다."
+   },
+   {
+    "index": 1,
+    "status": "no_opportunity",
+    "reason": "상담 엔진이 본인 확인 2회 실패로 판단하여 상담사 연결을 진행하며 대화가 마무리되어, 사건을 실행할 차례가 오지 않았습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 49162.4,
+   "input_tokens": 2487,
+   "output_tokens": 6321,
+   "thoughts_tokens": 5691,
+   "cost_usd": 0.080826,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.080826,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h14-r1-voice-holdout-A",
+ "scenario": "h14"
+}

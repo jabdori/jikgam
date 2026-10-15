@@ -1,0 +1,235 @@
+{
+ "session": "h15-r3-voice-holdout-A",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "동생 계정 해지 좀 하려고요. 이번 달 거 결제된 지 일주일밖에 안 됐는데 환불도 되죠?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "동생 계정 해지 좀 하려고요. / 이번 달 거 결제된지 일주일밖에 안 됐는데 환불도 되죠?",
+   "finals": 2,
+   "utt_ids": [
+    "u1",
+    "u2"
+   ],
+   "first_partial_ms": 1290.7,
+   "final_ms": 837.6,
+   "t_end_error_ms": 4.7,
+   "t_end_source": "vad",
+   "first_audio_ms": 4353.4,
+   "first_audio_from_t_end_ms": 4348.8,
+   "engine_ms": 2458.9,
+   "tts_ms": 1056.8,
+   "reply_suggestion": "h15-r3-voice-holdout-A-s2",
+   "replies_held": 1,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "4일 결제니까 오늘이 딱 일주일 아니에요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "4일 결제니까 오늘이 딱 일주일 아니에요?",
+   "finals": 1,
+   "utt_ids": [
+    "u3"
+   ],
+   "first_partial_ms": 1161.5,
+   "final_ms": 836.8,
+   "t_end_error_ms": 21.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 4627.9,
+   "first_audio_from_t_end_ms": 4606.0,
+   "engine_ms": 2738.1,
+   "tts_ms": 1053.0,
+   "reply_suggestion": "h15-r3-voice-holdout-A-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "환불 안 돼도 상관없으니까 그냥 해지나 해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "",
+   "finals": 0,
+   "utt_ids": [],
+   "first_partial_ms": 1153.5,
+   "final_ms": null,
+   "t_end_error_ms": null,
+   "t_end_source": null,
+   "first_audio_ms": null,
+   "first_audio_from_t_end_ms": null,
+   "engine_ms": null,
+   "tts_ms": null,
+   "reply_suggestion": null,
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "아 동생 계정이라고 한 건 동생이 쓴다는 거고요, 가입이랑 결제는 다 제 명의예요. 번호도 제 거예요.",
+   "marker": {
+    "condition_change": true,
+    "invalidates_prior": true,
+    "event": "h15#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "환불 안 해도 상관없으니까 그냥 해지나 해 주세요. / 아 동생 계정이라고 한 건 동생이 쓴다는 거고요. 가입이랑 결제는 다 제 명의예요. 번호도 제 거예요.",
+   "finals": 2,
+   "utt_ids": [
+    "u4",
+    "u5"
+   ],
+   "first_partial_ms": 1064.4,
+   "final_ms": 821.5,
+   "t_end_error_ms": -17.7,
+   "t_end_source": "vad",
+   "first_audio_ms": 4388.2,
+   "first_audio_from_t_end_ms": 4405.9,
+   "engine_ms": 2545.8,
+   "tts_ms": 1020.9,
+   "reply_suggestion": "h15-r3-voice-holdout-A-s5",
+   "replies_held": 1,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "번호는 010-0000-0215고요, 인증번호는 0215예요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "번호는 010-0000-0225고요. / 인증 번호는 0215예요.",
+   "finals": 2,
+   "utt_ids": [
+    "u6",
+    "u7"
+   ],
+   "first_partial_ms": 973.5,
+   "final_ms": 777.7,
+   "t_end_error_ms": -5.0,
+   "t_end_source": "vad",
+   "first_audio_ms": 14332.7,
+   "first_audio_from_t_end_ms": 14337.8,
+   "engine_ms": 4470.6,
+   "tts_ms": 899.9,
+   "reply_suggestion": "h15-r3-voice-holdout-A-s7",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "문자로 0215라고 왔는데, 다시 말씀드려요. 0215 맞아요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "문자로 0215라고 왔는데 다시 말씀드려요. 0215 맞아요.",
+   "finals": 1,
+   "utt_ids": [
+    "u8"
+   ],
+   "first_partial_ms": 968.5,
+   "final_ms": 832.9,
+   "t_end_error_ms": -31.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 8522.9,
+   "first_audio_from_t_end_ms": 8554.3,
+   "engine_ms": 6603.1,
+   "tts_ms": 1086.9,
+   "reply_suggestion": "h15-r3-voice-holdout-A-s8",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [
+  {
+   "session": "h15-r3-voice-holdout-A",
+   "event": "h15#0",
+   "utt_id": "u5",
+   "version": 5,
+   "t0": 12786069.168,
+   "t1": 12789454.058,
+   "latency_ms": 3384.89,
+   "invalidates_prior": true,
+   "latency_from_speech_end_ms": 3367.2
+  }
+ ],
+ "new_condition_audio": [
+  {
+   "event": "h15#0",
+   "utt_id": "u5",
+   "version": 5,
+   "invalidates_prior": true,
+   "suggestion_id": "h15-r3-voice-holdout-A-s5",
+   "from_speech_end_ms": 4388.2,
+   "from_t0_ms": 4405.9
+  }
+ ],
+ "barge_ins": [
+  {
+   "suggestion_id": "h15-r3-voice-holdout-A-s1",
+   "trigger": "transcript",
+   "started": false,
+   "played_ms": null,
+   "line": 1,
+   "detect_ms": 6792.5,
+   "stop_ms": 6792.5,
+   "new_audio_ms": 4353.4
+  },
+  {
+   "suggestion_id": "h15-r3-voice-holdout-A-s4",
+   "trigger": "transcript",
+   "started": false,
+   "played_ms": null,
+   "line": 4,
+   "detect_ms": 7838.5,
+   "stop_ms": 7838.5,
+   "new_audio_ms": 4388.2
+  }
+ ],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 4,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": [
+   {
+    "event": "h15#0",
+    "invalid_exposures": 0
+   }
+  ]
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-A/h15-r3-voice-holdout-A.wav",
+  "t0_ms": 12668519.508,
+  "sha256_16": "a8dddc30e6bebb37",
+  "duration_ms": 216933.9
+ },
+ "playbacks": {
+  "total": 8,
+  "exposed": 6,
+  "interrupted": {
+   "barge_in": 2,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 130678.2
+ },
+ "voice_discarded": 0,
+ "voice_held": 2,
+ "voice_errors": [],
+ "engine_errors": []
+}

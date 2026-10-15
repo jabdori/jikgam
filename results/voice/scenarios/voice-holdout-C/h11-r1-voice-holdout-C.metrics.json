@@ -1,0 +1,186 @@
+{
+ "session": "h11-r1-voice-holdout-C",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "아이고, 내가 연간으로 들어 놓은 게 있는데 이제 그만 보려고. 해지해 놓으면 내년까지는 볼 수 있는 거지요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아이고, 내가 영간으로 들어 놓은 게 있는데 이제 그만 보려고. / 해지해 놓으면 내년까지는 볼 수 있는 거죠?",
+   "finals": 2,
+   "utt_ids": [
+    "u1",
+    "u2"
+   ],
+   "first_partial_ms": 494.2,
+   "final_ms": 830.3,
+   "t_end_error_ms": 32.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 4138.5,
+   "first_audio_from_t_end_ms": 4105.9,
+   "engine_ms": 2255.7,
+   "tts_ms": 1052.0,
+   "reply_suggestion": "h11-r1-voice-holdout-C-s2",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "그럼 오늘 끝내고 돈 돌려받을게요. 제 번호는 010-0000-0211이에요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "그럼 오늘 끝내고 돈 돌려받을게요. 제 번호는 010-0000-0211이에요.",
+   "finals": 1,
+   "utt_ids": [
+    "u3"
+   ],
+   "first_partial_ms": 555.0,
+   "final_ms": 840.6,
+   "t_end_error_ms": 15.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 4050.2,
+   "first_audio_from_t_end_ms": 4035.0,
+   "engine_ms": 2278.3,
+   "tts_ms": 930.8,
+   "reply_suggestion": "h11-r1-voice-holdout-C-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "문자가 왔네요. 공, 이, 일, 일, 0211 맞지요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "문자가 왔네요. / 0211 / 0211 맞죠?",
+   "finals": 3,
+   "utt_ids": [
+    "u4",
+    "u5",
+    "u6"
+   ],
+   "first_partial_ms": 997.4,
+   "final_ms": 828.0,
+   "t_end_error_ms": 31.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 4896.2,
+   "first_audio_from_t_end_ms": 4864.8,
+   "engine_ms": 2999.7,
+   "tts_ms": 1068.4,
+   "reply_suggestion": "h11-r1-voice-holdout-C-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "오만 원 넘으면 승인인가 뭔가 받아야 한다던데 그것도 해야 돼요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "5만 원 넘으면 승인인가 뭔가 받아야 한다던데. / 이것도 해야 돼요?",
+   "finals": 2,
+   "utt_ids": [
+    "u7",
+    "u8"
+   ],
+   "first_partial_ms": 993.9,
+   "final_ms": 769.2,
+   "t_end_error_ms": -7.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 5274.9,
+   "first_audio_from_t_end_ms": 5282.1,
+   "engine_ms": 3397.7,
+   "tts_ms": 1107.9,
+   "reply_suggestion": "h11-r1-voice-holdout-C-s5",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "네, 추가 승인 안 받아도 되면 그냥 오늘로 다 끝내고 환불 접수해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 추가 승인 안 받아도 되면 그냥 오늘로 다 끝내고 환불 접수해 주세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u9"
+   ],
+   "first_partial_ms": 947.2,
+   "final_ms": 831.9,
+   "t_end_error_ms": -1.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 5127.6,
+   "first_audio_from_t_end_ms": 5129.0,
+   "engine_ms": 3354.7,
+   "tts_ms": 940.5,
+   "reply_suggestion": "h11-r1-voice-holdout-C-s6",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "네, 잘 알겠어요. 처리해 줘서 고마워요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 잘 알겠어요. 처리해 줘서 고마워요.",
+   "finals": 1,
+   "utt_ids": [
+    "u10"
+   ],
+   "first_partial_ms": 997.8,
+   "final_ms": 742.7,
+   "t_end_error_ms": -13.0,
+   "t_end_source": "vad",
+   "first_audio_ms": 4693.2,
+   "first_audio_from_t_end_ms": 4706.2,
+   "engine_ms": 2948.1,
+   "tts_ms": 1002.3,
+   "reply_suggestion": "h11-r1-voice-holdout-C-s7",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-C/h11-r1-voice-holdout-C.wav",
+  "t0_ms": 2887520.402,
+  "sha256_16": "1b86d35855be386c",
+  "duration_ms": 239977.3
+ },
+ "playbacks": {
+  "total": 6,
+  "exposed": 6,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 145500.8
+ },
+ "voice_discarded": 1,
+ "voice_held": 1,
+ "voice_errors": [],
+ "engine_errors": []
+}

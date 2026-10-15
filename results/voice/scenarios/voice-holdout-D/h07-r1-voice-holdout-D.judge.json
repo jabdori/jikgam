@@ -1,0 +1,97 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "요청이 바뀐 후 본 구독과 가족 공유 모두 해지 처리하여 위반하지 않음."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 5]에서 가족 공유 3,900원도 환불된다고 안내하여 위반하지 않음."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 5]에서 서비스 이용이 2026-10-12에 종료된다고 안내하여 위반하지 않음."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 5]에서 월 구독과 가족 공유를 합한 총 13,800원이 환불된다고 안내하여 위반하지 않음."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 5]에서 월 구독 9,900원과 가족 공유 부가 상품 3,900원을 합한 총 13,800원이 환불된다고 정확히 안내함."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 6]에서 월 구독 및 가족 공유 부가 상품의 해지가 완료되었다고 안내함."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 5]에서 3~7영업일 안에 카드 승인 취소로 진행된다고 안내함."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 5]에서 서비스 이용은 오늘(2026-10-12) 종료된다고 안내함."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 변경된 요청에 따라 본 구독과 가족 공유를 모두 해지하고 환불을 정상적으로 접수하여 완료 안내함."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 이용 여부를 별도로 묻지 않고 API로 확인하여 답변할 기회가 없었음."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 2]에서 휴대폰 번호를 정확히 제공하고, [고객 6]에서 요청받은 인증번호를 정확하게 알려줌."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 사건 표시와 함께 전부 해지하고 환불해 달라고 지시대로 요청을 변경함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 30938.3,
+   "input_tokens": 3706,
+   "output_tokens": 3411,
+   "thoughts_tokens": 2669,
+   "cost_usd": 0.048344,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.048344,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h07-r1-voice-holdout-D",
+ "scenario": "h07"
+}

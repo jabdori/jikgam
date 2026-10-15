@@ -1,0 +1,97 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 3]에서 2026년 6월 30일 이전 결제 건으로 위약금이 면제된다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 3]에서 결제일인 2026년 6월 30일 이전 결제를 기준으로 정상적으로 산정하여 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 3]에서 정상 월 요금 9,900원 기준으로 차감한다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "대화 내내 상담사 승인이 필요하다는 언급을 하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 이용 개월 수 4개월에 9,900원을 곱해 차감하고, 6월 30일 이전 결제로 위약금 면제되어 39,400원이라고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 환불은 접수일로부터 3~7영업일 안에 카드 승인 취소로 진행된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 서비스 이용 가능한 마지막 날은 오늘인 2026년 10월 12일까지라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 연 구독 해지 및 환불 처리를 완료하고 관련 정보를 모두 정상적으로 안내했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 고객에게 가입 시기를 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 위약금이 면제된다고 선제적으로 안내하여 규칙이 적용될 상황이 오지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 3]에서 상담 엔진의 요청에 따라 인증번호 0202를 정확히 전달했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 5]에서 (사건 #0 실행 표시)와 함께 지시된 내용대로 스스로 날짜를 정정하여 발화했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 16862.2,
+   "input_tokens": 3360,
+   "output_tokens": 2285,
+   "thoughts_tokens": 1545,
+   "cost_usd": 0.03414,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.03414,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h02-r2-voice-holdout-C",
+ "scenario": "h02"
+}

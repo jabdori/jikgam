@@ -1,0 +1,96 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진이 중도 해지 금액이 아닌 전액 청약철회 금액 79,000원으로 정확히 안내하고 접수했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "위약금 차감에 대해 언급하지 않고 전액 청약철회가 가능하다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "create_refund_request API가 한 건의 접수 번호(RF-000001)로 성공하여 중복 접수되지 않았습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "지금은 접수만 진행되며 상담사 승인 후 환불이 확정된다고 명확히 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 결제 후 7일 이내 및 이용 이력이 없어 전액 청약철회가 가능하여 79,000원 환불 예정이라고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3] 및 [상담 4]에서 상담사 승인 후 환불이 확정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 접수일로부터 3~7영업일 안에 카드 승인 취소로 진행된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 3]에서 이용 가능한 마지막 날이 2026-10-12라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 연간 구독 해지 및 환불 요청을 정상적으로 접수하고 관련 내용을 모두 안내하여 답변(answer)했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 API를 통해 이용 이력이 없음을 확인하여 고객에게 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "접수 중 오류가 발생했다는 안내가 없었습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 3]에서 본인 확인 인증번호(0217)를 요청받고 정확하게 대답했습니다."
+   }
+  ],
+  "mid_call_events": []
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 19524.0,
+   "input_tokens": 3298,
+   "output_tokens": 2713,
+   "thoughts_tokens": 1997,
+   "cost_usd": 0.039152,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.039152,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h17-r1-voice-holdout-D",
+ "scenario": "h17"
+}

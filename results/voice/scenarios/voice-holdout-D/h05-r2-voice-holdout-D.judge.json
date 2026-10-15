@@ -1,0 +1,97 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  4
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "정상 결제분이나 정지 기간 요금에 대해 환불을 약속하거나 접수하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "19,800원이 아닌 9,900원 환불로 정확히 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "이용 정지 계정이더라도 중복 결제 건은 환불된다고 정확히 안내했습니다."
+   },
+   {
+    "index": 4,
+    "violated": false,
+    "reason": "카드 승인 취소 3~7영업일 대신 간편결제 서비스의 취소 절차에 따른다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 이용 정지 계정이더라도 중복 결제로 인해 9,900원이 전액 환불된다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 5]에서 이용이 정지된 계정은 일반 환불 대상에서 제외된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3], [상담 4], [상담 5] 등에서 간편결제 서비스의 취소 절차에 따른다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 중복 결제 건에 대해 정상적으로 환불을 접수하고, 정지 기간 요금에 대한 환불 불가 사유를 안내하며 대화를 마쳤습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 고객에게 정지 사유를 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 고객에게 해지할 것인지 묻지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 3]에서 상담 엔진의 요청에 따라 인증번호 0205를 정확히 읽었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 5]에서 정지돼서 쓰지 못하니 이번 달 결제분 하나도 돌려달라고 사건 내용대로 요구했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 18053.6,
+   "input_tokens": 3387,
+   "output_tokens": 2134,
+   "thoughts_tokens": 1424,
+   "cost_usd": 0.032382,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.032382,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h05-r2-voice-holdout-D",
+ "scenario": "h05"
+}

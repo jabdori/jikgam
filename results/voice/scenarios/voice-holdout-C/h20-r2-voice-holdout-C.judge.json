@@ -1,0 +1,113 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담원이 연 구독 중도 해지 금액이 아닌 99,000원 전액 환불을 안내하고 접수했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "이용 이력을 이유로 환불 불가라고 안내하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "환불액을 79,000원이 아닌 99,000원으로 정확히 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 3]과 [상담 4] 등에서 상담사 승인 후 확정된다고 안내했습니다."
+   },
+   {
+    "index": 4,
+    "violated": false,
+    "reason": "갱신 안내 문자 수신 실패를 이유로 약관에 없는 보상이나 환불을 약속하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "대화 내용 중 갱신 시 정상 요금이 적용된다는 점을 설명하는 부분이 없습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 회사 귀책의 서비스 장애를 근거로 99,000원이 환불 예정액으로 산정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 환불이 기준 금액을 초과하여 상담사 승인 후 처리될 예정이라고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 3]에서 3~7영업일 이내에 카드 승인 취소로 처리될 예정이라고 환불 방법과 기간을 안내했습니다."
+   },
+   {
+    "index": 4,
+    "said": true,
+    "reason": "[상담 3]에서 서비스 이용 가능한 마지막 날은 오늘(2026-10-12)까지라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "거절이나 보류 없이 고객의 요청에 따라 환불 및 해지 접수를 정상적으로 완료하고 안내했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 대화 중 이용 여부를 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "violated",
+    "reason": "상담원이 [상담 3]에서 서비스 장애를 언급했으나, 고객은 [고객 4]에서 정해진 대사('아 그날 오후 내내 안 됐어요')로 동의하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 2]와 [고객 3]에서 본인 확인을 위한 휴대폰 번호와 인증번호를 정확하게 제공했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4] 메시지에서 사건 실행 표시와 함께 정해진 항의 내용을 정확히 발화했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 23773.3,
+   "input_tokens": 3744,
+   "output_tokens": 3119,
+   "thoughts_tokens": 2232,
+   "cost_usd": 0.044916,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.044916,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h20-r2-voice-holdout-C",
+ "scenario": "h20"
+}

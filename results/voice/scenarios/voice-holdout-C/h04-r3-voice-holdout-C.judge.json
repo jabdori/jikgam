@@ -1,0 +1,102 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "해지 접수 관련 업무 API를 호출하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "작년 결제 건은 기한 만료로 환불 대상에 포함되지 않는다고 명확히 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "환불 예정액을 9,900원으로 정확히 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "고객의 해지 번복 이후 구독이 해지되지 않고 유지된다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 같은 이용 기간에 중복 결제된 건의 환불 예정액이 9,900원이라고 산정 근거와 함께 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 작년 중복 결제 건은 신청 기한 1년이 지나 환불되지 않는다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 카드 승인 취소로 진행되며 3~7영업일 안에 취소된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 4]에서 구독 해지를 수반하지 않아 기존 구독은 유지된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "환불 가능한 중복 결제 건은 정상적으로 접수하고 기한이 지난 건은 불가 사유를 안내하며 고객의 요청을 모두 처리했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "대화 중 상담원이 중복 결제 날짜를 묻지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 4]에서 기한이 지난 작년 건도 환불해 달라고 한 번 요구한 뒤, [고객 6]에서 환불 진행에 동의하며 받아들였습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 3]에서 상담원의 인증번호 요청에 '0204요'라고 정확하게 답변했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 5] 발화에 사건 실행 표시가 있으며, 지시된 타이밍과 내용에 맞게 해지를 번복하고 환불만 요청했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 26263.9,
+   "input_tokens": 3564,
+   "output_tokens": 3485,
+   "thoughts_tokens": 2721,
+   "cost_usd": 0.048948,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.048948,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h04-r3-voice-holdout-C",
+ "scenario": "h04"
+}

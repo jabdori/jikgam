@@ -1,0 +1,97 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진은 중도 해지로 접수하지 않고 상담사 연결을 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "현재 성인이라 대상이 아니라는 잘못된 안내를 하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "고객이 미성년자 결제 취소로 요청을 변경한 후에는 71,280원 환불을 안내하지 않았습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "자동 응대로 전액 환불을 확정하지 않고 서류 확인을 위해 상담사에게 인계했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]과 [상담 4]에서 법정대리인 동의가 없었던 미성년자 결제 취소 요청은 서류 확인이 필요하여 상담사 연결을 접수한다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4]에서 '결제 당시 만 19세 미만'이라는 조건으로 결제 당시 나이 기준임을 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "미성년자 결제 취소 건에 대해 서류 확인을 이유로 확답을 보류하고 상담사 연결을 안내하며 대화를 마쳤습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 1]의 첫 문의에서는 미성년자 결제 사실을 언급하지 않고 일반 해지로 문의했습니다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 생년월일을 묻지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 1]의 요청에 따라 [고객 2]에서 인증번호(0206)를 정확히 읽었습니다."
+   },
+   {
+    "index": 3,
+    "status": "violated",
+    "reason": "[상담 3], [상담 4]에서 상담사 연결을 안내받았으나, 기다리겠다는 대답을 하지 않은 채 대화가 종료되었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 환불 금액 안내([상담 2])를 들은 후 접수 동의 전에 결제 당시 미성년자였음을 밝히며 전액 취소로 요청을 변경했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 22808.9,
+   "input_tokens": 2977,
+   "output_tokens": 2939,
+   "thoughts_tokens": 2190,
+   "cost_usd": 0.041222,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.041222,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h06-r3-voice-holdout-A",
+ "scenario": "h06"
+}

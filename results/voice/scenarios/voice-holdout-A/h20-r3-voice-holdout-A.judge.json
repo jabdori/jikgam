@@ -1,0 +1,124 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": true,
+    "reason": "상담 엔진이 [상담 2], [상담 3], [상담 4]에서 연 구독 중도 해지 금액인 80,190원을 환불 예정액으로 잘못 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "이용 이력으로 인해 전액 청약철회가 불가하다고 했을 뿐, 중도 해지 환불금(80,190원)을 안내하며 환불 자체가 불가하다고 확정하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "환불 예정액 산정 시 79,000원이 아닌 갱신 결제된 정상 요금 99,000원을 기준으로 산정하여 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "환불이 오늘 바로 확정된다고 하지 않고, [상담 2]와 [상담 5]에서 상담사 승인 후 처리된다고 올바르게 안내했습니다."
+   },
+   {
+    "index": 4,
+    "violated": false,
+    "reason": "고객의 갱신 안내 문자 미수신 항의에 대해 약관에 없는 보상이나 환불을 약속하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 1]에서 할인 요금은 첫 해에만 적용되며 이후 정상 요금(99,000원)으로 갱신 결제된다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 5]에서 회사 귀책 장애 이력을 근거로 결제 금액 전액인 99,000원이 환불 예정액으로 적용된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 2]와 [상담 5]에서 환불이 상담사 승인 후 진행된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 2]와 [상담 5]에서 3~7영업일 내 카드 승인 취소 방식으로 환불된다고 안내했습니다."
+   },
+   {
+    "index": 4,
+    "said": true,
+    "reason": "[상담 2]와 [상담 5]에서 서비스 이용이 해지 신청일인 오늘(2026-10-12) 종료된다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 구독 해지 및 전액 환불 요청을 정상적으로 접수하고 관련 내용을 안내하며 대화를 마무리했습니다."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "[상담 5]에서 전액 환불 및 구독 해지 접수 절차를 안내했고, [고객 4]에서 고객이 이에 동의한 후 구독 해지 쓰기 API가 호출되었습니다."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "[상담 5]에서 환불 예정액(99,000원)과 접수를 안내했고, [고객 4]에서 고객이 전액 환불 접수에 동의한 후 환불 요청 쓰기 API가 호출되었습니다."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 대화 중에 고객의 이용 여부를 묻지 않아 고객이 답변할 상황이 발생하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "status": "violated",
+    "reason": "[상담 5]에서 상담 엔진이 장애를 언급했으나, [고객 4]에서 규칙에 지정된 대사인 '아 그날 오후 내내 안 됐어요'라고 동의하지 않았습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[상담 1]의 본인 확인 번호 요청에 대해 [고객 2]에서 자신의 휴대폰 번호와 인증번호(0220)를 정확하게 읽어 답했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "violated",
+    "reason": "[고객 3]에서 실행 표시 없이 사건 내용(문자 미수신 항의)을 미리 발언했으며, 정작 (사건 #0 실행 표시)가 붙은 [고객 4]에서는 사건 내용과 전혀 다른 발언을 했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 76152.9,
+   "input_tokens": 4202,
+   "output_tokens": 6325,
+   "thoughts_tokens": 5110,
+   "cost_usd": 0.084304,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.084304,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "h20-r3-voice-holdout-A",
+ "scenario": "h20"
+}

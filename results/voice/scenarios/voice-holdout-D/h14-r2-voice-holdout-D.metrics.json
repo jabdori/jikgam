@@ -1,0 +1,146 @@
+{
+ "session": "h14-r2-voice-holdout-D",
+ "provisional": {
+  "sent": 3,
+  "confirmed": 2,
+  "replaced": 1,
+  "unconfirmed": 0,
+  "prejudge_calls": 32,
+  "prejudged_used": 2
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "여보세요? 그 별담인가 뭔가, 테레비 보는 거, 그거 인자 안 볼라 그러는데 끊어 줘요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "여보세요. 그 별담인가 뭔가 텔레비전 보는 거 그걸 이제 안 보려고 그러는데 끊어 줘요.",
+   "finals": 1,
+   "utt_ids": [
+    "u2"
+   ],
+   "first_partial_ms": 725.6,
+   "final_ms": 709.1,
+   "t_end_error_ms": -113.5,
+   "t_end_source": "vad",
+   "first_audio_ms": 4129.5,
+   "first_audio_from_t_end_ms": 4242.9,
+   "engine_ms": 2455.3,
+   "tts_ms": 964.9,
+   "reply_suggestion": "h14-r2-voice-holdout-D-s1",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "내 전화번호는 010-0000-0214요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "내 전화번호는 010-0000-0214야.",
+   "finals": 1,
+   "utt_ids": [
+    "u3"
+   ],
+   "first_partial_ms": 584.9,
+   "final_ms": 837.4,
+   "t_end_error_ms": 37.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 4623.9,
+   "first_audio_from_t_end_ms": 4586.6,
+   "engine_ms": 2709.5,
+   "tts_ms": 1076.9,
+   "reply_suggestion": "h14-r2-voice-holdout-D-s2",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "문자가 왔는가 모르겠네. 여기 뭐 숫자가 보이는데, 칠, 삼, 일, 공 맞소?",
+   "marker": {
+    "condition_change": false,
+    "invalidates_prior": false,
+    "event": "h14#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "문자가 왔는가 모르겠네. / 여기 뭐 숫자가 보이는데 7310 맞어?",
+   "finals": 2,
+   "utt_ids": [
+    "u4",
+    "u5"
+   ],
+   "first_partial_ms": 1238.2,
+   "final_ms": 845.1,
+   "t_end_error_ms": 29.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 4342.3,
+   "first_audio_from_t_end_ms": 4313.1,
+   "engine_ms": 2562.1,
+   "tts_ms": 935.1,
+   "reply_suggestion": "h14-r2-voice-holdout-D-s4",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "아닌가? 아, 이건가. 공, 칠, 삼, 일 같은데 이게 맞소?",
+   "marker": {
+    "condition_change": false,
+    "invalidates_prior": false,
+    "event": "h14#1"
+   },
+   "barge_in_planned": false,
+   "transcript": "아닌가? / 아, 이건가? 0731 같은데 이게 맞어?",
+   "finals": 2,
+   "utt_ids": [
+    "u6",
+    "u7"
+   ],
+   "first_partial_ms": 554.0,
+   "final_ms": 840.4,
+   "t_end_error_ms": 53.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 4534.8,
+   "first_audio_from_t_end_ms": 4481.6,
+   "engine_ms": 2632.4,
+   "tts_ms": 1061.8,
+   "reply_suggestion": "h14-r2-voice-holdout-D-s6",
+   "replies_held": 1,
+   "replies_discarded": 1
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-D/h14-r2-voice-holdout-D.wav",
+  "t0_ms": 8800070.875,
+  "sha256_16": "d3c687277b004ff1",
+  "duration_ms": 120053.1
+ },
+ "playbacks": {
+  "total": 4,
+  "exposed": 4,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 57261.3
+ },
+ "voice_discarded": 2,
+ "voice_held": 2,
+ "voice_errors": [],
+ "engine_errors": []
+}

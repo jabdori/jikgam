@@ -1,0 +1,160 @@
+{
+ "session": "h17-r1-voice-holdout-C",
+ "provisional": {
+  "sent": 0,
+  "confirmed": 0,
+  "replaced": 0,
+  "unconfirmed": 0,
+  "prejudge_calls": 0,
+  "prejudged_used": 0
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "금요일에 연간 할인 결제를 해 버렸는데요, 생각해 보니 잘 안 볼 것 같아서요. 위약금 빼고 남는 거라도 환불받을 수 있을까요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "금요일에 연간 할인 결제를 해버렸는데요. 생각해보니 잘 안 볼 것 같아서요. / 위약금 빼고 남는 거라도 환불 받을 수 있을까요?",
+   "finals": 2,
+   "utt_ids": [
+    "u1",
+    "u2"
+   ],
+   "first_partial_ms": 1010.9,
+   "final_ms": 793.7,
+   "t_end_error_ms": 23.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 5925.6,
+   "first_audio_from_t_end_ms": 5901.8,
+   "engine_ms": 4057.7,
+   "tts_ms": 1074.1,
+   "reply_suggestion": "h17-r1-voice-holdout-C-s2",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "제 번호는 010-0000-0217입니다.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호는 010-0000-0217입니다.",
+   "finals": 1,
+   "utt_ids": [
+    "u3"
+   ],
+   "first_partial_ms": 1326.1,
+   "final_ms": 819.1,
+   "t_end_error_ms": 30.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 4575.8,
+   "first_audio_from_t_end_ms": 4545.4,
+   "engine_ms": 2836.2,
+   "tts_ms": 920.3,
+   "reply_suggestion": "h17-r1-voice-holdout-C-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "인증번호 0217입니다.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "인증번호 0217입니다.",
+   "finals": 1,
+   "utt_ids": [
+    "u4"
+   ],
+   "first_partial_ms": 963.3,
+   "final_ms": 774.5,
+   "t_end_error_ms": -20.2,
+   "t_end_source": "vad",
+   "first_audio_ms": 6070.8,
+   "first_audio_from_t_end_ms": 6091.1,
+   "engine_ms": 4162.8,
+   "tts_ms": 1133.0,
+   "reply_suggestion": "h17-r1-voice-holdout-C-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "네, 전액 환불되는 거면 정말 좋네요. 그렇게 접수 진행해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 전액 환불되는 거면 정말 좋네요. 그렇게 접수 진행해 주세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u5"
+   ],
+   "first_partial_ms": 720.3,
+   "final_ms": 806.2,
+   "t_end_error_ms": 1.0,
+   "t_end_source": "vad",
+   "first_audio_ms": 6356.9,
+   "first_audio_from_t_end_ms": 6355.9,
+   "engine_ms": 4465.7,
+   "tts_ms": 1084.5,
+   "reply_suggestion": "h17-r1-voice-holdout-C-s5",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "네, 확인해 주셔서 감사합니다. 좋은 하루 보내세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 확인해 주셔서 감사합니다. 좋은 하루 보내세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u6"
+   ],
+   "first_partial_ms": 521.3,
+   "final_ms": 803.9,
+   "t_end_error_ms": 20.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 5498.8,
+   "first_audio_from_t_end_ms": 5478.5,
+   "engine_ms": 3473.9,
+   "tts_ms": 1220.8,
+   "reply_suggestion": "h17-r1-voice-holdout-C-s6",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [],
+ "new_condition_audio": [],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 0,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": []
+ },
+ "recording": {
+  "file": "results/voice/scenarios/voice-holdout-C/h17-r1-voice-holdout-C.wav",
+  "t0_ms": 4482106.323,
+  "sha256_16": "eee6759ae63aa014",
+  "duration_ms": 211780.9
+ },
+ "playbacks": {
+  "total": 5,
+  "exposed": 5,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 133769.4
+ },
+ "voice_discarded": 1,
+ "voice_held": 1,
+ "voice_errors": [],
+ "engine_errors": []
+}
