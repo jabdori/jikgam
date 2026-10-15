@@ -1,0 +1,192 @@
+{
+ "note": "판정에 쓰지 않는다. registered는 §9.3이 실행 전에 정한 보고 항목, post_hoc은 결과를 본 뒤 정한 분석이다(2026-10-15).",
+ "runs": [
+  {
+   "run_id": "voice-holdout-C",
+   "policy": "C",
+   "registered": {
+    "sessions": 60,
+    "customer_turns": 545,
+    "provisional_sent": 0,
+    "confirmed": 0,
+    "replaced": 0,
+    "unconfirmed": 0,
+    "replaced_rate": null,
+    "prejudged_used_of_decisions": 0.0,
+    "prejudged_used_of_provisional": null,
+    "decision_calls": 747,
+    "prejudge_calls": 0,
+    "decision_usd": 0.15254,
+    "prejudge_usd": 0.0,
+    "generation_calls": 449,
+    "generation_usd": 1.37455,
+    "prejudged_used": 0,
+    "decision_calls_per_turn": 1.37
+   },
+   "post_hoc": {
+    "replaced_similarity": {
+     "0.9 이상": 0,
+     "0.7~0.9": 0,
+     "0.4~0.7": 0,
+     "0.4 미만": 0
+    },
+    "shifted_pairs": {
+     "pairs": 0,
+     "replaced": 0,
+     "sessions": []
+    },
+    "final_lag_ms": {
+     "n": 0,
+     "measured": 0,
+     "none": 0,
+     "p50": null,
+     "p95": null
+    },
+    "evidence_ms": {
+     "final": {
+      "n": 545,
+      "measured": 545,
+      "none": 0,
+      "p50": 1032.3,
+      "p95": 1223.3
+     }
+    },
+    "first_audio_ms": {
+     "final": {
+      "n": 545,
+      "measured": 363,
+      "none": 182,
+      "p50": 4776.3,
+      "p95": 6267.9
+     }
+    },
+    "replaced_wasted": {
+     "generation_calls": 0,
+     "generation_usd": 0,
+     "generation_cancelled": 0,
+     "decision_cancelled": 0,
+     "played_replies": 0,
+     "played_ms_total": 0,
+     "redo_decision_calls": 0,
+     "redo_decision_usd": 0
+    }
+   }
+  },
+  {
+   "run_id": "voice-holdout-D",
+   "policy": "D",
+   "registered": {
+    "sessions": 60,
+    "customer_turns": 565,
+    "provisional_sent": 316,
+    "confirmed": 180,
+    "replaced": 133,
+    "unconfirmed": 3,
+    "replaced_rate": 0.4249,
+    "prejudged_used_of_decisions": 0.2813,
+    "prejudged_used_of_provisional": 0.7816,
+    "decision_calls": 878,
+    "prejudge_calls": 2643,
+    "decision_usd": 0.12862,
+    "prejudge_usd": 0.5515,
+    "generation_calls": 460,
+    "generation_usd": 1.41948,
+    "prejudged_used": 247,
+    "decision_calls_per_turn": 6.23
+   },
+   "post_hoc": {
+    "replaced_similarity": {
+     "0.9 이상": 62,
+     "0.7~0.9": 51,
+     "0.4~0.7": 13,
+     "0.4 미만": 7
+    },
+    "shifted_pairs": {
+     "pairs": 8,
+     "replaced": 8,
+     "sessions": [
+      "h14-r1-voice-holdout-D",
+      "h15-r1-voice-holdout-D"
+     ]
+    },
+    "final_lag_ms": {
+     "n": 313,
+     "measured": 313,
+     "none": 0,
+     "p50": 802.7,
+     "p95": 1047.3
+    },
+    "evidence_ms": {
+     "final": {
+      "n": 249,
+      "measured": 249,
+      "none": 0,
+      "p50": 997.2,
+      "p95": 1195.1
+     },
+     "confirmed": {
+      "n": 180,
+      "measured": 180,
+      "none": 0,
+      "p50": 699.2,
+      "p95": 895.1
+     },
+     "replaced": {
+      "n": 133,
+      "measured": 125,
+      "none": 8,
+      "p50": 1023.5,
+      "p95": 1253.8
+     },
+     "unconfirmed": {
+      "n": 3,
+      "measured": 3,
+      "none": 0,
+      "p50": 775.4,
+      "p95": 957.6
+     }
+    },
+    "first_audio_ms": {
+     "final": {
+      "n": 249,
+      "measured": 169,
+      "none": 80,
+      "p50": 4599.2,
+      "p95": 6014.6
+     },
+     "confirmed": {
+      "n": 180,
+      "measured": 111,
+      "none": 69,
+      "p50": 4425.8,
+      "p95": 5459.2
+     },
+     "replaced": {
+      "n": 133,
+      "measured": 86,
+      "none": 47,
+      "p50": 4773.3,
+      "p95": 6166.7
+     },
+     "unconfirmed": {
+      "n": 3,
+      "measured": 2,
+      "none": 1,
+      "p50": 5453.8,
+      "p95": 5695.8
+     }
+    },
+    "replaced_wasted": {
+     "generation_calls": 2,
+     "generation_usd": 0.00396,
+     "generation_cancelled": 111,
+     "decision_cancelled": 19,
+     "played_replies": 0,
+     "played_ms_total": 0,
+     "redo_decision_calls": 132,
+     "redo_decision_usd": 0.02791
+    }
+   }
+  }
+ ]
+}
