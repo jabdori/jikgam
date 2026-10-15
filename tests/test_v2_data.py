@@ -72,13 +72,45 @@ def test_validate_keeps_question_when_only_same_elsewhere_fails():
     assert item and counts == {"elsewhere_quote_not_found": 1}
 
 
-def test_validate_multi_needs_items_more_than_three_lines_apart():
+def test_validate_multi_items_within_three_lines_merge_into_single():
+    # 3줄 안에 붙은 근거는 이어진 근거 하나다(2차부터 합쳐서 단일 근거로 매긴다)
     call = Call("c", "answerable", "법령", ["law"])
     near = q("multi", ("law", "제5조(목적) 이 조는 5번째 내용을 정한다."), ("law", "제7조(목적) 이 조는 7번째 내용을 정한다."))
     far = q("multi", ("law", "제5조(목적) 이 조는 5번째 내용을 정한다."), ("law", "제9조(목적) 이 조는 9번째 내용을 정한다."))
     counts: dict[str, int] = {}
-    assert validate(DOCS, call, near, counts) is None and counts == {"drop_multi_too_close": 1}
-    assert validate(DOCS, call, far, {}) is not None
+    merged = validate(DOCS, call, near, counts)
+    assert merged and merged["type"] == "single" and counts == {"multi_merged_to_single": 1}
+    span = merged["evidence"][0]["alternatives"][0]
+    assert (LAW.line_at(span["start"]).no, LAW.line_at(span["end"] - 1).no) == (5, 7)
+    kept = validate(DOCS, call, far, {})
+    assert kept and kept["type"] == "multi" and len(kept["evidence"]) == 2
+
+
+def test_find_gapped_accepts_skipped_lines_within_window_only():
+    rows = [("별표 2", "1) 사업자 귀책사유로 인한 계약해제"), ("별표 2", "* 비고 칸의 다른 글이 끼어 있다"),
+            ("별표 2", "- 출국 예정일이 3개월 이상 지연 | o 대행수수료 환급")] + [("별표 2", f"다른 줄 {k}") for k in range(30)]
+    rows.append(("별표 2", "멀리 떨어진 줄의 글이다"))
+    doc = make_doc("t", "고시", rows)
+    got = doc.find_gapped("1) 사업자 귀책사유로 인한 계약해제 … - 출국 예정일이 3개월 이상 지연 | o 대행수수료 환급")
+    assert got and doc.line_at(got[0]).no == 1 and doc.line_at(got[1] - 1).no == 3
+    # 표시 없이 건너뛰어도 같다
+    assert doc.find_gapped("1) 사업자 귀책사유로 인한 계약해제 - 출국 예정일이 3개월 이상 지연") == (got[0], doc.text.index(" | o"))
+    # 25줄을 넘게 건너뛰면 받지 않는다
+    assert doc.find_gapped("1) 사업자 귀책사유로 인한 계약해제 멀리 떨어진 줄의 글이다") is None
+    # 원문에 없는 글자가 있으면 받지 않는다
+    assert doc.find_gapped("1) 사업자 귀책사유로 인한 계약해제 지어낸 문장이 들어갔다") is None
+
+
+def test_locate_drops_a_leading_heading_that_is_not_near():
+    from jikgam.v2.qa_gen import locate
+
+    rows = [("별표 2", "<④이민대행서비스(1개업종)>")] + [("별표 2", f"다른 줄 {k}") for k in range(30)]
+    rows += [("별표 2", "2) 사업자의 계약해지 | ㅇ 사업자는 이미 수수한 비용을 소비자에게 전액 환급")]
+    doc = make_doc("t", "고시", rows)
+    counts: dict[str, int] = {}
+    spans, why = locate({"t": doc}, "t", "<④이민대행서비스(1개업종)>\n2) 사업자의 계약해지 | ㅇ 사업자는 이미 수수한 비용을 소비자에게 전액 환급", counts)
+    assert why is None and counts == {"quote_lead_dropped_1": 1}
+    assert doc.line_at(spans[0]["start"]).no == 32
 
 
 def test_cross_questions_need_two_groups_and_terms_items_stay_local():

@@ -1,4 +1,6 @@
 {
+  "round": 2,
+  "budget_usd": 17.0,
   "model": "gemini-pro",
   "seed": 20261016,
   "targets": {
@@ -14,25 +16,17 @@
     "표준약관/none": 9
   },
   "over": 1.15,
+  "over_by": {
+    "고시/single": 1.35,
+    "고시/multi": 1.8,
+    "법령/multi": 1.45
+  },
   "calls_per_group": {
     "법령": 5,
     "고시": 5,
     "표준약관": 3
   },
-  "extra_calls": [
-    [
-      "고시",
-      2,
-      6,
-      13
-    ],
-    [
-      "법령",
-      1,
-      0,
-      10
-    ]
-  ],
+  "extra_calls": [],
   "cross_pairs": [
     [
       "ecom-act",
@@ -56,6 +50,7 @@
     ]
   ],
   "cross_each": 10,
+  "alt_batch_chars": 70000,
   "none_candidates": {
     "법령": 30,
     "고시": 25,
@@ -68,597 +63,731 @@
     "cached": 0.2
   },
   "prompts_sha256": {
-    "answerable": "f3cc980948b8f0bdfe409337208f3b8349a264a17fcb61b5e0e2ca230ac19087",
-    "none": "911c6cabaf4343781b10fc1101173050a2c7d81befb61c9e204317c4874cb8c6",
-    "check": "ecd9f52faf4c4e09682da29e0ba7c820f3b7a6ecd9cd1c49d4181b2fd8cf89f0"
+    "answerable": "b3802561ea777bf290b1eb43505ee7bfaa6868cd057dbae75f6a16ff4ff5e3e3",
+    "none": "f30b6b6f3643b1eebcca51eb63ba753c2532fffac29553799fec8e7669136812",
+    "check": "510930061263571cad50476b2f802b079b2437f82bf260e5365d94d5f740a1ea",
+    "alt": "081f6d976f36377c8cfdd0eb9d7b5f5afe573fd179a206cba284da471cd5aeca"
   },
   "counts": {
     "법령": {
       "written": 180,
-      "kept_single": 107,
-      "kept_multi": 43,
-      "drop_evidence_quote_not_found": 22,
-      "drop_multi_too_close": 8,
+      "kept_single": 115,
+      "quote_gapped": 64,
+      "kept_multi": 62,
+      "drop_evidence_quote_not_found": 1,
+      "drop_single_with_many": 2,
+      "outside_focus_kept": 5,
+      "multi_merged_to_single": 2,
+      "multi_merged_some": 1,
       "none_written": 30,
       "check_missing": 0,
-      "kept_none": 29,
-      "none_dropped_answerable": 1,
+      "kept_none": 15,
+      "none_dropped_answerable": 15,
       "chosen_single": 96,
       "short_single": 0,
-      "chosen_multi": 43,
-      "short_multi": 1,
-      "chosen_none": 17,
-      "short_none": 0
+      "chosen_multi": 44,
+      "short_multi": 0,
+      "chosen_none": 15,
+      "short_none": 2
     },
     "고시": {
-      "written": 168,
-      "kept_single": 77,
-      "drop_evidence_quote_not_found": 53,
-      "kept_multi": 27,
+      "written": 170,
+      "drop_evidence_quote_not_found": 57,
+      "kept_single": 86,
+      "quote_gapped": 64,
+      "kept_multi": 25,
       "drop_evidence_quote_too_short": 2,
-      "outside_focus_kept": 4,
-      "drop_multi_too_close": 8,
-      "drop_multi_with_one": 1,
+      "quote_lead_dropped_2": 4,
+      "quote_lead_dropped_1": 9,
+      "multi_merged_to_single": 9,
+      "outside_focus_kept": 3,
       "none_written": 25,
       "check_missing": 0,
-      "kept_none": 25,
+      "kept_none": 17,
+      "none_dropped_answerable": 8,
       "chosen_single": 76,
       "short_single": 0,
-      "chosen_multi": 27,
-      "short_multi": 7,
+      "chosen_multi": 25,
+      "short_multi": 9,
       "chosen_none": 14,
       "short_none": 0
     },
     "표준약관": {
-      "written": 84,
-      "kept_single": 57,
+      "written": 85,
+      "kept_single": 58,
+      "quote_gapped": 7,
+      "outside_focus_kept": 2,
       "kept_multi": 27,
+      "multi_merged_to_single": 1,
       "none_written": 16,
       "check_missing": 0,
-      "kept_none": 16,
+      "kept_none": 6,
+      "none_dropped_answerable": 10,
       "chosen_single": 48,
       "short_single": 0,
       "chosen_multi": 22,
       "short_multi": 0,
-      "chosen_none": 9,
-      "short_none": 0
+      "chosen_none": 6,
+      "short_none": 3
     },
     "넘나듦": {
       "written": 50,
-      "kept_multi": 47,
-      "drop_evidence_quote_not_found": 3,
+      "quote_gapped": 25,
+      "kept_multi": 43,
+      "quote_lead_dropped_2": 1,
+      "drop_evidence_quote_not_found": 1,
+      "drop_cross_single_group": 5,
+      "drop_multi_too_close": 1,
       "chosen_multi": 40,
       "short_multi": 0
+    },
+    "대체 근거": {
+      "calls": 9,
+      "added": 105,
+      "overlaps_other_evidence": 11,
+      "already_there": 90,
+      "quote_gapped": 1,
+      "location_quote_not_found": 5,
+      "outside_group": 31,
+      "evidence_items": 500,
+      "items_with_added": 58
     }
   },
+  "skipped_calls": [],
+  "gap_lines": 25,
   "files": {
-    "data/v2/qa/items.jsonl": 286,
-    "data/v2/local/qa/items.jsonl": 106
+    "data/v2/qa/items.jsonl": 260,
+    "data/v2/local/qa/items.jsonl": 126
   },
   "calls": [
     {
-      "call": "법령-1",
+      "call": "넘나듦-1",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 205318.3,
-        "input_tokens": 115292,
-        "output_tokens": 31954,
-        "thoughts_tokens": 23959,
+        "latency_ms": 118188.9,
+        "input_tokens": 137856,
+        "output_tokens": 19295,
+        "thoughts_tokens": 13834,
         "cached_tokens": 0,
-        "cost_usd": 0.614032,
+        "cost_usd": 0.507252,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "75577de359491ff286c41cd1379db2793fbf3f9ae601b8b9b87ba27e790c0730",
-      "billed_usd": 0.614,
-      "reused": true
+      "prompt_sha256": "ea03607c3d77db85bdb9578b8de9bbb58b4bce601d883afbcce02edffa14dfbe",
+      "billed_usd": 0.5073,
+      "reused": false
     },
     {
       "call": "고시-1",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 135288.8,
-        "input_tokens": 118584,
-        "output_tokens": 18177,
-        "thoughts_tokens": 10121,
-        "cached_tokens": 707,
-        "cost_usd": 0.455292,
+        "latency_ms": 123115.3,
+        "input_tokens": 118917,
+        "output_tokens": 21512,
+        "thoughts_tokens": 11553,
+        "cached_tokens": 0,
+        "cost_usd": 0.495978,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "3b7bc92fb3b9a65bf1ebc0fdde9a178c5693683525e53a13ab1c2677a8281895",
-      "billed_usd": 0.454,
-      "reused": true
+      "prompt_sha256": "de4c682b13dd31638c9bddd4293420f21e9c1cc5fd5d3e71a9d110e4dfe5da51",
+      "billed_usd": 0.496,
+      "reused": false
     },
     {
       "call": "표준약관-1",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 129644.6,
-        "input_tokens": 19958,
-        "output_tokens": 19256,
-        "thoughts_tokens": 12601,
+        "latency_ms": 152759.5,
+        "input_tokens": 20290,
+        "output_tokens": 23501,
+        "thoughts_tokens": 16622,
         "cached_tokens": 0,
-        "cost_usd": 0.270988,
+        "cost_usd": 0.322592,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "4ad1479b36f0cd3bfccc18ece31e7445fea9bac9ef43951c99ecb6b3721b81a7",
-      "billed_usd": 0.271,
-      "reused": true
-    },
-    {
-      "call": "넘나듦-1",
-      "usage": {
-        "model": "gemini-3.1-pro-preview",
-        "latency_ms": 138261.0,
-        "input_tokens": 137524,
-        "output_tokens": 21027,
-        "thoughts_tokens": 16022,
-        "cached_tokens": 0,
-        "cost_usd": 0.527372,
-        "attempts": 1,
-        "error": null
-      },
-      "prompt_sha256": "7379286c8af19b2733ed45e4113c812145a8867b9127271d89797401b32e27fb",
-      "billed_usd": 0.5274,
-      "reused": true
+      "prompt_sha256": "04d633ea5120801de70fefc206583fb8b0b7d0f81e4d8c2f3136aa49a8beb4e0",
+      "billed_usd": 0.3226,
+      "reused": false
     },
     {
       "call": "넘나듦-2",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 141267.9,
-        "input_tokens": 26461,
-        "output_tokens": 20445,
-        "thoughts_tokens": 15205,
+        "latency_ms": 83184.6,
+        "input_tokens": 26793,
+        "output_tokens": 13558,
+        "thoughts_tokens": 9254,
         "cached_tokens": 0,
-        "cost_usd": 0.298262,
+        "cost_usd": 0.216282,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "e0961691a1896cc8ccbd195de6137f9b6ab22c1f5a69df42754201a420d4f63a",
-      "billed_usd": 0.2983,
-      "reused": true
+      "prompt_sha256": "92b3454fb38ddaa41f96bf06090f39a62cfbce22b4804cea4d3f7f37e27d089c",
+      "billed_usd": 0.2163,
+      "reused": false
+    },
+    {
+      "call": "법령-1",
+      "usage": {
+        "model": "gemini-3.1-pro-preview",
+        "latency_ms": 230246.6,
+        "input_tokens": 115624,
+        "output_tokens": 40611,
+        "thoughts_tokens": 27407,
+        "cached_tokens": 0,
+        "cost_usd": 0.71858,
+        "attempts": 1,
+        "error": null
+      },
+      "prompt_sha256": "965aed8c88e431383b6a41b7cf943f81817e06b39fe9dafea6f52ee0a36858bc",
+      "billed_usd": 0.7186,
+      "reused": false
     },
     {
       "call": "넘나듦-3",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 98592.5,
-        "input_tokens": 36504,
-        "output_tokens": 15000,
-        "thoughts_tokens": 11047,
-        "cached_tokens": 700,
-        "cost_usd": 0.253008,
+        "latency_ms": 112622.1,
+        "input_tokens": 36836,
+        "output_tokens": 18654,
+        "thoughts_tokens": 13607,
+        "cached_tokens": 1028,
+        "cost_usd": 0.29752,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "f2368968a3e24e536195212cf2866128074913e3689ca0ea6e671234494db8fb",
-      "billed_usd": 0.2517,
-      "reused": true
+      "prompt_sha256": "5723e55694521927ff8c107b93414601dcd730853b329f9fa54b24bc82609ebd",
+      "billed_usd": 0.2957,
+      "reused": false
     },
     {
       "call": "넘나듦-4",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 100320.2,
-        "input_tokens": 23431,
-        "output_tokens": 15028,
-        "thoughts_tokens": 11065,
+        "latency_ms": 92671.9,
+        "input_tokens": 23763,
+        "output_tokens": 15471,
+        "thoughts_tokens": 10935,
         "cached_tokens": 0,
-        "cost_usd": 0.227198,
+        "cost_usd": 0.233178,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "0a0377506abd035c94ba911c867def4ba090ae6f1c84e02a53c53202e1e8b990",
-      "billed_usd": 0.2272,
-      "reused": true
+      "prompt_sha256": "ae8b513da4d2c964afcde2968af438ad3a1a191f6467afd8facb7683767e8dcb",
+      "billed_usd": 0.2332,
+      "reused": false
     },
     {
       "call": "넘나듦-5",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 113404.4,
-        "input_tokens": 21663,
-        "output_tokens": 16998,
-        "thoughts_tokens": 13264,
+        "latency_ms": 164989.6,
+        "input_tokens": 21995,
+        "output_tokens": 26653,
+        "thoughts_tokens": 22224,
         "cached_tokens": 0,
-        "cost_usd": 0.247302,
+        "cost_usd": 0.363826,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "17b1f397b8c46497cbee114f28929f3afbce7cae7c1ffaecaae4e97a5ca3960c",
-      "billed_usd": 0.2473,
-      "reused": true
+      "prompt_sha256": "21943523c8f78c97e91063e67e407cd9591c3853f85b8af511f65edb01aecccb",
+      "billed_usd": 0.3638,
+      "reused": false
     },
     {
       "call": "법령-2",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 169654.7,
-        "input_tokens": 115307,
-        "output_tokens": 26688,
-        "thoughts_tokens": 15637,
-        "cached_tokens": 113250,
-        "cost_usd": 0.55087,
+        "latency_ms": 128759.4,
+        "input_tokens": 115639,
+        "output_tokens": 20874,
+        "thoughts_tokens": 10156,
+        "cached_tokens": 0,
+        "cost_usd": 0.481766,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "18ae82c9ddc9bc949e5db09dca6dcf62da9fcfe4ce044092e6a3bc9d61fbf076",
-      "billed_usd": 0.347,
-      "reused": true
-    },
-    {
-      "call": "법령-3",
-      "usage": {
-        "model": "gemini-3.1-pro-preview",
-        "latency_ms": 142314.7,
-        "input_tokens": 115318,
-        "output_tokens": 20783,
-        "thoughts_tokens": 11520,
-        "cached_tokens": 113250,
-        "cost_usd": 0.480032,
-        "attempts": 1,
-        "error": null
-      },
-      "prompt_sha256": "b5b9fdd141ad020da86469ac13cefc81b59af9b20b2ead44fcf3a7e1f6da23bf",
-      "billed_usd": 0.2762,
-      "reused": true
+      "prompt_sha256": "869146249d63291d79f3d6d56c5f93325b62aad4cd1bc451360610e615e0f025",
+      "billed_usd": 0.4818,
+      "reused": false
     },
     {
       "call": "법령-4",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 104604.6,
-        "input_tokens": 115304,
-        "output_tokens": 15628,
-        "thoughts_tokens": 6603,
-        "cached_tokens": 113250,
-        "cost_usd": 0.418144,
+        "latency_ms": 157371.4,
+        "input_tokens": 115636,
+        "output_tokens": 23951,
+        "thoughts_tokens": 13197,
+        "cached_tokens": 0,
+        "cost_usd": 0.518684,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "4ec7992658a6597703576c309fbdb89228db059bd5482d665cfc1126ac339cf8",
-      "billed_usd": 0.2143,
-      "reused": true
+      "prompt_sha256": "f91619e0a19de283c95e2ac82449146e543ad30cc9f56f97f4e271a0045c7026",
+      "billed_usd": 0.5187,
+      "reused": false
+    },
+    {
+      "call": "법령-3",
+      "usage": {
+        "model": "gemini-3.1-pro-preview",
+        "latency_ms": 172454.4,
+        "input_tokens": 115650,
+        "output_tokens": 27154,
+        "thoughts_tokens": 15768,
+        "cached_tokens": 113597,
+        "cost_usd": 0.557148,
+        "attempts": 1,
+        "error": null
+      },
+      "prompt_sha256": "ccf1b896ce93a0448d49ada02e8558c20fe092463467666dd605602435b862ba",
+      "billed_usd": 0.3527,
+      "reused": false
     },
     {
       "call": "법령-5",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 157968.2,
-        "input_tokens": 115304,
-        "output_tokens": 26688,
-        "thoughts_tokens": 15996,
-        "cached_tokens": 113250,
-        "cost_usd": 0.550864,
+        "latency_ms": 198971.5,
+        "input_tokens": 115636,
+        "output_tokens": 30340,
+        "thoughts_tokens": 19678,
+        "cached_tokens": 1037,
+        "cost_usd": 0.595352,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "bdb050969a80d55063b81f30e180d9584c2a55d720b5e5790cfaac8bf207943b",
-      "billed_usd": 0.347,
-      "reused": true
+      "prompt_sha256": "798e2feca38a6767ad8e2160666fd3d1465e2123dd8edb8edd46cbeaee151b60",
+      "billed_usd": 0.5935,
+      "reused": false
     },
     {
       "call": "고시-2",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 162226.5,
-        "input_tokens": 118587,
-        "output_tokens": 23075,
-        "thoughts_tokens": 17064,
+        "latency_ms": 179435.7,
+        "input_tokens": 118920,
+        "output_tokens": 27062,
+        "thoughts_tokens": 19803,
         "cached_tokens": 0,
-        "cost_usd": 0.514074,
+        "cost_usd": 0.562584,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "027ab2685d8a2f966ba6e00951b9a6688de4c32c60c7820d81e0c8e16f75ca19",
-      "billed_usd": 0.5141,
-      "reused": true
-    },
-    {
-      "call": "고시-3",
-      "usage": {
-        "model": "gemini-3.1-pro-preview",
-        "latency_ms": 158161.0,
-        "input_tokens": 118587,
-        "output_tokens": 23619,
-        "thoughts_tokens": 16327,
-        "cached_tokens": 116545,
-        "cost_usd": 0.520602,
-        "attempts": 1,
-        "error": null
-      },
-      "prompt_sha256": "24e2fc6ef2e9f272622e75b06d19d97d178294894e2c7bd0e09b6d4ab5eaca35",
-      "billed_usd": 0.3108,
-      "reused": true
+      "prompt_sha256": "27c83be914eb4f047aad2b021eefd798d5eab0869ea13e30d5f9e88323dcac56",
+      "billed_usd": 0.5626,
+      "reused": false
     },
     {
       "call": "고시-4",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 151732.9,
-        "input_tokens": 118587,
-        "output_tokens": 22676,
-        "thoughts_tokens": 15900,
-        "cached_tokens": 116545,
-        "cost_usd": 0.509286,
+        "latency_ms": 143712.1,
+        "input_tokens": 118920,
+        "output_tokens": 23430,
+        "thoughts_tokens": 16400,
+        "cached_tokens": 116878,
+        "cost_usd": 0.519,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "edf93d3e07c97262099aef724596863be947def82a212166a7c681cebc436f0c",
-      "billed_usd": 0.2995,
-      "reused": true
+      "prompt_sha256": "b07766c341383da288cc898131e4ec4cff98624fd2cedf685b7aae7a98335dbb",
+      "billed_usd": 0.3086,
+      "reused": false
     },
     {
       "call": "고시-5",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 120305.3,
-        "input_tokens": 118598,
-        "output_tokens": 17662,
-        "thoughts_tokens": 11542,
-        "cached_tokens": 116545,
-        "cost_usd": 0.44914,
+        "latency_ms": 121219.9,
+        "input_tokens": 118931,
+        "output_tokens": 20037,
+        "thoughts_tokens": 9423,
+        "cached_tokens": 116878,
+        "cost_usd": 0.478306,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "941858a4ae60f48103b47a3c0d81acd50a1fe5d7a0977a1e90521dc8d59c5fbc",
-      "billed_usd": 0.2394,
-      "reused": true
+      "prompt_sha256": "e580691c0c9310fd98319c35ee49c915df4dfaae008ddb38cac947209bdbf4f9",
+      "billed_usd": 0.2679,
+      "reused": false
     },
     {
-      "call": "표준약관-2",
+      "call": "고시-3",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 155206.6,
-        "input_tokens": 19971,
-        "output_tokens": 21983,
-        "thoughts_tokens": 14172,
-        "cached_tokens": 0,
-        "cost_usd": 0.303738,
+        "latency_ms": 170417.9,
+        "input_tokens": 118920,
+        "output_tokens": 27366,
+        "thoughts_tokens": 17841,
+        "cached_tokens": 116878,
+        "cost_usd": 0.566232,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "cdb2641d16d37bfe2583af27c165d14b3cd8dbc97d2173bea0359bca9acc1a3a",
-      "billed_usd": 0.3037,
-      "reused": true
+      "prompt_sha256": "24e7d453bccb62234bb5ef8c5115e99d0c3be5d0ac1605af69a610d3c07e03ef",
+      "billed_usd": 0.3559,
+      "reused": false
     },
     {
       "call": "표준약관-3",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 119094.3,
-        "input_tokens": 19960,
-        "output_tokens": 18245,
-        "thoughts_tokens": 11994,
-        "cached_tokens": 693,
-        "cost_usd": 0.25886,
+        "latency_ms": 127579.1,
+        "input_tokens": 20292,
+        "output_tokens": 20620,
+        "thoughts_tokens": 13374,
+        "cached_tokens": 1018,
+        "cost_usd": 0.288024,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "d5c02cd88b7d61aa10c8d78f66de2a26e15b1440b828274f67f3bebf902f527b",
-      "billed_usd": 0.2576,
-      "reused": true
+      "prompt_sha256": "1d6ef578865b3303bcaba90bb30375678e2ebdc6b07f5f969f855c12bdd004cd",
+      "billed_usd": 0.2862,
+      "reused": false
     },
     {
-      "call": "고시-추가-2",
+      "call": "표준약관-2",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 107325.1,
-        "input_tokens": 125270,
-        "output_tokens": 14368,
-        "thoughts_tokens": 7859,
+        "latency_ms": 151573.8,
+        "input_tokens": 20303,
+        "output_tokens": 23324,
+        "thoughts_tokens": 15587,
         "cached_tokens": 0,
-        "cost_usd": 0.422956,
-        "attempts": 3,
+        "cost_usd": 0.320494,
+        "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "3b25ffcbc987caa994c5bfdd4f9c7543addc6245259d05e22976668464f49223",
-      "billed_usd": 0.423,
-      "reused": true
+      "prompt_sha256": "9b3ce2b800bbfe5ea03d7ec06bf9f0dd4d76e50bfb3806470ad2ab396062d1e9",
+      "billed_usd": 0.3205,
+      "reused": false
     },
     {
-      "call": "법령-추가-1",
+      "call": "없음-표준약관",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 127229.6,
-        "input_tokens": 122669,
-        "output_tokens": 13615,
-        "thoughts_tokens": 9265,
+        "latency_ms": 36962.5,
+        "input_tokens": 19612,
+        "output_tokens": 4918,
+        "thoughts_tokens": 3381,
         "cached_tokens": 0,
-        "cost_usd": 0.408718,
+        "cost_usd": 0.09824,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "509c2a97a35974066abf5c20cd39efc7f678e3508dbc10bfd3ac7461ed2db8f2",
-      "billed_usd": 0.4087,
-      "reused": true
-    },
-    {
-      "call": "고시-추가-1",
-      "usage": {
-        "model": "gemini-3.1-pro-preview",
-        "latency_ms": 216276.4,
-        "input_tokens": 125256,
-        "output_tokens": 26365,
-        "thoughts_tokens": 20400,
-        "cached_tokens": 707,
-        "cost_usd": 0.566892,
-        "attempts": 1,
-        "error": null
-      },
-      "prompt_sha256": "c18b363a988c9c238cb32388954cc629242d44a64593535b0d788f4afdd25689",
-      "billed_usd": 0.5656,
+      "prompt_sha256": "7501c6d43037f2b0f7731ca78401eafb1b455a6de0e69ccd2eb8502dcda5436b",
+      "billed_usd": 0.0982,
       "reused": false
     },
     {
       "call": "없음-법령",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 48714.5,
-        "input_tokens": 114911,
-        "output_tokens": 6109,
-        "thoughts_tokens": 3845,
+        "latency_ms": 59238.6,
+        "input_tokens": 114944,
+        "output_tokens": 7352,
+        "thoughts_tokens": 4600,
         "cached_tokens": 0,
-        "cost_usd": 0.30313,
+        "cost_usd": 0.318112,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "fde4dabe3c07d5b3d0fc4a016a3b53d50eaef1b2ba30e01093896bb37778d659",
-      "billed_usd": 0.3031,
-      "reused": true
+      "prompt_sha256": "b8051f98070d20d32b5cf1e258af291aa7caa87c5c1a8822ae7be0a13a05e024",
+      "billed_usd": 0.3181,
+      "reused": false
     },
     {
       "call": "없음-고시",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 51412.9,
-        "input_tokens": 118204,
-        "output_tokens": 5989,
-        "thoughts_tokens": 3862,
+        "latency_ms": 64735.7,
+        "input_tokens": 118237,
+        "output_tokens": 8666,
+        "thoughts_tokens": 5948,
         "cached_tokens": 0,
-        "cost_usd": 0.308276,
+        "cost_usd": 0.340466,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "40c33892e46f1898cd347c0718aee8e024ab306ab8c20d89699ee495d98bfca1",
-      "billed_usd": 0.3083,
-      "reused": true
-    },
-    {
-      "call": "없음-표준약관",
-      "usage": {
-        "model": "gemini-3.1-pro-preview",
-        "latency_ms": 35403.8,
-        "input_tokens": 19579,
-        "output_tokens": 4262,
-        "thoughts_tokens": 2698,
-        "cached_tokens": 0,
-        "cost_usd": 0.090302,
-        "attempts": 1,
-        "error": null
-      },
-      "prompt_sha256": "1290dd72faf96d70129c1f311d6da00d64b2bdbcd6479e182ddad337add3a41f",
-      "billed_usd": 0.0903,
-      "reused": true
+      "prompt_sha256": "e71829f08b7423071e5fcee1386360b1e884dcf5c0f17836dd497aa75afae129",
+      "billed_usd": 0.3405,
+      "reused": false
     },
     {
       "call": "확인-법령",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 47996.8,
-        "input_tokens": 117805,
-        "output_tokens": 7102,
-        "thoughts_tokens": 4218,
+        "latency_ms": 81992.4,
+        "input_tokens": 118665,
+        "output_tokens": 15980,
+        "thoughts_tokens": 12579,
         "cached_tokens": 0,
-        "cost_usd": 0.320834,
+        "cost_usd": 0.42909,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "f7f116276932eeb7b71230eeb4c00680da7dc83deb39c0ece3e0a4b3258c0da5",
-      "billed_usd": 0.3208,
-      "reused": true
-    },
-    {
-      "call": "확인-고시",
-      "usage": {
-        "model": "gemini-3.1-pro-preview",
-        "latency_ms": 97395.8,
-        "input_tokens": 121098,
-        "output_tokens": 13956,
-        "thoughts_tokens": 10878,
-        "cached_tokens": 0,
-        "cost_usd": 0.409668,
-        "attempts": 1,
-        "error": null
-      },
-      "prompt_sha256": "562f88732fe426b9463ed0b1e5d94a59f7c8987ddd83c8ba2ae1c946526c9143",
-      "billed_usd": 0.4097,
-      "reused": true
+      "prompt_sha256": "8688f7e8050f16ba0f3aa63a722fbdf53d8b8b0cfc30505a51187e37eafaac53",
+      "billed_usd": 0.4291,
+      "reused": false
     },
     {
       "call": "확인-표준약관",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 48797.1,
-        "input_tokens": 22473,
-        "output_tokens": 7270,
-        "thoughts_tokens": 4386,
+        "latency_ms": 85868.4,
+        "input_tokens": 23333,
+        "output_tokens": 13915,
+        "thoughts_tokens": 9930,
         "cached_tokens": 0,
-        "cost_usd": 0.132186,
+        "cost_usd": 0.213646,
         "attempts": 1,
         "error": null
       },
-      "prompt_sha256": "4fd03cc2c52d42da937faaaaac4fa6832a558f89b8976bae114fb36d53d68576",
-      "billed_usd": 0.1322,
-      "reused": true
+      "prompt_sha256": "ac0ee9be6ddb6fd1e212efbe97b94f2c81dd2ff3c868e97e7fac667ae9f26b01",
+      "billed_usd": 0.2136,
+      "reused": false
+    },
+    {
+      "call": "확인-고시",
+      "usage": {
+        "model": "gemini-3.1-pro-preview",
+        "latency_ms": 115739.7,
+        "input_tokens": 121958,
+        "output_tokens": 21242,
+        "thoughts_tokens": 15338,
+        "cached_tokens": 0,
+        "cost_usd": 0.49882,
+        "attempts": 1,
+        "error": null
+      },
+      "prompt_sha256": "28c821d5999f4248ab2bdc5ff61cf83ba75ba76167337b20fd91d48c92e34627",
+      "billed_usd": 0.4988,
+      "reused": false
+    },
+    {
+      "call": "대체-표준약관-1",
+      "usage": {
+        "model": "gemini-3.1-pro-preview",
+        "latency_ms": 132234.2,
+        "input_tokens": 60813,
+        "output_tokens": 23830,
+        "thoughts_tokens": 16548,
+        "cached_tokens": 0,
+        "cost_usd": 0.407586,
+        "attempts": 1,
+        "error": null
+      },
+      "prompt_sha256": "db9e9b2bf2cc3cc6ca7682953eeb04e2d365df92673f3c1316630cf62547f3ad",
+      "billed_usd": 0.4076,
+      "reused": false
+    },
+    {
+      "call": "대체-법령-1",
+      "usage": {
+        "model": "gemini-3.1-pro-preview",
+        "latency_ms": 137809.6,
+        "input_tokens": 156145,
+        "output_tokens": 24406,
+        "thoughts_tokens": 15848,
+        "cached_tokens": 0,
+        "cost_usd": 0.605162,
+        "attempts": 1,
+        "error": null
+      },
+      "prompt_sha256": "94dab8f2ba1e8da68c746375d19942daac1b394ec86e5bafdce5bf89d163d582",
+      "billed_usd": 0.6052,
+      "reused": false
+    },
+    {
+      "call": "대체-고시-1",
+      "usage": {
+        "model": "gemini-3.1-pro-preview",
+        "latency_ms": 207272.1,
+        "input_tokens": 159438,
+        "output_tokens": 34101,
+        "thoughts_tokens": 21074,
+        "cached_tokens": 0,
+        "cost_usd": 0.728088,
+        "attempts": 1,
+        "error": null
+      },
+      "prompt_sha256": "998614a28b1150c5e9a2bae08c77ad322d99972b49c742fd3029098d797cc6e2",
+      "billed_usd": 0.7281,
+      "reused": false
+    },
+    {
+      "call": "대체-법령-3",
+      "usage": {
+        "model": "gemini-3.1-pro-preview",
+        "latency_ms": 93319.8,
+        "input_tokens": 138824,
+        "output_tokens": 16607,
+        "thoughts_tokens": 11247,
+        "cached_tokens": 0,
+        "cost_usd": 0.476932,
+        "attempts": 1,
+        "error": null
+      },
+      "prompt_sha256": "377ccaecb5fe4c79a66c0446eda54f969856e5987f498716a12219ab0fa40f18",
+      "billed_usd": 0.4769,
+      "reused": false
+    },
+    {
+      "call": "대체-고시-3",
+      "usage": {
+        "model": "gemini-3.1-pro-preview",
+        "latency_ms": 106374.4,
+        "input_tokens": 142117,
+        "output_tokens": 19415,
+        "thoughts_tokens": 11899,
+        "cached_tokens": 0,
+        "cost_usd": 0.517214,
+        "attempts": 1,
+        "error": null
+      },
+      "prompt_sha256": "85a8917b9992a840863603d5109f936073ac081ef67e5c39976a22a65b906196",
+      "billed_usd": 0.5172,
+      "reused": false
+    },
+    {
+      "call": "대체-고시-2",
+      "usage": {
+        "model": "gemini-3.1-pro-preview",
+        "latency_ms": 123783.8,
+        "input_tokens": 159557,
+        "output_tokens": 21773,
+        "thoughts_tokens": 12762,
+        "cached_tokens": 0,
+        "cost_usd": 0.58039,
+        "attempts": 1,
+        "error": null
+      },
+      "prompt_sha256": "2ccf5405dd19326f0c79cfa97cb04329a16f33277270be1d84a4f8d0c95c6c28",
+      "billed_usd": 0.5804,
+      "reused": false
+    },
+    {
+      "call": "대체-법령-2",
+      "usage": {
+        "model": "gemini-3.1-pro-preview",
+        "latency_ms": 185006.4,
+        "input_tokens": 156264,
+        "output_tokens": 33205,
+        "thoughts_tokens": 25392,
+        "cached_tokens": 0,
+        "cost_usd": 0.710988,
+        "attempts": 1,
+        "error": null
+      },
+      "prompt_sha256": "7a64dc28538f4d93c87033ddf19acdd1ad9a879e67d65a3501b297d13ce27968",
+      "billed_usd": 0.711,
+      "reused": false
+    },
+    {
+      "call": "대체-표준약관-3",
+      "usage": {
+        "model": "gemini-3.1-pro-preview",
+        "latency_ms": 151863.6,
+        "input_tokens": 43492,
+        "output_tokens": 26028,
+        "thoughts_tokens": 21175,
+        "cached_tokens": 514,
+        "cost_usd": 0.39932,
+        "attempts": 1,
+        "error": null
+      },
+      "prompt_sha256": "9d2004123f872ac798ffd7f79ec7cbd431818fcafd774e76d5e30e1724fbcfbe",
+      "billed_usd": 0.3984,
+      "reused": false
+    },
+    {
+      "call": "대체-표준약관-2",
+      "usage": {
+        "model": "gemini-3.1-pro-preview",
+        "latency_ms": 193972.2,
+        "input_tokens": 60932,
+        "output_tokens": 35861,
+        "thoughts_tokens": 26322,
+        "cached_tokens": 515,
+        "cost_usd": 0.552196,
+        "attempts": 1,
+        "error": null
+      },
+      "prompt_sha256": "6824117019c64c77330bb6e76b65a863d8034410c4d607058236f13870fd9939",
+      "billed_usd": 0.5513,
+      "reused": false
     }
   ],
   "pilot_calls": [
     {
-      "call": "시험-고시",
+      "call": "시험4-고시",
       "usage": {
         "model": "gemini-3.1-pro-preview",
-        "latency_ms": 75081.5,
-        "input_tokens": 118455,
-        "output_tokens": 9872,
-        "thoughts_tokens": 8535,
-        "cost_usd": 0.355374,
-        "attempts": 1,
-        "error": null
-      },
-      "billed_usd": 0.3554
-    },
-    {
-      "call": "시험-법령",
-      "usage": {
-        "model": "gemini-3.1-pro-preview",
-        "latency_ms": 37054.8,
-        "input_tokens": 115159,
-        "output_tokens": 4293,
-        "thoughts_tokens": 2313,
-        "cost_usd": 0.281834,
-        "attempts": 1,
-        "error": null
-      },
-      "billed_usd": 0.2818
-    },
-    {
-      "call": "시험2-고시",
-      "usage": {
-        "model": "gemini-3.1-pro-preview",
-        "latency_ms": 122355.8,
-        "input_tokens": 118516,
-        "output_tokens": 18686,
-        "thoughts_tokens": 17081,
-        "cost_usd": 0.461264,
-        "attempts": 1,
-        "error": null
-      },
-      "billed_usd": 0.4613
-    },
-    {
-      "call": "시험3-고시",
-      "usage": {
-        "model": "gemini-3.1-pro-preview",
-        "latency_ms": 71178.0,
-        "input_tokens": 118586,
-        "output_tokens": 9298,
-        "thoughts_tokens": 7614,
+        "latency_ms": 125041.1,
+        "input_tokens": 118780,
+        "output_tokens": 19547,
+        "thoughts_tokens": 17754,
         "cached_tokens": 0,
-        "cost_usd": 0.348748,
+        "cost_usd": 0.472124,
         "attempts": 1,
         "error": null
       },
-      "billed_usd": 0.3487
+      "billed_usd": 0.4721
+    },
+    {
+      "call": "시험4-대체-표준약관-1",
+      "usage": {
+        "model": "gemini-3.1-pro-preview",
+        "latency_ms": 75159.0,
+        "input_tokens": 22377,
+        "output_tokens": 12722,
+        "thoughts_tokens": 11523,
+        "cached_tokens": 0,
+        "cost_usd": 0.197418,
+        "attempts": 1,
+        "error": null
+      },
+      "billed_usd": 0.1974
+    },
+    {
+      "call": "시험4-법령",
+      "usage": {
+        "model": "gemini-3.1-pro-preview",
+        "latency_ms": 42436.2,
+        "input_tokens": 115486,
+        "output_tokens": 4981,
+        "thoughts_tokens": 3269,
+        "cached_tokens": 0,
+        "cost_usd": 0.290744,
+        "attempts": 1,
+        "error": null
+      },
+      "billed_usd": 0.2907
+    },
+    {
+      "call": "시험5-고시",
+      "usage": {
+        "model": "gemini-3.1-pro-preview",
+        "latency_ms": 122063.6,
+        "input_tokens": 118907,
+        "output_tokens": 19842,
+        "thoughts_tokens": 17869,
+        "cached_tokens": 0,
+        "cost_usd": 0.475918,
+        "attempts": 1,
+        "error": null
+      },
+      "billed_usd": 0.4759
     }
   ],
   "billed_usd": {
-    "generation": 8.9622,
-    "pilots": 1.4472,
-    "total": 10.4094
+    "generation": 14.0763,
+    "pilots": 1.4362,
+    "total": 15.5125
   },
-  "uncached_cost_usd": 11.8592
+  "uncached_cost_usd": 16.3553
 }

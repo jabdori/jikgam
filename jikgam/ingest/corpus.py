@@ -5,8 +5,11 @@
 분할·검색·평가 세트가 모두 이 정의를 쓴다.
 
 원문 찾기(find_quote)는 공백과 표 구분자 "|"를 무시하고 비교한다(docs/evaluation-v2.md §2.3).
+중간 줄을 건너뛰고 옮긴 원문은 find_gapped로 찾는다(§2.3 보완). 옮긴 글자는 모두 원문에 같은 순서로 있어야 하고,
+근거 범위는 첫 조각부터 끝 조각까지 이어진 원문 전체다.
 """
 
+import bisect
 import json
 from dataclasses import dataclass
 from functools import cached_property
@@ -74,6 +77,49 @@ class Doc:
             spans.append((pos[i], pos[i + len(needle) - 1] + 1))
             i = hay.find(needle, i + len(needle))
         return spans
+
+    def find_gapped(self, quote: str, max_lines: int = 25, min_piece: int = 8, max_pieces: int = 8,
+                    tail_reach: int = 120) -> tuple[int, int] | None:
+        """중간 줄을 건너뛰고 옮긴 원문을 찾는다. 찾으면 첫 조각부터 끝 조각까지의 원문 위치 [시작, 끝).
+
+        옮긴 글의 모든 글자가 원문에 같은 순서로 있어야 한다(공백, "|", 생략 표시 "…"는 무시). 조각은 앞에서부터
+        가장 길게 맞는 것을 고르고, 조각 사이는 건너뛸 수 있다. 첫 조각이 든 줄부터 max_lines줄 안에서만 찾는다.
+        min_piece보다 짧은 조각은 끝 조각일 때만, 앞 조각 끝에서 tail_reach글자 안에 있을 때만 받는다.
+        """
+        needle, _ = squash(quote.replace("…", "").replace("...", ""))
+        if len(needle) < min_piece:
+            return None
+        hay, pos = self._squashed
+        first_len = next((n for n in range(len(needle), min_piece - 1, -1) if hay.find(needle[:n]) >= 0), 0)
+        if not first_len:
+            return None
+        start = hay.find(needle[:first_len])
+        while start >= 0:
+            limit_line = self.line_at(pos[start]).no + max_lines - 1  # 이 줄(1부터)까지 찾는다
+            limit_pos = self.lines[limit_line].start if limit_line < len(self.lines) else len(self.text)
+            limit = bisect.bisect_left(pos, limit_pos)
+            cur, rem, pieces, ok = start + first_len, needle[first_len:], 1, True
+            while rem and ok:
+                if pieces >= max_pieces:
+                    ok = False
+                    break
+                got = None
+                for n in range(len(rem), 0, -1):
+                    if n < min_piece and n < len(rem):
+                        break
+                    reach = limit if n >= min_piece else min(limit, cur + tail_reach)
+                    i = hay.find(rem[:n], cur, reach)
+                    if i >= 0:
+                        got = (i, n)
+                        break
+                if got is None:
+                    ok = False
+                    break
+                cur, rem, pieces = got[0] + got[1], rem[got[1]:], pieces + 1
+            if ok:
+                return pos[start], pos[cur - 1] + 1
+            start = hay.find(needle[:first_len], start + 1)
+        return None
 
 
 def squash(text: str) -> tuple[str, list[int]]:

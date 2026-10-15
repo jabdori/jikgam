@@ -1,7 +1,7 @@
 {
-  "model": "gpt-6.1-sol",
+  "round": 2,
+  "model": "gpt-6-astra",
   "effort": "high",
-  "codex_version": "codex-cli 0.162.1",
   "seed": 20261016,
   "targets": {
     "법령/single": 12,
@@ -11,25 +11,30 @@
     "표준약관/single": 9,
     "표준약관/multi": 6
   },
-  "over": 1.2,
+  "over": 1.3,
   "prompt_sha256": {
-    "법령": "613c7b273534ed80bd7e205ed982f5a9e0ac2e73a1635b5b75c10a5d13eba3ba",
-    "고시": "93a7aa8aa18406d10ac227917af902b30c6ca810124e3d9cb9fd8f3a2d56ee9d",
-    "표준약관": "6a415974a78699dec6a220dabe3d1307c7b93b5c91d02d1c76e77555128e230c"
+    "법령": "756e6524448b6a1bcf84ec497deec7dafebdceec0a17ba4a252525f0eb86f7e3",
+    "고시": "15f509be324a08f2c8465c63fe9d9d73c6f828bf91a36295a5783bfadcecb46f",
+    "표준약관": "7d26689662cbb70c2315eeddde63dbd8ced5875986942c840aa864dec710521c",
+    "대체-법령": "9379506d7ec3784299b3670988e45afbf1d0899b8e1d2c196bb52a89d6e90f99",
+    "대체-고시": "782066e1845316ea8a2a7d21328e213bfa0cbbae81d960a3e103f6b6ee4e0fd6",
+    "대체-표준약관": "075208621a045783d4f4356c02c5a779fde2a889486c923d127a29057991ca32"
   },
   "counts": {
     "법령": {
-      "written": 25,
-      "kept_single": 15,
-      "kept_multi": 10,
+      "written": 27,
+      "kept_single": 16,
+      "quote_gapped": 3,
+      "kept_multi": 11,
       "chosen_single": 12,
       "short_single": 0,
       "chosen_multi": 8,
       "short_multi": 0
     },
     "고시": {
-      "written": 19,
-      "kept_single": 11,
+      "written": 20,
+      "kept_single": 12,
+      "quote_gapped": 16,
       "kept_multi": 8,
       "chosen_single": 9,
       "short_single": 0,
@@ -37,46 +42,87 @@
       "short_multi": 0
     },
     "표준약관": {
-      "written": 19,
-      "kept_single": 11,
+      "written": 20,
+      "kept_single": 12,
       "kept_multi": 8,
+      "quote_gapped": 1,
       "chosen_single": 9,
       "short_single": 0,
       "chosen_multi": 6,
       "short_multi": 0
+    },
+    "대체 근거": {
+      "added": 15,
+      "quote_gapped": 2,
+      "already_there": 3,
+      "evidence_items": 70,
+      "items_with_added": 6
     }
   },
   "usage": {
     "법령": {
-      "seconds": 236.4,
-      "input_tokens": 128757,
+      "seconds": 282.6,
+      "input_tokens": 128129,
       "cached_input_tokens": 0,
       "cache_write_input_tokens": 0,
-      "output_tokens": 11952,
-      "reasoning_output_tokens": 4142,
-      "exit": 0
+      "output_tokens": 12423,
+      "reasoning_output_tokens": 3256,
+      "exit": 0,
+      "codex_version": "codex-cli 0.162.1"
     },
     "고시": {
-      "seconds": 227.0,
-      "input_tokens": 127886,
+      "seconds": 233.9,
+      "input_tokens": 127258,
       "cached_input_tokens": 0,
       "cache_write_input_tokens": 0,
-      "output_tokens": 10995,
-      "reasoning_output_tokens": 5696,
-      "exit": 0
+      "output_tokens": 9088,
+      "reasoning_output_tokens": 2588,
+      "exit": 0,
+      "codex_version": "codex-cli 0.162.1"
     },
     "표준약관": {
-      "seconds": 176.6,
-      "input_tokens": 38076,
+      "seconds": 230.7,
+      "input_tokens": 37448,
       "cached_input_tokens": 0,
       "cache_write_input_tokens": 0,
-      "output_tokens": 8421,
-      "reasoning_output_tokens": 3526,
-      "exit": 0
+      "output_tokens": 9208,
+      "reasoning_output_tokens": 3106,
+      "exit": 0,
+      "codex_version": "codex-cli 0.162.1"
+    },
+    "대체-법령": {
+      "seconds": 97.1,
+      "input_tokens": 144881,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 4073,
+      "reasoning_output_tokens": 1849,
+      "exit": 0,
+      "codex_version": "codex-cli 0.162.1"
+    },
+    "대체-고시": {
+      "seconds": 72.0,
+      "input_tokens": 144010,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2513,
+      "reasoning_output_tokens": 1034,
+      "exit": 0,
+      "codex_version": "codex-cli 0.162.1"
+    },
+    "대체-표준약관": {
+      "seconds": 59.7,
+      "input_tokens": 54200,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 2605,
+      "reasoning_output_tokens": 1294,
+      "exit": 0,
+      "codex_version": "codex-cli 0.162.1"
     }
   },
   "files": {
-    "data/v2/check/items.jsonl": 35,
-    "data/v2/local/check/items.jsonl": 15
+    "data/v2/check/items.jsonl": 34,
+    "data/v2/local/check/items.jsonl": 16
   }
 }
