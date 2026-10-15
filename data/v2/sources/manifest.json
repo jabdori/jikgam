@@ -1,0 +1,341 @@
+{
+  "docs": {
+    "ecom-act": {
+      "title": "전자상거래 등에서의 소비자보호에 관한 법률",
+      "kind": "법률",
+      "site": "law",
+      "redistribute": true,
+      "seq": 282793,
+      "effective": "2026-07-21",
+      "header": "[시행 2026. 7. 21.] [법률 제21312호, 2026. 1. 20., 일부개정]",
+      "source_url": "https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=282793",
+      "fetched": "2026-10-15",
+      "files": [
+        {
+          "role": "본문",
+          "path": "data/v2/sources/ecom-act/body.pdf",
+          "name": "전자상거래 등에서의 소비자보호에 관한 법률(법률)(제21312호)(20260721).pdf",
+          "url": "https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=282793",
+          "sha256": "0079fe03f7b0e19c93f64c8988f2de986c45efd2393cebedcfbd4d20656cd822",
+          "bytes": 196187,
+          "pages": 22,
+          "producer": "iText 2.1.7 by 1T3XT",
+          "creator": ""
+        }
+      ]
+    },
+    "ecom-decree": {
+      "title": "전자상거래 등에서의 소비자보호에 관한 법률 시행령",
+      "kind": "시행령",
+      "site": "law",
+      "redistribute": true,
+      "seq": 288143,
+      "effective": "2026-07-21",
+      "header": "[시행 2026. 7. 21.] [대통령령 제36507호, 2026. 7. 20., 일부개정]",
+      "source_url": "https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=288143",
+      "fetched": "2026-10-15",
+      "files": [
+        {
+          "role": "본문",
+          "path": "data/v2/sources/ecom-decree/body.pdf",
+          "name": "전자상거래 등에서의 소비자보호에 관한 법률 시행령(대통령령)(제36507호)(20260721).pdf",
+          "url": "https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=288143",
+          "sha256": "0d09d1bf39f3c0d626bde78f92a63fbbfa788d52ead854d8b3136c71988a933f",
+          "bytes": 155687,
+          "pages": 14,
+          "producer": "iText 2.1.7 by 1T3XT",
+          "creator": ""
+        },
+        {
+          "role": "별표",
+          "path": "data/v2/sources/ecom-decree/byl-01.pdf",
+          "name": "[별표 1] 영업정지 처분의 기준(제34조제1항 관련)(전자상거래 등에서의 소비자보호에 관한 법률 시행령).pdf",
+          "url": "https://www.law.go.kr/LSW/flDownload.do?flSeq=167149469",
+          "sha256": "7fee592cfcf1c56d4a8a49b49336ee51f21e46332f5a767000809e0dbc8b85e5",
+          "bytes": 86326,
+          "pages": 5,
+          "producer": "Hancom PDF 1.3.0.546",
+          "creator": "Hwp 2020 1.0.0.0"
+        },
+        {
+          "role": "별표",
+          "path": "data/v2/sources/ecom-decree/byl-02.pdf",
+          "name": "[별표 2] 과징금의 부과기준(제38조제2항 관련)(전자상거래 등에서의 소비자보호에 관한 법률 시행령).pdf",
+          "url": "https://www.law.go.kr/LSW/flDownload.do?flSeq=167149483",
+          "sha256": "ba2af6f67ff6fefa918f6e2b1d99d1cda28ea3a8b1ff9db4efd58256f617d176",
+          "bytes": 63016,
+          "pages": 2,
+          "producer": "Hancom PDF 1.3.0.546",
+          "creator": "Hwp 2020 1.0.0.0"
+        },
+        {
+          "role": "별표",
+          "path": "data/v2/sources/ecom-decree/byl-03.pdf",
+          "name": "[별표 3] 과태료의 부과기준(제42조관련)(전자상거래 등에서의 소비자보호에 관한 법률 시행령).pdf",
+          "url": "https://www.law.go.kr/LSW/flDownload.do?flSeq=167149491",
+          "sha256": "2999e2386b1b36772d567b4bb7871a004e5bf525e80f68cea0b6c76f820fca74",
+          "bytes": 79905,
+          "pages": 4,
+          "producer": "Hancom PDF 1.3.0.546",
+          "creator": "Hwp 2020 1.0.0.0"
+        }
+      ]
+    },
+    "ecom-rule": {
+      "title": "전자상거래 등에서의 소비자보호에 관한 법률 시행규칙",
+      "kind": "시행규칙",
+      "site": "law",
+      "redistribute": true,
+      "seq": 288167,
+      "effective": "2026-07-21",
+      "header": "[시행 2026. 7. 21.] [총리령 제2136호, 2026. 7. 20., 일부개정]",
+      "source_url": "https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=288167",
+      "fetched": "2026-10-15",
+      "files": [
+        {
+          "role": "본문",
+          "path": "data/v2/sources/ecom-rule/body.pdf",
+          "name": "전자상거래 등에서의 소비자보호에 관한 법률 시행규칙(총리령)(제02136호)(20260721).pdf",
+          "url": "https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=288167",
+          "sha256": "e1b995b58f5895a27b4836579993a89631d700459dce09f7fba2b2a3fc483789",
+          "bytes": 113651,
+          "pages": 4,
+          "producer": "iText 2.1.7 by 1T3XT",
+          "creator": ""
+        }
+      ]
+    },
+    "terms-act": {
+      "title": "약관의 규제에 관한 법률",
+      "kind": "법률",
+      "site": "law",
+      "redistribute": true,
+      "seq": 260021,
+      "effective": "2024-08-07",
+      "header": "[시행 2024. 8. 7.] [법률 제20239호, 2024. 2. 6., 타법개정]",
+      "source_url": "https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=260021",
+      "fetched": "2026-10-15",
+      "files": [
+        {
+          "role": "본문",
+          "path": "data/v2/sources/terms-act/body.pdf",
+          "name": "약관의 규제에 관한 법률(법률)(제20239호)(20240807).pdf",
+          "url": "https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=260021",
+          "sha256": "abe74b928325ea444f35243894cc034951a6e1b55afc9ff1ae820cecfd8bb2c2",
+          "bytes": 147698,
+          "pages": 10,
+          "producer": "iText 2.1.7 by 1T3XT",
+          "creator": ""
+        }
+      ]
+    },
+    "consumer-act": {
+      "title": "소비자기본법",
+      "kind": "법률",
+      "site": "law",
+      "redistribute": true,
+      "seq": 283837,
+      "effective": "2026-09-11",
+      "header": "[시행 2026. 9. 11.] [법률 제21444호, 2026. 3. 10., 일부개정]",
+      "source_url": "https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=283837",
+      "fetched": "2026-10-15",
+      "files": [
+        {
+          "role": "본문",
+          "path": "data/v2/sources/consumer-act/body.pdf",
+          "name": "소비자기본법(법률)(제21444호)(20260911).pdf",
+          "url": "https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=283837",
+          "sha256": "53aa34b9dfd074e02cf5ff31a1b0edf855cbe748405d82bee18c762f3cc297e2",
+          "bytes": 201250,
+          "pages": 24,
+          "producer": "iText 2.1.7 by 1T3XT",
+          "creator": ""
+        }
+      ]
+    },
+    "content-act": {
+      "title": "콘텐츠산업 진흥법",
+      "kind": "법률",
+      "site": "law",
+      "redistribute": true,
+      "seq": 268753,
+      "effective": "2026-02-01",
+      "header": "[시행 2026. 2. 1.] [법률 제20750호, 2025. 1. 31., 일부개정]",
+      "source_url": "https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=268753",
+      "fetched": "2026-10-15",
+      "files": [
+        {
+          "role": "본문",
+          "path": "data/v2/sources/content-act/body.pdf",
+          "name": "콘텐츠산업 진흥법(법률)(제20750호)(20260201).pdf",
+          "url": "https://www.law.go.kr/LSW/lsInfoP.do?lsiSeq=268753",
+          "sha256": "ed1fef3ced11a8019716b60788d7bbffa14edfc9d5d8c740b1959ef763e95879",
+          "bytes": 166327,
+          "pages": 14,
+          "producer": "iText 2.1.7 by 1T3XT",
+          "creator": ""
+        }
+      ]
+    },
+    "dispute-std": {
+      "title": "소비자분쟁해결기준",
+      "kind": "고시",
+      "site": "admrul",
+      "redistribute": true,
+      "seq": 2100000270136,
+      "effective": "2025-12-18",
+      "header": "[시행 2025. 12. 18.] [공정거래위원회고시 제2025-14호, 2025. 12. 18., 일부개정]",
+      "source_url": "https://www.law.go.kr/LSW/admRulInfoP.do?admRulSeq=2100000270136",
+      "fetched": "2026-10-15",
+      "files": [
+        {
+          "role": "본문",
+          "path": "data/v2/sources/dispute-std/body.pdf",
+          "name": "소비자분쟁해결기준(공정거래위원회고시)(제2025-14호)(20251218).pdf",
+          "url": "https://www.law.go.kr/LSW/admRulInfoP.do?admRulSeq=2100000270136",
+          "sha256": "b142fd0b961dfd2df5cef5b120951b1d88b2037cf45ccde2470f964dd31c0df3",
+          "bytes": 56286,
+          "pages": 1,
+          "producer": "iText 2.1.7 by 1T3XT",
+          "creator": ""
+        },
+        {
+          "role": "별표",
+          "path": "data/v2/sources/dispute-std/byl-01.pdf",
+          "name": "[별표 1] 대상품목(소비자분쟁해결기준).pdf",
+          "url": "https://www.law.go.kr/LSW/flDownload.do?flSeq=159469937&flNm=%5B%EB%B3%84%ED%91%9C+1%5D+%EB%8C%80%EC%83%81%ED%92%88%EB%AA%A9&bylClsCd=200201",
+          "sha256": "c9a1aa0c121a58767b22f21da16a857df103e5594c9bd6a8b7ab37fdb417c321",
+          "bytes": 402319,
+          "pages": 6,
+          "producer": "Hancom PDF 1.3.0.546",
+          "creator": "Hwp 2020 1.0.0.0"
+        },
+        {
+          "role": "별표",
+          "path": "data/v2/sources/dispute-std/byl-02.pdf",
+          "name": "[별표 2] 품목별 해결기준(소비자분쟁해결기준).pdf",
+          "url": "https://www.law.go.kr/LSW/flDownload.do?flSeq=159470209&flNm=%5B%EB%B3%84%ED%91%9C+2%5D+%ED%92%88%EB%AA%A9%EB%B3%84+%ED%95%B4%EA%B2%B0%EA%B8%B0%EC%A4%80&bylClsCd=200201",
+          "sha256": "242401b8ae436e786a1b3c33aa5f568d7c8cb3a0927484a25ed933346bf72083",
+          "bytes": 3324040,
+          "pages": 134,
+          "producer": "Hancom PDF 1.3.0.546",
+          "creator": "Hwp 2020 1.0.0.0"
+        },
+        {
+          "role": "별표",
+          "path": "data/v2/sources/dispute-std/byl-03.pdf",
+          "name": "[별표 3] 품목별 품질보증기간 및 부품보유기간(소비자분쟁해결기준).pdf",
+          "url": "https://www.law.go.kr/LSW/flDownload.do?flSeq=159470219&flNm=%5B%EB%B3%84%ED%91%9C+3%5D+%ED%92%88%EB%AA%A9%EB%B3%84+%ED%92%88%EC%A7%88%EB%B3%B4%EC%A6%9D%EA%B8%B0%EA%B0%84+%EB%B0%8F+%EB%B6%80%ED%92%88%EB%B3%B4%EC%9C%A0%EA%B8%B0%EA%B0%84&bylClsCd=200201",
+          "sha256": "efd94a7a06c489dab45e1160aa558be638af0176bec932f74fe0385616b11dd7",
+          "bytes": 194767,
+          "pages": 3,
+          "producer": "Hancom PDF 1.3.0.546",
+          "creator": "Hwp 2020 1.0.0.0"
+        },
+        {
+          "role": "별표",
+          "path": "data/v2/sources/dispute-std/byl-04.pdf",
+          "name": "[별표 4] 품목별 내용연수표(소비자분쟁해결기준).pdf",
+          "url": "https://www.law.go.kr/LSW/flDownload.do?flSeq=159470225&flNm=%5B%EB%B3%84%ED%91%9C+4%5D+%ED%92%88%EB%AA%A9%EB%B3%84+%EB%82%B4%EC%9A%A9%EC%97%B0%EC%88%98%ED%91%9C&bylClsCd=200201",
+          "sha256": "f6d4e6570d0bd34f527d023e1a5f4ee13ff4a7c0730515b8cb6a7845296704e4",
+          "bytes": 62579,
+          "pages": 1,
+          "producer": "Hancom PDF 1.3.0.546",
+          "creator": "Hwp 2020 1.0.0.0"
+        }
+      ]
+    },
+    "content-guide": {
+      "title": "콘텐츠이용자 보호지침",
+      "kind": "고시",
+      "site": "admrul",
+      "redistribute": true,
+      "seq": 2100000237546,
+      "effective": "2024-03-14",
+      "header": "[시행 2024. 3. 14.] [문화체육관광부고시 제2024-16호, 2024. 3. 14., 폐지제정]",
+      "source_url": "https://www.law.go.kr/LSW/admRulInfoP.do?admRulSeq=2100000237546",
+      "fetched": "2026-10-15",
+      "files": [
+        {
+          "role": "본문",
+          "path": "data/v2/sources/content-guide/body.pdf",
+          "name": "콘텐츠이용자 보호지침(문화체육관광부고시)(제2024-16호)(20240314).pdf",
+          "url": "https://www.law.go.kr/LSW/admRulInfoP.do?admRulSeq=2100000237546",
+          "sha256": "eb94c8a5a137c96355709bf8c92d34898a4041ee3b0cf1e9247d6f8678452111",
+          "bytes": 361889,
+          "pages": 15,
+          "producer": "iText 2.1.7 by 1T3XT",
+          "creator": ""
+        }
+      ]
+    },
+    "game-terms": {
+      "title": "온라인게임 표준약관",
+      "kind": "표준약관",
+      "site": "ftc",
+      "redistribute": false,
+      "post": 11197,
+      "file": 14861,
+      "effective": "2024-02-23",
+      "header": "표준약관 제10069호 (2024. 2. 23. 개정)",
+      "source_url": "https://www.ftc.go.kr/www/selectBbsNttView.do?key=202&bordCd=201&nttSn=11197",
+      "fetched": "2026-10-15",
+      "files": [
+        {
+          "role": "원본",
+          "path": "data/v2/local/game-terms/original.hwpx",
+          "name": "온라인게임 표준약관 (24_02_23_개정).hwpx",
+          "url": "https://www.ftc.go.kr/www/downloadBbsFile.do?atchmnflNo=14861",
+          "sha256": "eac9c2035f2a7fcc22ea167bcefad7541890281b47bb22d8fa3e7ab99398ada9",
+          "bytes": 257041
+        },
+        {
+          "role": "본문",
+          "path": "data/v2/local/game-terms/body.pdf",
+          "name": "온라인게임 표준약관 (24_02_23_개정).pdf",
+          "url": "https://www.ftc.go.kr/www/downloadBbsFile.do?atchmnflNo=14861",
+          "sha256": "f1a981bbb959165ea1d34b49e4ecb74f978bb1a87bd1389bd15a2f3180662621",
+          "bytes": 216347,
+          "pages": 15,
+          "producer": "Hancom PDF 1.3.0.542",
+          "creator": "Hwp 2020 11.0.0.6402",
+          "converted": "한컴오피스 PDF 저장(scripts/hwp_to_pdf.ps1)"
+        }
+      ]
+    },
+    "ecom-terms": {
+      "title": "전자상거래 표준약관",
+      "kind": "표준약관",
+      "site": "ftc",
+      "redistribute": false,
+      "post": 11139,
+      "file": 14800,
+      "effective": "2015-06-26",
+      "header": "표준약관 제10023호 (2015. 6. 26. 개정)",
+      "source_url": "https://www.ftc.go.kr/www/selectBbsNttView.do?key=202&bordCd=201&nttSn=11139",
+      "fetched": "2026-10-15",
+      "files": [
+        {
+          "role": "원본",
+          "path": "data/v2/local/ecom-terms/original.hwp",
+          "name": "2015_6._26._개정 (전자상거래 표준약관).hwp",
+          "url": "https://www.ftc.go.kr/www/downloadBbsFile.do?atchmnflNo=14800",
+          "sha256": "0ecfcb061c9c8c7ae31e126434e7e33da0f8376db4b4b15901873128b4d377ae",
+          "bytes": 194048
+        },
+        {
+          "role": "본문",
+          "path": "data/v2/local/ecom-terms/body.pdf",
+          "name": "2015_6._26._개정 (전자상거래 표준약관).pdf",
+          "url": "https://www.ftc.go.kr/www/downloadBbsFile.do?atchmnflNo=14800",
+          "sha256": "ca90ae6495b3a34dd32779baa4c06943123319124680be22a17f7278692debe8",
+          "bytes": 147011,
+          "pages": 12,
+          "producer": "Hancom PDF 1.3.0.542",
+          "creator": "Hwp 2020 11.0.0.6402",
+          "converted": "한컴오피스 PDF 저장(scripts/hwp_to_pdf.ps1)"
+        }
+      ]
+    }
+  }
+}

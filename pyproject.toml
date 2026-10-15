@@ -21,6 +21,10 @@ ui = [
     "axe-playwright-python==0.1.8",
     "playwright==1.63.0",
 ]
+# v2 문서 처리의 텍스트 추출(ADR 0023). 엔진의 상담 경로는 이 그룹에 의존하지 않는다.
+ingest = [
+    "pdfplumber==0.11.10",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -30,4 +34,4 @@ build-backend = "hatchling.build"
 packages = ["jikgam"]
 
 [tool.uv]
-default-groups = ["dev", "web", "voice", "ui"]
+default-groups = ["dev", "web", "voice", "ui", "ingest"]

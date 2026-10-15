@@ -18,3 +18,6 @@ results/engine/console/
 # 음성 재생 결과의 녹음과 Pipecat 로그(크다. 다시 만들 수 있다)
 results/voice/**/*.wav
 results/voice/**/*.log
+
+# v2 원본 중 다시 배포해도 되는지 확인하지 못한 문서(ADR 0023)
+data/v2/local/

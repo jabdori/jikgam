@@ -1,0 +1,81 @@
+# v2 근거 검색 실험의 원본 문서(ADR 0023).
+#
+# 문서마다 공개 누리집의 식별자를 적는다. 국가법령정보센터의 lsiSeq(법령)와 admRulSeq(행정규칙)는 버전 하나를 가리킨다.
+# 받은 날짜, 머리말의 시행일·번호, 파일 해시는 scripts/v2_fetch_sources.py가 data/v2/sources/manifest.json에 적는다.
+#
+# redistribute = false인 문서는 원본과 PDF를 저장소 밖(data/v2/local/, git 제외)에 둔다.
+# 공공누리 표시가 없어 다시 배포해도 되는지 확인하지 못한 문서다(ADR 0023).
+
+[[doc]]
+id = "ecom-act"
+title = "전자상거래 등에서의 소비자보호에 관한 법률"
+kind = "법률"
+site = "law"
+seq = 282793
+
+[[doc]]
+id = "ecom-decree"
+title = "전자상거래 등에서의 소비자보호에 관한 법률 시행령"
+kind = "시행령"
+site = "law"
+seq = 288143
+
+[[doc]]
+id = "ecom-rule"
+title = "전자상거래 등에서의 소비자보호에 관한 법률 시행규칙"
+kind = "시행규칙"
+site = "law"
+seq = 288167
+
+[[doc]]
+id = "terms-act"
+title = "약관의 규제에 관한 법률"
+kind = "법률"
+site = "law"
+seq = 260021
+
+[[doc]]
+id = "consumer-act"
+title = "소비자기본법"
+kind = "법률"
+site = "law"
+seq = 283837
+
+[[doc]]
+id = "content-act"
+title = "콘텐츠산업 진흥법"
+kind = "법률"
+site = "law"
+seq = 268753
+
+[[doc]]
+id = "dispute-std"
+title = "소비자분쟁해결기준"
+kind = "고시"
+site = "admrul"
+seq = 2100000270136
+
+[[doc]]
+id = "content-guide"
+title = "콘텐츠이용자 보호지침"
+kind = "고시"
+site = "admrul"
+seq = 2100000237546
+
+[[doc]]
+id = "game-terms"
+title = "온라인게임 표준약관"
+kind = "표준약관"
+site = "ftc"
+post = 11197
+file = 14861
+redistribute = false
+
+[[doc]]
+id = "ecom-terms"
+title = "전자상거래 표준약관"
+kind = "표준약관"
+site = "ftc"
+post = 11139
+file = 14800
+redistribute = false

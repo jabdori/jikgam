@@ -1,0 +1,302 @@
+{
+  "docs": {
+    "ecom-act": {
+      "title": "전자상거래 등에서의 소비자보호에 관한 법률",
+      "kind": "법률",
+      "redistribute": true,
+      "output": "data/v2/extracted/ecom-act.jsonl",
+      "pages": 22,
+      "chars": 31163,
+      "blocks": 22,
+      "tables": 0,
+      "files": [
+        {
+          "file": "본문",
+          "pages": 22,
+          "chars": 31163,
+          "tables": 0,
+          "table_lines": 0,
+          "tables_rejected": 0,
+          "removed": {
+            "전자상거래 등에서의 소비자보호에 관한 법률": 22,
+            "법제처 # 국가법령정보센터": 22
+          }
+        }
+      ]
+    },
+    "ecom-decree": {
+      "title": "전자상거래 등에서의 소비자보호에 관한 법률 시행령",
+      "kind": "시행령",
+      "redistribute": true,
+      "output": "data/v2/extracted/ecom-decree.jsonl",
+      "pages": 25,
+      "chars": 25817,
+      "blocks": 29,
+      "tables": 5,
+      "files": [
+        {
+          "file": "본문",
+          "pages": 14,
+          "chars": 18293,
+          "tables": 0,
+          "table_lines": 0,
+          "tables_rejected": 0,
+          "removed": {
+            "전자상거래 등에서의 소비자보호에 관한 법률 시행령": 14,
+            "법제처 # 국가법령정보센터": 14
+          }
+        },
+        {
+          "file": "별표 1",
+          "pages": 5,
+          "chars": 3441,
+          "tables": 1,
+          "table_lines": 5,
+          "tables_rejected": 1,
+          "removed": {}
+        },
+        {
+          "file": "별표 2",
+          "pages": 2,
+          "chars": 1182,
+          "tables": 0,
+          "table_lines": 0,
+          "tables_rejected": 0,
+          "removed": {}
+        },
+        {
+          "file": "별표 3",
+          "pages": 4,
+          "chars": 2901,
+          "tables": 4,
+          "table_lines": 115,
+          "tables_rejected": 0,
+          "removed": {}
+        }
+      ]
+    },
+    "ecom-rule": {
+      "title": "전자상거래 등에서의 소비자보호에 관한 법률 시행규칙",
+      "kind": "시행규칙",
+      "redistribute": true,
+      "output": "data/v2/extracted/ecom-rule.jsonl",
+      "pages": 4,
+      "chars": 5489,
+      "blocks": 4,
+      "tables": 0,
+      "files": [
+        {
+          "file": "본문",
+          "pages": 4,
+          "chars": 5489,
+          "tables": 0,
+          "table_lines": 0,
+          "tables_rejected": 0,
+          "removed": {
+            "전자상거래 등에서의 소비자보호에 관한 법률 시행규칙": 4,
+            "법제처 # 국가법령정보센터": 4
+          }
+        }
+      ]
+    },
+    "terms-act": {
+      "title": "약관의 규제에 관한 법률",
+      "kind": "법률",
+      "redistribute": true,
+      "output": "data/v2/extracted/terms-act.jsonl",
+      "pages": 10,
+      "chars": 11838,
+      "blocks": 10,
+      "tables": 0,
+      "files": [
+        {
+          "file": "본문",
+          "pages": 10,
+          "chars": 11838,
+          "tables": 0,
+          "table_lines": 0,
+          "tables_rejected": 0,
+          "removed": {
+            "약관의 규제에 관한 법률": 10,
+            "법제처 # 국가법령정보센터": 10
+          }
+        }
+      ]
+    },
+    "consumer-act": {
+      "title": "소비자기본법",
+      "kind": "법률",
+      "redistribute": true,
+      "output": "data/v2/extracted/consumer-act.jsonl",
+      "pages": 24,
+      "chars": 31241,
+      "blocks": 24,
+      "tables": 0,
+      "files": [
+        {
+          "file": "본문",
+          "pages": 24,
+          "chars": 31241,
+          "tables": 0,
+          "table_lines": 0,
+          "tables_rejected": 0,
+          "removed": {
+            "소비자기본법": 25,
+            "법제처 # 국가법령정보센터": 24
+          }
+        }
+      ]
+    },
+    "content-act": {
+      "title": "콘텐츠산업 진흥법",
+      "kind": "법률",
+      "redistribute": true,
+      "output": "data/v2/extracted/content-act.jsonl",
+      "pages": 14,
+      "chars": 18226,
+      "blocks": 14,
+      "tables": 0,
+      "files": [
+        {
+          "file": "본문",
+          "pages": 14,
+          "chars": 18226,
+          "tables": 0,
+          "table_lines": 0,
+          "tables_rejected": 0,
+          "removed": {
+            "콘텐츠산업 진흥법": 14,
+            "법제처 # 국가법령정보센터": 14
+          }
+        }
+      ]
+    },
+    "dispute-std": {
+      "title": "소비자분쟁해결기준",
+      "kind": "고시",
+      "redistribute": true,
+      "output": "data/v2/extracted/dispute-std.jsonl",
+      "pages": 145,
+      "chars": 91680,
+      "blocks": 298,
+      "tables": 172,
+      "files": [
+        {
+          "file": "본문",
+          "pages": 1,
+          "chars": 582,
+          "tables": 0,
+          "table_lines": 0,
+          "tables_rejected": 0,
+          "removed": {}
+        },
+        {
+          "file": "별표 1",
+          "pages": 6,
+          "chars": 4474,
+          "tables": 6,
+          "table_lines": 264,
+          "tables_rejected": 0,
+          "removed": {}
+        },
+        {
+          "file": "별표 2",
+          "pages": 134,
+          "chars": 83855,
+          "tables": 162,
+          "table_lines": 4054,
+          "tables_rejected": 1,
+          "removed": {}
+        },
+        {
+          "file": "별표 3",
+          "pages": 3,
+          "chars": 2260,
+          "tables": 3,
+          "table_lines": 96,
+          "tables_rejected": 0,
+          "removed": {}
+        },
+        {
+          "file": "별표 4",
+          "pages": 1,
+          "chars": 509,
+          "tables": 1,
+          "table_lines": 20,
+          "tables_rejected": 0,
+          "removed": {}
+        }
+      ]
+    },
+    "content-guide": {
+      "title": "콘텐츠이용자 보호지침",
+      "kind": "고시",
+      "redistribute": true,
+      "output": "data/v2/extracted/content-guide.jsonl",
+      "pages": 15,
+      "chars": 10870,
+      "blocks": 15,
+      "tables": 0,
+      "files": [
+        {
+          "file": "본문",
+          "pages": 15,
+          "chars": 10870,
+          "tables": 0,
+          "table_lines": 0,
+          "tables_rejected": 0,
+          "removed": {
+            "콘텐츠이용자 보호지침": 16,
+            "법제처 # 국가법령정보센터": 15
+          }
+        }
+      ]
+    },
+    "game-terms": {
+      "title": "온라인게임 표준약관",
+      "kind": "표준약관",
+      "redistribute": false,
+      "output": "data/v2/local/game-terms/extracted.jsonl",
+      "pages": 15,
+      "chars": 13330,
+      "blocks": 15,
+      "tables": 0,
+      "files": [
+        {
+          "file": "본문",
+          "pages": 15,
+          "chars": 13330,
+          "tables": 0,
+          "table_lines": 0,
+          "tables_rejected": 259,
+          "removed": {
+            "- # -": 15
+          }
+        }
+      ]
+    },
+    "ecom-terms": {
+      "title": "전자상거래 표준약관",
+      "kind": "표준약관",
+      "redistribute": false,
+      "output": "data/v2/local/ecom-terms/extracted.jsonl",
+      "pages": 12,
+      "chars": 8170,
+      "blocks": 11,
+      "tables": 0,
+      "files": [
+        {
+          "file": "본문",
+          "pages": 12,
+          "chars": 8170,
+          "tables": 0,
+          "table_lines": 0,
+          "tables_rejected": 0,
+          "removed": {
+            "- # -": 12
+          }
+        }
+      ]
+    }
+  }
+}
