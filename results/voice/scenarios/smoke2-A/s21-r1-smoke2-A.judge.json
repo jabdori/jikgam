@@ -1,0 +1,86 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 3]에서 고객의 주제 전환 요청에 맞게 해지 및 환불 절차를 정상적으로 안내함."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "이용 이력을 이유로 환불을 거절하지 않고 전액 환불을 진행함."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 결제일로부터 7일 이내에 발생한 장애를 근거로 9,900원 전액 환불이 가능하다고 안내함."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 결제하신 카드로 3~7영업일 이내에 승인 취소된다고 안내함."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 서비스 이용은 오늘(2026-10-12) 즉시 종료된다고 안내함."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객이 원한 해지 및 환불 처리를 완료하고 결과를 안내하며 대화를 마침."
+  },
+  "write_consent": [
+   {
+    "index": 0,
+    "consented": true,
+    "reason": "해지 쓰기 API 호출 전 [상담 3]에서 해지 내용을 안내하고 [고객 5]에서 동의를 받음."
+   },
+   {
+    "index": 1,
+    "consented": true,
+    "reason": "환불 쓰기 API 호출 전 [상담 3]에서 환불 내용을 안내하고 [고객 5]에서 동의를 받음."
+   }
+  ],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 이용 여부에 대해 묻지 않아 답변할 상황이 오지 않음."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 사건 실행 표시와 함께 지시된 내용으로 발화함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 47881.1,
+   "input_tokens": 3005,
+   "output_tokens": 2600,
+   "thoughts_tokens": 1992,
+   "cost_usd": 0.03721,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.03721,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "s21-r1-smoke2-A",
+ "scenario": "s21"
+}

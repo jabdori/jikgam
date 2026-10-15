@@ -1,0 +1,237 @@
+{
+ "session": "s20-r1-smoke3-D",
+ "provisional": {
+  "sent": 5,
+  "confirmed": 3,
+  "replaced": 2,
+  "unconfirmed": 0,
+  "prejudge_calls": 33,
+  "prejudged_used": 6
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "해지하려는 건 아니고요, 다음 결제가 언제 되는지만 알고 싶어서요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "해지하려는 건 아니고요. / 다음 결제가 언제 되는지만 알고 싶어서요.",
+   "finals": 2,
+   "utt_ids": [
+    "u1",
+    "u3"
+   ],
+   "first_partial_ms": 1057.8,
+   "final_ms": 760.7,
+   "t_end_error_ms": 22.3,
+   "t_end_source": "vad",
+   "first_audio_ms": 3873.9,
+   "first_audio_from_t_end_ms": 3851.6,
+   "engine_ms": 2133.3,
+   "tts_ms": 979.8,
+   "reply_suggestion": "s20-r1-smoke3-D-s2",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "제 번호는 010-0000-0016이에요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호는 010-0000-0016이에요.",
+   "finals": 1,
+   "utt_ids": [
+    "u4"
+   ],
+   "first_partial_ms": 1070.6,
+   "final_ms": 730.3,
+   "t_end_error_ms": -44.4,
+   "t_end_source": "vad",
+   "first_audio_ms": 4065.3,
+   "first_audio_from_t_end_ms": 4109.8,
+   "engine_ms": 2315.2,
+   "tts_ms": 1019.7,
+   "reply_suggestion": "s20-r1-smoke3-D-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "문자로 온 인증번호 0016이에요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "문자로 온 인증번호 0016이에요.",
+   "finals": 1,
+   "utt_ids": [
+    "u5"
+   ],
+   "first_partial_ms": 998.3,
+   "final_ms": 819.1,
+   "t_end_error_ms": 30.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 4184.2,
+   "first_audio_from_t_end_ms": 4153.5,
+   "engine_ms": 2339.4,
+   "tts_ms": 1025.5,
+   "reply_suggestion": "s20-r1-smoke3-D-s4",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "아, 11월 2일이군요. 확인 감사합니다.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아, 11월 2일이군요. 확인 감사합니다.",
+   "finals": 1,
+   "utt_ids": [
+    "u6"
+   ],
+   "first_partial_ms": 970.7,
+   "final_ms": 768.5,
+   "t_end_error_ms": -20.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 7338.2,
+   "first_audio_from_t_end_ms": 7358.3,
+   "engine_ms": 5592.2,
+   "tts_ms": 977.3,
+   "reply_suggestion": "s20-r1-smoke3-D-s6",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "아 그냥 해지할게요, 요즘 잘 안 봐서요.",
+   "marker": {
+    "condition_change": true,
+    "invalidates_prior": true,
+    "event": "s20#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "아 그냥 해지할게요. 요즘 잘 안 봐서요.",
+   "finals": 1,
+   "utt_ids": [
+    "u7"
+   ],
+   "first_partial_ms": 540.8,
+   "final_ms": 789.3,
+   "t_end_error_ms": -33.8,
+   "t_end_source": "vad",
+   "first_audio_ms": 3830.7,
+   "first_audio_from_t_end_ms": 3864.5,
+   "engine_ms": 2063.9,
+   "tts_ms": 977.3,
+   "reply_suggestion": "s20-r1-smoke3-D-s6",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "환불이 안 돼도 상관없으니 그냥 해지해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "환불이 안 돼도 상관없으니 그냥 해지해 주세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u9"
+   ],
+   "first_partial_ms": 1012.1,
+   "final_ms": 792.4,
+   "t_end_error_ms": -2.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 4788.7,
+   "first_audio_from_t_end_ms": 4790.8,
+   "engine_ms": 2714.2,
+   "tts_ms": 1282.0,
+   "reply_suggestion": "s20-r1-smoke3-D-s7",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 7,
+   "utt_file": null,
+   "script": "네, 확인해 주셔서 감사합니다. 수고하세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 확인해 주셔서 감사합니다. 수고하세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u10"
+   ],
+   "first_partial_ms": 813.7,
+   "final_ms": 1071.6,
+   "t_end_error_ms": 1.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 3988.9,
+   "first_audio_from_t_end_ms": 3987.3,
+   "engine_ms": 2051.0,
+   "tts_ms": 866.1,
+   "reply_suggestion": "s20-r1-smoke3-D-s8",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [
+  {
+   "session": "s20-r1-smoke3-D",
+   "event": "s20#0",
+   "utt_id": "u7",
+   "version": 9,
+   "t0": 104010.537,
+   "t1": 104658.297,
+   "latency_ms": 647.76,
+   "invalidates_prior": true,
+   "latency_from_speech_end_ms": 613.9
+  }
+ ],
+ "new_condition_audio": [
+  {
+   "event": "s20#0",
+   "utt_id": "u7",
+   "version": 9,
+   "invalidates_prior": true,
+   "suggestion_id": "s20-r1-smoke3-D-s6",
+   "from_speech_end_ms": 3830.7,
+   "from_t0_ms": 3864.5
+  }
+ ],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 3,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": [
+   {
+    "event": "s20#0",
+    "invalid_exposures": 0
+   }
+  ]
+ },
+ "recording": {
+  "file": "results/voice/scenarios/smoke3-D/s20-r1-smoke3-D.wav",
+  "t0_ms": 5933.952,
+  "sha256_16": "0c780257a43cc8fa",
+  "duration_ms": 186769.4
+ },
+ "playbacks": {
+  "total": 6,
+  "exposed": 6,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 106535.3
+ },
+ "voice_discarded": 2,
+ "voice_held": 2,
+ "voice_errors": [],
+ "engine_errors": []
+}

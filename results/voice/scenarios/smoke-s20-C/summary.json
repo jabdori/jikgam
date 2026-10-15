@@ -1,0 +1,115 @@
+{
+ "run_id": "smoke-s20-C",
+ "policy": "C",
+ "channel": "voice",
+ "stale_guard": true,
+ "decision_backend": "jev",
+ "decision_model": "jev-1.13.0",
+ "generator": "gemini-flash",
+ "generator_model": "gemini-3.8-flash",
+ "org": "org_a",
+ "bizapi_url": "http://127.0.0.1:8111",
+ "scenario_file": "data/scenarios/org_a.jsonl",
+ "scenario_sha256": "c4b1bff7a99630b38fcb3307c047f283a16aa7bb4ece788e8e996466406132cb",
+ "runs": 1,
+ "run_start": 1,
+ "max_turns": 16,
+ "fast_delay_ms": 1000.0,
+ "gap_ms": 700.0,
+ "voice": {
+  "stt": {
+   "model": "gemini-3.5-transcribe-live",
+   "mode": "VERBATIM",
+   "language": "ko-KR"
+  },
+  "tts": {
+   "model": "gemini-3.8-flash-lite-tts",
+   "voice": "Kore",
+   "language": "ko-KR"
+  },
+  "vad": {
+   "confidence": 0.7,
+   "start_secs": 0.2,
+   "stop_secs": 0.5,
+   "min_volume": 0.6
+  },
+  "channel": {
+   "final_wait_ms": 3000,
+   "play_start_timeout_ms": 15000
+  }
+ },
+ "voice_config_sha256_16": "10af1ec2dbadafe6",
+ "customer_tts": {
+  "model": "gemini-3.8-flash-lite-tts",
+  "voice": "Puck"
+ },
+ "customer_model": "gemini-3.8-flash",
+ "customer_prompt": "sim-customer-voice-2026.10.14-1",
+ "judge_model": "gemini-3.1-pro-preview",
+ "judge_prompt": "sim-judge-voice-2026.10.14-1",
+ "git": {
+  "commit": "daf537f25bce7392ebcbb86f432e2b0e95e804df",
+  "dirty": true
+ },
+ "started": "2026-10-14T21:59:48+09:00",
+ "ended": "2026-10-14T22:04:31+09:00",
+ "note": "개발용 시나리오 음성 결과(docs/evaluation-voice.md). 합성 음성과 AI 고객의 결과이며 운영 성과가 아니다.",
+ "customer_files": [
+  "domain/org_a/customers.json"
+ ],
+ "sessions": [
+  {
+   "scenario": "s20",
+   "session": "s20-r1-smoke-s20-C",
+   "run": 1,
+   "policy": "C",
+   "customer_seed": 598757078,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 8,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [
+    {
+     "event": "s20#0",
+     "gap_ms": 995.4,
+     "reply_started_before_followup": false
+    }
+   ],
+   "fast_missing": [],
+   "injections": [],
+   "notes": [],
+   "duration_ms": 241831.0,
+   "stt_stream_min": 3.87,
+   "tts_audio_s": 104.6,
+   "recording": {
+    "file": "results/voice/scenarios/smoke-s20-C/s20-r1-smoke-s20-C.wav",
+    "t0_ms": 12632.557,
+    "sha256_16": "12aa3e3ca7233ebf",
+    "duration_ms": 231604.6,
+    "sample_rate": 16000,
+    "channels": {
+     "left": "customer",
+     "right": "agent"
+    }
+   },
+   "costs": {
+    "customer_usd": 0.009170999999999999,
+    "customer_tts_usd": 0.004847,
+    "decision_calls": 12,
+    "warmup_calls": 1,
+    "decision_usd": 0.00222747,
+    "generation_calls": 7,
+    "generation_usd": 0.0166665,
+    "engine_errors": 0,
+    "engine_usd": 0.018894,
+    "stt_estimate_usd": 0.034844,
+    "tts_estimate_usd": 0.015696,
+    "judge_usd": 0.018802
+   },
+   "judge_error": null
+  }
+ ]
+}

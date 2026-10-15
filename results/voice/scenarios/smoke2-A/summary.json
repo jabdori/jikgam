@@ -1,0 +1,168 @@
+{
+ "run_id": "smoke2-A",
+ "policy": "A",
+ "channel": "voice",
+ "stale_guard": false,
+ "decision_backend": null,
+ "decision_model": null,
+ "generator": "gemini-flash",
+ "generator_model": "gemini-3.8-flash",
+ "org": "org_a",
+ "bizapi_url": "http://127.0.0.1:8112",
+ "scenario_file": "data/scenarios/org_a.jsonl",
+ "scenario_sha256": "c4b1bff7a99630b38fcb3307c047f283a16aa7bb4ece788e8e996466406132cb",
+ "runs": 1,
+ "run_start": 1,
+ "max_turns": 16,
+ "fast_delay_ms": 1000.0,
+ "gap_ms": 700.0,
+ "voice": {
+  "stt": {
+   "model": "gemini-3.5-transcribe-live",
+   "mode": "VERBATIM",
+   "language": "ko-KR"
+  },
+  "tts": {
+   "model": "gemini-3.8-flash-lite-tts",
+   "voice": "Kore",
+   "language": "ko-KR"
+  },
+  "vad": {
+   "confidence": 0.7,
+   "start_secs": 0.2,
+   "stop_secs": 0.5,
+   "min_volume": 0.6
+  },
+  "channel": {
+   "final_wait_ms": 3000,
+   "play_start_timeout_ms": 15000
+  }
+ },
+ "voice_config_sha256_16": "10af1ec2dbadafe6",
+ "customer_tts": {
+  "model": "gemini-3.8-flash-lite-tts",
+  "voice": "Puck"
+ },
+ "customer_model": "gemini-3.8-flash",
+ "customer_prompt": "sim-customer-voice-2026.10.14-1",
+ "judge_model": "gemini-3.1-pro-preview",
+ "judge_prompt": "sim-judge-voice-2026.10.14-1",
+ "git": {
+  "commit": "daf537f25bce7392ebcbb86f432e2b0e95e804df",
+  "dirty": true
+ },
+ "started": "2026-10-14T22:09:28+09:00",
+ "ended": "2026-10-14T22:19:28+09:00",
+ "note": "개발용 시나리오 음성 결과(docs/evaluation-voice.md). 합성 음성과 AI 고객의 결과이며 운영 성과가 아니다.",
+ "customer_files": [
+  "domain/org_a/customers.json"
+ ],
+ "sessions": [
+  {
+   "scenario": "s20",
+   "session": "s20-r1-smoke2-A",
+   "run": 1,
+   "policy": "A",
+   "customer_seed": 598757078,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 6,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [
+    {
+     "event": "s20#0",
+     "gap_ms": 1003.1,
+     "reply_started_before_followup": false
+    }
+   ],
+   "fast_missing": [],
+   "injections": [],
+   "notes": [],
+   "duration_ms": 200331.0,
+   "stt_stream_min": 3.22,
+   "tts_audio_s": 90.3,
+   "recording": {
+    "file": "results/voice/scenarios/smoke2-A/s20-r1-smoke2-A.wav",
+    "t0_ms": 6518.581,
+    "sha256_16": "af92e31287b6ca80",
+    "duration_ms": 192242.3,
+    "sample_rate": 16000,
+    "channels": {
+     "left": "customer",
+     "right": "agent"
+    }
+   },
+   "costs": {
+    "customer_usd": 0.006016500000000001,
+    "customer_tts_usd": 0.003638,
+    "decision_calls": 0,
+    "warmup_calls": 0,
+    "decision_usd": 0,
+    "generation_calls": 14,
+    "generation_usd": 0.08412599999999999,
+    "engine_errors": 0,
+    "engine_usd": 0.084126,
+    "stt_estimate_usd": 0.028943,
+    "tts_estimate_usd": 0.013548,
+    "judge_usd": 0.052978
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "s21",
+   "session": "s21-r1-smoke2-A",
+   "run": 1,
+   "policy": "A",
+   "customer_seed": 2041428560,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 6,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [
+    {
+     "event": "s21#0",
+     "gap_ms": 989.0,
+     "reply_started_before_followup": false
+    }
+   ],
+   "fast_missing": [],
+   "injections": [],
+   "notes": [],
+   "duration_ms": 244700.7,
+   "stt_stream_min": 3.93,
+   "tts_audio_s": 116.6,
+   "recording": {
+    "file": "results/voice/scenarios/smoke2-A/s21-r1-smoke2-A.wav",
+    "t0_ms": 310502.415,
+    "sha256_16": "c6752bcc2f22cf3e",
+    "duration_ms": 235043.8,
+    "sample_rate": 16000,
+    "channels": {
+     "left": "customer",
+     "right": "agent"
+    }
+   },
+   "costs": {
+    "customer_usd": 0.0064972499999999996,
+    "customer_tts_usd": 0.003756,
+    "decision_calls": 0,
+    "warmup_calls": 0,
+    "decision_usd": 0,
+    "generation_calls": 11,
+    "generation_usd": 0.0572955,
+    "engine_errors": 0,
+    "engine_usd": 0.057295,
+    "stt_estimate_usd": 0.035359,
+    "tts_estimate_usd": 0.017484,
+    "judge_usd": 0.03721
+   },
+   "judge_error": null
+  }
+ ]
+}

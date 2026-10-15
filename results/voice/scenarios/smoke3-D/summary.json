@@ -1,0 +1,171 @@
+{
+ "run_id": "smoke3-D",
+ "policy": "D",
+ "channel": "voice",
+ "stale_guard": true,
+ "provisional": true,
+ "decision_backend": "jev",
+ "decision_model": "jev-1.13.0",
+ "generator": "gemini-flash",
+ "generator_model": "gemini-3.8-flash",
+ "org": "org_a",
+ "bizapi_url": "http://127.0.0.1:8114",
+ "scenario_file": "data/scenarios/org_a.jsonl",
+ "scenario_sha256": "c4b1bff7a99630b38fcb3307c047f283a16aa7bb4ece788e8e996466406132cb",
+ "runs": 1,
+ "run_start": 1,
+ "max_turns": 16,
+ "fast_delay_ms": 1000.0,
+ "gap_ms": 700.0,
+ "voice": {
+  "stt": {
+   "model": "gemini-3.5-transcribe-live",
+   "mode": "VERBATIM",
+   "language": "ko-KR"
+  },
+  "tts": {
+   "model": "gemini-3.8-flash-lite-tts",
+   "voice": "Kore",
+   "language": "ko-KR"
+  },
+  "vad": {
+   "confidence": 0.7,
+   "start_secs": 0.2,
+   "stop_secs": 0.5,
+   "min_volume": 0.6
+  },
+  "channel": {
+   "final_wait_ms": 3000,
+   "play_start_timeout_ms": 15000
+  }
+ },
+ "voice_config_sha256_16": "10af1ec2dbadafe6",
+ "customer_tts": {
+  "model": "gemini-3.8-flash-lite-tts",
+  "voice": "Puck"
+ },
+ "customer_model": "gemini-3.8-flash",
+ "customer_prompt": "sim-customer-voice-2026.10.14-1",
+ "judge_model": "gemini-3.1-pro-preview",
+ "judge_prompt": "sim-judge-voice-2026.10.14-1",
+ "git": {
+  "commit": "b17954b763ac798e4adffd391c8d196a1ba28297",
+  "dirty": false
+ },
+ "started": "2026-10-15T09:09:04+09:00",
+ "ended": "2026-10-15T09:16:47+09:00",
+ "note": "개발용 시나리오 음성 결과(docs/evaluation-voice.md). 합성 음성과 AI 고객의 결과이며 운영 성과가 아니다.",
+ "customer_files": [
+  "domain/org_a/customers.json"
+ ],
+ "sessions": [
+  {
+   "scenario": "s20",
+   "session": "s20-r1-smoke3-D",
+   "run": 1,
+   "policy": "D",
+   "customer_seed": 598757078,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 7,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [
+    {
+     "event": "s20#0",
+     "gap_ms": 1007.5,
+     "reply_started_before_followup": false
+    }
+   ],
+   "fast_missing": [],
+   "injections": [],
+   "notes": [],
+   "duration_ms": 193679.8,
+   "stt_stream_min": 3.12,
+   "tts_audio_s": 91.1,
+   "recording": {
+    "file": "results/voice/scenarios/smoke3-D/s20-r1-smoke3-D.wav",
+    "t0_ms": 5933.952,
+    "sha256_16": "0c780257a43cc8fa",
+    "duration_ms": 186769.4,
+    "sample_rate": 16000,
+    "channels": {
+     "left": "customer",
+     "right": "agent"
+    }
+   },
+   "costs": {
+    "customer_usd": 0.008034,
+    "customer_tts_usd": 0.003993,
+    "decision_calls": 13,
+    "warmup_calls": 1,
+    "prejudge_calls": 33,
+    "decision_usd": 0.007924728,
+    "generation_calls": 8,
+    "generation_usd": 0.017268,
+    "engine_errors": 0,
+    "engine_usd": 0.025193,
+    "stt_estimate_usd": 0.02812,
+    "tts_estimate_usd": 0.013668,
+    "judge_usd": 0.033994
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "s21",
+   "session": "s21-r1-smoke3-D",
+   "run": 1,
+   "policy": "D",
+   "customer_seed": 2041428560,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 7,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [
+    {
+     "event": "s21#0",
+     "gap_ms": 992.6,
+     "reply_started_before_followup": false
+    }
+   ],
+   "fast_missing": [],
+   "injections": [],
+   "notes": [],
+   "duration_ms": 227384.7,
+   "stt_stream_min": 3.66,
+   "tts_audio_s": 112.6,
+   "recording": {
+    "file": "results/voice/scenarios/smoke3-D/s21-r1-smoke3-D.wav",
+    "t0_ms": 221295.808,
+    "sha256_16": "2a742adbda488cf5",
+    "duration_ms": 219164.8,
+    "sample_rate": 16000,
+    "channels": {
+     "left": "customer",
+     "right": "agent"
+    }
+   },
+   "costs": {
+    "customer_usd": 0.007432500000000001,
+    "customer_tts_usd": 0.003841,
+    "decision_calls": 12,
+    "warmup_calls": 1,
+    "prejudge_calls": 37,
+    "decision_usd": 0.008723484,
+    "generation_calls": 7,
+    "generation_usd": 0.02016675,
+    "engine_errors": 0,
+    "engine_usd": 0.02889,
+    "stt_estimate_usd": 0.032981,
+    "tts_estimate_usd": 0.016884,
+    "judge_usd": 0.030518
+   },
+   "judge_error": null
+  }
+ ]
+}

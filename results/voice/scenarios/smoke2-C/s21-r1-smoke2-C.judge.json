@@ -1,0 +1,75 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  0,
+  1
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 엔진은 [상담 4]에서 고객의 해지 및 환불 요청을 받아들여 그에 맞게 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 엔진은 [상담 4]에서 이용 이력과 관계없이 전액 환불이 가능하다고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 4]에서 회사 귀책으로 인한 서비스 장애를 근거로 9,900원이 환불된다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4]에서 카드 결제 취소로 3~7영업일 안에 처리된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 4]에서 서비스 이용 가능한 마지막 날이 2026년 10월 12일이라고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 해지 및 환불 요청에 따라 처리를 완료하고 결과를 올바르게 안내하며 대화를 마무리했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "대화 중 상담 엔진이 이용 여부를 묻지 않아 고객이 이를 말할 상황이 오지 않았습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 5]에서 지시된 대로 환불로 주제를 변경하는 발화를 정상적으로 실행했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 48066.0,
+   "input_tokens": 2949,
+   "output_tokens": 1759,
+   "thoughts_tokens": 1266,
+   "cost_usd": 0.027006,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.027006,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "s21-r1-smoke2-C",
+ "scenario": "s21"
+}

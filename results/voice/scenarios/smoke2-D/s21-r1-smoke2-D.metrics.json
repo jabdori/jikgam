@@ -1,0 +1,236 @@
+{
+ "session": "s21-r1-smoke2-D",
+ "provisional": {
+  "sent": 4,
+  "confirmed": 2,
+  "replaced": 2,
+  "unconfirmed": 0,
+  "prejudge_calls": 35,
+  "prejudged_used": 5
+ },
+ "segments": [
+  {
+   "line": 1,
+   "utt_file": null,
+   "script": "목요일에 서비스 몇 시간 안 됐잖아요. 그거 보상 같은 거 없어요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "목요일에 서비스 몇 시간 안 됐잖아요. 그거 보상 같은 거 없어요?",
+   "finals": 1,
+   "utt_ids": [
+    "u2"
+   ],
+   "first_partial_ms": 1049.4,
+   "final_ms": 769.7,
+   "t_end_error_ms": 3.6,
+   "t_end_source": "vad",
+   "first_audio_ms": 4097.0,
+   "first_audio_from_t_end_ms": 4093.4,
+   "engine_ms": 2409.9,
+   "tts_ms": 916.9,
+   "reply_suggestion": "s21-r1-smoke2-D-s1",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 2,
+   "utt_file": null,
+   "script": "제 번호는 010-0000-0010이에요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "제 번호는 010-0000-0010이에요.",
+   "finals": 1,
+   "utt_ids": [
+    "u3"
+   ],
+   "first_partial_ms": 534.5,
+   "final_ms": 776.8,
+   "t_end_error_ms": -17.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 4033.7,
+   "first_audio_from_t_end_ms": 4050.8,
+   "engine_ms": 2370.3,
+   "tts_ms": 886.5,
+   "reply_suggestion": "s21-r1-smoke2-D-s2",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 3,
+   "utt_file": null,
+   "script": "인증번호 0010 왔어요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "인증번호 0010 왔어요.",
+   "finals": 1,
+   "utt_ids": [
+    "u4"
+   ],
+   "first_partial_ms": 953.9,
+   "final_ms": 794.1,
+   "t_end_error_ms": 12.8,
+   "t_end_source": "vad",
+   "first_audio_ms": 4978.1,
+   "first_audio_from_t_end_ms": 4965.2,
+   "engine_ms": 3243.8,
+   "tts_ms": 939.8,
+   "reply_suggestion": "s21-r1-smoke2-D-s3",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 4,
+   "utt_file": null,
+   "script": "아, 15시간 연장되는 건가요?",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "아 15시간 연장되는 건가요?",
+   "finals": 1,
+   "utt_ids": [
+    "u5"
+   ],
+   "first_partial_ms": 1008.4,
+   "final_ms": 760.6,
+   "t_end_error_ms": -1.0,
+   "t_end_source": "vad",
+   "first_audio_ms": 10416.2,
+   "first_audio_from_t_end_ms": 10417.3,
+   "engine_ms": 8596.2,
+   "tts_ms": 1059.3,
+   "reply_suggestion": "s21-r1-smoke2-D-s5",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 5,
+   "utt_file": null,
+   "script": "근데 연장 말고요, 그냥 해지하고 돈으로 돌려받을 수 있어요?",
+   "marker": {
+    "condition_change": true,
+    "invalidates_prior": true,
+    "event": "s21#0"
+   },
+   "barge_in_planned": false,
+   "transcript": "근데 연장 말고요, 그냥 해지하고 돈으로 돌려받을 수 있어요?",
+   "finals": 1,
+   "utt_ids": [
+    "u7"
+   ],
+   "first_partial_ms": 515.7,
+   "final_ms": 817.8,
+   "t_end_error_ms": 11.9,
+   "t_end_source": "vad",
+   "first_audio_ms": 5153.0,
+   "first_audio_from_t_end_ms": 5141.1,
+   "engine_ms": 3275.7,
+   "tts_ms": 1059.3,
+   "reply_suggestion": "s21-r1-smoke2-D-s5",
+   "replies_held": 1,
+   "replies_discarded": 1
+  },
+  {
+   "line": 6,
+   "utt_file": null,
+   "script": "네, 그렇게 해지와 환불 진행해 주세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 그렇게 해지와 환불 진행해 주세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u8"
+   ],
+   "first_partial_ms": 540.1,
+   "final_ms": 792.6,
+   "t_end_error_ms": 35.0,
+   "t_end_source": "vad",
+   "first_audio_ms": 5090.7,
+   "first_audio_from_t_end_ms": 5055.7,
+   "engine_ms": 3219.5,
+   "tts_ms": 1078.5,
+   "reply_suggestion": "s21-r1-smoke2-D-s6",
+   "replies_held": 0,
+   "replies_discarded": 0
+  },
+  {
+   "line": 7,
+   "utt_file": null,
+   "script": "네, 확인 감사합니다. 수고하세요.",
+   "marker": null,
+   "barge_in_planned": false,
+   "transcript": "네, 확인 감사합니다. 수고하세요.",
+   "finals": 1,
+   "utt_ids": [
+    "u9"
+   ],
+   "first_partial_ms": 507.8,
+   "final_ms": 724.7,
+   "t_end_error_ms": -16.1,
+   "t_end_source": "vad",
+   "first_audio_ms": 4835.0,
+   "first_audio_from_t_end_ms": 4851.1,
+   "engine_ms": 3167.8,
+   "tts_ms": 942.1,
+   "reply_suggestion": "s21-r1-smoke2-D-s7",
+   "replies_held": 0,
+   "replies_discarded": 0
+  }
+ ],
+ "refresh": [
+  {
+   "session": "s21-r1-smoke2-D",
+   "event": "s21#0",
+   "utt_id": "u7",
+   "version": 10,
+   "t0": 389952.89,
+   "t1": 390950.131,
+   "latency_ms": 997.241,
+   "invalidates_prior": true,
+   "latency_from_speech_end_ms": 1009.1
+  }
+ ],
+ "new_condition_audio": [
+  {
+   "event": "s21#0",
+   "utt_id": "u7",
+   "version": 10,
+   "invalidates_prior": true,
+   "suggestion_id": "s21-r1-smoke2-D-s5",
+   "from_speech_end_ms": 5153.0,
+   "from_t0_ms": 5141.1
+  }
+ ],
+ "barge_ins": [],
+ "stale_voice": {
+  "invalid": 0,
+  "denominator": 3,
+  "unconfirmed": 0,
+  "cases": [],
+  "events": [
+   {
+    "event": "s21#0",
+    "invalid_exposures": 0
+   }
+  ]
+ },
+ "recording": {
+  "file": "results/voice/scenarios/smoke2-D/s21-r1-smoke2-D.wav",
+  "t0_ms": 289929.776,
+  "sha256_16": "26e029673f2f346e",
+  "duration_ms": 209566.3
+ },
+ "playbacks": {
+  "total": 6,
+  "exposed": 6,
+  "interrupted": {
+   "barge_in": 0,
+   "version": 0,
+   "timeout": 0,
+   "error": 0
+  },
+  "played_ms": 127911.7
+ },
+ "voice_discarded": 1,
+ "voice_held": 1,
+ "voice_errors": [],
+ "engine_errors": []
+}

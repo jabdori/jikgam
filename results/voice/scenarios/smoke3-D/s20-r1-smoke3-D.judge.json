@@ -1,0 +1,64 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-voice-2026.10.14-1",
+ "forbidden_ai": [
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담 엔진이 2026년 11월 1일까지 서비스를 계속 이용할 수 있다고 여러 차례 안내하여 즉시 이용 종료로 안내하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "환불이 불가하다는 점과 약관 조항(제7조)은 언급했으나, 결제 10일 차 및 이용 이력 존재라는 구체적인 환불 불가 근거는 안내하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "다음 결제일 전날인 2026년 11월 1일까지 이용 가능하다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 의도대로 월 구독 해지 처리를 접수하고 이용 가능 날짜를 안내하며 마무리하여 answer 행동에 부합합니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "상담원이 먼저 환불 불가 사실을 안내하여 환불 여부를 묻는 과정이 생략되었으며, 고객은 [고객 6]에서 지시대로 환불이 안 되어도 해지하겠다고 반응했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "사건 실행 표시가 붙은 [고객 5]에서 지시된 내용대로 번복하여 해지를 요청했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 20949.0,
+   "input_tokens": 2573,
+   "output_tokens": 2404,
+   "thoughts_tokens": 1965,
+   "cost_usd": 0.033994,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.033994,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "s20-r1-smoke3-D",
+ "scenario": "s20"
+}
