@@ -24,6 +24,16 @@ ui = [
 # v2 문서 처리의 텍스트 추출(ADR 0023). 엔진의 상담 경로는 이 그룹에 의존하지 않는다.
 ingest = [
     "pdfplumber==0.11.10",
+    # v2 분할·예산의 토큰 수는 학습 때와 같은 Qwen3.5 토크나이저로 센다(docs/evaluation-v2.md §2.1)
+    "tokenizers>=0.22,<0.24",
+]
+# v2 임베딩 검색(docs/evaluation-v2.md §3.4 보완). PyLate가 sentence-transformers 5.3.0을 고정한다.
+# torch는 CUDA판을 PyTorch 저장소에서 받는다. 크기가 커서 기본 설치에서 뺀다: uv sync --group embed
+embed = [
+    "torch==2.11.0",
+    "pylate==1.6.0",
+    "sentence-transformers==5.3.0",
+    "transformers==5.3.0",
 ]
 
 [build-system]
@@ -35,3 +45,11 @@ packages = ["jikgam"]
 
 [tool.uv]
 default-groups = ["dev", "web", "voice", "ui", "ingest"]
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu130" }]
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true

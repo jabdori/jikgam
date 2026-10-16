@@ -1,0 +1,17 @@
+{
+ "method": "c-jev-W4000-C800-raw-t0.30",
+ "config": {
+  "judge": "jev",
+  "W": 4000,
+  "cmax": 800,
+  "context": "raw"
+ },
+ "chunks": 1016,
+ "tokens": {
+  "mean": 191.3,
+  "median": 59,
+  "max": 800
+ },
+ "theta": 0.3,
+ "from": "c-jev-W4000-C800-raw"
+}

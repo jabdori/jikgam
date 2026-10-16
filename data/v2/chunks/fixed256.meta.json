@@ -1,0 +1,15 @@
+{
+ "method": "fixed",
+ "size": 256,
+ "overlap": 0.1,
+ "chunks": 859,
+ "tokens": {
+  "mean": 255.2,
+  "median": 256,
+  "max": 285
+ },
+ "tokenizer": [
+  "unsloth/Qwen3.5-2B",
+  "fffbc0d8711cf87df6d1f97938c5e50ef94aadc7"
+ ]
+}

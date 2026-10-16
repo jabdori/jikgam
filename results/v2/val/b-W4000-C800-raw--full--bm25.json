@@ -1,0 +1,61 @@
+{
+ "name": "b-W4000-C800-raw--full--bm25",
+ "split": "val",
+ "chunks": "b-W4000-C800-raw",
+ "meta": "full",
+ "config": {
+  "r0": false,
+  "embed": null,
+  "fusion": "rrf",
+  "related": false,
+  "rerank": 0
+ },
+ "metrics": {
+  "single": {
+   "questions": 43,
+   "evidence_items": 43,
+   "items@1000": 0.7442,
+   "complete@1000": 0.7442,
+   "items@2000": 0.8372,
+   "complete@2000": 0.8372,
+   "items@4000": 0.8837,
+   "complete@4000": 0.8837,
+   "recall@5": 0.8605,
+   "recall@10": 0.9302,
+   "ndcg@10": 0.81
+  },
+  "multi": {
+   "questions": 34,
+   "evidence_items": 75,
+   "items@1000": 0.36,
+   "complete@1000": 0.1176,
+   "items@2000": 0.4667,
+   "complete@2000": 0.2353,
+   "items@4000": 0.6533,
+   "complete@4000": 0.3529,
+   "recall@5": 0.6,
+   "recall@10": 0.8267,
+   "ndcg@10": 0.7466
+  },
+  "all": {
+   "questions": 77,
+   "evidence_items": 118,
+   "items@1000": 0.5,
+   "complete@1000": 0.4675,
+   "items@2000": 0.6017,
+   "complete@2000": 0.5714,
+   "items@4000": 0.7373,
+   "complete@4000": 0.6494,
+   "recall@5": 0.6949,
+   "recall@10": 0.8644,
+   "ndcg@10": 0.782
+  }
+ },
+ "latency_ms": {
+  "retrieval_p50": 1.71,
+  "retrieval_p95": 3.44,
+  "rerank_p50": null,
+  "rerank_p95": null
+ },
+ "rerank": null
+}

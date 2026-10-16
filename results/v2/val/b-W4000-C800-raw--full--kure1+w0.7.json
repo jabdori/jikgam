@@ -1,0 +1,69 @@
+{
+ "name": "b-W4000-C800-raw--full--kure1+w0.7",
+ "split": "val",
+ "chunks": "b-W4000-C800-raw",
+ "meta": "full",
+ "config": {
+  "r0": false,
+  "embed": "kure1",
+  "fusion": "w0.7",
+  "related": false,
+  "rerank": 0
+ },
+ "metrics": {
+  "single": {
+   "questions": 43,
+   "evidence_items": 43,
+   "items@1000": 0.7442,
+   "complete@1000": 0.7442,
+   "items@2000": 0.8372,
+   "complete@2000": 0.8372,
+   "items@4000": 0.907,
+   "complete@4000": 0.907,
+   "recall@5": 0.8837,
+   "recall@10": 0.9535,
+   "ndcg@10": 0.8168
+  },
+  "multi": {
+   "questions": 34,
+   "evidence_items": 75,
+   "items@1000": 0.3867,
+   "complete@1000": 0.1765,
+   "items@2000": 0.5333,
+   "complete@2000": 0.2941,
+   "items@4000": 0.68,
+   "complete@4000": 0.4118,
+   "recall@5": 0.64,
+   "recall@10": 0.8533,
+   "ndcg@10": 0.7473
+  },
+  "all": {
+   "questions": 77,
+   "evidence_items": 118,
+   "items@1000": 0.5169,
+   "complete@1000": 0.4935,
+   "items@2000": 0.6441,
+   "complete@2000": 0.5974,
+   "items@4000": 0.7627,
+   "complete@4000": 0.6883,
+   "recall@5": 0.7288,
+   "recall@10": 0.8898,
+   "ndcg@10": 0.7861
+  }
+ },
+ "latency_ms": {
+  "retrieval_p50": 24.63,
+  "retrieval_p95": 27.75,
+  "rerank_p50": null,
+  "rerank_p95": null
+ },
+ "rerank": null,
+ "embedding": {
+  "model": "kure1",
+  "revision": "8b418a58414668e75532ed045c22d9ca018ae2b2",
+  "cache": "data\\v2\\local\\emb\\kure1\\b-W4000-C800-raw--full-715e7890713daf04.pt",
+  "built": false,
+  "build_seconds": 0.1,
+  "cost_usd": 0.0
+ }
+}

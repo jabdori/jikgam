@@ -1,0 +1,11 @@
+{
+ "chunks": "fixed256",
+ "variant": "full",
+ "model": "gemini-flash",
+ "called": 859,
+ "seconds_wall": 403.4,
+ "cost_usd": 1.3733,
+ "errors": 0,
+ "empty": 0,
+ "with_related": 836
+}

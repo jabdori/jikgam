@@ -1,0 +1,11 @@
+{
+ "chunks": "b-W4000-C800-raw",
+ "variant": "full",
+ "model": "gemini-flash",
+ "called": 378,
+ "seconds_wall": 198.9,
+ "cost_usd": 0.709,
+ "errors": 0,
+ "empty": 0,
+ "with_related": 347
+}

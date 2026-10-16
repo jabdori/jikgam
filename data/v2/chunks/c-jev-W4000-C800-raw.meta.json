@@ -1,0 +1,31 @@
+{
+ "method": "c-jev-W4000-C800-raw",
+ "config": {
+  "judge": "jev",
+  "W": 4000,
+  "cmax": 800,
+  "context": "raw"
+ },
+ "chunks": 571,
+ "tokens": {
+  "mean": 340.5,
+  "median": 275,
+  "max": 800
+ },
+ "seconds_wall": 8.1,
+ "concurrency": 4,
+ "calls": {
+  "judge": {
+   "requests": 64,
+   "questions": 9674,
+   "input_tokens": 632064,
+   "output_tokens": 196428,
+   "cost_usd": 0.02655,
+   "retries": 0,
+   "errors": 0
+  },
+  "total_cost_usd": 0.02655
+ },
+ "hard_cuts": 110,
+ "boundaries": 571
+}

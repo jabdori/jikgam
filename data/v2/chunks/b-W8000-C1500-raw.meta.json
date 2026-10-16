@@ -1,0 +1,31 @@
+{
+ "method": "b-W8000-C1500-raw",
+ "config": {
+  "judge": "llm",
+  "W": 8000,
+  "cmax": 1500,
+  "context": "raw"
+ },
+ "chunks": 245,
+ "tokens": {
+  "mean": 793.5,
+  "median": 667,
+  "max": 1500
+ },
+ "seconds_wall": 34.0,
+ "concurrency": 4,
+ "calls": {
+  "judge": {
+   "requests": 33,
+   "questions": 0,
+   "input_tokens": 314695,
+   "output_tokens": 1668,
+   "cost_usd": 0.24228,
+   "retries": 0,
+   "errors": 0
+  },
+  "total_cost_usd": 0.24228
+ },
+ "hard_cuts": 60,
+ "boundaries": 245
+}
