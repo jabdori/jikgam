@@ -1,0 +1,29 @@
+{
+ "reason": "2차 사람 검토 뒤 고치기(사용자 결정 2026-10-16)",
+ "removed_items": [
+  "ck-042",
+  "ck-047"
+ ],
+ "removed_added_alternatives": 13,
+ "kept": 48,
+ "kept_by_group_type": {
+  "표준약관/single": 9,
+  "법령/multi": 8,
+  "고시/single": 9,
+  "표준약관/multi": 5,
+  "고시/multi": 5,
+  "법령/single": 12
+ },
+ "files": {
+  "public": 34,
+  "local": 14
+ },
+ "sha256_16_before": {
+  "public": "eafc85aaf7704855",
+  "local": "820f405a813d4e4c"
+ },
+ "sha256_16_after": {
+  "public": "6ee3b7569547b81c",
+  "local": "5714691b149fc319"
+ }
+}

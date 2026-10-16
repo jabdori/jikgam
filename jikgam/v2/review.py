@@ -22,14 +22,19 @@ from pathlib import Path
 from jikgam.ingest.corpus import ROOT, Doc, load_docs
 
 SEED = 20261016
-ROUND = 2  # 2차 세트(2026-10-16). 1차 화면과 결과는 data/v2/local/review/round1/에 있다
+ROUND = 2  # 2차 세트(2026-10-16). 1차·2차 화면과 결과는 data/v2/local/review/round1/, round2/에 있다
+# 지금 검토: 2차 세트를 고친 뒤(jikgam/v2/repair.py) 다시 재는 확인 검토. 답이 있는 질문 40개만, 2차 표본과 겹치지 않게 뽑는다
+STAGE = "2b"
+TITLE = "2차 고친 뒤 확인"
 OUT = ROOT / "data" / "v2" / "local" / "review"
 PAGE = OUT / "qa_review.html"
 SAMPLE = OUT / "sample.json"  # 검토 대상 id(내용 없음)
+EXCLUDE = OUT / "round2" / "sample.json"  # 2차 검토 표본
 QA_FILES = [ROOT / "data" / "v2" / "qa" / "items.jsonl", ROOT / "data" / "v2" / "local" / "qa" / "items.jsonl"]
 CHECK_FILES = [ROOT / "data" / "v2" / "check" / "items.jsonl", ROOT / "data" / "v2" / "local" / "check" / "items.jsonl"]
 N_ANSWERABLE = 40
-N_CHECK = 20
+N_CHECK = 0  # 점검용은 2차 검토에서 기준을 넘지 않아(10.0%) 다시 재지 않는다
+INCLUDE_NONE = False  # 근거 없음은 2차 검토에서 35개 모두 문제없음
 CONTEXT = 2  # 근거 앞뒤로 보여 주는 줄 수
 LIMIT = 0.10  # 문제 비율이 이보다 크면 다시 만든다(§2.3)
 
@@ -53,11 +58,16 @@ def read(paths: list[Path]) -> list[dict]:
 def pick() -> dict[str, list[str]]:
     qa = sorted(read(QA_FILES), key=lambda i: i["id"])
     check = sorted(read(CHECK_FILES), key=lambda i: i["id"])
-    answerable = [i["id"] for i in qa if i["type"] != "none"]
-    none = [i["id"] for i in qa if i["type"] == "none"]
-    return {"answerable": random.Random(f"{SEED}:{ROUND}:review:answerable").sample(answerable, min(N_ANSWERABLE, len(answerable))),
+    seen: set[str] = set()
+    if EXCLUDE is not None and EXCLUDE.exists():  # 앞 검토에서 본 질문은 뽑지 않는다
+        prev = json.loads(EXCLUDE.read_text(encoding="utf-8"))
+        seen = set(prev["answerable"] + prev["none"] + prev["check"])
+    answerable = [i["id"] for i in qa if i["type"] != "none" and i["id"] not in seen]
+    none = [i["id"] for i in qa if i["type"] == "none"] if INCLUDE_NONE else []
+    checks = [i["id"] for i in check if i["id"] not in seen]
+    return {"answerable": random.Random(f"{SEED}:{STAGE}:review:answerable").sample(answerable, min(N_ANSWERABLE, len(answerable))),
             "none": none,
-            "check": random.Random(f"{SEED}:{ROUND}:review:check").sample([i["id"] for i in check], min(N_CHECK, len(check)))}
+            "check": random.Random(f"{SEED}:{STAGE}:review:check").sample(checks, min(N_CHECK, len(checks)))}
 
 
 def evidence_html(docs: dict[str, Doc], alt: dict) -> str:
@@ -143,7 +153,7 @@ button.primary { background: var(--accent); color: #fff; border-color: var(--acc
 """
 
 SCRIPT = """
-const KEY = 'jikgam-v2-qa-review-r__ROUND__';
+const KEY = 'jikgam-v2-qa-review-r__STAGE__';
 const CORPUS = JSON.parse(document.getElementById('corpus').textContent);
 function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } }
 function save(state) { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
@@ -177,8 +187,8 @@ function restore() {
   });
 }
 function download() {
-  const blob = new Blob([JSON.stringify({page: 'qa_review', round: __ROUND__, saved: new Date().toISOString(), items: collect()}, null, 1)], {type: 'application/json'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'qa_review_result_r__ROUND__.json'; a.click();
+  const blob = new Blob([JSON.stringify({page: 'qa_review', round: __ROUND__, stage: '__STAGE__', saved: new Date().toISOString(), items: collect()}, null, 1)], {type: 'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'qa_review_result_r__STAGE__.json'; a.click();
 }
 function squash(s) { return s.replace(/[\\s|\\u00a0\\u3000]/g, ''); }
 function search(term) {
@@ -216,25 +226,27 @@ def build() -> None:
                 ("check", "C. 점검용 질문(무작위 20개)", "점검용")]
     body = []
     for key, title, label in sections:
+        if not chosen[key]:
+            continue
         body.append(f"<h2>{html.escape(title)} · {len(chosen[key])}개</h2>")
         body += [item_html(docs, items[i], label) for i in chosen[key]]
-    intro = """<h1>v2 질문·정답 검토(__ROUND__차)</h1>
+    intro = """<h1>v2 질문·정답 검토(__TITLE__)</h1>
 <p class="note">기준은 docs/evaluation-v2.md §2.3입니다. 항목마다 맞지 않는 기준의 표시를 끄고, 필요하면 메모를 남긴 뒤 "검토 완료"를 켜 주세요.
 기준 표시가 하나라도 꺼진 항목을 "문제"로 셉니다. 노란 부분이 정답 근거이고, 앞뒤 줄은 맥락입니다.
-표시는 이 브라우저에 저장됩니다. 끝나면 "결과 내려받기"로 받은 <b>qa_review_result_r__ROUND__.json</b>의 위치만 알려 주세요(메모에 질문 내용이 들어가므로 채팅에 붙여 넣지 말아 주세요).
-1차와 다른 새 질문입니다. 근거 범위에 표의 상위 줄이 들어가 노란 부분이 여러 줄일 수 있고, 다른 문서의 같은 내용이 대체 근거로 붙어 있습니다.
+표시는 이 브라우저에 저장됩니다. 끝나면 "결과 내려받기"로 받은 <b>qa_review_result_r__STAGE__.json</b>의 위치만 알려 주세요(메모에 질문 내용이 들어가므로 채팅에 붙여 넣지 말아 주세요).
+2차 검토에서 본 질문과 겹치지 않는 새 표본(답이 있는 질문 40개)입니다. 2차 검토 뒤 대체 근거 찾기로 붙였던 근거는 뺐습니다. 근거 범위에 표의 상위 줄이 들어가 노란 부분이 여러 줄일 수 있습니다.
 오른쪽 아래 "문서 찾기"로 대체 근거나 답이 있는지 찾아볼 수 있습니다(공백과 표 구분자는 무시합니다).</p>"""
     page = f"""<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>v2 질문 검토 __ROUND__차</title><style>{STYLE}</style></head><body><main>{intro}
+<title>v2 질문 검토 __STAGE__</title><style>{STYLE}</style></head><body><main>{intro}
 <div class="bar"><button class="primary" id="dl">결과 내려받기</button><span id="progress" class="note"></span></div>
 {"".join(body)}</main>
 <div id="search" class="closed"><button id="toggle">문서 찾기</button><input id="q" placeholder="찾을 말(Enter)"><div id="results"></div></div>
 <script type="application/json" id="corpus">{corpus_json(docs)}</script>
 <script>{SCRIPT}</script></body></html>"""
-    page = page.replace("__ROUND__", str(ROUND))
+    page = page.replace("__ROUND__", str(ROUND)).replace("__STAGE__", STAGE).replace("__TITLE__", TITLE)
     OUT.mkdir(parents=True, exist_ok=True)
     PAGE.write_text(page, encoding="utf-8", newline="\n")
-    SAMPLE.write_text(json.dumps({"seed": SEED, "round": ROUND, **chosen}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    SAMPLE.write_text(json.dumps({"seed": SEED, "round": ROUND, "stage": STAGE, **chosen}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print(f"검토 화면: {PAGE} ({', '.join(f'{k} {len(v)}개' for k, v in chosen.items())}, {PAGE.stat().st_size:,}바이트)")
 
 
@@ -254,7 +266,10 @@ def apply(result_path: Path) -> None:
     qa_ids = chosen["answerable"] + chosen["none"]
     qa_rate = sum(bool(result.get(i, {}).get("failed")) for i in qa_ids) / max(1, len(qa_ids))
     ck_rate = sum(bool(result.get(i, {}).get("failed")) for i in chosen["check"]) / max(1, len(chosen["check"]))
-    print(f"검색 평가 세트 문제 비율 {qa_rate:.1%}, 점검용 문제 비율 {ck_rate:.1%} (다시 만드는 기준 {LIMIT:.0%} 초과)")
+    line = f"검색 평가 세트 문제 비율 {qa_rate:.1%}"
+    if chosen["check"]:
+        line += f", 점검용 문제 비율 {ck_rate:.1%}"
+    print(line + f" (기준 {LIMIT:.0%})")
 
 
 def main() -> None:

@@ -1,0 +1,45 @@
+{
+ "reason": "2차 사람 검토 뒤 고치기(사용자 결정 2026-10-16)",
+ "removed_items": [
+  "qa-0025",
+  "qa-0039",
+  "qa-0075",
+  "qa-0115",
+  "qa-0116",
+  "qa-0191",
+  "qa-0227",
+  "qa-0255",
+  "qa-0263",
+  "qa-0317",
+  "qa-0346",
+  "qa-0356",
+  "qa-0359",
+  "qa-0361"
+ ],
+ "removed_added_alternatives": 80,
+ "kept": 372,
+ "kept_by_group_type": {
+  "법령/multi": 42,
+  "넘나듦/multi": 35,
+  "고시/single": 76,
+  "표준약관/single": 47,
+  "법령/single": 95,
+  "표준약관/multi": 19,
+  "고시/multi": 23,
+  "법령/none": 15,
+  "표준약관/none": 6,
+  "고시/none": 14
+ },
+ "files": {
+  "public": 279,
+  "local": 93
+ },
+ "sha256_16_before": {
+  "public": "7134b84794d4399a",
+  "local": "fbfbd5317d04ca39"
+ },
+ "sha256_16_after": {
+  "public": "862b7a9a01383a74",
+  "local": "57eaedc3e9bc1a46"
+ }
+}
