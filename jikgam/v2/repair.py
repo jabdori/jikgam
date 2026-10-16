@@ -43,7 +43,47 @@ def strip_added(item: dict) -> int:
     return removed
 
 
+def remove_reviewed() -> None:
+    """확인 검토(2b)에서 문제로 표시된 질문을 검색 평가 세트에서 뺀다. 검토를 통과한 질문의 id를 남긴다(내용 없음)."""
+    docs = load_docs()
+    review_dir = ROOT / "data" / "v2" / "local" / "review"
+    r2 = json.loads((review_dir / "round2" / "qa_review_result_r2.json").read_text(encoding="utf-8"))["items"]
+    r2b = json.loads((review_dir / "qa_review_result_r2b.json").read_text(encoding="utf-8"))["items"]
+    problems = sorted(k for k, v in r2b.items() if v["failed"])
+    pub_dir, loc_dir = SETS["qa"]
+    pub, loc = pub_dir / "items.jsonl", loc_dir / "items.jsonl"
+    backup = loc_dir / "round2b_before_removal"
+    if backup.exists():
+        raise SystemExit(f"{backup}가 이미 있다. 한 번만 뺀다")
+    backup.mkdir(parents=True)
+    shutil.copy2(pub, backup / "public_items.jsonl")
+    shutil.copy2(loc, backup / "items.jsonl")
+    before = {"public": sha16(pub), "local": sha16(loc)}
+    items = [json.loads(line) for p in (pub, loc) for line in p.read_text(encoding="utf-8").splitlines() if line.strip()]
+    kept = sorted((i for i in items if i["id"] not in problems), key=lambda i: i["id"])
+    for path, rows in ((pub, [i for i in kept if not is_local(docs, i)]), (loc, [i for i in kept if is_local(docs, i)])):
+        path.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8", newline="\n")
+    ids = {i["id"] for i in kept}
+    passed = sorted(k for k, v in {**r2, **r2b}.items() if not v["failed"] and k in ids)
+    record = json.loads((pub_dir / "repair.json").read_text(encoding="utf-8"))
+    record["review_2b"] = {"reason": "확인 검토(2b)의 문제 항목을 뺀다(사용자 결정 2026-10-16: 기준을 넘어도 더 만들지 않음)",
+                           "reviewed": len(r2b), "problems": len(problems), "removed_items": problems,
+                           "kept": len(kept), "sha256_16_before": before,
+                           "sha256_16_after": {"public": sha16(pub), "local": sha16(loc)}}
+    (pub_dir / "repair.json").write_text(json.dumps(record, ensure_ascii=False, indent=1) + "\n", encoding="utf-8",
+                                         newline="\n")
+    # 사람 검토를 통과한 질문(2차 표본과 확인 표본). 결과 보고에서 참고 값을 낼 때 쓴다
+    (pub_dir / "reviewed_passed.json").write_text(json.dumps({"source": ["round2", "2b"], "ids": passed}, indent=1) + "\n",
+                                                  encoding="utf-8", newline="\n")
+    print(json.dumps({"removed": len(problems), "kept": len(kept), "reviewed_passed": len(passed)}, ensure_ascii=False))
+
+
 def main() -> None:
+    import sys
+
+    if sys.argv[1:] == ["--remove-2b"]:
+        remove_reviewed()
+        return
     docs = load_docs()
     review = json.loads(RESULT.read_text(encoding="utf-8"))["items"]
     problems = sorted(k for k, v in review.items() if v["failed"])

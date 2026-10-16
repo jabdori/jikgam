@@ -41,5 +41,36 @@
  "sha256_16_after": {
   "public": "862b7a9a01383a74",
   "local": "57eaedc3e9bc1a46"
+ },
+ "review_2b": {
+  "reason": "확인 검토(2b)의 문제 항목을 뺀다(사용자 결정 2026-10-16: 기준을 넘어도 더 만들지 않음)",
+  "reviewed": 40,
+  "problems": 15,
+  "removed_items": [
+   "qa-0006",
+   "qa-0008",
+   "qa-0010",
+   "qa-0034",
+   "qa-0061",
+   "qa-0107",
+   "qa-0126",
+   "qa-0128",
+   "qa-0173",
+   "qa-0179",
+   "qa-0243",
+   "qa-0254",
+   "qa-0267",
+   "qa-0283",
+   "qa-0331"
+  ],
+  "kept": 357,
+  "sha256_16_before": {
+   "public": "862b7a9a01383a74",
+   "local": "57eaedc3e9bc1a46"
+  },
+  "sha256_16_after": {
+   "public": "36077a512fe93dee",
+   "local": "23ff04a590b55d0b"
+  }
  }
 }
