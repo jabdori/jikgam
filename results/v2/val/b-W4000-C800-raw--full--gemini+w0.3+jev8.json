@@ -1,0 +1,72 @@
+{
+ "name": "b-W4000-C800-raw--full--gemini+w0.3+jev8",
+ "split": "val",
+ "chunks": "b-W4000-C800-raw",
+ "meta": "full",
+ "config": {
+  "r0": false,
+  "embed": "gemini",
+  "fusion": "w0.3",
+  "related": false,
+  "rerank": 8
+ },
+ "metrics": {
+  "single": {
+   "questions": 43,
+   "evidence_items": 43,
+   "items@1000": 0.9302,
+   "complete@1000": 0.9302,
+   "items@2000": 0.9767,
+   "complete@2000": 0.9767,
+   "items@4000": 0.9767,
+   "complete@4000": 0.9767,
+   "recall@5": 0.9767,
+   "recall@10": 0.9767,
+   "ndcg@10": 0.9596
+  },
+  "multi": {
+   "questions": 34,
+   "evidence_items": 75,
+   "items@1000": 0.5067,
+   "complete@1000": 0.2059,
+   "items@2000": 0.7333,
+   "complete@2000": 0.5294,
+   "items@4000": 0.88,
+   "complete@4000": 0.7647,
+   "recall@5": 0.8667,
+   "recall@10": 0.9333,
+   "ndcg@10": 0.9043
+  },
+  "all": {
+   "questions": 77,
+   "evidence_items": 118,
+   "items@1000": 0.661,
+   "complete@1000": 0.6104,
+   "items@2000": 0.822,
+   "complete@2000": 0.7792,
+   "items@4000": 0.9153,
+   "complete@4000": 0.8831,
+   "recall@5": 0.9068,
+   "recall@10": 0.9492,
+   "ndcg@10": 0.9352
+  }
+ },
+ "latency_ms": {
+  "retrieval_p50": 494.51,
+  "retrieval_p95": 832.01,
+  "rerank_p50": 209.23,
+  "rerank_p95": 250.83
+ },
+ "rerank": {
+  "cost_usd": 0.02508,
+  "errors": 0
+ },
+ "embedding": {
+  "model": "gemini",
+  "revision": null,
+  "cache": "data\\v2\\local\\emb\\gemini\\b-W4000-C800-raw--full-715e7890713daf04.pt",
+  "built": false,
+  "build_seconds": 0.1,
+  "cost_usd": 0.0
+ }
+}

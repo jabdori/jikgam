@@ -52,8 +52,8 @@
   }
  },
  "latency_ms": {
-  "retrieval_p50": 3.54,
-  "retrieval_p95": 6.08,
+  "retrieval_p50": 3.6,
+  "retrieval_p95": 6.73,
   "rerank_p50": null,
   "rerank_p95": null
  },

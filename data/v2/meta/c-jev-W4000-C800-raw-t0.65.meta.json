@@ -1,0 +1,11 @@
+{
+ "chunks": "c-jev-W4000-C800-raw-t0.65",
+ "variant": "full",
+ "model": "gemini-flash",
+ "called": 389,
+ "seconds_wall": 177.8,
+ "cost_usd": 0.6971,
+ "errors": 0,
+ "empty": 0,
+ "with_related": 365
+}

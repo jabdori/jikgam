@@ -1,0 +1,32 @@
+{
+ "method": "c-qwen-W4000-C800-raw",
+ "config": {
+  "judge": "qwen",
+  "W": 4000,
+  "cmax": 800,
+  "context": "raw"
+ },
+ "chunks": 2750,
+ "tokens": {
+  "mean": 70.7,
+  "median": 27,
+  "max": 800
+ },
+ "seconds_wall": 133.4,
+ "concurrency": 1,
+ "calls": {
+  "judge": {
+   "windows": 64,
+   "requests": 273,
+   "questions": 9674,
+   "input_tokens": 2290490,
+   "output_tokens": 0,
+   "cost_usd": 0.0,
+   "retries": 0,
+   "errors": 0
+  },
+  "total_cost_usd": 0.0
+ },
+ "hard_cuts": 21,
+ "boundaries": 2750
+}

@@ -1,0 +1,17 @@
+{
+ "method": "c-qwen-W4000-C800-raw-t0.55",
+ "config": {
+  "judge": "qwen",
+  "W": 4000,
+  "cmax": 800,
+  "context": "raw"
+ },
+ "chunks": 2322,
+ "tokens": {
+  "mean": 83.7,
+  "median": 29,
+  "max": 799
+ },
+ "theta": 0.55,
+ "from": "c-qwen-W4000-C800-raw"
+}

@@ -1,0 +1,32 @@
+{
+ "name": "R0-article256",
+ "split": "val",
+ "reps": 1,
+ "types": [
+  "none",
+  "single"
+ ],
+ "questions": 8,
+ "gen_model": "gemini-flash",
+ "judge_model": "gemini-pro",
+ "by_type": {
+  "none": {
+   "questions": 1,
+   "unsupported_claim_rate": null,
+   "answers_with_unsupported": 0.0,
+   "accuracy": null,
+   "hold_rate": null,
+   "none_assertion_rate": 0.0
+  },
+  "single": {
+   "questions": 7,
+   "unsupported_claim_rate": 0.0,
+   "answers_with_unsupported": 0.0,
+   "accuracy": 0.7143,
+   "hold_rate": 0.0,
+   "none_assertion_rate": null
+  }
+ },
+ "judge_errors": 0,
+ "cost_usd": 0.1931
+}

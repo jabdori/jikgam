@@ -27,10 +27,12 @@ QA_FILES = [ROOT / "data" / "v2" / "qa" / "items.jsonl", ROOT / "data" / "v2" / 
 SPLITS = ROOT / "data" / "v2" / "qa" / "splits.json"
 
 
-def load_questions(split: str) -> list[dict]:
+def load_questions(split: str, include_none: bool = False) -> list[dict]:
+    """분할의 질문. 검색 채점은 답이 있는 질문만 쓰고, 답변 품질은 근거 없음 질문도 쓴다."""
     sp = json.loads(SPLITS.read_text(encoding="utf-8"))["splits"]
     rows = [json.loads(line) for p in QA_FILES for line in p.read_text(encoding="utf-8").splitlines() if line.strip()]
-    return sorted((r for r in rows if sp.get(r["id"]) == split and r["type"] != "none"), key=lambda r: r["id"])
+    return sorted((r for r in rows if sp.get(r["id"]) == split and (include_none or r["type"] != "none")),
+                  key=lambda r: r["id"])
 
 
 class Coverage:
@@ -123,6 +125,8 @@ def evaluate_rankings(cs: ChunkSet, questions: list[dict], rankings: dict[str, l
     """질문 id → 구간 순위로 채점한다."""
     per = {"single": defaultdict(list), "multi": defaultdict(list)}
     for q in questions:
+        if q["type"] == "none":
+            continue
         ranked = rankings[q["id"]]
         res = per[q["type"]]
         for b in BUDGETS:

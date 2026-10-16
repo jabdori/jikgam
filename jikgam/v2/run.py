@@ -29,6 +29,17 @@ RESULTS = ROOT / "results" / "v2"
 RUNS = ROOT / "data" / "v2" / "local" / "runs"
 
 
+def budget_ids(cs: ChunkSet, ranked: list[str], budget: int) -> list[str]:
+    """예산을 채우는 데까지의 순위. 답변 단계가 같은 순서를 쓰도록 단계 기록에 남긴다."""
+    out, left = [], budget
+    for cid in ranked:
+        if left <= 0:
+            break
+        out.append(cid)
+        left -= cs.by_id[cid].tokens
+    return out
+
+
 def pct(xs: list[float], q: float) -> float | None:
     if not xs:
         return None
@@ -46,7 +57,7 @@ async def run(args) -> dict:
             raise SystemExit(f"구간 정보가 없는 구간 {len(missing)}개({args.meta}). 먼저 jikgam.ingest.metadata를 돌린다")
     extra = {cid: metadata.text_for_index(m) for cid, m in meta.items()}
     cs = ChunkSet(args.chunks, chunks, docs, extra)
-    questions = load_questions(args.split)
+    questions = load_questions(args.split, include_none=True)  # 근거 없음도 순위를 남긴다(답변 품질용). 채점에서는 뺀다
     if args.split == "test" and not args.frozen:
         raise SystemExit("test는 설정을 고정한 결정 기록(--frozen)이 있어야 돈다")
     traces, rankings = {}, {}
@@ -104,7 +115,8 @@ async def run(args) -> dict:
     (RUNS / args.split).mkdir(parents=True, exist_ok=True)
     with (RUNS / args.split / f"{name}.jsonl").open("w", encoding="utf-8", newline="\n") as fh:
         for qid, tr in traces.items():
-            fh.write(json.dumps({"id": qid, **tr, "top10": rankings[qid][:10]}, ensure_ascii=False) + "\n")
+            fh.write(json.dumps({"id": qid, **tr, "top10": rankings[qid][:10],
+                                 "budget4000": budget_ids(cs, rankings[qid], 4000)}, ensure_ascii=False) + "\n")
     return out
 
 

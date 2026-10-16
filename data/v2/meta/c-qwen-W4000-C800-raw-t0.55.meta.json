@@ -1,0 +1,11 @@
+{
+ "chunks": "c-qwen-W4000-C800-raw-t0.55",
+ "variant": "full",
+ "model": "gemini-flash",
+ "called": 2322,
+ "seconds_wall": 969.8,
+ "cost_usd": 2.3037,
+ "errors": 0,
+ "empty": 0,
+ "with_related": 2260
+}
