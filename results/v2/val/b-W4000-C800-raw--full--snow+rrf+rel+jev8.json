@@ -1,0 +1,72 @@
+{
+ "name": "b-W4000-C800-raw--full--snow+rrf+rel+jev8",
+ "split": "val",
+ "chunks": "b-W4000-C800-raw",
+ "meta": "full",
+ "config": {
+  "r0": false,
+  "embed": "snow",
+  "fusion": "rrf",
+  "related": true,
+  "rerank": 8
+ },
+ "metrics": {
+  "single": {
+   "questions": 43,
+   "evidence_items": 43,
+   "items@1000": 0.9302,
+   "complete@1000": 0.9302,
+   "items@2000": 0.9767,
+   "complete@2000": 0.9767,
+   "items@4000": 0.9767,
+   "complete@4000": 0.9767,
+   "recall@5": 0.9767,
+   "recall@10": 0.9767,
+   "ndcg@10": 0.9596
+  },
+  "multi": {
+   "questions": 34,
+   "evidence_items": 75,
+   "items@1000": 0.4933,
+   "complete@1000": 0.1471,
+   "items@2000": 0.64,
+   "complete@2000": 0.4118,
+   "items@4000": 0.8,
+   "complete@4000": 0.6765,
+   "recall@5": 0.8,
+   "recall@10": 0.84,
+   "ndcg@10": 0.8703
+  },
+  "all": {
+   "questions": 77,
+   "evidence_items": 118,
+   "items@1000": 0.6525,
+   "complete@1000": 0.5844,
+   "items@2000": 0.7627,
+   "complete@2000": 0.7273,
+   "items@4000": 0.8644,
+   "complete@4000": 0.8442,
+   "recall@5": 0.8644,
+   "recall@10": 0.8898,
+   "ndcg@10": 0.9202
+  }
+ },
+ "latency_ms": {
+  "retrieval_p50": 33.22,
+  "retrieval_p95": 126.98,
+  "rerank_p50": 208.96,
+  "rerank_p95": 244.69
+ },
+ "rerank": {
+  "cost_usd": 0.0281,
+  "errors": 0
+ },
+ "embedding": {
+  "model": "snow",
+  "revision": "55ec6e9358a56d56af759bc8372e970caf8c305f",
+  "cache": "data\\v2\\local\\emb\\snow\\b-W4000-C800-raw--full-715e7890713daf04.pt",
+  "built": false,
+  "build_seconds": 0.1,
+  "cost_usd": 0.0
+ }
+}
