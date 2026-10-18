@@ -34,6 +34,26 @@ def digest(texts: list[str]) -> str:
     return h.hexdigest()[:16]
 
 
+def cache_path(key, texts, tag):
+    return CACHE / key / f"{tag}-{digest(texts)}.pt"
+
+
+def corpus_inputs(chunks_name, variant):
+    """검색 실행과 사전 준비가 같은 말뭉치 캐시 키를 만들도록 입력을 공유한다."""
+    from jikgam.ingest import chunk as chunking, metadata
+    from jikgam.ingest.corpus import load_docs
+    from jikgam.v2.search import ChunkSet
+
+    docs, chunks = load_docs(), chunking.load(chunks_name)
+    meta = metadata.load(chunks_name, variant) if variant != "none" else {}
+    if variant != "none" and any(c.id not in meta for c in chunks):
+        raise ValueError("구간 정보가 빠졌습니다")
+    extra = {cid: metadata.text_for_index(m) for cid, m in meta.items()}
+    cs = ChunkSet(chunks_name, chunks, docs, extra)
+    return ([c.id for c in chunks], [cs.text(c) + ("\n" + extra[c.id] if c.id in extra else "") for c in chunks],
+            [docs[c.doc].title for c in chunks])
+
+
 class Encoder:
     """문서 벡터를 만들고, 질의 하나에 대한 문서 점수를 낸다."""
 
@@ -42,6 +62,7 @@ class Encoder:
         self.model = None
         self.http = None
         self.cost_usd = 0.0
+        self.requests = self.retries = 0
 
     # ---------- 불러오기 ----------
     def _load(self):
@@ -89,15 +110,24 @@ class Encoder:
         return torch.tensor(vecs, device="cuda", dtype=torch.float16)
 
     def _gemini_batch(self, reqs: list[dict]) -> list[list[float]]:
+        import httpx
+
         url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents"
         for attempt, delay in enumerate((0, 2, 4, 8)):
             if delay:
+                self.retries += 1
                 time.sleep(delay)
-            r = self.http.post(url, json={"requests": reqs})
+            self.requests += 1
+            try:
+                r = self.http.post(url, json={"requests": reqs})
+            except httpx.HTTPError:
+                if attempt == 3:
+                    raise RuntimeError("gemini 임베딩 연결 실패(4회)") from None
+                continue
             if r.status_code == 200:
                 break
-            if r.status_code not in (429, 500, 502, 503, 504) or attempt == 3:
-                raise RuntimeError(f"gemini-embedding-2 HTTP {r.status_code}: {r.text[:300]}")
+            if (r.status_code != 429 and r.status_code < 500) or attempt == 3:
+                raise RuntimeError(f"gemini-embedding-2 HTTP {r.status_code}")
         # 공개 가격으로 비용을 낸다. 토큰 수는 응답에 없어 countTokens 대신 글자 수 × 0.6으로 어림한다(§9 가정)
         self.cost_usd += sum(len(q["content"]["parts"][0]["text"]) for q in reqs) * 0.6 * GEMINI_PRICE_PER_MTOK / 1e6
         return [e["values"] for e in r.json()["embeddings"]]
@@ -136,17 +166,19 @@ class Encoder:
 class EmbeddingIndex:
     """구간 집합 하나에 대한 임베딩 색인. 같은 글이면 저장한 벡터를 다시 쓴다."""
 
-    def __init__(self, key: str, ids: list[str], texts: list[str], titles: list[str], tag: str):
+    def __init__(self, key: str, ids: list[str], texts: list[str], titles: list[str], tag: str, allow_build=True):
         import torch
 
         self.key, self.ids = key, ids
         self.encoder = Encoder(key)
-        path = CACHE / key / f"{tag}-{digest(texts)}.pt"
+        path = cache_path(key, texts, tag)
         t0 = time.time()
         if path.exists():
             self.index = torch.load(path, map_location="cuda")
             self.built = False
         else:
+            if not allow_build:
+                raise FileNotFoundError(f"고정한 말뭉치 캐시가 없습니다. freeze prepare가 필요합니다: {path}")
             self.index = self.encoder.encode_docs(texts, titles)
             path.parent.mkdir(parents=True, exist_ok=True)
             torch.save(self.index, path)
@@ -168,4 +200,5 @@ class EmbeddingIndex:
 
     def info(self) -> dict:
         return {"model": self.key, "revision": REVISIONS[self.key][1], "cache": str(self.path.relative_to(ROOT)),
-                "built": self.built, "build_seconds": self.build_seconds, "cost_usd": round(self.encoder.cost_usd, 4)}
+                "built": self.built, "build_seconds": self.build_seconds, "cost_usd": round(self.encoder.cost_usd, 4),
+                "requests": self.encoder.requests, "retries": self.encoder.retries}

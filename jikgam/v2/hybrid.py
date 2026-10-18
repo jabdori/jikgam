@@ -16,6 +16,7 @@ from dataclasses import dataclass, field
 
 from jikgam.engine.retrieval import BM25, tokens
 from jikgam.v2.search import ChunkSet, rank_bm25
+from jikgam.v2.retry import decide
 
 RRF_K = 60
 RELATED_SEEDS = 4
@@ -45,9 +46,11 @@ class HybridConfig:
 class Trace:
     retrieval_ms: float = 0.0
     rerank_ms: float | None = None
+    rerank_total_ms: float | None = None
     rerank_tokens: int = 0
     rerank_cost_usd: float = 0.0
     rerank_error: str | None = None
+    rerank_attempts: int = 0
     related_added: list[str] = field(default_factory=list)
 
 
@@ -116,9 +119,12 @@ class Hybrid:
                                  "text": self.cs.text(self.cs.by_id[c])} for i, c in enumerate(head)]}
         questions = {f"c{i + 1}": {"type": "noul", "instructions": f"후보 c{i + 1}은 질문에 답하는 근거를 담고 있는가?"}
                      for i in range(len(head))}
-        r = await self.jev.decide(state, questions)
-        tr.rerank_ms, tr.rerank_tokens, tr.rerank_cost_usd, tr.rerank_error = r.latency_ms, r.input_tokens, r.cost_usd, r.error
-        if r.error and not r.answers:
+        r = await decide(self.jev, state, questions)
+        tr.rerank_ms = r.latency_ms if not r.error else None
+        tr.rerank_total_ms = r.meta["total_ms"]
+        tr.rerank_tokens, tr.rerank_cost_usd, tr.rerank_error = r.input_tokens, r.cost_usd, r.error
+        tr.rerank_attempts = r.meta["attempts"]
+        if r.error:
             return ranked
         probs = {c: float((r.answers.get(f"c{i + 1}") or {}).get("noul", 0.0)) for i, c in enumerate(head)}
         pos = {c: i for i, c in enumerate(head)}

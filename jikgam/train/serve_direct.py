@@ -13,10 +13,22 @@ import argparse
 import json
 import os
 import threading
+import hmac
 from pathlib import Path
 
 HOME = Path.home() / "jikgam-train"
 SERVE_MAX_LEN = 16384
+
+
+def authorize(authorization: str, key: str) -> None:
+    if not key or not hmac.compare_digest(authorization.encode(), f"Bearer {key}".encode()):
+        raise PermissionError("invalid key")
+
+
+def model_info(merged: Path, name: str) -> dict:
+    from jikgam.train.serve import weights_sha16
+
+    return {"model": name, "weights_sha256_16": weights_sha16(merged)}
 
 
 def wire_answer(answer: dict) -> dict:
@@ -46,18 +58,31 @@ def main() -> None:
     runs = Path(os.environ.get("JIKGAM_RUNS", HOME / "runs"))
     run_dir = Path(args.run) if Path(args.run).is_dir() else runs / args.run
     merged = run_dir / "merged" if (run_dir / "merged").is_dir() else run_dir
+    info = model_info(merged, args.name)
     model, processor = FastDecisionModel.from_pretrained(str(merged), max_seq_length=SERVE_MAX_LEN,
                                                          load_in_4bit=False, use_gradient_checkpointing=False)
     FastDecisionModel.for_inference(model)
+    if model_info(merged, args.name) != info:
+        raise SystemExit("모델을 올리는 동안 가중치 파일이 바뀌었습니다")
     tokenizer = getattr(processor, "tokenizer", processor)
     key = (HOME / "secrets" / "studio_api_key").read_text(encoding="utf-8").strip()
     lock = threading.Lock()
     app = FastAPI()
 
+    def check_key(authorization):
+        try:
+            authorize(authorization, key)
+        except PermissionError:
+            raise HTTPException(401, "invalid key") from None
+
+    @app.get("/v1/info")
+    def get_info(authorization: str = Header(default="")):
+        check_key(authorization)
+        return info
+
     @app.post("/v1/systemone")
     def systemone(body: dict, authorization: str = Header(default="")):
-        if authorization != f"Bearer {key}":
-            raise HTTPException(401, "invalid key")
+        check_key(authorization)
         questions = {str(k): _clef_question(q) for k, q in body["questions"].items()}
         with lock:
             result = _clef_decide(model, tokenizer, body["state"], questions, max_length=SERVE_MAX_LEN)

@@ -15,6 +15,7 @@ import json
 
 from jikgam.ingest import tokens
 from jikgam.v2.search import ChunkSet
+from jikgam.v2.retry import ask_json
 
 GEN_MODEL = "gemini-flash"
 JUDGE_MODEL = "gemini-pro"
@@ -72,50 +73,50 @@ def gold_block(cs: ChunkSet, item: dict) -> str:
 
 async def generate(client, question: str, evidence: str, seed: int) -> dict:
     user = f"## 근거 글\n{evidence or '(검색된 글이 없다)'}\n\n## 고객 질문\n{question}"
-    r = await client.ask(GEN_SYSTEM, user, GEN_SCHEMA, seed=seed)
+    r = await ask_json(client, GEN_SYSTEM, user, GEN_SCHEMA, seed=seed)
     return {"answer": (r.data or {}).get("answer", ""), "usage": r.usage()}
 
 
 async def judge(client, question: str, evidence: str, gold: str, answer: str) -> dict:
     user = (f"## 질문\n{question}\n\n## 답변을 만들 때 넘긴 근거 글\n{evidence or '(없음)'}\n\n## 정답\n{gold}\n\n"
             f"## 판정할 답변\n{answer}")
-    r = await client.ask(JUDGE_SYSTEM, user, JUDGE_SCHEMA)
+    r = await ask_json(client, JUDGE_SYSTEM, user, JUDGE_SCHEMA)
     return {"claims": (r.data or {}).get("claims") or [], "usage": r.usage(), "error": r.error}
 
 
 def answer_metrics(rows: list[dict]) -> dict:
-    """rows: 질문 하나·반복 하나마다 {"type", "claims"}. 질문마다 반복 평균을 낸 뒤 평균한다(§4.3)."""
+    """주장 비율은 모든 주장을 합친 분모, 답 기준 지표는 질문별 반복 평균으로 계산한다."""
     by_q: dict[str, list[dict]] = {}
     for r in rows:
         by_q.setdefault(r["id"], []).append(r)
 
     def mean(xs):
         xs = [x for x in xs if x is not None]
-        return round(sum(xs) / len(xs), 4) if xs else None
+        return sum(xs) / len(xs) if xs else None
 
-    claim_unsup, ans_unsup, acc, hold, assert_none = [], [], [], [], []
+    claims = [c for r in rows for c in r["claims"]]
+    ans_unsup, acc, hold, assert_none = [], [], [], []
     for qid, reps in by_q.items():
         t = reps[0]["type"]
-        cu, au, ac, ho, an = [], [], [], [], []
+        au, ac, ho, an = [], [], [], []
         for r in reps:
             cl = r["claims"]
-            if cl:
-                cu.append(sum(not c["supported"] for c in cl) / len(cl))
             au.append(float(any(not c["supported"] for c in cl)))
             if t == "none":
                 an.append(float(bool(cl)))
-            else:
+            elif t == "single":
                 ho.append(float(not cl))
                 ac.append(float(any(c["correctness"] == "match" for c in cl)
                                 and not any(c["correctness"] == "contradict" for c in cl)))
-        claim_unsup.append(mean(cu))
         ans_unsup.append(mean(au))
         if t == "none":
             assert_none.append(mean(an))
-        else:
+        elif t == "single":
             acc.append(mean(ac))
             hold.append(mean(ho))
-    return {"questions": len(by_q), "unsupported_claim_rate": mean(claim_unsup), "answers_with_unsupported": mean(ans_unsup),
+    return {"questions": len(by_q), "claims": len(claims), "unsupported_claims": sum(not c["supported"] for c in claims),
+            "unsupported_claim_rate": sum(not c["supported"] for c in claims) / len(claims) if claims else None,
+            "answers_with_unsupported": mean(ans_unsup),
             "accuracy": mean(acc), "hold_rate": mean(hold), "none_assertion_rate": mean(assert_none)}
 
 
@@ -137,10 +138,16 @@ async def run(name: str, split: str, reps: int, types: set[str], limit: int | No
            (ROOT / "data" / "v2" / "local" / "runs" / split / f"{name}.jsonl").read_text(encoding="utf-8").splitlines()}
     docs = load_docs()
     cs = ChunkSet(res["chunks"], chunking.load(res["chunks"]), docs)
-    qs = [q for q in load_questions(split, include_none=True) if q["type"] in types and q["id"] in log]
+    qs = [q for q in load_questions(split, include_none=True) if q["type"] in types]
+    if any(q["id"] not in log for q in qs):
+        raise ValueError("검색 단계 기록에 필요한 질문이 빠졌습니다")
     if limit:
         qs = random.Random(f"answer:{split}").sample(qs, min(limit, len(qs)))
-    gen, jud = GeminiJson.from_config(GEN_MODEL), GeminiJson.from_config(JUDGE_MODEL, timeout_s=600.0)
+    from jikgam.v2.claim_check import invalidate_review
+
+    invalidate_review(ROOT, split)
+    gen = GeminiJson.from_config(GEN_MODEL, retry_delays_s=())
+    jud = GeminiJson.from_config(JUDGE_MODEL, timeout_s=600.0, retry_delays_s=())
     sem = asyncio.Semaphore(8)
 
     async def one(q: dict, rep: int) -> dict:
@@ -163,6 +170,7 @@ async def run(name: str, split: str, reps: int, types: set[str], limit: int | No
     summary = {"name": name, "split": split, "reps": reps, "types": sorted(types), "questions": len(qs),
                "gen_model": GEN_MODEL, "judge_model": JUDGE_MODEL,
                "by_type": {t: answer_metrics([r for r in rows if r["type"] == t]) for t in sorted(types)},
+               "judgment": answer_metrics([r for r in rows if r["type"] in ("single", "none")]),
                "judge_errors": sum(1 for r in rows if r["judge_error"]),
                "cost_usd": round(sum(r["gen_usage"]["cost_usd"] + r["judge_usage"]["cost_usd"] for r in rows), 4)}
     (ROOT / "results" / "v2" / split / f"answers-{name}.json").write_text(

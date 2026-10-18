@@ -90,6 +90,7 @@ class CallLog:
     cost_usd: float = 0.0
     attempts: int = 1
     error: str | None = None
+    successful_requests: int = 0
 
 
 @dataclass
@@ -141,7 +142,7 @@ class Judge:
         self.cfg = cfg
         from jikgam.sim.gemini import GeminiJson
 
-        self.llm = GeminiJson.from_config(LLM) if (cfg.judge == "llm" or cfg.context == "summary") else None
+        self.llm = GeminiJson.from_config(LLM, retry_delays_s=()) if (cfg.judge == "llm" or cfg.context == "summary") else None
         self.decider = None
         if cfg.judge != "llm":
             from jikgam.decision.registry import make_client
@@ -151,6 +152,8 @@ class Judge:
         self.sem = asyncio.Semaphore(1 if cfg.judge == "qwen" else CONCURRENCY)
 
     async def llm_window(self, doc: Doc, ctx: str, s: int, jend: int, wend: int, k: int) -> tuple[list[int], str, CallLog]:
+        from jikgam.v2.retry import ask_json
+        started = time.perf_counter()
         user = (f"문서: 「{doc.title}」({doc.kind})\n\n## 앞 맥락\n{ctx}\n\n## 창\n{numbered(doc, s, wend)}\n\n## 할 일\n"
                 f"- 판단 구역은 {s}~{jend}줄이다. 이 가운데 새 구간이 시작되는 줄 번호를 모두 boundaries에 적는다."
                 f" 없으면 빈 목록이다.")
@@ -159,14 +162,16 @@ class Judge:
         if self.cfg.context != "summary":
             user += "\n- summary는 빈 글로 둔다."
         async with self.sem:
-            r = await self.llm.ask(system_prompt(self.cfg.cmax, self.cfg.context == "summary"), user, SCHEMA_LLM)
+            r = await ask_json(self.llm, system_prompt(self.cfg.cmax, self.cfg.context == "summary"), user, SCHEMA_LLM)
         log = CallLog(doc.id, k, "judge", input_tokens=r.input_tokens, output_tokens=r.output_tokens,
-                      latency_ms=r.latency_ms, cost_usd=r.cost_usd, attempts=r.attempts, error=r.error)
+                      latency_ms=(time.perf_counter() - started) * 1000, cost_usd=r.cost_usd, attempts=r.attempts,
+                      requests=r.attempts, error=r.error, successful_requests=int(not r.error))
         data = r.data or {}
         picked = sorted({int(x) for x in data.get("boundaries") or [] if isinstance(x, (int, float)) and s <= int(x) <= jend})
         return picked, str(data.get("summary") or ""), log
 
     async def judge_window(self, doc: Doc, ctx: str, s: int, jend: int, wend: int, k: int) -> tuple[dict[int, float], CallLog]:
+        from jikgam.v2.retry import decide
         state = {"task": "문서를 검색용 구간으로 나눌 때, 줄마다 그 줄에서 새 구간이 시작되는지 판단한다.",
                  "rules": DOC_NOTE + "\n" + DEFINITION + f"\n- 구간 하나는 {self.cfg.cmax}토큰을 넘지 않는다.",
                  "document": f"「{doc.title}」({doc.kind})", "previous_context": ctx,
@@ -180,12 +185,15 @@ class Judge:
         for i in range(0, len(keys), size):
             part = {q: questions[q] for q in keys[i:i + size]}
             async with self.sem:
-                r = await self.decider.decide(state, part)
-            answers.update(r.answers)
-            log.requests += 1
+                r = await decide(self.decider, state, part)
+            if not r.error:
+                answers.update(r.answers)
+                log.successful_requests += 1
+            log.requests += r.meta["attempts"]
+            log.attempts += r.meta["retries"]
             log.input_tokens += r.input_tokens
             log.output_tokens += r.output_tokens
-            log.latency_ms += r.latency_ms
+            log.latency_ms += r.meta["total_ms"]
             log.cost_usd += r.cost_usd
             if r.error:
                 log.error = r.error if log.error is None else log.error
@@ -196,11 +204,13 @@ class Judge:
         return probs, log
 
     async def summarize(self, doc: Doc, open_start: int, end: int, k: int) -> tuple[str, CallLog]:
+        from jikgam.v2.retry import ask_json
         user = f"문서: 「{doc.title}」({doc.kind})\n\n## 구간({open_start}~{end}줄)\n{numbered(doc, open_start, end)}"
         async with self.sem:
-            r = await self.llm.ask(SUMMARY_SYSTEM, user, SCHEMA_SUMMARY)
+            r = await ask_json(self.llm, SUMMARY_SYSTEM, user, SCHEMA_SUMMARY)
         log = CallLog(doc.id, k, "summary", input_tokens=r.input_tokens, output_tokens=r.output_tokens,
-                      latency_ms=r.latency_ms, cost_usd=r.cost_usd, attempts=r.attempts, error=r.error)
+                      latency_ms=r.latency_ms, cost_usd=r.cost_usd, attempts=r.attempts, requests=r.attempts,
+                      error=r.error, successful_requests=int(not r.error))
         return str((r.data or {}).get("summary") or ""), log
 
     async def aclose(self) -> None:
@@ -274,6 +284,7 @@ def summarize_calls(calls: list[CallLog]) -> dict:
             by[kind] = {"windows": len(cs), "requests": sum(c.requests for c in cs), "questions": sum(c.questions for c in cs),
                         "input_tokens": sum(c.input_tokens for c in cs), "output_tokens": sum(c.output_tokens for c in cs),
                         "cost_usd": round(sum(c.cost_usd for c in cs), 5), "retries": sum(c.attempts - 1 for c in cs),
+                        "successful_requests": sum(c.successful_requests for c in cs),
                         "errors": sum(1 for c in cs if c.error)}
     by["total_cost_usd"] = round(sum(c.cost_usd for c in calls), 5)
     return by

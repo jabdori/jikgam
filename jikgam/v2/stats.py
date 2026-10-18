@@ -6,6 +6,7 @@
 """
 
 import random
+from fractions import Fraction
 from collections.abc import Callable, Sequence
 
 
@@ -91,7 +92,7 @@ def boundary_agreement(segs: list[dict], pred: dict[str, list[int]], gold: dict[
 def bootstrap_ci(units: list, stat: Callable[[list], float], n: int = 10000, seed: int = 20261016) -> list[float]:
     rng = random.Random(seed)
     vals = sorted(stat([units[rng.randrange(len(units))] for _ in units]) for _ in range(n))
-    return [round(vals[int(0.025 * n)], 4), round(vals[int(0.975 * n) - 1], 4)]
+    return [vals[int(0.025 * n)], vals[int(0.975 * n) - 1]]
 
 
 def paired_recall_diff(per_q_a: dict[str, list[bool]], per_q_b: dict[str, list[bool]], n: int = 10000,
@@ -101,14 +102,14 @@ def paired_recall_diff(per_q_a: dict[str, list[bool]], per_q_b: dict[str, list[b
 
     def rec(sample, d):
         items = [x for q in sample for x in d[q]]
-        return sum(items) / len(items) if items else 0.0
+        return Fraction(sum(items), len(items)) if items else Fraction(0)
 
     point = rec(qs, per_q_a) - rec(qs, per_q_b)
     rng = random.Random(seed)
     diffs = []
     for _ in range(n):
         s = [qs[rng.randrange(len(qs))] for _ in qs]
-        diffs.append(rec(s, per_q_a) - rec(s, per_q_b))
+        diffs.append(float(rec(s, per_q_a) - rec(s, per_q_b)))
     diffs.sort()
-    return {"diff": round(point, 4), "ci95": [round(diffs[int(0.025 * n)], 4), round(diffs[int(0.975 * n) - 1], 4)],
+    return {"diff": float(point), "ci95": [diffs[int(0.025 * n)], diffs[int(0.975 * n) - 1]],
             "questions": len(qs)}

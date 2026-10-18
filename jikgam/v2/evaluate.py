@@ -25,14 +25,23 @@ from jikgam.v2.search import RANKERS, ChunkSet
 BUDGETS = (1000, 2000, 4000)
 QA_FILES = [ROOT / "data" / "v2" / "qa" / "items.jsonl", ROOT / "data" / "v2" / "local" / "qa" / "items.jsonl"]
 SPLITS = ROOT / "data" / "v2" / "qa" / "splits.json"
+# 점검용 질문(§2.4, 다른 계열 모델이 씀). 모두 test 때 한 번만 쓰므로 분할 이름 "check"로 부른다
+CHECK_FILES = [ROOT / "data" / "v2" / "check" / "items.jsonl", ROOT / "data" / "v2" / "local" / "check" / "items.jsonl"]
+FROZEN_SPLITS = ("test", "check")  # 설정을 고정한 결정 기록(--frozen)이 있어야 도는 질문
+
+
+def _rows(paths) -> list[dict]:
+    return [json.loads(line) for p in paths for line in p.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
 def load_questions(split: str, include_none: bool = False) -> list[dict]:
     """분할의 질문. 검색 채점은 답이 있는 질문만 쓰고, 답변 품질은 근거 없음 질문도 쓴다."""
-    sp = json.loads(SPLITS.read_text(encoding="utf-8"))["splits"]
-    rows = [json.loads(line) for p in QA_FILES for line in p.read_text(encoding="utf-8").splitlines() if line.strip()]
-    return sorted((r for r in rows if sp.get(r["id"]) == split and (include_none or r["type"] != "none")),
-                  key=lambda r: r["id"])
+    if split == "check":
+        rows = _rows(CHECK_FILES)
+    else:
+        sp = json.loads(SPLITS.read_text(encoding="utf-8"))["splits"]
+        rows = [r for r in _rows(QA_FILES) if sp.get(r["id"]) == split]
+    return sorted((r for r in rows if include_none or r["type"] != "none"), key=lambda r: r["id"])
 
 
 class Coverage:
@@ -165,10 +174,10 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--chunks", required=True)
     ap.add_argument("--ranker", choices=list(RANKERS), default="bm25")
-    ap.add_argument("--split", choices=["train", "val", "test"], default="val")
+    ap.add_argument("--split", choices=["train", "val", "test", "check"], default="val")
     ap.add_argument("--frozen", help="test를 돌릴 때 설정을 고정한 결정 기록 번호")
     args = ap.parse_args()
-    if args.split == "test" and not args.frozen:
+    if args.split in FROZEN_SPLITS and not args.frozen:
         raise SystemExit("test는 설정을 고정한 결정 기록(--frozen)이 있어야 돈다")
     from jikgam.ingest.chunk import load
 
@@ -191,3 +200,32 @@ def per_question_found(cs: ChunkSet, questions: list[dict], rankings: dict[str, 
             continue
         out[q["type"]][q["id"]] = scorer.found(q, budget_coverage(cs, rankings[q["id"]], budget))
     return out
+
+
+def group_metrics(cs, questions, rankings, scorer):
+    """유형별과 같은 지표를 질문의 묶음별로 집계한다."""
+    return {g: evaluate_rankings(cs, [q for q in questions if q["group"] == g], rankings, scorer)["all"]
+            for g in sorted({q["group"] for q in questions})}
+
+
+def word_overlap(questions, docs):
+    """정답 근거가 있는 질문의 공백 제외 두 글자 조각 겹침을 질문마다 계산한다."""
+    values = []
+    for q in questions:
+        if q["type"] == "none":
+            continue
+        gold = "".join(docs[a["doc"]].text[a["start"]:a["end"]]
+                       for ev in q["evidence"] for a in ev["alternatives"][:1])
+        query = "".join(c for c in q["question"] if not c.isspace())
+        gold = "".join(c for c in gold if not c.isspace())
+        grams = [query[i:i + 2] for i in range(len(query) - 1)]
+        if grams:
+            values.append((q["type"], q["group"], sum(g in gold for g in grams) / len(grams)))
+
+    def mean(rows):
+        return {"questions": len(rows), "overlap": round(sum(rows) / len(rows), 4) if rows else None}
+
+    return {"all": mean([v for _, _, v in values]),
+            "by_type": {t: mean([v for kind, _, v in values if kind == t]) for t in ("single", "multi")},
+            "by_group": {g: mean([v for _, group, v in values if group == g]) for g in sorted({q["group"] for q in questions})},
+            "excluded_none": sum(q["type"] == "none" for q in questions)}
