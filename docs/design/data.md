@@ -102,17 +102,19 @@
 - 고객사 처리 단계에는 단계·상태·구간 수만 표시한다. 처리 전 예상 비용 승인 흐름은 유지하며, 단계별 실제 비용과 정밀 시간은 화면에 노출하지 않고 위 저장소 밖 처리 기록에 남긴다.
 - 고객사 화면은 비용을 `USD` 단위 숫자로 표시한다. 모델명, 평가 분할, 구성 이름과 계산용 파일 경로는 관리 콘솔에서만 보인다.
 - 업로드 예상 비용은 기준 구성의 `chunks × tokens.mean`에 대한 업로드 원문의 실제 토큰 수 비율로 이전 분할·구간 정보 비용을 조정한다. 실제 구간 수와 호출비는 달라질 수 있다.
-- 관리 콘솔의 검색 비교는 `R0-article256`, `fixed256--none--bm25`, `b-W4000-C800-raw--full--snow+rrf+jev8`, `c-jev-W4000-C800-raw-t0.65--full--snow+rrf+jev8`, `c-qwen-W4000-C800-raw-t0.55--full--snow+rrf+jev8` 결과를 읽는다. 표시 분할은 `settings.RETRIEVAL_SPLIT` 한 곳에서 정하며 기본은 val(튜닝용 분할)이다.
+- 관리 콘솔의 검색 비교는 `R0-article256`, `fixed256--none--bm25`, `b-W4000-C800-raw--full--snow+rrf+jev8`, `c-jev-W4000-C800-raw-t0.65--full--snow+rrf+jev8`, `c-qwen-W4000-C800-raw-t0.55--full--snow+rrf+jev8` 결과를 읽는다. 표시 분할은 `settings.RETRIEVAL_SPLIT` 한 곳에서 정하며 기본은 test(최종 평가 분할)이다. 설정 고정 커밋 `89eca24`의 깨끗한 사본에서 한 번 실행한 결과다(ADR 0025). 화면은 구성별 JSON을 직접 읽고 `report.json`이나 `claim-check.json`에 의존하지 않으며, 판정이나 해석 문구는 넣지 않는다.
+- 고정 test 비교 표와 `val 실행 결과` 영역은 별도 표다. 후자에는 완료된 화면 실행 중 val 결과와 같은 구성의 `results/v2/val/` 기준 행만 함께 둔다. 같은 구성의 기준 행은 한 번만 보이고, 기준 파일이 없으면 실행 결과만 보인다. 완료된 val 실행이 없으면 기준 행도 표시하지 않고 빈 상태 문구만 보인다. test·check 화면 실행 파일은 두 표에 넣지 않는다.
 - 단일 근거 재현율은 `metrics.single.items@2000`(판정 기준), 전체 재현율은 `metrics.all.items@2000`(모든 질문의 근거 항목을 합친 값), nDCG는 `metrics.all.ndcg@10`, 검색·리랭킹 p95는 `latency_ms`에서 읽는다. 질문별 완전 재현율과 전체 근거 재현율을 혼동하지 않는다.
 - 검색 실행의 분할 모델은 flash, Jev(θ 0.65), 조정한 Qwen 2B(θ 0.55)다. 판별 방식은 기존 `split_doc`처럼 θ 0.5로 맥락을 만든 뒤 저장 확률에 선택한 임계값과 Cmax를 적용한다. Qwen은 `127.0.0.1:8893`에 연결되지 않으면 고를 수 없다.
 - 예상 분할비는 `data/v2/chunks/*.meta.json`의 원래 호출비, 구간 정보비는 같은 구성의 메타 측정치(없으면 기준 구성의 구간당 비용 × 예상 구간 수), 리랭킹비는 같은 val 결과의 `rerank.cost_usd`다. 확인 화면에 비용별 계산 근거 파일과 합계를 보이며, 기준값이 없으면 실행하지 않는다.
 - 확인 후 분할 → 구간 정보 → 색인 → snow+RRF+Jev 8 검색 → `evaluate_rankings`, `per_question_found`로 채점한다. 기존 실행기와 같이 예열 후 검색·리랭킹 시간을 기록한다. 실행은 단일 백그라운드 작업 큐에서 순서대로 처리하며 화면의 새로고침 버튼으로 진행을 확인한다.
-- 검색 실행은 세 진입점(HTTP, 작업 제출, 실제 처리)에서 val만 허용한다. `RETRIEVAL_SPLIT`을 test로 바꾸어 기존 결과를 표시하더라도 test·check를 실행할 수 없다. 새 산출물·진행 상태·결과는 `data/v2/local/web/jobs/<임의 ID>/`에만 저장하며 끝난 결과는 비교 목록에 들어온다.
+- 검색 실행은 세 진입점(HTTP, 작업 제출, 실제 처리)에서 val만 허용한다. `RETRIEVAL_SPLIT`과 관계없이 test·check를 실행할 수 없다. 새 산출물·진행 상태·결과는 `data/v2/local/web/jobs/<임의 ID>/`에만 저장하며 끝난 val 결과는 별도 `val 실행 결과` 영역에 들어온다. 예상 비용도 표시 분할과 관계없이 같은 구성의 val 측정치를 계속 쓴다.
 - 웹 전용 저장소는 기존 `.gitignore`의 `data/v2/local/` 규칙으로 제외된다. 구간 원문 스크린샷은 `ecom-act`(공개 법령)만 사용한다.
 
 | 추가 설정 | 뜻 |
 |---|---|
-| `RETRIEVAL_SPLIT` | 읽어서 표시할 검색 평가 분할(val 기본) |
+| `RETRIEVAL_SPLIT` | 고정 비교 표에 읽어서 표시할 검색 평가 분할(test 기본). 화면 실행은 val만 허용 |
+| `RETRIEVAL_FIXED_COMMIT` | 최종 평가를 한 번 실행한 설정 고정 커밋 `89eca24` |
 | `RETRIEVAL_BUDGET`, `RETRIEVAL_NDCG_K` | 표시 지표의 예산 2,000과 순위 길이 10 |
 | `RETRIEVAL_METRIC_DIGITS` | nDCG 표시 소수 자릿수 4 |
 | `RETRIEVAL_CHUNKS`, `RETRIEVAL_MODELS` | 원본 열람 구간 구성과 실행할 분할 모델·임계값 |
@@ -128,6 +130,7 @@
 - 검색 비용 확인 상단의 문서 수는 추출 `summary.json`의 문서 개수이고, 실행 범위는 근거 없음 질문을 포함한 전체 val다. 단계별 예상 비용과 합계는 모두 소수 여섯 자리로 표시한다.
 - 하네스는 `WebConfig.knowledge_documents`에 `tests/web_knowledge_fixture.py`의 자료 공급 함수를 주입한다. 기본 제품 경로는 실제 공급자를 그대로 사용하며 시연용 분기가 없다. 원본 10개는 실제 읽고, 개발 확인용 업로드 대신 가상 업무용 업로드 두 개의 고정된 진행·완료 상태를 사용한다. 이 상태와 비용은 화면 검증 자료이며 실제 처리 성능이나 비용 측정치가 아니다.
 - `saas-knowledge-progress-*`와 `saas-knowledge-complete-*`는 이 고정 자료의 상태다. 완료 단계는 제품 기본 화면에서 접혀 있고, 완료 스크린샷은 사용자가 펼친 상태를 촬영한다. 표준약관 상세나 표준약관에서 가져온 테스트 문장은 쓰지 않는다.
+- `admin-models-simulated-val-*`는 `tests/web_retrieval_fixture.py`의 가상 val 실행과 실제 val 기준 행을 함께 촬영한 화면 검증 자료다. 가상 결과는 촬영 중에만 임시 폴더에서 읽으며 실제 실행 기록이나 성능 측정치가 아니다. `admin-models-*`와 `admin-retrieval-confirm-*`의 고정 비교 표는 실제 test 결과다.
 
 ### 고객사 관리(`jikgam/web/data/tenants.py`)
 

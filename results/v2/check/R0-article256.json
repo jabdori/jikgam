@@ -1,0 +1,335 @@
+{
+ "name": "R0-article256",
+ "split": "check",
+ "chunks": "article256",
+ "meta": "none",
+ "config": {
+  "r0": true,
+  "embed": null,
+  "fusion": "rrf",
+  "related": false,
+  "rerank": 0
+ },
+ "metrics": {
+  "single": {
+   "questions": 30,
+   "evidence_items": 30,
+   "items@1000": 0.8333,
+   "complete@1000": 0.8333,
+   "items@2000": 0.9333,
+   "complete@2000": 0.9333,
+   "items@4000": 0.9667,
+   "complete@4000": 0.9667,
+   "recall@5": 0.8667,
+   "recall@10": 0.9333,
+   "ndcg@10": 0.7383
+  },
+  "multi": {
+   "questions": 18,
+   "evidence_items": 36,
+   "items@1000": 0.6389,
+   "complete@1000": 0.5556,
+   "items@2000": 0.7222,
+   "complete@2000": 0.6667,
+   "items@4000": 0.7778,
+   "complete@4000": 0.7222,
+   "recall@5": 0.7222,
+   "recall@10": 0.8056,
+   "ndcg@10": 0.6773
+  },
+  "all": {
+   "questions": 48,
+   "evidence_items": 66,
+   "items@1000": 0.7273,
+   "complete@1000": 0.7292,
+   "items@2000": 0.8182,
+   "complete@2000": 0.8333,
+   "items@4000": 0.8636,
+   "complete@4000": 0.875,
+   "recall@5": 0.7879,
+   "recall@10": 0.8636,
+   "ndcg@10": 0.7154
+  }
+ },
+ "by_group": {
+  "고시": {
+   "questions": 14,
+   "evidence_items": 19,
+   "items@1000": 0.5789,
+   "complete@1000": 0.6429,
+   "items@2000": 0.6842,
+   "complete@2000": 0.7857,
+   "items@4000": 0.6842,
+   "complete@4000": 0.7857,
+   "recall@5": 0.6316,
+   "recall@10": 0.7368,
+   "ndcg@10": 0.6533,
+   "latency_ms": {
+    "retrieval_p50": 3.4334999800194055,
+    "retrieval_p95": 4.51889997930266,
+    "rerank_p50": null,
+    "rerank_p95": null,
+    "rerank_total_p50": null,
+    "rerank_total_p95": null,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 0
+   }
+  },
+  "법령": {
+   "questions": 20,
+   "evidence_items": 28,
+   "items@1000": 0.8929,
+   "complete@1000": 0.85,
+   "items@2000": 0.8929,
+   "complete@2000": 0.85,
+   "items@4000": 0.9286,
+   "complete@4000": 0.9,
+   "recall@5": 0.8929,
+   "recall@10": 0.9286,
+   "ndcg@10": 0.8152,
+   "latency_ms": {
+    "retrieval_p50": 3.326700010802597,
+    "retrieval_p95": 4.2215000139549375,
+    "rerank_p50": null,
+    "rerank_p95": null,
+    "rerank_total_p50": null,
+    "rerank_total_p95": null,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 0
+   }
+  },
+  "표준약관": {
+   "questions": 14,
+   "evidence_items": 19,
+   "items@1000": 0.6316,
+   "complete@1000": 0.6429,
+   "items@2000": 0.8421,
+   "complete@2000": 0.8571,
+   "items@4000": 0.9474,
+   "complete@4000": 0.9286,
+   "recall@5": 0.7895,
+   "recall@10": 0.8947,
+   "ndcg@10": 0.635,
+   "latency_ms": {
+    "retrieval_p50": 2.834200015058741,
+    "retrieval_p95": 4.583500005537644,
+    "rerank_p50": null,
+    "rerank_p95": null,
+    "rerank_total_p50": null,
+    "rerank_total_p95": null,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 0
+   }
+  }
+ },
+ "word_overlap": {
+  "all": {
+   "questions": 48,
+   "overlap": 0.2036
+  },
+  "by_type": {
+   "single": {
+    "questions": 30,
+    "overlap": 0.1896
+   },
+   "multi": {
+    "questions": 18,
+    "overlap": 0.2268
+   }
+  },
+  "by_group": {
+   "고시": {
+    "questions": 14,
+    "overlap": 0.1892
+   },
+   "법령": {
+    "questions": 20,
+    "overlap": 0.231
+   },
+   "표준약관": {
+    "questions": 14,
+    "overlap": 0.1787
+   }
+  },
+  "excluded_none": 0
+ },
+ "per_question@2000": {
+  "single": {
+   "ck-001": [
+    true
+   ],
+   "ck-006": [
+    true
+   ],
+   "ck-009": [
+    true
+   ],
+   "ck-011": [
+    true
+   ],
+   "ck-012": [
+    true
+   ],
+   "ck-013": [
+    true
+   ],
+   "ck-014": [
+    true
+   ],
+   "ck-015": [
+    true
+   ],
+   "ck-016": [
+    true
+   ],
+   "ck-019": [
+    true
+   ],
+   "ck-020": [
+    true
+   ],
+   "ck-021": [
+    true
+   ],
+   "ck-022": [
+    true
+   ],
+   "ck-024": [
+    true
+   ],
+   "ck-025": [
+    true
+   ],
+   "ck-026": [
+    true
+   ],
+   "ck-027": [
+    true
+   ],
+   "ck-028": [
+    true
+   ],
+   "ck-030": [
+    false
+   ],
+   "ck-031": [
+    true
+   ],
+   "ck-033": [
+    true
+   ],
+   "ck-035": [
+    true
+   ],
+   "ck-036": [
+    true
+   ],
+   "ck-038": [
+    true
+   ],
+   "ck-040": [
+    false
+   ],
+   "ck-043": [
+    true
+   ],
+   "ck-044": [
+    true
+   ],
+   "ck-045": [
+    true
+   ],
+   "ck-046": [
+    true
+   ],
+   "ck-050": [
+    true
+   ]
+  },
+  "multi": {
+   "ck-002": [
+    false,
+    true
+   ],
+   "ck-003": [
+    true,
+    true
+   ],
+   "ck-004": [
+    true,
+    true
+   ],
+   "ck-005": [
+    true,
+    true
+   ],
+   "ck-007": [
+    true,
+    true
+   ],
+   "ck-008": [
+    true,
+    true
+   ],
+   "ck-010": [
+    false,
+    false
+   ],
+   "ck-017": [
+    true,
+    true
+   ],
+   "ck-018": [
+    true,
+    true
+   ],
+   "ck-023": [
+    true,
+    true
+   ],
+   "ck-029": [
+    true,
+    true
+   ],
+   "ck-032": [
+    true,
+    true
+   ],
+   "ck-034": [
+    false,
+    false
+   ],
+   "ck-037": [
+    true,
+    true
+   ],
+   "ck-039": [
+    true,
+    true
+   ],
+   "ck-041": [
+    false,
+    false
+   ],
+   "ck-048": [
+    false,
+    false
+   ],
+   "ck-049": [
+    false,
+    true
+   ]
+  }
+ },
+ "latency_ms": {
+  "retrieval_p50": 3.1300000264309347,
+  "retrieval_p95": 4.720099997939542,
+  "rerank_p50": null,
+  "rerank_p95": null,
+  "rerank_total_p50": null,
+  "rerank_total_p95": null,
+  "rerank_failed_questions": 0,
+  "rerank_successful_questions": 0
+ },
+ "rerank": null
+}

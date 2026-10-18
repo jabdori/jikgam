@@ -23,6 +23,7 @@ import socket
 import sys
 import threading
 import time
+from contextlib import nullcontext
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
@@ -61,6 +62,7 @@ class Screen:
     path: Callable[[], str]
     keys: Callable[[Page, str], None] | None = None
     prepare: Callable[[Page], None] | None = None
+    fixture: Callable | None = None
 
 
 def free_port() -> int:
@@ -260,6 +262,23 @@ def keys_tenants(page: Page, base: str) -> None:
         raise AssertionError("다른 고객사를 키보드로 고를 수 없다")
 
 
+def simulated_val_results():
+    """가상 실행은 해당 화면 촬영 중에만 임시 폴더에서 읽는다."""
+    fixture = runpy.run_path(str(ROOT / "tests/web_retrieval_fixture.py"))
+    return fixture["simulated_job"]()
+
+
+def check_simulated_val_label(page: Page) -> None:
+    """두 폭에서 가상 수치와 실측 아님 안내가 같은 행에 펼쳐져 있어야 한다."""
+    row = page.get_by_role("table").filter(has=page.get_by_role("rowheader", name="가상 실행", exact=False)) \
+        .get_by_role("row").filter(has=page.get_by_role("rowheader", name="가상 실행", exact=False))
+    if row.count() != 1 or "77.0%" not in row.inner_text():
+        raise AssertionError("보이는 val 표에서 가상 실행 수치 행을 찾을 수 없다")
+    label = row.get_by_text("화면 검증 자료(실측 아님)", exact=True)
+    if not label.is_visible() or label.locator("xpath=ancestor::details").count():
+        raise AssertionError("가상 실행 수치 행의 실측 아님 안내가 펼쳐져 보이지 않는다")
+
+
 SCREENS = [
     Screen("saas-live", "saas", "실시간 통화", lambda: "/app/live", keys_live),
     Screen("saas-calls", "saas", "통화 기록", lambda: f"/app/calls?call={pick_call()}", keys_calls),
@@ -288,6 +307,8 @@ SCREENS = [
            prepare_published_documents),
     Screen("saas-integrations", "saas", "연동", lambda: "/app/integrations", keys_integrations),
     Screen("admin-models", "admin", "모델·벤치마크", lambda: "/admin/models", keys_models),
+    Screen("admin-models-simulated-val", "admin", "모델·벤치마크(가상 val 실행 결과)",
+           lambda: "/admin/models", prepare=check_simulated_val_label, fixture=simulated_val_results),
     Screen("admin-retrieval-confirm", "admin", "검색 벤치마크 비용 확인",
            lambda: "/admin/models?retrieval=jev", lambda page, base: (
                page.goto(base + "/admin/models?retrieval=jev", wait_until="networkidle"), keys_skip(page),
@@ -352,49 +373,50 @@ def main() -> None:
         with sync_playwright() as p:
             browser = p.chromium.launch()
             for s in screens:
-                acct = tenant if s.console == "saas" else admin
-                for w in WIDTHS:
-                    ctx = browser.new_context(viewport={"width": w, "height": HEIGHT[w]}, device_scale_factor=1,
-                                              http_credentials={"username": acct.name, "password": acct.password},
-                                              reduced_motion="reduce", locale="ko-KR")
-                    page = ctx.new_page()
-                    resp = page.goto(base + s.path(), wait_until="networkidle")
-                    if resp is None or resp.status != 200:
-                        failures.append(f"{s.name} {w}px: 응답 {resp.status if resp else '없음'}")
+                with s.fixture() if s.fixture else nullcontext():
+                    acct = tenant if s.console == "saas" else admin
+                    for w in WIDTHS:
+                        ctx = browser.new_context(viewport={"width": w, "height": HEIGHT[w]}, device_scale_factor=1,
+                                                  http_credentials={"username": acct.name, "password": acct.password},
+                                                  reduced_motion="reduce", locale="ko-KR")
+                        page = ctx.new_page()
+                        resp = page.goto(base + s.path(), wait_until="networkidle")
+                        if resp is None or resp.status != 200:
+                            failures.append(f"{s.name} {w}px: 응답 {resp.status if resp else '없음'}")
+                            ctx.close()
+                            continue
+                        page.wait_for_timeout(300)
+                        if s.prepare:
+                            s.prepare(page)
+                        shot = page.screenshot(full_page=True, animations="disabled")
+                        out = SCREENS_DIR / f"{s.name}-{w}.png"
+                        ratio = diff_ratio(out.read_bytes() if out.exists() else None, shot)
+                        if not args.no_shots:
+                            out.write_bytes(shot)
+                        axe = run_axe(page)
+                        bad = [v for v in axe["violations"] if v.get("impact") in SERIOUS]
+                        for v in bad:
+                            nodes = "; ".join(n["target"][0] if isinstance(n["target"][0], str) else str(n["target"][0])
+                                              for n in v["nodes"][:3])
+                            failures.append(f"{s.name} {w}px axe {v['impact']} {v['id']}: {v['help']} ({nodes})")
+                        hits = tm.find(visible_dump(page), terms) if s.console == "saas" else []
+                        for word, near in hits[:5]:
+                            failures.append(f"{s.name} {w}px 금지어 {word}: …{near}…")
+                        page_width = page.evaluate("() => document.documentElement.scrollWidth")
+                        if page_width > w:
+                            failures.append(f"{s.name} {w}px: 가로로 넘친다(문서 폭 {page_width}px)")
+                        kb = "-"
+                        if s.keys is not None and w == WIDTHS[0]:
+                            try:
+                                s.keys(page, base)
+                                kb = "통과"
+                            except AssertionError as e:
+                                kb = "실패"
+                                failures.append(f"{s.name} 키보드: {e}")
+                        rows.append((s.name, s.title, w, ratio, len(bad), len(hits), kb))
+                        print(f"{s.name:18} {w:5}px  바뀐 화소 {('-' if ratio is None else f'{ratio:.2%}'):>7}  "
+                              f"axe 심각 {len(bad)}  금지어 {len(hits)}  키보드 {kb}")
                         ctx.close()
-                        continue
-                    page.wait_for_timeout(300)
-                    if s.prepare:
-                        s.prepare(page)
-                    shot = page.screenshot(full_page=True, animations="disabled")
-                    out = SCREENS_DIR / f"{s.name}-{w}.png"
-                    ratio = diff_ratio(out.read_bytes() if out.exists() else None, shot)
-                    if not args.no_shots:
-                        out.write_bytes(shot)
-                    axe = run_axe(page)
-                    bad = [v for v in axe["violations"] if v.get("impact") in SERIOUS]
-                    for v in bad:
-                        nodes = "; ".join(n["target"][0] if isinstance(n["target"][0], str) else str(n["target"][0])
-                                          for n in v["nodes"][:3])
-                        failures.append(f"{s.name} {w}px axe {v['impact']} {v['id']}: {v['help']} ({nodes})")
-                    hits = tm.find(visible_dump(page), terms) if s.console == "saas" else []
-                    for word, near in hits[:5]:
-                        failures.append(f"{s.name} {w}px 금지어 {word}: …{near}…")
-                    page_width = page.evaluate("() => document.documentElement.scrollWidth")
-                    if page_width > w:
-                        failures.append(f"{s.name} {w}px: 가로로 넘친다(문서 폭 {page_width}px)")
-                    kb = "-"
-                    if s.keys is not None and w == WIDTHS[0]:
-                        try:
-                            s.keys(page, base)
-                            kb = "통과"
-                        except AssertionError as e:
-                            kb = "실패"
-                            failures.append(f"{s.name} 키보드: {e}")
-                    rows.append((s.name, s.title, w, ratio, len(bad), len(hits), kb))
-                    print(f"{s.name:18} {w:5}px  바뀐 화소 {('-' if ratio is None else f'{ratio:.2%}'):>7}  "
-                          f"axe 심각 {len(bad)}  금지어 {len(hits)}  키보드 {kb}")
-                    ctx.close()
             browser.close()
     finally:
         server.should_exit = True

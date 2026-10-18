@@ -1,0 +1,349 @@
+{
+ "name": "c-qwen-W4000-C800-raw-t0.55--full--snow+rrf+jev8",
+ "split": "check",
+ "chunks": "c-qwen-W4000-C800-raw-t0.55",
+ "meta": "full",
+ "config": {
+  "r0": false,
+  "embed": "snow",
+  "fusion": "rrf",
+  "related": false,
+  "rerank": 8
+ },
+ "metrics": {
+  "single": {
+   "questions": 30,
+   "evidence_items": 30,
+   "items@1000": 0.9333,
+   "complete@1000": 0.9333,
+   "items@2000": 1.0,
+   "complete@2000": 1.0,
+   "items@4000": 1.0,
+   "complete@4000": 1.0,
+   "recall@5": 0.9,
+   "recall@10": 0.9667,
+   "ndcg@10": 0.8662
+  },
+  "multi": {
+   "questions": 18,
+   "evidence_items": 36,
+   "items@1000": 0.6667,
+   "complete@1000": 0.5556,
+   "items@2000": 0.75,
+   "complete@2000": 0.5556,
+   "items@4000": 0.8056,
+   "complete@4000": 0.6111,
+   "recall@5": 0.6944,
+   "recall@10": 0.75,
+   "ndcg@10": 0.7761
+  },
+  "all": {
+   "questions": 48,
+   "evidence_items": 66,
+   "items@1000": 0.7879,
+   "complete@1000": 0.7917,
+   "items@2000": 0.8636,
+   "complete@2000": 0.8333,
+   "items@4000": 0.8939,
+   "complete@4000": 0.8542,
+   "recall@5": 0.7879,
+   "recall@10": 0.8485,
+   "ndcg@10": 0.8325
+  }
+ },
+ "by_group": {
+  "고시": {
+   "questions": 14,
+   "evidence_items": 19,
+   "items@1000": 0.6316,
+   "complete@1000": 0.7143,
+   "items@2000": 0.7368,
+   "complete@2000": 0.7143,
+   "items@4000": 0.7895,
+   "complete@4000": 0.7143,
+   "recall@5": 0.6316,
+   "recall@10": 0.7368,
+   "ndcg@10": 0.7028,
+   "latency_ms": {
+    "retrieval_p50": 58.02980001317337,
+    "retrieval_p95": 64.79460000991821,
+    "rerank_p50": 182.6973999850452,
+    "rerank_p95": 214.05370000866242,
+    "rerank_total_p50": 182.74380001821555,
+    "rerank_total_p95": 214.10079998895526,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 14
+   }
+  },
+  "법령": {
+   "questions": 20,
+   "evidence_items": 28,
+   "items@1000": 0.9286,
+   "complete@1000": 0.9,
+   "items@2000": 0.9643,
+   "complete@2000": 0.95,
+   "items@4000": 1.0,
+   "complete@4000": 1.0,
+   "recall@5": 0.9286,
+   "recall@10": 0.9286,
+   "ndcg@10": 0.9,
+   "latency_ms": {
+    "retrieval_p50": 59.586199990008026,
+    "retrieval_p95": 73.82970000617206,
+    "rerank_p50": 195.09090000065044,
+    "rerank_p95": 229.0179999836255,
+    "rerank_total_p50": 195.13409998035058,
+    "rerank_total_p95": 229.06959999818355,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 20
+   }
+  },
+  "표준약관": {
+   "questions": 14,
+   "evidence_items": 19,
+   "items@1000": 0.7368,
+   "complete@1000": 0.7143,
+   "items@2000": 0.8421,
+   "complete@2000": 0.7857,
+   "items@4000": 0.8421,
+   "complete@4000": 0.7857,
+   "recall@5": 0.7368,
+   "recall@10": 0.8421,
+   "ndcg@10": 0.8656,
+   "latency_ms": {
+    "retrieval_p50": 55.975799972657114,
+    "retrieval_p95": 60.87730001308955,
+    "rerank_p50": 185.87799998931587,
+    "rerank_p95": 204.673800006276,
+    "rerank_total_p50": 185.9260999772232,
+    "rerank_total_p95": 204.72229999722913,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 14
+   }
+  }
+ },
+ "word_overlap": {
+  "all": {
+   "questions": 48,
+   "overlap": 0.2036
+  },
+  "by_type": {
+   "single": {
+    "questions": 30,
+    "overlap": 0.1896
+   },
+   "multi": {
+    "questions": 18,
+    "overlap": 0.2268
+   }
+  },
+  "by_group": {
+   "고시": {
+    "questions": 14,
+    "overlap": 0.1892
+   },
+   "법령": {
+    "questions": 20,
+    "overlap": 0.231
+   },
+   "표준약관": {
+    "questions": 14,
+    "overlap": 0.1787
+   }
+  },
+  "excluded_none": 0
+ },
+ "per_question@2000": {
+  "single": {
+   "ck-001": [
+    true
+   ],
+   "ck-006": [
+    true
+   ],
+   "ck-009": [
+    true
+   ],
+   "ck-011": [
+    true
+   ],
+   "ck-012": [
+    true
+   ],
+   "ck-013": [
+    true
+   ],
+   "ck-014": [
+    true
+   ],
+   "ck-015": [
+    true
+   ],
+   "ck-016": [
+    true
+   ],
+   "ck-019": [
+    true
+   ],
+   "ck-020": [
+    true
+   ],
+   "ck-021": [
+    true
+   ],
+   "ck-022": [
+    true
+   ],
+   "ck-024": [
+    true
+   ],
+   "ck-025": [
+    true
+   ],
+   "ck-026": [
+    true
+   ],
+   "ck-027": [
+    true
+   ],
+   "ck-028": [
+    true
+   ],
+   "ck-030": [
+    true
+   ],
+   "ck-031": [
+    true
+   ],
+   "ck-033": [
+    true
+   ],
+   "ck-035": [
+    true
+   ],
+   "ck-036": [
+    true
+   ],
+   "ck-038": [
+    true
+   ],
+   "ck-040": [
+    true
+   ],
+   "ck-043": [
+    true
+   ],
+   "ck-044": [
+    true
+   ],
+   "ck-045": [
+    true
+   ],
+   "ck-046": [
+    true
+   ],
+   "ck-050": [
+    true
+   ]
+  },
+  "multi": {
+   "ck-002": [
+    true,
+    true
+   ],
+   "ck-003": [
+    true,
+    true
+   ],
+   "ck-004": [
+    true,
+    true
+   ],
+   "ck-005": [
+    true,
+    true
+   ],
+   "ck-007": [
+    true,
+    false
+   ],
+   "ck-008": [
+    true,
+    true
+   ],
+   "ck-010": [
+    true,
+    false
+   ],
+   "ck-017": [
+    true,
+    true
+   ],
+   "ck-018": [
+    true,
+    true
+   ],
+   "ck-023": [
+    true,
+    true
+   ],
+   "ck-029": [
+    false,
+    true
+   ],
+   "ck-032": [
+    true,
+    false
+   ],
+   "ck-034": [
+    false,
+    false
+   ],
+   "ck-037": [
+    true,
+    false
+   ],
+   "ck-039": [
+    true,
+    true
+   ],
+   "ck-041": [
+    true,
+    false
+   ],
+   "ck-048": [
+    true,
+    false
+   ],
+   "ck-049": [
+    true,
+    true
+   ]
+  }
+ },
+ "latency_ms": {
+  "retrieval_p50": 57.968299981439486,
+  "retrieval_p95": 70.86389997857623,
+  "rerank_p50": 186.04339999728836,
+  "rerank_p95": 229.0179999836255,
+  "rerank_total_p50": 186.09679999644868,
+  "rerank_total_p95": 229.06959999818355,
+  "rerank_failed_questions": 0,
+  "rerank_successful_questions": 48
+ },
+ "rerank": {
+  "cost_usd": 0.00695,
+  "requests": 48,
+  "errors": 0
+ },
+ "embedding": {
+  "model": "snow",
+  "revision": "55ec6e9358a56d56af759bc8372e970caf8c305f",
+  "cache": "data\\v2\\local\\emb\\snow\\c-qwen-W4000-C800-raw-t0.55--full-f2ff56d0a05bd8b0.pt",
+  "built": false,
+  "build_seconds": 0.1,
+  "cost_usd": 0.0,
+  "requests": 0,
+  "retries": 0
+ }
+}

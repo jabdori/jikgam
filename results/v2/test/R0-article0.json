@@ -1,0 +1,728 @@
+{
+ "name": "R0-article0",
+ "split": "test",
+ "chunks": "article0",
+ "meta": "none",
+ "config": {
+  "r0": true,
+  "embed": null,
+  "fusion": "rrf",
+  "related": false,
+  "rerank": 0
+ },
+ "metrics": {
+  "single": {
+   "questions": 103,
+   "evidence_items": 103,
+   "items@1000": 0.466,
+   "complete@1000": 0.466,
+   "items@2000": 0.5631,
+   "complete@2000": 0.5631,
+   "items@4000": 0.6117,
+   "complete@4000": 0.6117,
+   "recall@5": 0.8058,
+   "recall@10": 0.8932,
+   "ndcg@10": 0.6993
+  },
+  "multi": {
+   "questions": 53,
+   "evidence_items": 113,
+   "items@1000": 0.3982,
+   "complete@1000": 0.1509,
+   "items@2000": 0.5133,
+   "complete@2000": 0.3208,
+   "items@4000": 0.6372,
+   "complete@4000": 0.5283,
+   "recall@5": 0.7168,
+   "recall@10": 0.8496,
+   "ndcg@10": 0.7627
+  },
+  "all": {
+   "questions": 156,
+   "evidence_items": 216,
+   "items@1000": 0.4306,
+   "complete@1000": 0.359,
+   "items@2000": 0.537,
+   "complete@2000": 0.4808,
+   "items@4000": 0.625,
+   "complete@4000": 0.5833,
+   "recall@5": 0.7593,
+   "recall@10": 0.8704,
+   "ndcg@10": 0.7208
+  }
+ },
+ "by_group": {
+  "고시": {
+   "questions": 43,
+   "evidence_items": 54,
+   "items@1000": 0.0926,
+   "complete@1000": 0.0698,
+   "items@2000": 0.1111,
+   "complete@2000": 0.093,
+   "items@4000": 0.1111,
+   "complete@4000": 0.093,
+   "recall@5": 0.8148,
+   "recall@10": 0.9074,
+   "ndcg@10": 0.7411,
+   "latency_ms": {
+    "retrieval_p50": 2.144500002032146,
+    "retrieval_p95": 3.452000004472211,
+    "rerank_p50": null,
+    "rerank_p95": null,
+    "rerank_total_p50": null,
+    "rerank_total_p95": null,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 0
+   }
+  },
+  "넘나듦": {
+   "questions": 18,
+   "evidence_items": 41,
+   "items@1000": 0.3659,
+   "complete@1000": 0.1111,
+   "items@2000": 0.5854,
+   "complete@2000": 0.3889,
+   "items@4000": 0.7317,
+   "complete@4000": 0.6111,
+   "recall@5": 0.7073,
+   "recall@10": 0.878,
+   "ndcg@10": 0.7667,
+   "latency_ms": {
+    "retrieval_p50": 3.2796000014059246,
+    "retrieval_p95": 4.283599992049858,
+    "rerank_p50": null,
+    "rerank_p95": null,
+    "rerank_total_p50": null,
+    "rerank_total_p95": null,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 0
+   }
+  },
+  "법령": {
+   "questions": 65,
+   "evidence_items": 84,
+   "items@1000": 0.5714,
+   "complete@1000": 0.5077,
+   "items@2000": 0.6667,
+   "complete@2000": 0.6308,
+   "items@4000": 0.7857,
+   "complete@4000": 0.7692,
+   "recall@5": 0.7262,
+   "recall@10": 0.8333,
+   "ndcg@10": 0.6723,
+   "latency_ms": {
+    "retrieval_p50": 2.179900009650737,
+    "retrieval_p95": 3.422599984332919,
+    "rerank_p50": null,
+    "rerank_p95": null,
+    "rerank_total_p50": null,
+    "rerank_total_p95": null,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 0
+   }
+  },
+  "표준약관": {
+   "questions": 30,
+   "evidence_items": 37,
+   "items@1000": 0.6757,
+   "complete@1000": 0.6,
+   "items@2000": 0.8108,
+   "complete@2000": 0.7667,
+   "items@4000": 0.8919,
+   "complete@4000": 0.8667,
+   "recall@5": 0.8108,
+   "recall@10": 0.8919,
+   "ndcg@10": 0.7695,
+   "latency_ms": {
+    "retrieval_p50": 1.735099998768419,
+    "retrieval_p95": 2.684400009457022,
+    "rerank_p50": null,
+    "rerank_p95": null,
+    "rerank_total_p50": null,
+    "rerank_total_p95": null,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 0
+   }
+  }
+ },
+ "word_overlap": {
+  "all": {
+   "questions": 156,
+   "overlap": 0.191
+  },
+  "by_type": {
+   "single": {
+    "questions": 103,
+    "overlap": 0.1678
+   },
+   "multi": {
+    "questions": 53,
+    "overlap": 0.2362
+   }
+  },
+  "by_group": {
+   "고시": {
+    "questions": 43,
+    "overlap": 0.1604
+   },
+   "넘나듦": {
+    "questions": 18,
+    "overlap": 0.2572
+   },
+   "법령": {
+    "questions": 65,
+    "overlap": 0.2028
+   },
+   "표준약관": {
+    "questions": 30,
+    "overlap": 0.1697
+   }
+  },
+  "excluded_none": 18
+ },
+ "per_question@2000": {
+  "single": {
+   "qa-0003": [
+    true
+   ],
+   "qa-0007": [
+    true
+   ],
+   "qa-0009": [
+    true
+   ],
+   "qa-0018": [
+    false
+   ],
+   "qa-0022": [
+    true
+   ],
+   "qa-0023": [
+    false
+   ],
+   "qa-0024": [
+    false
+   ],
+   "qa-0027": [
+    false
+   ],
+   "qa-0028": [
+    true
+   ],
+   "qa-0031": [
+    false
+   ],
+   "qa-0033": [
+    false
+   ],
+   "qa-0037": [
+    true
+   ],
+   "qa-0042": [
+    false
+   ],
+   "qa-0043": [
+    false
+   ],
+   "qa-0044": [
+    true
+   ],
+   "qa-0052": [
+    true
+   ],
+   "qa-0053": [
+    false
+   ],
+   "qa-0054": [
+    false
+   ],
+   "qa-0055": [
+    false
+   ],
+   "qa-0060": [
+    true
+   ],
+   "qa-0069": [
+    false
+   ],
+   "qa-0070": [
+    true
+   ],
+   "qa-0071": [
+    false
+   ],
+   "qa-0081": [
+    false
+   ],
+   "qa-0082": [
+    false
+   ],
+   "qa-0084": [
+    true
+   ],
+   "qa-0085": [
+    true
+   ],
+   "qa-0086": [
+    true
+   ],
+   "qa-0090": [
+    true
+   ],
+   "qa-0103": [
+    true
+   ],
+   "qa-0106": [
+    true
+   ],
+   "qa-0109": [
+    true
+   ],
+   "qa-0113": [
+    true
+   ],
+   "qa-0122": [
+    true
+   ],
+   "qa-0131": [
+    true
+   ],
+   "qa-0134": [
+    true
+   ],
+   "qa-0145": [
+    false
+   ],
+   "qa-0146": [
+    true
+   ],
+   "qa-0147": [
+    true
+   ],
+   "qa-0156": [
+    false
+   ],
+   "qa-0161": [
+    false
+   ],
+   "qa-0162": [
+    false
+   ],
+   "qa-0164": [
+    true
+   ],
+   "qa-0170": [
+    false
+   ],
+   "qa-0176": [
+    true
+   ],
+   "qa-0182": [
+    false
+   ],
+   "qa-0184": [
+    false
+   ],
+   "qa-0185": [
+    false
+   ],
+   "qa-0186": [
+    false
+   ],
+   "qa-0190": [
+    true
+   ],
+   "qa-0194": [
+    false
+   ],
+   "qa-0198": [
+    false
+   ],
+   "qa-0200": [
+    false
+   ],
+   "qa-0201": [
+    true
+   ],
+   "qa-0204": [
+    true
+   ],
+   "qa-0206": [
+    true
+   ],
+   "qa-0210": [
+    false
+   ],
+   "qa-0211": [
+    false
+   ],
+   "qa-0217": [
+    true
+   ],
+   "qa-0218": [
+    true
+   ],
+   "qa-0220": [
+    true
+   ],
+   "qa-0229": [
+    false
+   ],
+   "qa-0231": [
+    true
+   ],
+   "qa-0232": [
+    true
+   ],
+   "qa-0234": [
+    true
+   ],
+   "qa-0241": [
+    false
+   ],
+   "qa-0242": [
+    true
+   ],
+   "qa-0249": [
+    false
+   ],
+   "qa-0250": [
+    true
+   ],
+   "qa-0252": [
+    true
+   ],
+   "qa-0256": [
+    false
+   ],
+   "qa-0262": [
+    true
+   ],
+   "qa-0264": [
+    true
+   ],
+   "qa-0270": [
+    true
+   ],
+   "qa-0271": [
+    true
+   ],
+   "qa-0272": [
+    false
+   ],
+   "qa-0273": [
+    true
+   ],
+   "qa-0276": [
+    true
+   ],
+   "qa-0280": [
+    true
+   ],
+   "qa-0285": [
+    false
+   ],
+   "qa-0289": [
+    false
+   ],
+   "qa-0290": [
+    false
+   ],
+   "qa-0291": [
+    false
+   ],
+   "qa-0292": [
+    false
+   ],
+   "qa-0295": [
+    true
+   ],
+   "qa-0296": [
+    true
+   ],
+   "qa-0304": [
+    true
+   ],
+   "qa-0319": [
+    true
+   ],
+   "qa-0322": [
+    true
+   ],
+   "qa-0329": [
+    false
+   ],
+   "qa-0330": [
+    true
+   ],
+   "qa-0332": [
+    false
+   ],
+   "qa-0333": [
+    false
+   ],
+   "qa-0339": [
+    true
+   ],
+   "qa-0345": [
+    true
+   ],
+   "qa-0347": [
+    true
+   ],
+   "qa-0349": [
+    true
+   ],
+   "qa-0357": [
+    false
+   ],
+   "qa-0360": [
+    false
+   ],
+   "qa-0371": [
+    true
+   ],
+   "qa-0378": [
+    true
+   ],
+   "qa-0379": [
+    false
+   ],
+   "qa-0385": [
+    true
+   ]
+  },
+  "multi": {
+   "qa-0013": [
+    false,
+    false
+   ],
+   "qa-0015": [
+    false,
+    true
+   ],
+   "qa-0016": [
+    false,
+    false
+   ],
+   "qa-0021": [
+    false,
+    false
+   ],
+   "qa-0026": [
+    true,
+    false
+   ],
+   "qa-0035": [
+    true,
+    true,
+    true
+   ],
+   "qa-0038": [
+    true,
+    true
+   ],
+   "qa-0056": [
+    false,
+    false
+   ],
+   "qa-0063": [
+    true,
+    true
+   ],
+   "qa-0073": [
+    false,
+    false
+   ],
+   "qa-0074": [
+    false,
+    false
+   ],
+   "qa-0094": [
+    true,
+    true
+   ],
+   "qa-0095": [
+    true,
+    true
+   ],
+   "qa-0101": [
+    true,
+    false
+   ],
+   "qa-0114": [
+    false,
+    false
+   ],
+   "qa-0118": [
+    true,
+    true
+   ],
+   "qa-0119": [
+    false,
+    true
+   ],
+   "qa-0123": [
+    true,
+    false
+   ],
+   "qa-0124": [
+    false,
+    false
+   ],
+   "qa-0125": [
+    true,
+    true
+   ],
+   "qa-0130": [
+    false,
+    true
+   ],
+   "qa-0133": [
+    false,
+    false
+   ],
+   "qa-0135": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "qa-0137": [
+    true,
+    true
+   ],
+   "qa-0139": [
+    false,
+    false,
+    false
+   ],
+   "qa-0149": [
+    true,
+    true
+   ],
+   "qa-0150": [
+    false,
+    true
+   ],
+   "qa-0157": [
+    false,
+    false,
+    true
+   ],
+   "qa-0159": [
+    true,
+    true
+   ],
+   "qa-0160": [
+    true,
+    true
+   ],
+   "qa-0163": [
+    false,
+    false
+   ],
+   "qa-0167": [
+    true,
+    true
+   ],
+   "qa-0187": [
+    true,
+    false
+   ],
+   "qa-0189": [
+    true,
+    true,
+    true
+   ],
+   "qa-0196": [
+    true,
+    true
+   ],
+   "qa-0215": [
+    true,
+    true
+   ],
+   "qa-0219": [
+    false,
+    true
+   ],
+   "qa-0246": [
+    false,
+    true
+   ],
+   "qa-0257": [
+    false,
+    true
+   ],
+   "qa-0275": [
+    false,
+    true
+   ],
+   "qa-0277": [
+    false,
+    false
+   ],
+   "qa-0278": [
+    false,
+    true
+   ],
+   "qa-0293": [
+    false,
+    false
+   ],
+   "qa-0301": [
+    true,
+    false
+   ],
+   "qa-0302": [
+    true,
+    false
+   ],
+   "qa-0311": [
+    false,
+    false,
+    false
+   ],
+   "qa-0313": [
+    false,
+    false
+   ],
+   "qa-0318": [
+    false,
+    true
+   ],
+   "qa-0338": [
+    false,
+    true
+   ],
+   "qa-0350": [
+    true,
+    false
+   ],
+   "qa-0351": [
+    true,
+    true
+   ],
+   "qa-0352": [
+    false,
+    false
+   ],
+   "qa-0362": [
+    true,
+    false
+   ]
+  }
+ },
+ "latency_ms": {
+  "retrieval_p50": 2.1877999824937433,
+  "retrieval_p95": 3.7121000059414655,
+  "rerank_p50": null,
+  "rerank_p95": null,
+  "rerank_total_p50": null,
+  "rerank_total_p95": null,
+  "rerank_failed_questions": 0,
+  "rerank_successful_questions": 0
+ },
+ "rerank": null
+}

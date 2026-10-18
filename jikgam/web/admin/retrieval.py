@@ -50,15 +50,16 @@ def identity(result):
     if not result.get("run_id"):
         return ui.stack(ui.text(result["label"], strong=True), ui.text(result["description"], tone="muted", size="sm"), gap="xs")
     _, _, configuration, _ = settings.RETRIEVAL_MODELS[result["boundary_model"]]
-    return ui.stack(ui.text("화면 실행", strong=True),
+    simulated = result.get("simulated") is True
+    return ui.stack(ui.text("가상 실행" if simulated else "화면 실행", strong=True),
+                    ui.text("화면 검증 자료(실측 아님)", tone="muted", size="sm") if simulated else None,
                     ui.text(ui.joined("모델", result["model_label"]), size="sm"),
                     ui.disclosure("설정·실행 ID", ui.keyvals([
                         ("분할 설정", configuration), ("검색 설정", settings.RETRIEVAL_PIPELINE),
                         ("실행 ID", ui.code(result["run_id"]))], narrative=True)), gap="xs")
 
 
-def card(ctx):
-    results = proc.results(ctx.root)
+def results_table(results, caption, compact_caption):
     budget = fmt.count(settings.RETRIEVAL_BUDGET, kind="criterion")
     cols = [ui.Col("구성"), ui.Col(ui.joined("단일 근거 재현율@", budget, " · 판정 기준", sep=""), num=True),
             ui.Col(ui.joined("전체 재현율@", budget, sep=""), num=True),
@@ -80,17 +81,28 @@ def card(ctx):
                             fmt.ms(lat.get("retrieval_p95")), fmt.ms(lat.get("rerank_p95")),
                             fmt.count((r.get("rerank") or {}).get("errors"))]))
         compact.append(ui.Row([identity(r), major, ui.disclosure("상세", ui.keyvals(rest, narrative=True))]))
+    compact_cols = [ui.Col("구성"), ui.Col("단일 근거 재현율", num=True), ui.Col("추가 지표")]
+    return ui.responsive(ui.table(cols, rows, caption=caption, empty_text="검색 결과가 없습니다."),
+                         ui.table(compact_cols, compact, caption=compact_caption, empty_text="검색 결과가 없습니다."))
+
+
+def card(ctx):
+    results = proc.results(ctx.root)
+    val_results = proc.val_results(ctx.root)
     qwen = proc.qwen_available()
     options = [(key, value[0] + " · 서버 없음 — 선택 불가" if key == "qwen" and not qwen else value[0],
                 key != "qwen" or qwen) for key, value in settings.RETRIEVAL_MODELS.items()]
     form = ui.form(ui.field_choices("boundary_model", "분할 판단 모델", options, "jev"), ui.hidden("split", "val"),
                    ui.button("검색 예상 비용 보기", type="submit", kind="primary"),
                    action="/admin/retrieval", label="검색 벤치마크 실행")
-    split_label = settings.RETRIEVAL_SPLIT + (" 결과(튜닝용 분할)" if settings.RETRIEVAL_SPLIT == "val" else " 결과")
-    compact_cols = [ui.Col("구성"), ui.Col("단일 근거 재현율", num=True), ui.Col("추가 지표")]
+    split_label = ui.joined(settings.RETRIEVAL_SPLIT, "결과(최종 평가 분할) · 설정 고정 커밋",
+                            settings.RETRIEVAL_FIXED_COMMIT, "에서 한 번 실행", sep=" ") \
+        if settings.RETRIEVAL_SPLIT == "test" else settings.RETRIEVAL_SPLIT + " 결과(튜닝용 분할)"
     return ui.stack(ui.text(split_label, strong=True),
-                   ui.responsive(ui.table(cols, rows, caption="검색 비교 세트", empty_text="검색 결과가 없습니다."),
-                                 ui.table(compact_cols, compact, caption="검색 비교 핵심 지표", empty_text="검색 결과가 없습니다.")),
+                   results_table(results, "검색 비교 세트", "검색 비교 핵심 지표"),
                    ui.text("전체 재현율은 모든 근거 항목을 합친 값입니다. 단일 근거 재현율이 판정 기준입니다. "
                            "분할 → 구간 정보 → 색인 → 검색·리랭킹 → 채점 순서로 실행합니다. test·check는 실행할 수 없습니다.", size="sm", tone="muted"),
+                   ui.stack(ui.subheading("val 실행 결과"),
+                            results_table(val_results, "val 실행 결과 비교", "val 실행 결과 핵심 지표") if val_results else
+                            ui.empty("아직 완료된 val 실행 결과가 없습니다."), gap="sm"),
                    ui.disclosure("검색 실행 · 분할 판단 모델 선택", form, open=True), gap="lg")

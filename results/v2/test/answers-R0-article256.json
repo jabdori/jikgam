@@ -1,0 +1,46 @@
+{
+ "name": "R0-article256",
+ "split": "test",
+ "reps": 1,
+ "types": [
+  "none",
+  "single"
+ ],
+ "questions": 121,
+ "gen_model": "gemini-flash",
+ "judge_model": "gemini-pro",
+ "by_type": {
+  "none": {
+   "questions": 18,
+   "claims": 2,
+   "unsupported_claims": 0,
+   "unsupported_claim_rate": 0.0,
+   "answers_with_unsupported": 0.0,
+   "accuracy": null,
+   "hold_rate": null,
+   "none_assertion_rate": 0.1111111111111111
+  },
+  "single": {
+   "questions": 103,
+   "claims": 133,
+   "unsupported_claims": 0,
+   "unsupported_claim_rate": 0.0,
+   "answers_with_unsupported": 0.0,
+   "accuracy": 0.8058252427184466,
+   "hold_rate": 0.11650485436893204,
+   "none_assertion_rate": null
+  }
+ },
+ "judgment": {
+  "questions": 121,
+  "claims": 135,
+  "unsupported_claims": 0,
+  "unsupported_claim_rate": 0.0,
+  "answers_with_unsupported": 0.0,
+  "accuracy": 0.8058252427184466,
+  "hold_rate": 0.11650485436893204,
+  "none_assertion_rate": 0.1111111111111111
+ },
+ "judge_errors": 0,
+ "cost_usd": 2.5225
+}

@@ -1,0 +1,742 @@
+{
+ "name": "c-qwen-W4000-C800-raw-t0.55--full--snow+rrf+jev8",
+ "split": "test",
+ "chunks": "c-qwen-W4000-C800-raw-t0.55",
+ "meta": "full",
+ "config": {
+  "r0": false,
+  "embed": "snow",
+  "fusion": "rrf",
+  "related": false,
+  "rerank": 8
+ },
+ "metrics": {
+  "single": {
+   "questions": 103,
+   "evidence_items": 103,
+   "items@1000": 0.835,
+   "complete@1000": 0.835,
+   "items@2000": 0.9223,
+   "complete@2000": 0.9223,
+   "items@4000": 0.9417,
+   "complete@4000": 0.9417,
+   "recall@5": 0.8447,
+   "recall@10": 0.8932,
+   "ndcg@10": 0.7358
+  },
+  "multi": {
+   "questions": 53,
+   "evidence_items": 113,
+   "items@1000": 0.6106,
+   "complete@1000": 0.3585,
+   "items@2000": 0.7434,
+   "complete@2000": 0.566,
+   "items@4000": 0.8053,
+   "complete@4000": 0.6226,
+   "recall@5": 0.6814,
+   "recall@10": 0.7522,
+   "ndcg@10": 0.8019
+  },
+  "all": {
+   "questions": 156,
+   "evidence_items": 216,
+   "items@1000": 0.7176,
+   "complete@1000": 0.6731,
+   "items@2000": 0.8287,
+   "complete@2000": 0.8013,
+   "items@4000": 0.8704,
+   "complete@4000": 0.8333,
+   "recall@5": 0.7593,
+   "recall@10": 0.8194,
+   "ndcg@10": 0.7583
+  }
+ },
+ "by_group": {
+  "고시": {
+   "questions": 43,
+   "evidence_items": 54,
+   "items@1000": 0.7222,
+   "complete@1000": 0.7209,
+   "items@2000": 0.7963,
+   "complete@2000": 0.814,
+   "items@4000": 0.8333,
+   "complete@4000": 0.814,
+   "recall@5": 0.7037,
+   "recall@10": 0.7963,
+   "ndcg@10": 0.7401,
+   "latency_ms": {
+    "retrieval_p50": 61.82010000338778,
+    "retrieval_p95": 77.11170002585277,
+    "rerank_p50": 181.37430000933819,
+    "rerank_p95": 261.0421999997925,
+    "rerank_total_p50": 181.429999996908,
+    "rerank_total_p95": 261.0894000099506,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 50
+   }
+  },
+  "넘나듦": {
+   "questions": 18,
+   "evidence_items": 41,
+   "items@1000": 0.6098,
+   "complete@1000": 0.3333,
+   "items@2000": 0.7073,
+   "complete@2000": 0.4444,
+   "items@4000": 0.7561,
+   "complete@4000": 0.5,
+   "recall@5": 0.6341,
+   "recall@10": 0.7317,
+   "ndcg@10": 0.7886,
+   "latency_ms": {
+    "retrieval_p50": 66.94189997506328,
+    "retrieval_p95": 88.38290002313443,
+    "rerank_p50": 176.2721999839414,
+    "rerank_p95": 241.93540000123903,
+    "rerank_total_p50": 176.32009999942966,
+    "rerank_total_p95": 241.98489999980666,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 18
+   }
+  },
+  "법령": {
+   "questions": 65,
+   "evidence_items": 84,
+   "items@1000": 0.7262,
+   "complete@1000": 0.6769,
+   "items@2000": 0.8571,
+   "complete@2000": 0.8308,
+   "items@4000": 0.9048,
+   "complete@4000": 0.8769,
+   "recall@5": 0.7857,
+   "recall@10": 0.8214,
+   "ndcg@10": 0.747,
+   "latency_ms": {
+    "retrieval_p50": 62.0401999913156,
+    "retrieval_p95": 82.41730000008829,
+    "rerank_p50": 185.00009999843314,
+    "rerank_p95": 286.9253000244498,
+    "rerank_total_p50": 185.04779998329468,
+    "rerank_total_p95": 287.0470000198111,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 73
+   }
+  },
+  "표준약관": {
+   "questions": 30,
+   "evidence_items": 37,
+   "items@1000": 0.8108,
+   "complete@1000": 0.8,
+   "items@2000": 0.9459,
+   "complete@2000": 0.9333,
+   "items@4000": 0.973,
+   "complete@4000": 0.9667,
+   "recall@5": 0.9189,
+   "recall@10": 0.9459,
+   "ndcg@10": 0.7903,
+   "latency_ms": {
+    "retrieval_p50": 60.96850000903942,
+    "retrieval_p95": 71.58200000412762,
+    "rerank_p50": 180.8129999844823,
+    "rerank_p95": 227.71179999108426,
+    "rerank_total_p50": 180.8735999802593,
+    "rerank_total_p95": 227.7641999826301,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 33
+   }
+  }
+ },
+ "word_overlap": {
+  "all": {
+   "questions": 156,
+   "overlap": 0.191
+  },
+  "by_type": {
+   "single": {
+    "questions": 103,
+    "overlap": 0.1678
+   },
+   "multi": {
+    "questions": 53,
+    "overlap": 0.2362
+   }
+  },
+  "by_group": {
+   "고시": {
+    "questions": 43,
+    "overlap": 0.1604
+   },
+   "넘나듦": {
+    "questions": 18,
+    "overlap": 0.2572
+   },
+   "법령": {
+    "questions": 65,
+    "overlap": 0.2028
+   },
+   "표준약관": {
+    "questions": 30,
+    "overlap": 0.1697
+   }
+  },
+  "excluded_none": 18
+ },
+ "per_question@2000": {
+  "single": {
+   "qa-0003": [
+    true
+   ],
+   "qa-0007": [
+    true
+   ],
+   "qa-0009": [
+    true
+   ],
+   "qa-0018": [
+    false
+   ],
+   "qa-0022": [
+    true
+   ],
+   "qa-0023": [
+    true
+   ],
+   "qa-0024": [
+    true
+   ],
+   "qa-0027": [
+    true
+   ],
+   "qa-0028": [
+    true
+   ],
+   "qa-0031": [
+    true
+   ],
+   "qa-0033": [
+    true
+   ],
+   "qa-0037": [
+    true
+   ],
+   "qa-0042": [
+    true
+   ],
+   "qa-0043": [
+    true
+   ],
+   "qa-0044": [
+    true
+   ],
+   "qa-0052": [
+    true
+   ],
+   "qa-0053": [
+    true
+   ],
+   "qa-0054": [
+    true
+   ],
+   "qa-0055": [
+    true
+   ],
+   "qa-0060": [
+    true
+   ],
+   "qa-0069": [
+    true
+   ],
+   "qa-0070": [
+    true
+   ],
+   "qa-0071": [
+    true
+   ],
+   "qa-0081": [
+    true
+   ],
+   "qa-0082": [
+    false
+   ],
+   "qa-0084": [
+    true
+   ],
+   "qa-0085": [
+    true
+   ],
+   "qa-0086": [
+    true
+   ],
+   "qa-0090": [
+    true
+   ],
+   "qa-0103": [
+    true
+   ],
+   "qa-0106": [
+    true
+   ],
+   "qa-0109": [
+    true
+   ],
+   "qa-0113": [
+    true
+   ],
+   "qa-0122": [
+    true
+   ],
+   "qa-0131": [
+    true
+   ],
+   "qa-0134": [
+    true
+   ],
+   "qa-0145": [
+    true
+   ],
+   "qa-0146": [
+    false
+   ],
+   "qa-0147": [
+    true
+   ],
+   "qa-0156": [
+    true
+   ],
+   "qa-0161": [
+    true
+   ],
+   "qa-0162": [
+    true
+   ],
+   "qa-0164": [
+    true
+   ],
+   "qa-0170": [
+    false
+   ],
+   "qa-0176": [
+    true
+   ],
+   "qa-0182": [
+    true
+   ],
+   "qa-0184": [
+    true
+   ],
+   "qa-0185": [
+    true
+   ],
+   "qa-0186": [
+    true
+   ],
+   "qa-0190": [
+    true
+   ],
+   "qa-0194": [
+    true
+   ],
+   "qa-0198": [
+    true
+   ],
+   "qa-0200": [
+    false
+   ],
+   "qa-0201": [
+    false
+   ],
+   "qa-0204": [
+    true
+   ],
+   "qa-0206": [
+    true
+   ],
+   "qa-0210": [
+    true
+   ],
+   "qa-0211": [
+    true
+   ],
+   "qa-0217": [
+    true
+   ],
+   "qa-0218": [
+    true
+   ],
+   "qa-0220": [
+    true
+   ],
+   "qa-0229": [
+    true
+   ],
+   "qa-0231": [
+    true
+   ],
+   "qa-0232": [
+    true
+   ],
+   "qa-0234": [
+    true
+   ],
+   "qa-0241": [
+    true
+   ],
+   "qa-0242": [
+    true
+   ],
+   "qa-0249": [
+    true
+   ],
+   "qa-0250": [
+    true
+   ],
+   "qa-0252": [
+    true
+   ],
+   "qa-0256": [
+    true
+   ],
+   "qa-0262": [
+    true
+   ],
+   "qa-0264": [
+    true
+   ],
+   "qa-0270": [
+    true
+   ],
+   "qa-0271": [
+    true
+   ],
+   "qa-0272": [
+    true
+   ],
+   "qa-0273": [
+    true
+   ],
+   "qa-0276": [
+    true
+   ],
+   "qa-0280": [
+    true
+   ],
+   "qa-0285": [
+    true
+   ],
+   "qa-0289": [
+    true
+   ],
+   "qa-0290": [
+    true
+   ],
+   "qa-0291": [
+    true
+   ],
+   "qa-0292": [
+    true
+   ],
+   "qa-0295": [
+    true
+   ],
+   "qa-0296": [
+    true
+   ],
+   "qa-0304": [
+    true
+   ],
+   "qa-0319": [
+    true
+   ],
+   "qa-0322": [
+    true
+   ],
+   "qa-0329": [
+    true
+   ],
+   "qa-0330": [
+    true
+   ],
+   "qa-0332": [
+    false
+   ],
+   "qa-0333": [
+    true
+   ],
+   "qa-0339": [
+    true
+   ],
+   "qa-0345": [
+    true
+   ],
+   "qa-0347": [
+    true
+   ],
+   "qa-0349": [
+    true
+   ],
+   "qa-0357": [
+    true
+   ],
+   "qa-0360": [
+    true
+   ],
+   "qa-0371": [
+    true
+   ],
+   "qa-0378": [
+    false
+   ],
+   "qa-0379": [
+    true
+   ],
+   "qa-0385": [
+    true
+   ]
+  },
+  "multi": {
+   "qa-0013": [
+    false,
+    true
+   ],
+   "qa-0015": [
+    true,
+    true
+   ],
+   "qa-0016": [
+    false,
+    false
+   ],
+   "qa-0021": [
+    true,
+    false
+   ],
+   "qa-0026": [
+    true,
+    false
+   ],
+   "qa-0035": [
+    true,
+    false,
+    true
+   ],
+   "qa-0038": [
+    true,
+    true
+   ],
+   "qa-0056": [
+    true,
+    false
+   ],
+   "qa-0063": [
+    true,
+    true
+   ],
+   "qa-0073": [
+    true,
+    true
+   ],
+   "qa-0074": [
+    false,
+    false
+   ],
+   "qa-0094": [
+    true,
+    true
+   ],
+   "qa-0095": [
+    true,
+    true
+   ],
+   "qa-0101": [
+    true,
+    true
+   ],
+   "qa-0114": [
+    true,
+    true
+   ],
+   "qa-0118": [
+    true,
+    true
+   ],
+   "qa-0119": [
+    false,
+    true
+   ],
+   "qa-0123": [
+    true,
+    false
+   ],
+   "qa-0124": [
+    true,
+    false
+   ],
+   "qa-0125": [
+    true,
+    true
+   ],
+   "qa-0130": [
+    true,
+    true
+   ],
+   "qa-0133": [
+    true,
+    false
+   ],
+   "qa-0135": [
+    true,
+    true,
+    true,
+    true
+   ],
+   "qa-0137": [
+    true,
+    true
+   ],
+   "qa-0139": [
+    false,
+    false,
+    true
+   ],
+   "qa-0149": [
+    true,
+    true
+   ],
+   "qa-0150": [
+    true,
+    true
+   ],
+   "qa-0157": [
+    true,
+    false,
+    true
+   ],
+   "qa-0159": [
+    true,
+    false
+   ],
+   "qa-0160": [
+    true,
+    true
+   ],
+   "qa-0163": [
+    true,
+    true
+   ],
+   "qa-0167": [
+    true,
+    true
+   ],
+   "qa-0187": [
+    true,
+    false
+   ],
+   "qa-0189": [
+    true,
+    true,
+    false
+   ],
+   "qa-0196": [
+    true,
+    true
+   ],
+   "qa-0215": [
+    true,
+    true
+   ],
+   "qa-0219": [
+    true,
+    true
+   ],
+   "qa-0246": [
+    true,
+    true
+   ],
+   "qa-0257": [
+    true,
+    true
+   ],
+   "qa-0275": [
+    true,
+    true
+   ],
+   "qa-0277": [
+    false,
+    false
+   ],
+   "qa-0278": [
+    true,
+    true
+   ],
+   "qa-0293": [
+    false,
+    false
+   ],
+   "qa-0301": [
+    true,
+    true
+   ],
+   "qa-0302": [
+    true,
+    true
+   ],
+   "qa-0311": [
+    false,
+    true,
+    false
+   ],
+   "qa-0313": [
+    true,
+    true
+   ],
+   "qa-0318": [
+    false,
+    true
+   ],
+   "qa-0338": [
+    true,
+    true
+   ],
+   "qa-0350": [
+    true,
+    false
+   ],
+   "qa-0351": [
+    true,
+    true
+   ],
+   "qa-0352": [
+    true,
+    false
+   ],
+   "qa-0362": [
+    true,
+    false
+   ]
+  }
+ },
+ "latency_ms": {
+  "retrieval_p50": 62.01059999875724,
+  "retrieval_p95": 82.41730000008829,
+  "rerank_p50": 182.13210001704283,
+  "rerank_p95": 242.50549997668713,
+  "rerank_total_p50": 182.18690002686344,
+  "rerank_total_p95": 242.56470002001151,
+  "rerank_failed_questions": 0,
+  "rerank_successful_questions": 174
+ },
+ "rerank": {
+  "cost_usd": 0.02708,
+  "requests": 174,
+  "errors": 0
+ },
+ "embedding": {
+  "model": "snow",
+  "revision": "55ec6e9358a56d56af759bc8372e970caf8c305f",
+  "cache": "data\\v2\\local\\emb\\snow\\c-qwen-W4000-C800-raw-t0.55--full-f2ff56d0a05bd8b0.pt",
+  "built": false,
+  "build_seconds": 0.1,
+  "cost_usd": 0.0,
+  "requests": 0,
+  "retries": 0
+ }
+}

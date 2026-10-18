@@ -62,21 +62,35 @@ def validate(model: str, split: str):
         raise ValueError("조정한 Qwen 서버에 연결할 수 없습니다.")
 
 
-def results(root: Path):
+def results(root: Path, split: str | None = None):
+    """지정 분할의 고정 결과만 읽는다. 화면 실행 결과는 별도로 비교한다."""
+    split = split or settings.RETRIEVAL_SPLIT
     rows = []
     for label, name in SETS.items():
-        obj = read(root / "results/v2" / settings.RETRIEVAL_SPLIT / f"{name}.json")
+        obj = read(root / "results/v2" / split / f"{name}.json")
         if obj:
             rows.append({**obj, "label": label, "description": SET_DESCRIPTIONS[label], "run_id": None})
+    return rows
+
+
+def val_results(root: Path):
+    """완료된 val 화면 실행과 같은 구성의 val 기준 행만 함께 반환한다."""
+    rows, configurations = [], set()
     for p in sorted((local(root) / "jobs").glob("*/result.json"), reverse=True):
         obj = read(p)
-        if obj.get("split") == settings.RETRIEVAL_SPLIT:
+        if obj.get("split") == "val":
             state = read(p.parent / "state.json", {})
             model = state.get("model", "jev")
+            configurations.add(settings.RETRIEVAL_MODELS[model][2] + "--full--snow+rrf+jev8")
             rows.append({**obj, "label": "화면 실행", "model_label": settings.RETRIEVAL_MODELS[model][0],
                          "description": "문맥 분할 + 구간 정보 + 하이브리드 + 리랭킹",
-                         "run_id": state.get("id", p.parent.name), "boundary_model": model})
-    return rows
+                         "run_id": state.get("id", p.parent.name), "boundary_model": model,
+                         "simulated": state.get("simulated") is True})
+    if not rows:
+        return []
+    baselines = [{**row, "description": "val 기준 · " + row["description"]}
+                 for row in results(root, "val") if SETS[row["label"]] in configurations]
+    return baselines + rows
 
 
 def estimate(root: Path, model: str, ratio: float = 1.0, benchmark: bool = True):
@@ -258,6 +272,9 @@ class Processing:
             self.save(directory, state)
 
     async def _process(self, directory, state, benchmark):
+        if benchmark:
+            validate(state["model"], state["split"])
+
         from jikgam.ingest import chunk, metadata
         from jikgam.ingest.corpus import Doc, Line, load_docs
         from jikgam.ingest.window import Config, Judge, apply_cmax, split_doc, to_chunks
@@ -275,7 +292,6 @@ class Processing:
             self.save(directory, state)
 
         if benchmark:
-            validate(state["model"], state["split"])
             docs = load_docs()
         else:
             obj = read(directory / "document.json")

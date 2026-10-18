@@ -1,9 +1,12 @@
 """독립 화면 리뷰에서 지적한 문서 연결과 실행 범위 표시를 검증한다."""
 
+import re
+
 import pytest
 from starlette.testclient import TestClient
 from web_fixture import build
 from web_knowledge_fixture import uploads
+from web_retrieval_fixture import simulated_job
 
 from jikgam.web import auth
 from jikgam.web.app import WebConfig, create_app
@@ -105,9 +108,42 @@ def test_saved_run_identity_keeps_model_settings_and_run_separate(client):
     proc.write(proc.local(root) / "jobs/fake-run/state.json", {
         "id": "fake-run", "model": "jev", "title": "가상 검색 실행", "status": "완료", "stages": []})
     proc.write(proc.local(root) / "jobs/fake-run/result.json", {"name": "지금 실행", "split": "val", "metrics": {}})
-    result = proc.results(root)[0]
+    result = proc.val_results(root)[0]
     assert result["run_id"] == "fake-run" and result["boundary_model"] == "jev"
     page = get(c, "/admin/models", "a")
     assert all(value in page for value in ("화면 실행", "설정·실행 ID", "분할 설정", "검색 설정", "fake-run"))
     assert 'class="viewport-wide"' in page and 'class="viewport-narrow"' in page
-    assert "검색 비교 핵심 지표" in page and "추가 지표" in page
+    assert "val 실행 결과 핵심 지표" in page and "추가 지표" in page
+    assert "실측 아님" not in page
+
+
+def test_simulated_result_is_labeled_in_each_table_row_before_collapsed_details(client):
+    root, c = client
+    proc.write(root / f"results/v2/val/{proc.SETS['R4c-Jev']}.json", {
+        "name": "고정 val 기준", "split": "val", "metrics": {"single": {"items@2000": .93}}})
+    with simulated_job():
+        rows = proc.val_results(root)
+        assert "simulated" not in rows[0] and rows[1]["simulated"] is True
+        page = get(c, "/admin/models", "a")
+    for table in re.findall(r"<table\b.*?</table>", page):
+        if "77.0%" not in table:
+            continue
+        row = next(row for row in re.findall(r"<tr\b.*?</tr>", table) if "77.0%" in row)
+        assert "가상 실행" in row and "화면 검증 자료(실측 아님)" in row
+        assert row.index("실측 아님") < row.index("<details")
+        baseline = next(row for row in re.findall(r"<tr\b.*?</tr>", table) if "93.0%" in row)
+        assert "val 기준" in baseline and "실측 아님" not in baseline
+    assert page.count("화면 검증 자료(실측 아님)") == 2
+
+
+@pytest.mark.parametrize("marker", [None, False, "true"])
+def test_real_result_does_not_get_simulated_label_without_explicit_marker(client, marker):
+    root, c = client
+    state = {"id": "real-run", "model": "jev", "title": "실제 검색 실행", "status": "완료", "stages": []}
+    if marker is not None:
+        state["simulated"] = marker
+    proc.write(proc.local(root) / "jobs/real-run/state.json", state)
+    proc.write(proc.local(root) / "jobs/real-run/result.json", {"name": "실제 결과", "split": "val", "metrics": {}})
+    assert proc.val_results(root)[0]["simulated"] is False
+    page = get(c, "/admin/models", "a")
+    assert "화면 실행" in page and "실측 아님" not in page and "가상 실행" not in page

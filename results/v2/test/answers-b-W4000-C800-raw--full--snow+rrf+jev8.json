@@ -1,0 +1,46 @@
+{
+ "name": "b-W4000-C800-raw--full--snow+rrf+jev8",
+ "split": "test",
+ "reps": 1,
+ "types": [
+  "none",
+  "single"
+ ],
+ "questions": 121,
+ "gen_model": "gemini-flash",
+ "judge_model": "gemini-pro",
+ "by_type": {
+  "none": {
+   "questions": 18,
+   "claims": 6,
+   "unsupported_claims": 0,
+   "unsupported_claim_rate": 0.0,
+   "answers_with_unsupported": 0.0,
+   "accuracy": null,
+   "hold_rate": null,
+   "none_assertion_rate": 0.2777777777777778
+  },
+  "single": {
+   "questions": 103,
+   "claims": 164,
+   "unsupported_claims": 0,
+   "unsupported_claim_rate": 0.0,
+   "answers_with_unsupported": 0.0,
+   "accuracy": 0.9611650485436893,
+   "hold_rate": 0.0,
+   "none_assertion_rate": null
+  }
+ },
+ "judgment": {
+  "questions": 121,
+  "claims": 170,
+  "unsupported_claims": 0,
+  "unsupported_claim_rate": 0.0,
+  "answers_with_unsupported": 0.0,
+  "accuracy": 0.9611650485436893,
+  "hold_rate": 0.0,
+  "none_assertion_rate": 0.2777777777777778
+ },
+ "judge_errors": 0,
+ "cost_usd": 2.5249
+}

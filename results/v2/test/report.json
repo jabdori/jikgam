@@ -1,0 +1,4668 @@
+{
+ "split": "test",
+ "status": "판정",
+ "conditions": {
+  "8.1": [
+   {
+    "condition": "R0 정확도 병목",
+    "value": 0.7475728155339806,
+    "ci95": null,
+    "criterion": {
+     "operator": "<",
+     "threshold": 0.8
+    },
+    "result": "만족"
+   },
+   {
+    "condition": "R0 지연 병목(ms)",
+    "value": 5.865099985385314,
+    "ci95": null,
+    "criterion": {
+     "operator": ">",
+     "threshold": 250
+    },
+    "result": "불만족"
+   }
+  ],
+  "8.2": [
+   {
+    "condition": "R4 − R0 재현율",
+    "value": 0.20388349514563106,
+    "ci95": [
+     0.11650485436893204,
+     0.2912621359223301
+    ],
+    "criterion": {
+     "operator": ">=",
+     "threshold": 0.1
+    },
+    "result": "만족"
+   },
+   {
+    "condition": "R4 − R0 구간 아래 끝",
+    "value": 0.11650485436893204,
+    "ci95": [
+     0.11650485436893204,
+     0.2912621359223301
+    ],
+    "criterion": {
+     "operator": ">",
+     "threshold": 0
+    },
+    "result": "만족"
+   },
+   {
+    "condition": "R4 − R1 구간 아래 끝",
+    "value": 0.0970873786407767,
+    "ci95": [
+     0.0970873786407767,
+     0.27184466019417475
+    ],
+    "criterion": {
+     "operator": ">",
+     "threshold": 0
+    },
+    "result": "만족"
+   },
+   {
+    "condition": "점검용 R4 − R0 재현율",
+    "value": 0.06666666666666667,
+    "ci95": [
+     0.0,
+     0.16666666666666666
+    ],
+    "criterion": {
+     "operator": ">",
+     "threshold": 0
+    },
+    "result": "만족"
+   },
+   {
+    "condition": "R4 검색 p95(ms)",
+    "value": 83.36180000333115,
+    "ci95": null,
+    "criterion": {
+     "operator": "<=",
+     "threshold": 250
+    },
+    "result": "만족"
+   },
+   {
+    "condition": "R4 리랭킹 p95(ms)",
+    "value": 259.7492999921087,
+    "ci95": null,
+    "criterion": {
+     "operator": "<=",
+     "threshold": 250
+    },
+    "result": "불만족"
+   },
+   {
+    "condition": "R4 − R0 근거 없는 주장 비율",
+    "value": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "criterion": {
+     "operator": "<=",
+     "threshold": 0
+    },
+    "result": "만족",
+    "human_check": "사람 확인 전"
+   },
+   {
+    "condition": "R4 − R0 정답률",
+    "value": 0.1553398058252427,
+    "ci95": [
+     0.07766990291262135,
+     0.23300970873786409
+    ],
+    "criterion": {
+     "operator": ">=",
+     "threshold": 0
+    },
+    "result": "만족",
+    "human_check": "사람 확인 전"
+   }
+  ],
+  "8.3 R4c-Jev": [
+   {
+    "condition": "R4c-Jev − R4 재현율",
+    "value": -0.038834951456310676,
+    "ci95": [
+     -0.08737864077669903,
+     0.0
+    ],
+    "criterion": {
+     "operator": ">=",
+     "threshold": -0.03
+    },
+    "result": "불만족"
+   },
+   {
+    "condition": "R4c-Jev 분할 비용(USD)",
+    "value": 0.02655,
+    "ci95": null,
+    "criterion": {
+     "operator": "<=",
+     "threshold": 0.052828
+    },
+    "result": "만족"
+   },
+   {
+    "condition": "R4c-Jev 분할 시간(초)",
+    "value": 8.1,
+    "ci95": null,
+    "criterion": {
+     "operator": "<=",
+     "threshold": 60.9
+    },
+    "result": "만족"
+   }
+  ],
+  "8.3 R4c-Qwen": [
+   {
+    "condition": "R4c-Qwen − R4 재현율",
+    "value": -0.02912621359223301,
+    "ci95": [
+     -0.0970873786407767,
+     0.02912621359223301
+    ],
+    "criterion": {
+     "operator": ">=",
+     "threshold": -0.03
+    },
+    "result": "만족"
+   },
+   {
+    "condition": "R4c-Qwen 분할 비용(USD)",
+    "value": 0.0,
+    "ci95": null,
+    "criterion": {
+     "operator": "<=",
+     "threshold": 0.052828
+    },
+    "result": "만족"
+   },
+   {
+    "condition": "R4c-Qwen 분할 시간(초)",
+    "value": 133.4,
+    "ci95": null,
+    "criterion": {
+     "operator": "<=",
+     "threshold": 60.9
+    },
+    "result": "불만족"
+   }
+  ],
+  "8.4": "판정하지 않음(ADR 0025 범위 조정)"
+ },
+ "claim_check": {
+  "sampled": null,
+  "reviewed": null,
+  "supported_matches": null,
+  "correctness_matches": null,
+  "both_matches": null,
+  "supported_agreement": null,
+  "correctness_agreement": null,
+  "both_agreement": null,
+  "status": "사람 확인 전"
+ },
+ "R0_original": {
+  "single@2000": 0.5631067961165048,
+  "retrieval_p95_ms": 3.7121000059414655
+ },
+ "retrieval": {
+  "R0": {
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "evidence_items": 103,
+     "items@1000": 0.6602,
+     "complete@1000": 0.6602,
+     "items@2000": 0.7476,
+     "complete@2000": 0.7476,
+     "items@4000": 0.8447,
+     "complete@4000": 0.8447,
+     "recall@5": 0.7184,
+     "recall@10": 0.835,
+     "ndcg@10": 0.6414
+    },
+    "multi": {
+     "questions": 53,
+     "evidence_items": 113,
+     "items@1000": 0.469,
+     "complete@1000": 0.1887,
+     "items@2000": 0.6372,
+     "complete@2000": 0.434,
+     "items@4000": 0.7699,
+     "complete@4000": 0.5849,
+     "recall@5": 0.6018,
+     "recall@10": 0.7168,
+     "ndcg@10": 0.7143
+    },
+    "all": {
+     "questions": 156,
+     "evidence_items": 216,
+     "items@1000": 0.5602,
+     "complete@1000": 0.5,
+     "items@2000": 0.6898,
+     "complete@2000": 0.641,
+     "items@4000": 0.8056,
+     "complete@4000": 0.7564,
+     "recall@5": 0.6574,
+     "recall@10": 0.7731,
+     "ndcg@10": 0.6661
+    }
+   },
+   "latency_ms": {
+    "retrieval_p50": 3.654100000858307,
+    "retrieval_p95": 5.865099985385314,
+    "rerank_p50": null,
+    "rerank_p95": null,
+    "rerank_total_p50": null,
+    "rerank_total_p95": null,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 0
+   },
+   "rerank": null,
+   "by_group": {
+    "고시": {
+     "questions": 43,
+     "evidence_items": 54,
+     "items@1000": 0.5926,
+     "complete@1000": 0.5814,
+     "items@2000": 0.6667,
+     "complete@2000": 0.6512,
+     "items@4000": 0.8148,
+     "complete@4000": 0.7674,
+     "recall@5": 0.6296,
+     "recall@10": 0.7593,
+     "ndcg@10": 0.6415,
+     "latency_ms": {
+      "retrieval_p50": 3.6592000105883926,
+      "retrieval_p95": 5.4014999768696725,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "넘나듦": {
+     "questions": 18,
+     "evidence_items": 41,
+     "items@1000": 0.4146,
+     "complete@1000": 0.1111,
+     "items@2000": 0.6341,
+     "complete@2000": 0.3889,
+     "items@4000": 0.7805,
+     "complete@4000": 0.5556,
+     "recall@5": 0.5366,
+     "recall@10": 0.7073,
+     "ndcg@10": 0.6831,
+     "latency_ms": {
+      "retrieval_p50": 5.479100014781579,
+      "retrieval_p95": 8.019300003070384,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "법령": {
+     "questions": 65,
+     "evidence_items": 84,
+     "items@1000": 0.5595,
+     "complete@1000": 0.5077,
+     "items@2000": 0.6786,
+     "complete@2000": 0.6462,
+     "items@4000": 0.7976,
+     "complete@4000": 0.7846,
+     "recall@5": 0.6667,
+     "recall@10": 0.7857,
+     "ndcg@10": 0.664,
+     "latency_ms": {
+      "retrieval_p50": 3.5174000076949596,
+      "retrieval_p95": 5.594399990513921,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "표준약관": {
+     "questions": 30,
+     "evidence_items": 37,
+     "items@1000": 0.6757,
+     "complete@1000": 0.6,
+     "items@2000": 0.8108,
+     "complete@2000": 0.7667,
+     "items@4000": 0.8378,
+     "complete@4000": 0.8,
+     "recall@5": 0.8108,
+     "recall@10": 0.8378,
+     "ndcg@10": 0.6959,
+     "latency_ms": {
+      "retrieval_p50": 3.2609999761916697,
+      "retrieval_p95": 4.432599991559982,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    }
+   },
+   "reviewed_passed": {
+    "single": {
+     "questions": 20,
+     "evidence_items": 20,
+     "items@2000": 0.9,
+     "complete@2000": 0.9
+    },
+    "multi": {
+     "questions": 5,
+     "evidence_items": 10,
+     "items@2000": 0.8,
+     "complete@2000": 0.6
+    }
+   },
+   "reviewed_passed_by_group": {
+    "법령": {
+     "questions": 13,
+     "evidence_items": 15,
+     "items@2000": 0.8,
+     "complete@2000": 0.7692
+    },
+    "고시": {
+     "questions": 7,
+     "evidence_items": 8,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "표준약관": {
+     "questions": 4,
+     "evidence_items": 5,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "넘나듦": {
+     "questions": 1,
+     "evidence_items": 2,
+     "items@2000": 0.5,
+     "complete@2000": 0.0
+    }
+   }
+  },
+  "R0-원형": {
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "evidence_items": 103,
+     "items@1000": 0.466,
+     "complete@1000": 0.466,
+     "items@2000": 0.5631,
+     "complete@2000": 0.5631,
+     "items@4000": 0.6117,
+     "complete@4000": 0.6117,
+     "recall@5": 0.8058,
+     "recall@10": 0.8932,
+     "ndcg@10": 0.6993
+    },
+    "multi": {
+     "questions": 53,
+     "evidence_items": 113,
+     "items@1000": 0.3982,
+     "complete@1000": 0.1509,
+     "items@2000": 0.5133,
+     "complete@2000": 0.3208,
+     "items@4000": 0.6372,
+     "complete@4000": 0.5283,
+     "recall@5": 0.7168,
+     "recall@10": 0.8496,
+     "ndcg@10": 0.7627
+    },
+    "all": {
+     "questions": 156,
+     "evidence_items": 216,
+     "items@1000": 0.4306,
+     "complete@1000": 0.359,
+     "items@2000": 0.537,
+     "complete@2000": 0.4808,
+     "items@4000": 0.625,
+     "complete@4000": 0.5833,
+     "recall@5": 0.7593,
+     "recall@10": 0.8704,
+     "ndcg@10": 0.7208
+    }
+   },
+   "latency_ms": {
+    "retrieval_p50": 2.1877999824937433,
+    "retrieval_p95": 3.7121000059414655,
+    "rerank_p50": null,
+    "rerank_p95": null,
+    "rerank_total_p50": null,
+    "rerank_total_p95": null,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 0
+   },
+   "rerank": null,
+   "by_group": {
+    "고시": {
+     "questions": 43,
+     "evidence_items": 54,
+     "items@1000": 0.0926,
+     "complete@1000": 0.0698,
+     "items@2000": 0.1111,
+     "complete@2000": 0.093,
+     "items@4000": 0.1111,
+     "complete@4000": 0.093,
+     "recall@5": 0.8148,
+     "recall@10": 0.9074,
+     "ndcg@10": 0.7411,
+     "latency_ms": {
+      "retrieval_p50": 2.144500002032146,
+      "retrieval_p95": 3.452000004472211,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "넘나듦": {
+     "questions": 18,
+     "evidence_items": 41,
+     "items@1000": 0.3659,
+     "complete@1000": 0.1111,
+     "items@2000": 0.5854,
+     "complete@2000": 0.3889,
+     "items@4000": 0.7317,
+     "complete@4000": 0.6111,
+     "recall@5": 0.7073,
+     "recall@10": 0.878,
+     "ndcg@10": 0.7667,
+     "latency_ms": {
+      "retrieval_p50": 3.2796000014059246,
+      "retrieval_p95": 4.283599992049858,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "법령": {
+     "questions": 65,
+     "evidence_items": 84,
+     "items@1000": 0.5714,
+     "complete@1000": 0.5077,
+     "items@2000": 0.6667,
+     "complete@2000": 0.6308,
+     "items@4000": 0.7857,
+     "complete@4000": 0.7692,
+     "recall@5": 0.7262,
+     "recall@10": 0.8333,
+     "ndcg@10": 0.6723,
+     "latency_ms": {
+      "retrieval_p50": 2.179900009650737,
+      "retrieval_p95": 3.422599984332919,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "표준약관": {
+     "questions": 30,
+     "evidence_items": 37,
+     "items@1000": 0.6757,
+     "complete@1000": 0.6,
+     "items@2000": 0.8108,
+     "complete@2000": 0.7667,
+     "items@4000": 0.8919,
+     "complete@4000": 0.8667,
+     "recall@5": 0.8108,
+     "recall@10": 0.8919,
+     "ndcg@10": 0.7695,
+     "latency_ms": {
+      "retrieval_p50": 1.735099998768419,
+      "retrieval_p95": 2.684400009457022,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    }
+   },
+   "reviewed_passed": {
+    "single": {
+     "questions": 20,
+     "evidence_items": 20,
+     "items@2000": 0.65,
+     "complete@2000": 0.65
+    },
+    "multi": {
+     "questions": 5,
+     "evidence_items": 10,
+     "items@2000": 0.6,
+     "complete@2000": 0.4
+    }
+   },
+   "reviewed_passed_by_group": {
+    "법령": {
+     "questions": 13,
+     "evidence_items": 15,
+     "items@2000": 0.8,
+     "complete@2000": 0.7692
+    },
+    "고시": {
+     "questions": 7,
+     "evidence_items": 8,
+     "items@2000": 0.125,
+     "complete@2000": 0.1429
+    },
+    "표준약관": {
+     "questions": 4,
+     "evidence_items": 5,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "넘나듦": {
+     "questions": 1,
+     "evidence_items": 2,
+     "items@2000": 0.5,
+     "complete@2000": 0.0
+    }
+   }
+  },
+  "R1": {
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "evidence_items": 103,
+     "items@1000": 0.6505,
+     "complete@1000": 0.6505,
+     "items@2000": 0.767,
+     "complete@2000": 0.767,
+     "items@4000": 0.8544,
+     "complete@4000": 0.8544,
+     "recall@5": 0.6796,
+     "recall@10": 0.7864,
+     "ndcg@10": 0.6032
+    },
+    "multi": {
+     "questions": 53,
+     "evidence_items": 113,
+     "items@1000": 0.5221,
+     "complete@1000": 0.2453,
+     "items@2000": 0.6549,
+     "complete@2000": 0.434,
+     "items@4000": 0.7876,
+     "complete@4000": 0.6415,
+     "recall@5": 0.5664,
+     "recall@10": 0.6903,
+     "ndcg@10": 0.6795
+    },
+    "all": {
+     "questions": 156,
+     "evidence_items": 216,
+     "items@1000": 0.5833,
+     "complete@1000": 0.5128,
+     "items@2000": 0.7083,
+     "complete@2000": 0.6538,
+     "items@4000": 0.8194,
+     "complete@4000": 0.7821,
+     "recall@5": 0.6204,
+     "recall@10": 0.7361,
+     "ndcg@10": 0.6291
+    }
+   },
+   "latency_ms": {
+    "retrieval_p50": 3.7823999882675707,
+    "retrieval_p95": 6.011399993440136,
+    "rerank_p50": null,
+    "rerank_p95": null,
+    "rerank_total_p50": null,
+    "rerank_total_p95": null,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 0
+   },
+   "rerank": null,
+   "by_group": {
+    "고시": {
+     "questions": 43,
+     "evidence_items": 54,
+     "items@1000": 0.6852,
+     "complete@1000": 0.6512,
+     "items@2000": 0.7593,
+     "complete@2000": 0.7442,
+     "items@4000": 0.8519,
+     "complete@4000": 0.8372,
+     "recall@5": 0.7222,
+     "recall@10": 0.7778,
+     "ndcg@10": 0.7225,
+     "latency_ms": {
+      "retrieval_p50": 3.820299985818565,
+      "retrieval_p95": 5.687700002454221,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "넘나듦": {
+     "questions": 18,
+     "evidence_items": 41,
+     "items@1000": 0.4634,
+     "complete@1000": 0.1667,
+     "items@2000": 0.6585,
+     "complete@2000": 0.3333,
+     "items@4000": 0.8293,
+     "complete@4000": 0.6111,
+     "recall@5": 0.5366,
+     "recall@10": 0.7073,
+     "ndcg@10": 0.6687,
+     "latency_ms": {
+      "retrieval_p50": 5.751099990447983,
+      "retrieval_p95": 8.225700003094971,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "법령": {
+     "questions": 65,
+     "evidence_items": 84,
+     "items@1000": 0.5833,
+     "complete@1000": 0.5385,
+     "items@2000": 0.6905,
+     "complete@2000": 0.6769,
+     "items@4000": 0.7976,
+     "complete@4000": 0.8,
+     "recall@5": 0.6071,
+     "recall@10": 0.7143,
+     "ndcg@10": 0.5846,
+     "latency_ms": {
+      "retrieval_p50": 3.7296999944373965,
+      "retrieval_p95": 5.710500001441687,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "표준약관": {
+     "questions": 30,
+     "evidence_items": 37,
+     "items@1000": 0.5676,
+     "complete@1000": 0.4667,
+     "items@2000": 0.7297,
+     "complete@2000": 0.6667,
+     "items@4000": 0.8108,
+     "complete@4000": 0.7667,
+     "recall@5": 0.5946,
+     "recall@10": 0.7568,
+     "ndcg@10": 0.568,
+     "latency_ms": {
+      "retrieval_p50": 3.086299984715879,
+      "retrieval_p95": 4.400800011353567,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    }
+   },
+   "reviewed_passed": {
+    "single": {
+     "questions": 20,
+     "evidence_items": 20,
+     "items@2000": 0.85,
+     "complete@2000": 0.85
+    },
+    "multi": {
+     "questions": 5,
+     "evidence_items": 10,
+     "items@2000": 0.9,
+     "complete@2000": 0.8
+    }
+   },
+   "reviewed_passed_by_group": {
+    "법령": {
+     "questions": 13,
+     "evidence_items": 15,
+     "items@2000": 0.8667,
+     "complete@2000": 0.8462
+    },
+    "고시": {
+     "questions": 7,
+     "evidence_items": 8,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "표준약관": {
+     "questions": 4,
+     "evidence_items": 5,
+     "items@2000": 0.8,
+     "complete@2000": 0.75
+    },
+    "넘나듦": {
+     "questions": 1,
+     "evidence_items": 2,
+     "items@2000": 0.5,
+     "complete@2000": 0.0
+    }
+   }
+  },
+  "R2": {
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "evidence_items": 103,
+     "items@1000": 0.6117,
+     "complete@1000": 0.6117,
+     "items@2000": 0.7476,
+     "complete@2000": 0.7476,
+     "items@4000": 0.7864,
+     "complete@4000": 0.7864,
+     "recall@5": 0.7864,
+     "recall@10": 0.8932,
+     "ndcg@10": 0.6994
+    },
+    "multi": {
+     "questions": 53,
+     "evidence_items": 113,
+     "items@1000": 0.3805,
+     "complete@1000": 0.1321,
+     "items@2000": 0.5752,
+     "complete@2000": 0.3019,
+     "items@4000": 0.7434,
+     "complete@4000": 0.5472,
+     "recall@5": 0.708,
+     "recall@10": 0.8319,
+     "ndcg@10": 0.7283
+    },
+    "all": {
+     "questions": 156,
+     "evidence_items": 216,
+     "items@1000": 0.4907,
+     "complete@1000": 0.4487,
+     "items@2000": 0.6574,
+     "complete@2000": 0.5962,
+     "items@4000": 0.7639,
+     "complete@4000": 0.7051,
+     "recall@5": 0.7454,
+     "recall@10": 0.8611,
+     "ndcg@10": 0.7092
+    }
+   },
+   "latency_ms": {
+    "retrieval_p50": 2.0366999960970134,
+    "retrieval_p95": 3.6130999797023833,
+    "rerank_p50": null,
+    "rerank_p95": null,
+    "rerank_total_p50": null,
+    "rerank_total_p95": null,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 0
+   },
+   "rerank": null,
+   "by_group": {
+    "고시": {
+     "questions": 43,
+     "evidence_items": 54,
+     "items@1000": 0.7037,
+     "complete@1000": 0.6744,
+     "items@2000": 0.8333,
+     "complete@2000": 0.814,
+     "items@4000": 0.8889,
+     "complete@4000": 0.8605,
+     "recall@5": 0.8889,
+     "recall@10": 0.9074,
+     "ndcg@10": 0.8037,
+     "latency_ms": {
+      "retrieval_p50": 2.042100008111447,
+      "retrieval_p95": 2.8913999849464744,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "넘나듦": {
+     "questions": 18,
+     "evidence_items": 41,
+     "items@1000": 0.2683,
+     "complete@1000": 0.0,
+     "items@2000": 0.5122,
+     "complete@2000": 0.1111,
+     "items@4000": 0.6585,
+     "complete@4000": 0.3333,
+     "recall@5": 0.6098,
+     "recall@10": 0.8293,
+     "ndcg@10": 0.6702,
+     "latency_ms": {
+      "retrieval_p50": 2.7054000238422304,
+      "retrieval_p95": 4.019299987703562,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "법령": {
+     "questions": 65,
+     "evidence_items": 84,
+     "items@1000": 0.4286,
+     "complete@1000": 0.4154,
+     "items@2000": 0.5952,
+     "complete@2000": 0.5692,
+     "items@4000": 0.7024,
+     "complete@4000": 0.6615,
+     "recall@5": 0.6786,
+     "recall@10": 0.8214,
+     "ndcg@10": 0.6409,
+     "latency_ms": {
+      "retrieval_p50": 2.062799991108477,
+      "retrieval_p95": 3.530799993313849,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "표준약관": {
+     "questions": 30,
+     "evidence_items": 37,
+     "items@1000": 0.5676,
+     "complete@1000": 0.4667,
+     "items@2000": 0.7027,
+     "complete@2000": 0.6333,
+     "items@4000": 0.8378,
+     "complete@4000": 0.8,
+     "recall@5": 0.8378,
+     "recall@10": 0.9189,
+     "ndcg@10": 0.7454,
+     "latency_ms": {
+      "retrieval_p50": 1.767199981259182,
+      "retrieval_p95": 2.3135000083129853,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    }
+   },
+   "reviewed_passed": {
+    "single": {
+     "questions": 20,
+     "evidence_items": 20,
+     "items@2000": 0.9,
+     "complete@2000": 0.9
+    },
+    "multi": {
+     "questions": 5,
+     "evidence_items": 10,
+     "items@2000": 0.8,
+     "complete@2000": 0.6
+    }
+   },
+   "reviewed_passed_by_group": {
+    "법령": {
+     "questions": 13,
+     "evidence_items": 15,
+     "items@2000": 0.8,
+     "complete@2000": 0.7692
+    },
+    "고시": {
+     "questions": 7,
+     "evidence_items": 8,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "표준약관": {
+     "questions": 4,
+     "evidence_items": 5,
+     "items@2000": 0.8,
+     "complete@2000": 0.75
+    },
+    "넘나듦": {
+     "questions": 1,
+     "evidence_items": 2,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    }
+   }
+  },
+  "R3": {
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "evidence_items": 103,
+     "items@1000": 0.8058,
+     "complete@1000": 0.8058,
+     "items@2000": 0.8738,
+     "complete@2000": 0.8738,
+     "items@4000": 0.9223,
+     "complete@4000": 0.9223,
+     "recall@5": 0.9126,
+     "recall@10": 1.0,
+     "ndcg@10": 0.836
+    },
+    "multi": {
+     "questions": 53,
+     "evidence_items": 113,
+     "items@1000": 0.4779,
+     "complete@1000": 0.2264,
+     "items@2000": 0.6814,
+     "complete@2000": 0.5094,
+     "items@4000": 0.8053,
+     "complete@4000": 0.6604,
+     "recall@5": 0.7788,
+     "recall@10": 0.8761,
+     "ndcg@10": 0.816
+    },
+    "all": {
+     "questions": 156,
+     "evidence_items": 216,
+     "items@1000": 0.6343,
+     "complete@1000": 0.609,
+     "items@2000": 0.7731,
+     "complete@2000": 0.75,
+     "items@4000": 0.8611,
+     "complete@4000": 0.8333,
+     "recall@5": 0.8426,
+     "recall@10": 0.9352,
+     "ndcg@10": 0.8292
+    }
+   },
+   "latency_ms": {
+    "retrieval_p50": 26.923199999146163,
+    "retrieval_p95": 39.13989997818135,
+    "rerank_p50": null,
+    "rerank_p95": null,
+    "rerank_total_p50": null,
+    "rerank_total_p95": null,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 0
+   },
+   "rerank": null,
+   "by_group": {
+    "고시": {
+     "questions": 43,
+     "evidence_items": 54,
+     "items@1000": 0.7963,
+     "complete@1000": 0.7907,
+     "items@2000": 0.8704,
+     "complete@2000": 0.8605,
+     "items@4000": 0.9074,
+     "complete@4000": 0.907,
+     "recall@5": 0.9074,
+     "recall@10": 0.963,
+     "ndcg@10": 0.9068,
+     "latency_ms": {
+      "retrieval_p50": 28.025400009937584,
+      "retrieval_p95": 42.69260002183728,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "넘나듦": {
+     "questions": 18,
+     "evidence_items": 41,
+     "items@1000": 0.3902,
+     "complete@1000": 0.0556,
+     "items@2000": 0.6098,
+     "complete@2000": 0.3333,
+     "items@4000": 0.7317,
+     "complete@4000": 0.4444,
+     "recall@5": 0.6829,
+     "recall@10": 0.8293,
+     "ndcg@10": 0.7974,
+     "latency_ms": {
+      "retrieval_p50": 27.15179999358952,
+      "retrieval_p95": 35.85899999598041,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "법령": {
+     "questions": 65,
+     "evidence_items": 84,
+     "items@1000": 0.619,
+     "complete@1000": 0.6154,
+     "items@2000": 0.7738,
+     "complete@2000": 0.7692,
+     "items@4000": 0.869,
+     "complete@4000": 0.8615,
+     "recall@5": 0.8571,
+     "recall@10": 0.9524,
+     "ndcg@10": 0.7946,
+     "latency_ms": {
+      "retrieval_p50": 26.181900000665337,
+      "retrieval_p95": 39.13989997818135,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "표준약관": {
+     "questions": 30,
+     "evidence_items": 37,
+     "items@1000": 0.7027,
+     "complete@1000": 0.6667,
+     "items@2000": 0.8108,
+     "complete@2000": 0.8,
+     "items@4000": 0.9189,
+     "complete@4000": 0.9,
+     "recall@5": 0.8919,
+     "recall@10": 0.973,
+     "ndcg@10": 0.8123,
+     "latency_ms": {
+      "retrieval_p50": 25.61270000296645,
+      "retrieval_p95": 33.51879998808727,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    }
+   },
+   "reviewed_passed": {
+    "single": {
+     "questions": 20,
+     "evidence_items": 20,
+     "items@2000": 0.95,
+     "complete@2000": 0.95
+    },
+    "multi": {
+     "questions": 5,
+     "evidence_items": 10,
+     "items@2000": 0.9,
+     "complete@2000": 0.8
+    }
+   },
+   "reviewed_passed_by_group": {
+    "법령": {
+     "questions": 13,
+     "evidence_items": 15,
+     "items@2000": 0.8667,
+     "complete@2000": 0.8462
+    },
+    "고시": {
+     "questions": 7,
+     "evidence_items": 8,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "표준약관": {
+     "questions": 4,
+     "evidence_items": 5,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "넘나듦": {
+     "questions": 1,
+     "evidence_items": 2,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    }
+   }
+  },
+  "R4": {
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "evidence_items": 103,
+     "items@1000": 0.9223,
+     "complete@1000": 0.9223,
+     "items@2000": 0.9515,
+     "complete@2000": 0.9515,
+     "items@4000": 0.9612,
+     "complete@4000": 0.9612,
+     "recall@5": 0.9612,
+     "recall@10": 1.0,
+     "ndcg@10": 0.9479
+    },
+    "multi": {
+     "questions": 53,
+     "evidence_items": 113,
+     "items@1000": 0.5664,
+     "complete@1000": 0.3019,
+     "items@2000": 0.7611,
+     "complete@2000": 0.6226,
+     "items@4000": 0.8407,
+     "complete@4000": 0.6981,
+     "recall@5": 0.8319,
+     "recall@10": 0.8761,
+     "ndcg@10": 0.8876
+    },
+    "all": {
+     "questions": 156,
+     "evidence_items": 216,
+     "items@1000": 0.7361,
+     "complete@1000": 0.7115,
+     "items@2000": 0.8519,
+     "complete@2000": 0.8397,
+     "items@4000": 0.8981,
+     "complete@4000": 0.8718,
+     "recall@5": 0.8935,
+     "recall@10": 0.9352,
+     "ndcg@10": 0.9274
+    }
+   },
+   "latency_ms": {
+    "retrieval_p50": 69.1367999825161,
+    "retrieval_p95": 83.36180000333115,
+    "rerank_p50": 201.15999999688938,
+    "rerank_p95": 259.7492999921087,
+    "rerank_total_p50": 201.211500010686,
+    "rerank_total_p95": 259.79790001292713,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 174
+   },
+   "rerank": {
+    "cost_usd": 0.05803,
+    "requests": 174,
+    "errors": 0
+   },
+   "by_group": {
+    "고시": {
+     "questions": 43,
+     "evidence_items": 54,
+     "items@1000": 0.7963,
+     "complete@1000": 0.7907,
+     "items@2000": 0.9074,
+     "complete@2000": 0.9302,
+     "items@4000": 0.9444,
+     "complete@4000": 0.9302,
+     "recall@5": 0.9444,
+     "recall@10": 0.963,
+     "ndcg@10": 0.9484,
+     "latency_ms": {
+      "retrieval_p50": 70.14980001258664,
+      "retrieval_p95": 87.33969999593683,
+      "rerank_p50": 201.42239998676814,
+      "rerank_p95": 232.36919997725636,
+      "rerank_total_p50": 201.47390000056475,
+      "rerank_total_p95": 232.42600000230595,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 50
+     }
+    },
+    "넘나듦": {
+     "questions": 18,
+     "evidence_items": 41,
+     "items@1000": 0.5366,
+     "complete@1000": 0.3333,
+     "items@2000": 0.7073,
+     "complete@2000": 0.5,
+     "items@4000": 0.7805,
+     "complete@4000": 0.5556,
+     "recall@5": 0.7561,
+     "recall@10": 0.8293,
+     "ndcg@10": 0.8701,
+     "latency_ms": {
+      "retrieval_p50": 72.79079998261295,
+      "retrieval_p95": 83.36180000333115,
+      "rerank_p50": 200.80849999794737,
+      "rerank_p95": 222.29889998561703,
+      "rerank_total_p50": 200.85459999972954,
+      "rerank_total_p95": 222.34629999729805,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 18
+     }
+    },
+    "법령": {
+     "questions": 65,
+     "evidence_items": 84,
+     "items@1000": 0.8214,
+     "complete@1000": 0.8,
+     "items@2000": 0.8929,
+     "complete@2000": 0.8769,
+     "items@4000": 0.9167,
+     "complete@4000": 0.9077,
+     "recall@5": 0.9167,
+     "recall@10": 0.9524,
+     "ndcg@10": 0.956,
+     "latency_ms": {
+      "retrieval_p50": 68.33939999341965,
+      "retrieval_p95": 83.87940001557581,
+      "rerank_p50": 198.55140001163818,
+      "rerank_p95": 259.7492999921087,
+      "rerank_total_p50": 198.63110000733286,
+      "rerank_total_p95": 259.79790001292713,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 73
+     }
+    },
+    "표준약관": {
+     "questions": 30,
+     "evidence_items": 37,
+     "items@1000": 0.6757,
+     "complete@1000": 0.6333,
+     "items@2000": 0.8378,
+     "complete@2000": 0.8333,
+     "items@4000": 0.9189,
+     "complete@4000": 0.9,
+     "recall@5": 0.9189,
+     "recall@10": 0.973,
+     "ndcg@10": 0.8697,
+     "latency_ms": {
+      "retrieval_p50": 68.24749999213964,
+      "retrieval_p95": 76.12570002675056,
+      "rerank_p50": 206.16119998157956,
+      "rerank_p95": 269.072099996265,
+      "rerank_total_p50": 206.21509998454712,
+      "rerank_total_p95": 269.1231000062544,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 33
+     }
+    }
+   },
+   "reviewed_passed": {
+    "single": {
+     "questions": 20,
+     "evidence_items": 20,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "multi": {
+     "questions": 5,
+     "evidence_items": 10,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    }
+   },
+   "reviewed_passed_by_group": {
+    "법령": {
+     "questions": 13,
+     "evidence_items": 15,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "고시": {
+     "questions": 7,
+     "evidence_items": 8,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "표준약관": {
+     "questions": 4,
+     "evidence_items": 5,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "넘나듦": {
+     "questions": 1,
+     "evidence_items": 2,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    }
+   }
+  },
+  "R4c-Jev": {
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "evidence_items": 103,
+     "items@1000": 0.8447,
+     "complete@1000": 0.8447,
+     "items@2000": 0.9126,
+     "complete@2000": 0.9126,
+     "items@4000": 0.9515,
+     "complete@4000": 0.9515,
+     "recall@5": 0.9515,
+     "recall@10": 0.9709,
+     "ndcg@10": 0.9104
+    },
+    "multi": {
+     "questions": 53,
+     "evidence_items": 113,
+     "items@1000": 0.5133,
+     "complete@1000": 0.2075,
+     "items@2000": 0.6637,
+     "complete@2000": 0.4528,
+     "items@4000": 0.7699,
+     "complete@4000": 0.6226,
+     "recall@5": 0.7611,
+     "recall@10": 0.8407,
+     "ndcg@10": 0.8554
+    },
+    "all": {
+     "questions": 156,
+     "evidence_items": 216,
+     "items@1000": 0.6713,
+     "complete@1000": 0.6282,
+     "items@2000": 0.7824,
+     "complete@2000": 0.7564,
+     "items@4000": 0.8565,
+     "complete@4000": 0.8397,
+     "recall@5": 0.8519,
+     "recall@10": 0.9028,
+     "ndcg@10": 0.8917
+    }
+   },
+   "latency_ms": {
+    "retrieval_p50": 32.64419999322854,
+    "retrieval_p95": 86.21639999910258,
+    "rerank_p50": 200.6480999989435,
+    "rerank_p95": 245.5208000028506,
+    "rerank_total_p50": 200.69440000224859,
+    "rerank_total_p95": 245.56889999075793,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 174
+   },
+   "rerank": {
+    "cost_usd": 0.06058,
+    "requests": 174,
+    "errors": 0
+   },
+   "by_group": {
+    "고시": {
+     "questions": 43,
+     "evidence_items": 54,
+     "items@1000": 0.7963,
+     "complete@1000": 0.814,
+     "items@2000": 0.8889,
+     "complete@2000": 0.907,
+     "items@4000": 0.9074,
+     "complete@4000": 0.907,
+     "recall@5": 0.9074,
+     "recall@10": 0.9444,
+     "ndcg@10": 0.9291,
+     "latency_ms": {
+      "retrieval_p50": 31.93149997969158,
+      "retrieval_p95": 76.07570002437569,
+      "rerank_p50": 195.7671999989543,
+      "rerank_p95": 246.06350000249222,
+      "rerank_total_p50": 195.8298000099603,
+      "rerank_total_p95": 246.12100000376813,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 50
+     }
+    },
+    "넘나듦": {
+     "questions": 18,
+     "evidence_items": 41,
+     "items@1000": 0.4878,
+     "complete@1000": 0.1111,
+     "items@2000": 0.5854,
+     "complete@2000": 0.2222,
+     "items@4000": 0.7073,
+     "complete@4000": 0.3889,
+     "recall@5": 0.6829,
+     "recall@10": 0.8049,
+     "ndcg@10": 0.8847,
+     "latency_ms": {
+      "retrieval_p50": 37.245200015604496,
+      "retrieval_p95": 87.0858000125736,
+      "rerank_p50": 197.9171999846585,
+      "rerank_p95": 221.58489999128506,
+      "rerank_total_p50": 197.9628999833949,
+      "rerank_total_p95": 221.6335999837611,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 18
+     }
+    },
+    "법령": {
+     "questions": 65,
+     "evidence_items": 84,
+     "items@1000": 0.7024,
+     "complete@1000": 0.6769,
+     "items@2000": 0.8095,
+     "complete@2000": 0.8,
+     "items@4000": 0.869,
+     "complete@4000": 0.8769,
+     "recall@5": 0.869,
+     "recall@10": 0.9048,
+     "ndcg@10": 0.8894,
+     "latency_ms": {
+      "retrieval_p50": 32.64419999322854,
+      "retrieval_p95": 86.21639999910258,
+      "rerank_p50": 202.05570000689477,
+      "rerank_p95": 245.5208000028506,
+      "rerank_total_p50": 202.1062999847345,
+      "rerank_total_p95": 245.56889999075793,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 73
+     }
+    },
+    "표준약관": {
+     "questions": 30,
+     "evidence_items": 37,
+     "items@1000": 0.6216,
+     "complete@1000": 0.5667,
+     "items@2000": 0.7838,
+     "complete@2000": 0.7667,
+     "items@4000": 0.9189,
+     "complete@4000": 0.9333,
+     "recall@5": 0.9189,
+     "recall@10": 0.9459,
+     "ndcg@10": 0.8471,
+     "latency_ms": {
+      "retrieval_p50": 32.000600011087954,
+      "retrieval_p95": 79.40049999160692,
+      "rerank_p50": 204.02040000772104,
+      "rerank_p95": 243.30729999928735,
+      "rerank_total_p50": 204.06999997794628,
+      "rerank_total_p95": 243.3685000287369,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 33
+     }
+    }
+   },
+   "reviewed_passed": {
+    "single": {
+     "questions": 20,
+     "evidence_items": 20,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "multi": {
+     "questions": 5,
+     "evidence_items": 10,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    }
+   },
+   "reviewed_passed_by_group": {
+    "법령": {
+     "questions": 13,
+     "evidence_items": 15,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "고시": {
+     "questions": 7,
+     "evidence_items": 8,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "표준약관": {
+     "questions": 4,
+     "evidence_items": 5,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "넘나듦": {
+     "questions": 1,
+     "evidence_items": 2,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    }
+   }
+  },
+  "R4c-Qwen": {
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "evidence_items": 103,
+     "items@1000": 0.835,
+     "complete@1000": 0.835,
+     "items@2000": 0.9223,
+     "complete@2000": 0.9223,
+     "items@4000": 0.9417,
+     "complete@4000": 0.9417,
+     "recall@5": 0.8447,
+     "recall@10": 0.8932,
+     "ndcg@10": 0.7358
+    },
+    "multi": {
+     "questions": 53,
+     "evidence_items": 113,
+     "items@1000": 0.6106,
+     "complete@1000": 0.3585,
+     "items@2000": 0.7434,
+     "complete@2000": 0.566,
+     "items@4000": 0.8053,
+     "complete@4000": 0.6226,
+     "recall@5": 0.6814,
+     "recall@10": 0.7522,
+     "ndcg@10": 0.8019
+    },
+    "all": {
+     "questions": 156,
+     "evidence_items": 216,
+     "items@1000": 0.7176,
+     "complete@1000": 0.6731,
+     "items@2000": 0.8287,
+     "complete@2000": 0.8013,
+     "items@4000": 0.8704,
+     "complete@4000": 0.8333,
+     "recall@5": 0.7593,
+     "recall@10": 0.8194,
+     "ndcg@10": 0.7583
+    }
+   },
+   "latency_ms": {
+    "retrieval_p50": 62.01059999875724,
+    "retrieval_p95": 82.41730000008829,
+    "rerank_p50": 182.13210001704283,
+    "rerank_p95": 242.50549997668713,
+    "rerank_total_p50": 182.18690002686344,
+    "rerank_total_p95": 242.56470002001151,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 174
+   },
+   "rerank": {
+    "cost_usd": 0.02708,
+    "requests": 174,
+    "errors": 0
+   },
+   "by_group": {
+    "고시": {
+     "questions": 43,
+     "evidence_items": 54,
+     "items@1000": 0.7222,
+     "complete@1000": 0.7209,
+     "items@2000": 0.7963,
+     "complete@2000": 0.814,
+     "items@4000": 0.8333,
+     "complete@4000": 0.814,
+     "recall@5": 0.7037,
+     "recall@10": 0.7963,
+     "ndcg@10": 0.7401,
+     "latency_ms": {
+      "retrieval_p50": 61.82010000338778,
+      "retrieval_p95": 77.11170002585277,
+      "rerank_p50": 181.37430000933819,
+      "rerank_p95": 261.0421999997925,
+      "rerank_total_p50": 181.429999996908,
+      "rerank_total_p95": 261.0894000099506,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 50
+     }
+    },
+    "넘나듦": {
+     "questions": 18,
+     "evidence_items": 41,
+     "items@1000": 0.6098,
+     "complete@1000": 0.3333,
+     "items@2000": 0.7073,
+     "complete@2000": 0.4444,
+     "items@4000": 0.7561,
+     "complete@4000": 0.5,
+     "recall@5": 0.6341,
+     "recall@10": 0.7317,
+     "ndcg@10": 0.7886,
+     "latency_ms": {
+      "retrieval_p50": 66.94189997506328,
+      "retrieval_p95": 88.38290002313443,
+      "rerank_p50": 176.2721999839414,
+      "rerank_p95": 241.93540000123903,
+      "rerank_total_p50": 176.32009999942966,
+      "rerank_total_p95": 241.98489999980666,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 18
+     }
+    },
+    "법령": {
+     "questions": 65,
+     "evidence_items": 84,
+     "items@1000": 0.7262,
+     "complete@1000": 0.6769,
+     "items@2000": 0.8571,
+     "complete@2000": 0.8308,
+     "items@4000": 0.9048,
+     "complete@4000": 0.8769,
+     "recall@5": 0.7857,
+     "recall@10": 0.8214,
+     "ndcg@10": 0.747,
+     "latency_ms": {
+      "retrieval_p50": 62.0401999913156,
+      "retrieval_p95": 82.41730000008829,
+      "rerank_p50": 185.00009999843314,
+      "rerank_p95": 286.9253000244498,
+      "rerank_total_p50": 185.04779998329468,
+      "rerank_total_p95": 287.0470000198111,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 73
+     }
+    },
+    "표준약관": {
+     "questions": 30,
+     "evidence_items": 37,
+     "items@1000": 0.8108,
+     "complete@1000": 0.8,
+     "items@2000": 0.9459,
+     "complete@2000": 0.9333,
+     "items@4000": 0.973,
+     "complete@4000": 0.9667,
+     "recall@5": 0.9189,
+     "recall@10": 0.9459,
+     "ndcg@10": 0.7903,
+     "latency_ms": {
+      "retrieval_p50": 60.96850000903942,
+      "retrieval_p95": 71.58200000412762,
+      "rerank_p50": 180.8129999844823,
+      "rerank_p95": 227.71179999108426,
+      "rerank_total_p50": 180.8735999802593,
+      "rerank_total_p95": 227.7641999826301,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 33
+     }
+    }
+   },
+   "reviewed_passed": {
+    "single": {
+     "questions": 20,
+     "evidence_items": 20,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "multi": {
+     "questions": 5,
+     "evidence_items": 10,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    }
+   },
+   "reviewed_passed_by_group": {
+    "법령": {
+     "questions": 13,
+     "evidence_items": 15,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "고시": {
+     "questions": 7,
+     "evidence_items": 8,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "표준약관": {
+     "questions": 4,
+     "evidence_items": 5,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "넘나듦": {
+     "questions": 1,
+     "evidence_items": 2,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    }
+   }
+  },
+  "R4 원래 규칙": {
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "evidence_items": 103,
+     "items@1000": 0.9515,
+     "complete@1000": 0.9515,
+     "items@2000": 0.9903,
+     "complete@2000": 0.9903,
+     "items@4000": 0.9903,
+     "complete@4000": 0.9903,
+     "recall@5": 0.9903,
+     "recall@10": 1.0,
+     "ndcg@10": 0.9632
+    },
+    "multi": {
+     "questions": 53,
+     "evidence_items": 113,
+     "items@1000": 0.5752,
+     "complete@1000": 0.3208,
+     "items@2000": 0.7876,
+     "complete@2000": 0.6415,
+     "items@4000": 0.8938,
+     "complete@4000": 0.7925,
+     "recall@5": 0.8761,
+     "recall@10": 0.9115,
+     "ndcg@10": 0.8761
+    },
+    "all": {
+     "questions": 156,
+     "evidence_items": 216,
+     "items@1000": 0.7546,
+     "complete@1000": 0.7372,
+     "items@2000": 0.8843,
+     "complete@2000": 0.8718,
+     "items@4000": 0.9398,
+     "complete@4000": 0.9231,
+     "recall@5": 0.9306,
+     "recall@10": 0.9537,
+     "ndcg@10": 0.9336
+    }
+   },
+   "latency_ms": {
+    "retrieval_p50": 599.5518999989145,
+    "retrieval_p95": 1043.0226000025868,
+    "rerank_p50": 196.61119999364018,
+    "rerank_p95": 252.30600000941195,
+    "rerank_total_p50": 196.6536000254564,
+    "rerank_total_p95": 252.34750000527129,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 174
+   },
+   "rerank": {
+    "cost_usd": 0.05617,
+    "requests": 174,
+    "errors": 0
+   },
+   "by_group": {
+    "고시": {
+     "questions": 43,
+     "evidence_items": 54,
+     "items@1000": 0.8148,
+     "complete@1000": 0.814,
+     "items@2000": 0.9259,
+     "complete@2000": 0.9302,
+     "items@4000": 0.9815,
+     "complete@4000": 0.9767,
+     "recall@5": 0.963,
+     "recall@10": 0.9815,
+     "ndcg@10": 0.9579,
+     "latency_ms": {
+      "retrieval_p50": 612.4217000033241,
+      "retrieval_p95": 1084.3915000150446,
+      "rerank_p50": 196.31930001196451,
+      "rerank_p95": 229.95509998872876,
+      "rerank_total_p50": 196.36409997474402,
+      "rerank_total_p95": 230.00680000404827,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 50
+     }
+    },
+    "넘나듦": {
+     "questions": 18,
+     "evidence_items": 41,
+     "items@1000": 0.561,
+     "complete@1000": 0.3333,
+     "items@2000": 0.7561,
+     "complete@2000": 0.5,
+     "items@4000": 0.8537,
+     "complete@4000": 0.6667,
+     "recall@5": 0.8293,
+     "recall@10": 0.9024,
+     "ndcg@10": 0.8641,
+     "latency_ms": {
+      "retrieval_p50": 571.6291999851819,
+      "retrieval_p95": 941.3190000050236,
+      "rerank_p50": 194.44279998424463,
+      "rerank_p95": 224.07060000114143,
+      "rerank_total_p50": 194.48710000142455,
+      "rerank_total_p95": 224.1210000065621,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 18
+     }
+    },
+    "법령": {
+     "questions": 65,
+     "evidence_items": 84,
+     "items@1000": 0.8333,
+     "complete@1000": 0.8308,
+     "items@2000": 0.9167,
+     "complete@2000": 0.9231,
+     "items@4000": 0.9524,
+     "complete@4000": 0.9538,
+     "recall@5": 0.9524,
+     "recall@10": 0.9524,
+     "ndcg@10": 0.9575,
+     "latency_ms": {
+      "retrieval_p50": 597.9329999827314,
+      "retrieval_p95": 1016.2915000109933,
+      "rerank_p50": 195.77670001308434,
+      "rerank_p95": 264.5399000030011,
+      "rerank_total_p50": 195.81770000513643,
+      "rerank_total_p95": 264.5913999876939,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 73
+     }
+    },
+    "표준약관": {
+     "questions": 30,
+     "evidence_items": 37,
+     "items@1000": 0.7027,
+     "complete@1000": 0.6667,
+     "items@2000": 0.8919,
+     "complete@2000": 0.9,
+     "items@4000": 0.9459,
+     "complete@4000": 0.9333,
+     "recall@5": 0.9459,
+     "recall@10": 0.973,
+     "ndcg@10": 0.8885,
+     "latency_ms": {
+      "retrieval_p50": 594.8990999895614,
+      "retrieval_p95": 975.4370999871753,
+      "rerank_p50": 199.20299999648705,
+      "rerank_p95": 219.96230000513606,
+      "rerank_total_p50": 199.24640000681393,
+      "rerank_total_p95": 220.0105999945663,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 33
+     }
+    }
+   },
+   "reviewed_passed": {
+    "single": {
+     "questions": 20,
+     "evidence_items": 20,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "multi": {
+     "questions": 5,
+     "evidence_items": 10,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    }
+   },
+   "reviewed_passed_by_group": {
+    "법령": {
+     "questions": 13,
+     "evidence_items": 15,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "고시": {
+     "questions": 7,
+     "evidence_items": 8,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "표준약관": {
+     "questions": 4,
+     "evidence_items": 5,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "넘나듦": {
+     "questions": 1,
+     "evidence_items": 2,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    }
+   }
+  },
+  "R4 KURE-v1": {
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "evidence_items": 103,
+     "items@1000": 0.9126,
+     "complete@1000": 0.9126,
+     "items@2000": 0.9709,
+     "complete@2000": 0.9709,
+     "items@4000": 0.9709,
+     "complete@4000": 0.9709,
+     "recall@5": 0.9709,
+     "recall@10": 0.9709,
+     "ndcg@10": 0.9374
+    },
+    "multi": {
+     "questions": 53,
+     "evidence_items": 113,
+     "items@1000": 0.5664,
+     "complete@1000": 0.3396,
+     "items@2000": 0.7168,
+     "complete@2000": 0.5849,
+     "items@4000": 0.7965,
+     "complete@4000": 0.6792,
+     "recall@5": 0.7876,
+     "recall@10": 0.823,
+     "ndcg@10": 0.8347
+    },
+    "all": {
+     "questions": 156,
+     "evidence_items": 216,
+     "items@1000": 0.7315,
+     "complete@1000": 0.7179,
+     "items@2000": 0.838,
+     "complete@2000": 0.8397,
+     "items@4000": 0.8796,
+     "complete@4000": 0.8718,
+     "recall@5": 0.875,
+     "recall@10": 0.8935,
+     "ndcg@10": 0.9025
+    }
+   },
+   "latency_ms": {
+    "retrieval_p50": 51.48279998684302,
+    "retrieval_p95": 59.17540000518784,
+    "rerank_p50": 198.96340000559576,
+    "rerank_p95": 263.1397999939509,
+    "rerank_total_p50": 199.00649998453446,
+    "rerank_total_p95": 263.1847999873571,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 174
+   },
+   "rerank": {
+    "cost_usd": 0.05737,
+    "requests": 174,
+    "errors": 0
+   },
+   "by_group": {
+    "고시": {
+     "questions": 43,
+     "evidence_items": 54,
+     "items@1000": 0.8333,
+     "complete@1000": 0.8372,
+     "items@2000": 0.9074,
+     "complete@2000": 0.9302,
+     "items@4000": 0.9259,
+     "complete@4000": 0.9302,
+     "recall@5": 0.9259,
+     "recall@10": 0.9259,
+     "ndcg@10": 0.952,
+     "latency_ms": {
+      "retrieval_p50": 49.92949997540563,
+      "retrieval_p95": 56.08179999398999,
+      "rerank_p50": 198.96340000559576,
+      "rerank_p95": 263.1397999939509,
+      "rerank_total_p50": 199.00649998453446,
+      "rerank_total_p95": 263.1847999873571,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 50
+     }
+    },
+    "넘나듦": {
+     "questions": 18,
+     "evidence_items": 41,
+     "items@1000": 0.561,
+     "complete@1000": 0.3333,
+     "items@2000": 0.7317,
+     "complete@2000": 0.5,
+     "items@4000": 0.7805,
+     "complete@4000": 0.5556,
+     "recall@5": 0.7561,
+     "recall@10": 0.8049,
+     "ndcg@10": 0.8703,
+     "latency_ms": {
+      "retrieval_p50": 54.24040000070818,
+      "retrieval_p95": 63.612099998863414,
+      "rerank_p50": 200.4237000073772,
+      "rerank_p95": 230.56460000225343,
+      "rerank_total_p50": 200.47409998369403,
+      "rerank_total_p95": 230.61779999989085,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 18
+     }
+    },
+    "법령": {
+     "questions": 65,
+     "evidence_items": 84,
+     "items@1000": 0.7738,
+     "complete@1000": 0.7846,
+     "items@2000": 0.8214,
+     "complete@2000": 0.8462,
+     "items@4000": 0.869,
+     "complete@4000": 0.8923,
+     "recall@5": 0.869,
+     "recall@10": 0.8929,
+     "ndcg@10": 0.8952,
+     "latency_ms": {
+      "retrieval_p50": 52.06529999850318,
+      "retrieval_p95": 57.338899991009384,
+      "rerank_p50": 197.30130000971258,
+      "rerank_p95": 253.61439998960122,
+      "rerank_total_p50": 197.34459999017417,
+      "rerank_total_p95": 253.6577999999281,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 73
+     }
+    },
+    "표준약관": {
+     "questions": 30,
+     "evidence_items": 37,
+     "items@1000": 0.6757,
+     "complete@1000": 0.6333,
+     "items@2000": 0.8919,
+     "complete@2000": 0.9,
+     "items@4000": 0.9459,
+     "complete@4000": 0.9333,
+     "recall@5": 0.9459,
+     "recall@10": 0.9459,
+     "ndcg@10": 0.8665,
+     "latency_ms": {
+      "retrieval_p50": 50.81059999065474,
+      "retrieval_p95": 54.22959997667931,
+      "rerank_p50": 204.71099999849685,
+      "rerank_p95": 324.8166000121273,
+      "rerank_total_p50": 204.75460001034662,
+      "rerank_total_p95": 324.8617999779526,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 33
+     }
+    }
+   },
+   "reviewed_passed": {
+    "single": {
+     "questions": 20,
+     "evidence_items": 20,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "multi": {
+     "questions": 5,
+     "evidence_items": 10,
+     "items@2000": 0.9,
+     "complete@2000": 0.8
+    }
+   },
+   "reviewed_passed_by_group": {
+    "법령": {
+     "questions": 13,
+     "evidence_items": 15,
+     "items@2000": 0.9333,
+     "complete@2000": 0.9231
+    },
+    "고시": {
+     "questions": 7,
+     "evidence_items": 8,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "표준약관": {
+     "questions": 4,
+     "evidence_items": 5,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "넘나듦": {
+     "questions": 1,
+     "evidence_items": 2,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    }
+   }
+  },
+  "R4 KURE-v2": {
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "evidence_items": 103,
+     "items@1000": 0.9029,
+     "complete@1000": 0.9029,
+     "items@2000": 0.9806,
+     "complete@2000": 0.9806,
+     "items@4000": 0.9806,
+     "complete@4000": 0.9806,
+     "recall@5": 0.9806,
+     "recall@10": 0.9903,
+     "ndcg@10": 0.9474
+    },
+    "multi": {
+     "questions": 53,
+     "evidence_items": 113,
+     "items@1000": 0.5575,
+     "complete@1000": 0.283,
+     "items@2000": 0.7168,
+     "complete@2000": 0.5283,
+     "items@4000": 0.823,
+     "complete@4000": 0.6981,
+     "recall@5": 0.8142,
+     "recall@10": 0.8938,
+     "ndcg@10": 0.8548
+    },
+    "all": {
+     "questions": 156,
+     "evidence_items": 216,
+     "items@1000": 0.7222,
+     "complete@1000": 0.6923,
+     "items@2000": 0.8426,
+     "complete@2000": 0.8269,
+     "items@4000": 0.8981,
+     "complete@4000": 0.8846,
+     "recall@5": 0.8935,
+     "recall@10": 0.9398,
+     "ndcg@10": 0.916
+    }
+   },
+   "latency_ms": {
+    "retrieval_p50": 76.93880001897924,
+    "retrieval_p95": 88.83769999374636,
+    "rerank_p50": 195.1884999871254,
+    "rerank_p95": 232.30070000863634,
+    "rerank_total_p50": 195.23479999043047,
+    "rerank_total_p95": 232.35390000627376,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 174
+   },
+   "rerank": {
+    "cost_usd": 0.05804,
+    "requests": 174,
+    "errors": 0
+   },
+   "by_group": {
+    "고시": {
+     "questions": 43,
+     "evidence_items": 54,
+     "items@1000": 0.8333,
+     "complete@1000": 0.8372,
+     "items@2000": 0.9259,
+     "complete@2000": 0.9535,
+     "items@4000": 0.963,
+     "complete@4000": 0.9535,
+     "recall@5": 0.963,
+     "recall@10": 0.9815,
+     "ndcg@10": 0.9625,
+     "latency_ms": {
+      "retrieval_p50": 75.62449999386445,
+      "retrieval_p95": 85.49969998421147,
+      "rerank_p50": 195.32080000499263,
+      "rerank_p95": 253.78579998505302,
+      "rerank_total_p50": 195.36720000905916,
+      "rerank_total_p95": 253.8318999868352,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 50
+     }
+    },
+    "넘나듦": {
+     "questions": 18,
+     "evidence_items": 41,
+     "items@1000": 0.4634,
+     "complete@1000": 0.1667,
+     "items@2000": 0.6341,
+     "complete@2000": 0.2778,
+     "items@4000": 0.7317,
+     "complete@4000": 0.5,
+     "recall@5": 0.7073,
+     "recall@10": 0.8537,
+     "ndcg@10": 0.8258,
+     "latency_ms": {
+      "retrieval_p50": 77.68449999275617,
+      "retrieval_p95": 86.40109997941181,
+      "rerank_p50": 194.21350001357496,
+      "rerank_p95": 213.7667000060901,
+      "rerank_total_p50": 194.30810000631027,
+      "rerank_total_p95": 213.81879999535158,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 18
+     }
+    },
+    "법령": {
+     "questions": 65,
+     "evidence_items": 84,
+     "items@1000": 0.8214,
+     "complete@1000": 0.8,
+     "items@2000": 0.881,
+     "complete@2000": 0.8769,
+     "items@4000": 0.9286,
+     "complete@4000": 0.9231,
+     "recall@5": 0.9286,
+     "recall@10": 0.9524,
+     "ndcg@10": 0.9454,
+     "latency_ms": {
+      "retrieval_p50": 77.85859997966327,
+      "retrieval_p95": 88.9288000180386,
+      "rerank_p50": 195.24189998628572,
+      "rerank_p95": 225.73710000142455,
+      "rerank_total_p50": 195.2962000214029,
+      "rerank_total_p95": 225.78280000016093,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 73
+     }
+    },
+    "표준약관": {
+     "questions": 30,
+     "evidence_items": 37,
+     "items@1000": 0.6216,
+     "complete@1000": 0.5667,
+     "items@2000": 0.8649,
+     "complete@2000": 0.8667,
+     "items@4000": 0.9189,
+     "complete@4000": 0.9333,
+     "recall@5": 0.9189,
+     "recall@10": 0.9459,
+     "ndcg@10": 0.8397,
+     "latency_ms": {
+      "retrieval_p50": 76.9698999938555,
+      "retrieval_p95": 88.83769999374636,
+      "rerank_p50": 193.51979999919422,
+      "rerank_p95": 211.7240999941714,
+      "rerank_total_p50": 193.56370001332834,
+      "rerank_total_p95": 211.78629997302778,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 33
+     }
+    }
+   },
+   "reviewed_passed": {
+    "single": {
+     "questions": 20,
+     "evidence_items": 20,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "multi": {
+     "questions": 5,
+     "evidence_items": 10,
+     "items@2000": 0.8,
+     "complete@2000": 0.6
+    }
+   },
+   "reviewed_passed_by_group": {
+    "법령": {
+     "questions": 13,
+     "evidence_items": 15,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "고시": {
+     "questions": 7,
+     "evidence_items": 8,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "표준약관": {
+     "questions": 4,
+     "evidence_items": 5,
+     "items@2000": 0.8,
+     "complete@2000": 0.75
+    },
+    "넘나듦": {
+     "questions": 1,
+     "evidence_items": 2,
+     "items@2000": 0.5,
+     "complete@2000": 0.0
+    }
+   }
+  },
+  "R4 gemini RRF": {
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "evidence_items": 103,
+     "items@1000": 0.932,
+     "complete@1000": 0.932,
+     "items@2000": 0.9806,
+     "complete@2000": 0.9806,
+     "items@4000": 0.9903,
+     "complete@4000": 0.9903,
+     "recall@5": 0.9903,
+     "recall@10": 1.0,
+     "ndcg@10": 0.9648
+    },
+    "multi": {
+     "questions": 53,
+     "evidence_items": 113,
+     "items@1000": 0.5752,
+     "complete@1000": 0.3396,
+     "items@2000": 0.7788,
+     "complete@2000": 0.6226,
+     "items@4000": 0.885,
+     "complete@4000": 0.7736,
+     "recall@5": 0.8673,
+     "recall@10": 0.9204,
+     "ndcg@10": 0.8641
+    },
+    "all": {
+     "questions": 156,
+     "evidence_items": 216,
+     "items@1000": 0.7454,
+     "complete@1000": 0.7308,
+     "items@2000": 0.875,
+     "complete@2000": 0.859,
+     "items@4000": 0.9352,
+     "complete@4000": 0.9167,
+     "recall@5": 0.9259,
+     "recall@10": 0.9583,
+     "ndcg@10": 0.9306
+    }
+   },
+   "latency_ms": {
+    "retrieval_p50": 583.885600004578,
+    "retrieval_p95": 956.294000003254,
+    "rerank_p50": 197.5819999934174,
+    "rerank_p95": 241.01800000062212,
+    "rerank_total_p50": 197.62350001838058,
+    "rerank_total_p95": 241.06790000223555,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 174
+   },
+   "rerank": {
+    "cost_usd": 0.05732,
+    "requests": 174,
+    "errors": 0
+   },
+   "by_group": {
+    "고시": {
+     "questions": 43,
+     "evidence_items": 54,
+     "items@1000": 0.8333,
+     "complete@1000": 0.8372,
+     "items@2000": 0.9259,
+     "complete@2000": 0.9535,
+     "items@4000": 0.963,
+     "complete@4000": 0.9535,
+     "recall@5": 0.9444,
+     "recall@10": 0.9815,
+     "ndcg@10": 0.9616,
+     "latency_ms": {
+      "retrieval_p50": 594.8812999995425,
+      "retrieval_p95": 1034.0541000186931,
+      "rerank_p50": 195.84430000395514,
+      "rerank_p95": 232.15920000802726,
+      "rerank_total_p50": 195.88489999296144,
+      "rerank_total_p95": 232.20759999821894,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 50
+     }
+    },
+    "넘나듦": {
+     "questions": 18,
+     "evidence_items": 41,
+     "items@1000": 0.561,
+     "complete@1000": 0.3333,
+     "items@2000": 0.7805,
+     "complete@2000": 0.5,
+     "items@4000": 0.878,
+     "complete@4000": 0.7222,
+     "recall@5": 0.8537,
+     "recall@10": 0.9268,
+     "ndcg@10": 0.8532,
+     "latency_ms": {
+      "retrieval_p50": 604.0529000165407,
+      "retrieval_p95": 866.0841999808326,
+      "rerank_p50": 201.37139997677878,
+      "rerank_p95": 242.43770001339726,
+      "rerank_total_p50": 201.41500001773238,
+      "rerank_total_p95": 242.48670000815764,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 18
+     }
+    },
+    "법령": {
+     "questions": 65,
+     "evidence_items": 84,
+     "items@1000": 0.8214,
+     "complete@1000": 0.8308,
+     "items@2000": 0.8929,
+     "complete@2000": 0.8923,
+     "items@4000": 0.9405,
+     "complete@4000": 0.9385,
+     "recall@5": 0.9405,
+     "recall@10": 0.9524,
+     "ndcg@10": 0.9597,
+     "latency_ms": {
+      "retrieval_p50": 583.885600004578,
+      "retrieval_p95": 885.0767999829259,
+      "rerank_p50": 200.45309999841265,
+      "rerank_p95": 234.48899999493733,
+      "rerank_total_p50": 200.50469998386689,
+      "rerank_total_p95": 234.5363000058569,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 73
+     }
+    },
+    "표준약관": {
+     "questions": 30,
+     "evidence_items": 37,
+     "items@1000": 0.6486,
+     "complete@1000": 0.6,
+     "items@2000": 0.8649,
+     "complete@2000": 0.8667,
+     "items@4000": 0.9459,
+     "complete@4000": 0.9333,
+     "recall@5": 0.9459,
+     "recall@10": 0.973,
+     "ndcg@10": 0.8695,
+     "latency_ms": {
+      "retrieval_p50": 573.1606000044849,
+      "retrieval_p95": 905.8921999821905,
+      "rerank_p50": 196.25450001331046,
+      "rerank_p95": 262.46939998236485,
+      "rerank_total_p50": 196.3050999911502,
+      "rerank_total_p95": 262.52390001900494,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 33
+     }
+    }
+   },
+   "reviewed_passed": {
+    "single": {
+     "questions": 20,
+     "evidence_items": 20,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "multi": {
+     "questions": 5,
+     "evidence_items": 10,
+     "items@2000": 0.9,
+     "complete@2000": 0.8
+    }
+   },
+   "reviewed_passed_by_group": {
+    "법령": {
+     "questions": 13,
+     "evidence_items": 15,
+     "items@2000": 0.9333,
+     "complete@2000": 0.9231
+    },
+    "고시": {
+     "questions": 7,
+     "evidence_items": 8,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "표준약관": {
+     "questions": 4,
+     "evidence_items": 5,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "넘나듦": {
+     "questions": 1,
+     "evidence_items": 2,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    }
+   }
+  },
+  "(a)+구간 정보": {
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "evidence_items": 103,
+     "items@1000": 0.9223,
+     "complete@1000": 0.9223,
+     "items@2000": 0.9417,
+     "complete@2000": 0.9417,
+     "items@4000": 0.9709,
+     "complete@4000": 0.9709,
+     "recall@5": 0.932,
+     "recall@10": 0.9417,
+     "ndcg@10": 0.8628
+    },
+    "multi": {
+     "questions": 53,
+     "evidence_items": 113,
+     "items@1000": 0.7345,
+     "complete@1000": 0.566,
+     "items@2000": 0.7876,
+     "complete@2000": 0.6415,
+     "items@4000": 0.8584,
+     "complete@4000": 0.7547,
+     "recall@5": 0.7788,
+     "recall@10": 0.8142,
+     "ndcg@10": 0.8295
+    },
+    "all": {
+     "questions": 156,
+     "evidence_items": 216,
+     "items@1000": 0.8241,
+     "complete@1000": 0.8013,
+     "items@2000": 0.8611,
+     "complete@2000": 0.8397,
+     "items@4000": 0.912,
+     "complete@4000": 0.8974,
+     "recall@5": 0.8519,
+     "recall@10": 0.875,
+     "ndcg@10": 0.8515
+    }
+   },
+   "latency_ms": {
+    "retrieval_p50": 55.458800023188815,
+    "retrieval_p95": 65.12430001748726,
+    "rerank_p50": 184.87520000780933,
+    "rerank_p95": 270.52580000599846,
+    "rerank_total_p50": 184.92080000578426,
+    "rerank_total_p95": 270.5786000005901,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 174
+   },
+   "rerank": {
+    "cost_usd": 0.02676,
+    "requests": 174,
+    "errors": 0
+   },
+   "by_group": {
+    "고시": {
+     "questions": 43,
+     "evidence_items": 54,
+     "items@1000": 0.8704,
+     "complete@1000": 0.8837,
+     "items@2000": 0.8889,
+     "complete@2000": 0.8837,
+     "items@4000": 0.9444,
+     "complete@4000": 0.9535,
+     "recall@5": 0.8889,
+     "recall@10": 0.9074,
+     "ndcg@10": 0.8347,
+     "latency_ms": {
+      "retrieval_p50": 55.54549998487346,
+      "retrieval_p95": 61.862100003054366,
+      "rerank_p50": 182.59219999890774,
+      "rerank_p95": 314.150599995628,
+      "rerank_total_p50": 182.6461000018753,
+      "rerank_total_p95": 314.2032999894582,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 50
+     }
+    },
+    "넘나듦": {
+     "questions": 18,
+     "evidence_items": 41,
+     "items@1000": 0.7805,
+     "complete@1000": 0.5,
+     "items@2000": 0.8293,
+     "complete@2000": 0.6111,
+     "items@4000": 0.878,
+     "complete@4000": 0.7222,
+     "recall@5": 0.8049,
+     "recall@10": 0.878,
+     "ndcg@10": 0.9001,
+     "latency_ms": {
+      "retrieval_p50": 59.67029999010265,
+      "retrieval_p95": 71.47999998414889,
+      "rerank_p50": 186.4732000103686,
+      "rerank_p95": 262.3408999934327,
+      "rerank_total_p50": 186.5205999929458,
+      "rerank_total_p95": 262.3866999929305,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 18
+     }
+    },
+    "법령": {
+     "questions": 65,
+     "evidence_items": 84,
+     "items@1000": 0.8095,
+     "complete@1000": 0.8154,
+     "items@2000": 0.8452,
+     "complete@2000": 0.8615,
+     "items@4000": 0.9048,
+     "complete@4000": 0.9077,
+     "recall@5": 0.8333,
+     "recall@10": 0.8452,
+     "ndcg@10": 0.8584,
+     "latency_ms": {
+      "retrieval_p50": 55.55449999519624,
+      "retrieval_p95": 64.03880001744255,
+      "rerank_p50": 190.15199999557808,
+      "rerank_p95": 262.26700001279823,
+      "rerank_total_p50": 190.20340000861324,
+      "rerank_total_p95": 262.3118000046816,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 73
+     }
+    },
+    "표준약관": {
+     "questions": 30,
+     "evidence_items": 37,
+     "items@1000": 0.8378,
+     "complete@1000": 0.8333,
+     "items@2000": 0.8919,
+     "complete@2000": 0.8667,
+     "items@4000": 0.9189,
+     "complete@4000": 0.9,
+     "recall@5": 0.8919,
+     "recall@10": 0.8919,
+     "ndcg@10": 0.8313,
+     "latency_ms": {
+      "retrieval_p50": 54.243899998255074,
+      "retrieval_p95": 61.59170001046732,
+      "rerank_p50": 180.82129998947494,
+      "rerank_p95": 225.02410001470707,
+      "rerank_total_p50": 180.8722999994643,
+      "rerank_total_p95": 225.08010000456125,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 33
+     }
+    }
+   },
+   "reviewed_passed": {
+    "single": {
+     "questions": 20,
+     "evidence_items": 20,
+     "items@2000": 0.95,
+     "complete@2000": 0.95
+    },
+    "multi": {
+     "questions": 5,
+     "evidence_items": 10,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    }
+   },
+   "reviewed_passed_by_group": {
+    "법령": {
+     "questions": 13,
+     "evidence_items": 15,
+     "items@2000": 0.9333,
+     "complete@2000": 0.9231
+    },
+    "고시": {
+     "questions": 7,
+     "evidence_items": 8,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "표준약관": {
+     "questions": 4,
+     "evidence_items": 5,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "넘나듦": {
+     "questions": 1,
+     "evidence_items": 2,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    }
+   }
+  },
+  "구간 정보 없는 하이브리드": {
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "evidence_items": 103,
+     "items@1000": 0.8738,
+     "complete@1000": 0.8738,
+     "items@2000": 0.9126,
+     "complete@2000": 0.9126,
+     "items@4000": 0.9223,
+     "complete@4000": 0.9223,
+     "recall@5": 0.9223,
+     "recall@10": 0.9612,
+     "ndcg@10": 0.9129
+    },
+    "multi": {
+     "questions": 53,
+     "evidence_items": 113,
+     "items@1000": 0.5575,
+     "complete@1000": 0.3019,
+     "items@2000": 0.7522,
+     "complete@2000": 0.6038,
+     "items@4000": 0.823,
+     "complete@4000": 0.6792,
+     "recall@5": 0.8053,
+     "recall@10": 0.8496,
+     "ndcg@10": 0.876
+    },
+    "all": {
+     "questions": 156,
+     "evidence_items": 216,
+     "items@1000": 0.7083,
+     "complete@1000": 0.6795,
+     "items@2000": 0.8287,
+     "complete@2000": 0.8077,
+     "items@4000": 0.8704,
+     "complete@4000": 0.8397,
+     "recall@5": 0.8611,
+     "recall@10": 0.9028,
+     "ndcg@10": 0.9004
+    }
+   },
+   "latency_ms": {
+    "retrieval_p50": 49.98879999038763,
+    "retrieval_p95": 71.86640001600608,
+    "rerank_p50": 199.08619998022914,
+    "rerank_p95": 250.00339999678545,
+    "rerank_total_p50": 199.13090000045486,
+    "rerank_total_p95": 250.04929999704473,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 174
+   },
+   "rerank": {
+    "cost_usd": 0.05849,
+    "requests": 174,
+    "errors": 0
+   },
+   "by_group": {
+    "고시": {
+     "questions": 43,
+     "evidence_items": 54,
+     "items@1000": 0.7778,
+     "complete@1000": 0.7674,
+     "items@2000": 0.8704,
+     "complete@2000": 0.8837,
+     "items@4000": 0.9074,
+     "complete@4000": 0.8837,
+     "recall@5": 0.9074,
+     "recall@10": 0.9444,
+     "ndcg@10": 0.9306,
+     "latency_ms": {
+      "retrieval_p50": 47.87779998150654,
+      "retrieval_p95": 58.43029997777194,
+      "rerank_p50": 203.99569999426603,
+      "rerank_p95": 251.5049000212457,
+      "rerank_total_p50": 204.0438000112772,
+      "rerank_total_p95": 251.548800006276,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 50
+     }
+    },
+    "넘나듦": {
+     "questions": 18,
+     "evidence_items": 41,
+     "items@1000": 0.561,
+     "complete@1000": 0.3333,
+     "items@2000": 0.7317,
+     "complete@2000": 0.5,
+     "items@4000": 0.7805,
+     "complete@4000": 0.5556,
+     "recall@5": 0.7317,
+     "recall@10": 0.8049,
+     "ndcg@10": 0.8839,
+     "latency_ms": {
+      "retrieval_p50": 53.66829998092726,
+      "retrieval_p95": 68.22879999526776,
+      "rerank_p50": 196.13050000043586,
+      "rerank_p95": 278.58959999866784,
+      "rerank_total_p50": 196.17660000221804,
+      "rerank_total_p95": 278.63370001432486,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 18
+     }
+    },
+    "법령": {
+     "questions": 65,
+     "evidence_items": 84,
+     "items@1000": 0.7738,
+     "complete@1000": 0.7692,
+     "items@2000": 0.8571,
+     "complete@2000": 0.8462,
+     "items@4000": 0.881,
+     "complete@4000": 0.8769,
+     "recall@5": 0.881,
+     "recall@10": 0.9167,
+     "ndcg@10": 0.9197,
+     "latency_ms": {
+      "retrieval_p50": 51.01429999922402,
+      "retrieval_p95": 71.86640001600608,
+      "rerank_p50": 198.90180000220425,
+      "rerank_p95": 238.96300001069903,
+      "rerank_total_p50": 198.95399999222718,
+      "rerank_total_p95": 239.00909998337738,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 73
+     }
+    },
+    "표준약관": {
+     "questions": 30,
+     "evidence_items": 37,
+     "items@1000": 0.6216,
+     "complete@1000": 0.5667,
+     "items@2000": 0.8108,
+     "complete@2000": 0.8,
+     "items@4000": 0.8919,
+     "complete@4000": 0.8667,
+     "recall@5": 0.8919,
+     "recall@10": 0.9189,
+     "ndcg@10": 0.8249,
+     "latency_ms": {
+      "retrieval_p50": 48.92089997883886,
+      "retrieval_p95": 74.60190000711009,
+      "rerank_p50": 200.5498000071384,
+      "rerank_p95": 229.7176000138279,
+      "rerank_total_p50": 200.60240000020713,
+      "rerank_total_p95": 229.76960000232793,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 33
+     }
+    }
+   },
+   "reviewed_passed": {
+    "single": {
+     "questions": 20,
+     "evidence_items": 20,
+     "items@2000": 0.95,
+     "complete@2000": 0.95
+    },
+    "multi": {
+     "questions": 5,
+     "evidence_items": 10,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    }
+   },
+   "reviewed_passed_by_group": {
+    "법령": {
+     "questions": 13,
+     "evidence_items": 15,
+     "items@2000": 0.9333,
+     "complete@2000": 0.9231
+    },
+    "고시": {
+     "questions": 7,
+     "evidence_items": 8,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "표준약관": {
+     "questions": 4,
+     "evidence_items": 5,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "넘나듦": {
+     "questions": 1,
+     "evidence_items": 2,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    }
+   }
+  },
+  "고객 표현 뺀 구간 정보": {
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "evidence_items": 103,
+     "items@1000": 0.8932,
+     "complete@1000": 0.8932,
+     "items@2000": 0.9417,
+     "complete@2000": 0.9417,
+     "items@4000": 0.9515,
+     "complete@4000": 0.9515,
+     "recall@5": 0.9515,
+     "recall@10": 0.9709,
+     "ndcg@10": 0.9325
+    },
+    "multi": {
+     "questions": 53,
+     "evidence_items": 113,
+     "items@1000": 0.5664,
+     "complete@1000": 0.3208,
+     "items@2000": 0.7257,
+     "complete@2000": 0.566,
+     "items@4000": 0.823,
+     "complete@4000": 0.6981,
+     "recall@5": 0.8142,
+     "recall@10": 0.8673,
+     "ndcg@10": 0.875
+    },
+    "all": {
+     "questions": 156,
+     "evidence_items": 216,
+     "items@1000": 0.7222,
+     "complete@1000": 0.6987,
+     "items@2000": 0.8287,
+     "complete@2000": 0.8141,
+     "items@4000": 0.8843,
+     "complete@4000": 0.8654,
+     "recall@5": 0.8796,
+     "recall@10": 0.9167,
+     "ndcg@10": 0.9129
+    }
+   },
+   "latency_ms": {
+    "retrieval_p50": 51.749700010987,
+    "retrieval_p95": 68.25470001786016,
+    "rerank_p50": 196.34249998489395,
+    "rerank_p95": 233.49430001690052,
+    "rerank_total_p50": 196.38609999674372,
+    "rerank_total_p95": 233.5388000064995,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 174
+   },
+   "rerank": {
+    "cost_usd": 0.05828,
+    "requests": 174,
+    "errors": 0
+   },
+   "by_group": {
+    "고시": {
+     "questions": 43,
+     "evidence_items": 54,
+     "items@1000": 0.8148,
+     "complete@1000": 0.814,
+     "items@2000": 0.8889,
+     "complete@2000": 0.907,
+     "items@4000": 0.9259,
+     "complete@4000": 0.9302,
+     "recall@5": 0.9259,
+     "recall@10": 0.963,
+     "ndcg@10": 0.9417,
+     "latency_ms": {
+      "retrieval_p50": 50.78930000308901,
+      "retrieval_p95": 67.7743999985978,
+      "rerank_p50": 196.34249998489395,
+      "rerank_p95": 243.95730000105686,
+      "rerank_total_p50": 196.38609999674372,
+      "rerank_total_p95": 244.00299999979325,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 50
+     }
+    },
+    "넘나듦": {
+     "questions": 18,
+     "evidence_items": 41,
+     "items@1000": 0.5366,
+     "complete@1000": 0.3333,
+     "items@2000": 0.7073,
+     "complete@2000": 0.5,
+     "items@4000": 0.7805,
+     "complete@4000": 0.5556,
+     "recall@5": 0.7561,
+     "recall@10": 0.8293,
+     "ndcg@10": 0.8669,
+     "latency_ms": {
+      "retrieval_p50": 57.02420001034625,
+      "retrieval_p95": 69.35259999590926,
+      "rerank_p50": 200.6075000099372,
+      "rerank_p95": 236.63929998292588,
+      "rerank_total_p50": 200.6544999894686,
+      "rerank_total_p95": 236.68860000907443,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 18
+     }
+    },
+    "법령": {
+     "questions": 65,
+     "evidence_items": 84,
+     "items@1000": 0.8095,
+     "complete@1000": 0.8,
+     "items@2000": 0.8571,
+     "complete@2000": 0.8462,
+     "items@4000": 0.9167,
+     "complete@4000": 0.9077,
+     "recall@5": 0.9167,
+     "recall@10": 0.9286,
+     "ndcg@10": 0.9529,
+     "latency_ms": {
+      "retrieval_p50": 53.556400001980364,
+      "retrieval_p95": 77.01599999563769,
+      "rerank_p50": 195.78650000039488,
+      "rerank_p95": 233.15899999579415,
+      "rerank_total_p50": 195.8388000202831,
+      "rerank_total_p95": 233.20220000459813,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 73
+     }
+    },
+    "표준약관": {
+     "questions": 30,
+     "evidence_items": 37,
+     "items@1000": 0.5946,
+     "complete@1000": 0.5333,
+     "items@2000": 0.8108,
+     "complete@2000": 0.8,
+     "items@4000": 0.8649,
+     "complete@4000": 0.8667,
+     "recall@5": 0.8649,
+     "recall@10": 0.9189,
+     "ndcg@10": 0.8126,
+     "latency_ms": {
+      "retrieval_p50": 51.45440000342205,
+      "retrieval_p95": 59.94380000629462,
+      "rerank_p50": 194.37549999565817,
+      "rerank_p95": 221.30539998761378,
+      "rerank_total_p50": 194.42470002104528,
+      "rerank_total_p95": 221.3501000078395,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 33
+     }
+    }
+   },
+   "reviewed_passed": {
+    "single": {
+     "questions": 20,
+     "evidence_items": 20,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "multi": {
+     "questions": 5,
+     "evidence_items": 10,
+     "items@2000": 0.9,
+     "complete@2000": 0.8
+    }
+   },
+   "reviewed_passed_by_group": {
+    "법령": {
+     "questions": 13,
+     "evidence_items": 15,
+     "items@2000": 0.9333,
+     "complete@2000": 0.9231
+    },
+    "고시": {
+     "questions": 7,
+     "evidence_items": 8,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "표준약관": {
+     "questions": 4,
+     "evidence_items": 5,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    },
+    "넘나듦": {
+     "questions": 1,
+     "evidence_items": 2,
+     "items@2000": 1.0,
+     "complete@2000": 1.0
+    }
+   }
+  }
+ },
+ "check": {
+  "R0": {
+   "by_type": {
+    "single": {
+     "questions": 30,
+     "evidence_items": 30,
+     "items@1000": 0.8333,
+     "complete@1000": 0.8333,
+     "items@2000": 0.9333,
+     "complete@2000": 0.9333,
+     "items@4000": 0.9667,
+     "complete@4000": 0.9667,
+     "recall@5": 0.8667,
+     "recall@10": 0.9333,
+     "ndcg@10": 0.7383
+    },
+    "multi": {
+     "questions": 18,
+     "evidence_items": 36,
+     "items@1000": 0.6389,
+     "complete@1000": 0.5556,
+     "items@2000": 0.7222,
+     "complete@2000": 0.6667,
+     "items@4000": 0.7778,
+     "complete@4000": 0.7222,
+     "recall@5": 0.7222,
+     "recall@10": 0.8056,
+     "ndcg@10": 0.6773
+    },
+    "all": {
+     "questions": 48,
+     "evidence_items": 66,
+     "items@1000": 0.7273,
+     "complete@1000": 0.7292,
+     "items@2000": 0.8182,
+     "complete@2000": 0.8333,
+     "items@4000": 0.8636,
+     "complete@4000": 0.875,
+     "recall@5": 0.7879,
+     "recall@10": 0.8636,
+     "ndcg@10": 0.7154
+    }
+   },
+   "by_group": {
+    "고시": {
+     "questions": 14,
+     "evidence_items": 19,
+     "items@1000": 0.5789,
+     "complete@1000": 0.6429,
+     "items@2000": 0.6842,
+     "complete@2000": 0.7857,
+     "items@4000": 0.6842,
+     "complete@4000": 0.7857,
+     "recall@5": 0.6316,
+     "recall@10": 0.7368,
+     "ndcg@10": 0.6533,
+     "latency_ms": {
+      "retrieval_p50": 3.4334999800194055,
+      "retrieval_p95": 4.51889997930266,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "법령": {
+     "questions": 20,
+     "evidence_items": 28,
+     "items@1000": 0.8929,
+     "complete@1000": 0.85,
+     "items@2000": 0.8929,
+     "complete@2000": 0.85,
+     "items@4000": 0.9286,
+     "complete@4000": 0.9,
+     "recall@5": 0.8929,
+     "recall@10": 0.9286,
+     "ndcg@10": 0.8152,
+     "latency_ms": {
+      "retrieval_p50": 3.326700010802597,
+      "retrieval_p95": 4.2215000139549375,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "표준약관": {
+     "questions": 14,
+     "evidence_items": 19,
+     "items@1000": 0.6316,
+     "complete@1000": 0.6429,
+     "items@2000": 0.8421,
+     "complete@2000": 0.8571,
+     "items@4000": 0.9474,
+     "complete@4000": 0.9286,
+     "recall@5": 0.7895,
+     "recall@10": 0.8947,
+     "ndcg@10": 0.635,
+     "latency_ms": {
+      "retrieval_p50": 2.834200015058741,
+      "retrieval_p95": 4.583500005537644,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    }
+   },
+   "rerank": null,
+   "latency_ms": {
+    "retrieval_p50": 3.1300000264309347,
+    "retrieval_p95": 4.720099997939542,
+    "rerank_p50": null,
+    "rerank_p95": null,
+    "rerank_total_p50": null,
+    "rerank_total_p95": null,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 0
+   },
+   "status": "보고"
+  },
+  "R0-원형": {
+   "by_type": {},
+   "by_group": {},
+   "rerank": null,
+   "latency_ms": {},
+   "status": "판정 불가(입력 없음)"
+  },
+  "R1": {
+   "by_type": {
+    "single": {
+     "questions": 30,
+     "evidence_items": 30,
+     "items@1000": 0.8667,
+     "complete@1000": 0.8667,
+     "items@2000": 0.8667,
+     "complete@2000": 0.8667,
+     "items@4000": 0.9667,
+     "complete@4000": 0.9667,
+     "recall@5": 0.8667,
+     "recall@10": 0.9,
+     "ndcg@10": 0.7172
+    },
+    "multi": {
+     "questions": 18,
+     "evidence_items": 36,
+     "items@1000": 0.5833,
+     "complete@1000": 0.4444,
+     "items@2000": 0.7222,
+     "complete@2000": 0.6667,
+     "items@4000": 0.8056,
+     "complete@4000": 0.7222,
+     "recall@5": 0.6389,
+     "recall@10": 0.7778,
+     "ndcg@10": 0.6639
+    },
+    "all": {
+     "questions": 48,
+     "evidence_items": 66,
+     "items@1000": 0.7121,
+     "complete@1000": 0.7083,
+     "items@2000": 0.7879,
+     "complete@2000": 0.7917,
+     "items@4000": 0.8788,
+     "complete@4000": 0.875,
+     "recall@5": 0.7424,
+     "recall@10": 0.8333,
+     "ndcg@10": 0.6972
+    }
+   },
+   "by_group": {
+    "고시": {
+     "questions": 14,
+     "evidence_items": 19,
+     "items@1000": 0.6842,
+     "complete@1000": 0.7143,
+     "items@2000": 0.7895,
+     "complete@2000": 0.7857,
+     "items@4000": 0.7895,
+     "complete@4000": 0.7857,
+     "recall@5": 0.6842,
+     "recall@10": 0.7895,
+     "ndcg@10": 0.6996,
+     "latency_ms": {
+      "retrieval_p50": 3.631600004155189,
+      "retrieval_p95": 4.5498999825213104,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "법령": {
+     "questions": 20,
+     "evidence_items": 28,
+     "items@1000": 0.8929,
+     "complete@1000": 0.85,
+     "items@2000": 1.0,
+     "complete@2000": 1.0,
+     "items@4000": 1.0,
+     "complete@4000": 1.0,
+     "recall@5": 0.9643,
+     "recall@10": 1.0,
+     "ndcg@10": 0.8319,
+     "latency_ms": {
+      "retrieval_p50": 3.5512000031303614,
+      "retrieval_p95": 4.899899999145418,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    },
+    "표준약관": {
+     "questions": 14,
+     "evidence_items": 19,
+     "items@1000": 0.4737,
+     "complete@1000": 0.5,
+     "items@2000": 0.4737,
+     "complete@2000": 0.5,
+     "items@4000": 0.7895,
+     "complete@4000": 0.7857,
+     "recall@5": 0.4737,
+     "recall@10": 0.6316,
+     "ndcg@10": 0.5025,
+     "latency_ms": {
+      "retrieval_p50": 2.629099995829165,
+      "retrieval_p95": 3.9320999931078404,
+      "rerank_p50": null,
+      "rerank_p95": null,
+      "rerank_total_p50": null,
+      "rerank_total_p95": null,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 0
+     }
+    }
+   },
+   "rerank": null,
+   "latency_ms": {
+    "retrieval_p50": 3.1478999881073833,
+    "retrieval_p95": 4.899899999145418,
+    "rerank_p50": null,
+    "rerank_p95": null,
+    "rerank_total_p50": null,
+    "rerank_total_p95": null,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 0
+   },
+   "status": "보고"
+  },
+  "R2": {
+   "by_type": {},
+   "by_group": {},
+   "rerank": null,
+   "latency_ms": {},
+   "status": "판정 불가(입력 없음)"
+  },
+  "R3": {
+   "by_type": {},
+   "by_group": {},
+   "rerank": null,
+   "latency_ms": {},
+   "status": "판정 불가(입력 없음)"
+  },
+  "R4": {
+   "by_type": {
+    "single": {
+     "questions": 30,
+     "evidence_items": 30,
+     "items@1000": 0.9667,
+     "complete@1000": 0.9667,
+     "items@2000": 1.0,
+     "complete@2000": 1.0,
+     "items@4000": 1.0,
+     "complete@4000": 1.0,
+     "recall@5": 1.0,
+     "recall@10": 1.0,
+     "ndcg@10": 0.9877
+    },
+    "multi": {
+     "questions": 18,
+     "evidence_items": 36,
+     "items@1000": 0.8056,
+     "complete@1000": 0.6667,
+     "items@2000": 0.9167,
+     "complete@2000": 0.8889,
+     "items@4000": 0.9722,
+     "complete@4000": 0.9444,
+     "recall@5": 0.9722,
+     "recall@10": 0.9722,
+     "ndcg@10": 0.9595
+    },
+    "all": {
+     "questions": 48,
+     "evidence_items": 66,
+     "items@1000": 0.8788,
+     "complete@1000": 0.8542,
+     "items@2000": 0.9545,
+     "complete@2000": 0.9583,
+     "items@4000": 0.9848,
+     "complete@4000": 0.9792,
+     "recall@5": 0.9848,
+     "recall@10": 0.9848,
+     "ndcg@10": 0.9771
+    }
+   },
+   "by_group": {
+    "고시": {
+     "questions": 14,
+     "evidence_items": 19,
+     "items@1000": 0.7895,
+     "complete@1000": 0.7857,
+     "items@2000": 0.8421,
+     "complete@2000": 0.8571,
+     "items@4000": 0.9474,
+     "complete@4000": 0.9286,
+     "recall@5": 0.9474,
+     "recall@10": 0.9474,
+     "ndcg@10": 0.9536,
+     "latency_ms": {
+      "retrieval_p50": 51.148700003977865,
+      "retrieval_p95": 57.88750000647269,
+      "rerank_p50": 193.02559999050573,
+      "rerank_p95": 211.12790002371185,
+      "rerank_total_p50": 193.0745999852661,
+      "rerank_total_p95": 211.2351999967359,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 14
+     }
+    },
+    "법령": {
+     "questions": 20,
+     "evidence_items": 28,
+     "items@1000": 0.9643,
+     "complete@1000": 0.95,
+     "items@2000": 1.0,
+     "complete@2000": 1.0,
+     "items@4000": 1.0,
+     "complete@4000": 1.0,
+     "recall@5": 1.0,
+     "recall@10": 1.0,
+     "ndcg@10": 0.996,
+     "latency_ms": {
+      "retrieval_p50": 48.73849998693913,
+      "retrieval_p95": 53.92920001759194,
+      "rerank_p50": 205.27700000093319,
+      "rerank_p95": 239.08030000166036,
+      "rerank_total_p50": 205.32569999340922,
+      "rerank_total_p95": 239.1349999816157,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 20
+     }
+    },
+    "표준약관": {
+     "questions": 14,
+     "evidence_items": 19,
+     "items@1000": 0.8421,
+     "complete@1000": 0.7857,
+     "items@2000": 1.0,
+     "complete@2000": 1.0,
+     "items@4000": 1.0,
+     "complete@4000": 1.0,
+     "recall@5": 1.0,
+     "recall@10": 1.0,
+     "ndcg@10": 0.9736,
+     "latency_ms": {
+      "retrieval_p50": 47.39479999989271,
+      "retrieval_p95": 54.82109999866225,
+      "rerank_p50": 202.5881000154186,
+      "rerank_p95": 253.63219997962005,
+      "rerank_total_p50": 202.63720001094043,
+      "rerank_total_p95": 253.68289998732507,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 14
+     }
+    }
+   },
+   "rerank": {
+    "cost_usd": 0.01585,
+    "requests": 48,
+    "errors": 0
+   },
+   "latency_ms": {
+    "retrieval_p50": 49.19789999257773,
+    "retrieval_p95": 57.044000015594065,
+    "rerank_p50": 202.5881000154186,
+    "rerank_p95": 253.63219997962005,
+    "rerank_total_p50": 202.63720001094043,
+    "rerank_total_p95": 253.68289998732507,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 48
+   },
+   "status": "보고"
+  },
+  "R4c-Jev": {
+   "by_type": {
+    "single": {
+     "questions": 30,
+     "evidence_items": 30,
+     "items@1000": 0.9333,
+     "complete@1000": 0.9333,
+     "items@2000": 1.0,
+     "complete@2000": 1.0,
+     "items@4000": 1.0,
+     "complete@4000": 1.0,
+     "recall@5": 1.0,
+     "recall@10": 1.0,
+     "ndcg@10": 0.9631
+    },
+    "multi": {
+     "questions": 18,
+     "evidence_items": 36,
+     "items@1000": 0.8056,
+     "complete@1000": 0.6111,
+     "items@2000": 0.8889,
+     "complete@2000": 0.7778,
+     "items@4000": 0.9444,
+     "complete@4000": 0.8889,
+     "recall@5": 0.9444,
+     "recall@10": 0.9722,
+     "ndcg@10": 0.942
+    },
+    "all": {
+     "questions": 48,
+     "evidence_items": 66,
+     "items@1000": 0.8636,
+     "complete@1000": 0.8125,
+     "items@2000": 0.9394,
+     "complete@2000": 0.9167,
+     "items@4000": 0.9697,
+     "complete@4000": 0.9583,
+     "recall@5": 0.9697,
+     "recall@10": 0.9848,
+     "ndcg@10": 0.9552
+    }
+   },
+   "by_group": {
+    "고시": {
+     "questions": 14,
+     "evidence_items": 19,
+     "items@1000": 0.7895,
+     "complete@1000": 0.7143,
+     "items@2000": 0.8421,
+     "complete@2000": 0.7857,
+     "items@4000": 0.9474,
+     "complete@4000": 0.9286,
+     "recall@5": 0.9474,
+     "recall@10": 0.9474,
+     "ndcg@10": 0.9136,
+     "latency_ms": {
+      "retrieval_p50": 49.629900022409856,
+      "retrieval_p95": 55.78290001722053,
+      "rerank_p50": 192.21129998913966,
+      "rerank_p95": 212.99150001141243,
+      "rerank_total_p50": 192.25570000708103,
+      "rerank_total_p95": 213.03499999339692,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 14
+     }
+    },
+    "법령": {
+     "questions": 20,
+     "evidence_items": 28,
+     "items@1000": 0.9286,
+     "complete@1000": 0.9,
+     "items@2000": 0.9643,
+     "complete@2000": 0.95,
+     "items@4000": 0.9643,
+     "complete@4000": 0.95,
+     "recall@5": 0.9643,
+     "recall@10": 1.0,
+     "ndcg@10": 0.9714,
+     "latency_ms": {
+      "retrieval_p50": 50.63490002066828,
+      "retrieval_p95": 63.588099990738556,
+      "rerank_p50": 195.3771999978926,
+      "rerank_p95": 238.37920001824386,
+      "rerank_total_p50": 195.42080000974238,
+      "rerank_total_p95": 238.43669999041595,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 20
+     }
+    },
+    "표준약관": {
+     "questions": 14,
+     "evidence_items": 19,
+     "items@1000": 0.8421,
+     "complete@1000": 0.7857,
+     "items@2000": 1.0,
+     "complete@2000": 1.0,
+     "items@4000": 1.0,
+     "complete@4000": 1.0,
+     "recall@5": 1.0,
+     "recall@10": 1.0,
+     "ndcg@10": 0.9736,
+     "latency_ms": {
+      "retrieval_p50": 48.391400021500885,
+      "retrieval_p95": 53.670300025260076,
+      "rerank_p50": 197.45119998697191,
+      "rerank_p95": 210.2934999857098,
+      "rerank_total_p50": 197.4952999735251,
+      "rerank_total_p95": 210.33979998901486,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 14
+     }
+    }
+   },
+   "rerank": {
+    "cost_usd": 0.01652,
+    "requests": 48,
+    "errors": 0
+   },
+   "latency_ms": {
+    "retrieval_p50": 49.629900022409856,
+    "retrieval_p95": 59.28919999860227,
+    "rerank_p50": 195.3771999978926,
+    "rerank_p95": 238.37920001824386,
+    "rerank_total_p50": 195.42080000974238,
+    "rerank_total_p95": 238.43669999041595,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 48
+   },
+   "status": "보고"
+  },
+  "R4c-Qwen": {
+   "by_type": {
+    "single": {
+     "questions": 30,
+     "evidence_items": 30,
+     "items@1000": 0.9333,
+     "complete@1000": 0.9333,
+     "items@2000": 1.0,
+     "complete@2000": 1.0,
+     "items@4000": 1.0,
+     "complete@4000": 1.0,
+     "recall@5": 0.9,
+     "recall@10": 0.9667,
+     "ndcg@10": 0.8662
+    },
+    "multi": {
+     "questions": 18,
+     "evidence_items": 36,
+     "items@1000": 0.6667,
+     "complete@1000": 0.5556,
+     "items@2000": 0.75,
+     "complete@2000": 0.5556,
+     "items@4000": 0.8056,
+     "complete@4000": 0.6111,
+     "recall@5": 0.6944,
+     "recall@10": 0.75,
+     "ndcg@10": 0.7761
+    },
+    "all": {
+     "questions": 48,
+     "evidence_items": 66,
+     "items@1000": 0.7879,
+     "complete@1000": 0.7917,
+     "items@2000": 0.8636,
+     "complete@2000": 0.8333,
+     "items@4000": 0.8939,
+     "complete@4000": 0.8542,
+     "recall@5": 0.7879,
+     "recall@10": 0.8485,
+     "ndcg@10": 0.8325
+    }
+   },
+   "by_group": {
+    "고시": {
+     "questions": 14,
+     "evidence_items": 19,
+     "items@1000": 0.6316,
+     "complete@1000": 0.7143,
+     "items@2000": 0.7368,
+     "complete@2000": 0.7143,
+     "items@4000": 0.7895,
+     "complete@4000": 0.7143,
+     "recall@5": 0.6316,
+     "recall@10": 0.7368,
+     "ndcg@10": 0.7028,
+     "latency_ms": {
+      "retrieval_p50": 58.02980001317337,
+      "retrieval_p95": 64.79460000991821,
+      "rerank_p50": 182.6973999850452,
+      "rerank_p95": 214.05370000866242,
+      "rerank_total_p50": 182.74380001821555,
+      "rerank_total_p95": 214.10079998895526,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 14
+     }
+    },
+    "법령": {
+     "questions": 20,
+     "evidence_items": 28,
+     "items@1000": 0.9286,
+     "complete@1000": 0.9,
+     "items@2000": 0.9643,
+     "complete@2000": 0.95,
+     "items@4000": 1.0,
+     "complete@4000": 1.0,
+     "recall@5": 0.9286,
+     "recall@10": 0.9286,
+     "ndcg@10": 0.9,
+     "latency_ms": {
+      "retrieval_p50": 59.586199990008026,
+      "retrieval_p95": 73.82970000617206,
+      "rerank_p50": 195.09090000065044,
+      "rerank_p95": 229.0179999836255,
+      "rerank_total_p50": 195.13409998035058,
+      "rerank_total_p95": 229.06959999818355,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 20
+     }
+    },
+    "표준약관": {
+     "questions": 14,
+     "evidence_items": 19,
+     "items@1000": 0.7368,
+     "complete@1000": 0.7143,
+     "items@2000": 0.8421,
+     "complete@2000": 0.7857,
+     "items@4000": 0.8421,
+     "complete@4000": 0.7857,
+     "recall@5": 0.7368,
+     "recall@10": 0.8421,
+     "ndcg@10": 0.8656,
+     "latency_ms": {
+      "retrieval_p50": 55.975799972657114,
+      "retrieval_p95": 60.87730001308955,
+      "rerank_p50": 185.87799998931587,
+      "rerank_p95": 204.673800006276,
+      "rerank_total_p50": 185.9260999772232,
+      "rerank_total_p95": 204.72229999722913,
+      "rerank_failed_questions": 0,
+      "rerank_successful_questions": 14
+     }
+    }
+   },
+   "rerank": {
+    "cost_usd": 0.00695,
+    "requests": 48,
+    "errors": 0
+   },
+   "latency_ms": {
+    "retrieval_p50": 57.968299981439486,
+    "retrieval_p95": 70.86389997857623,
+    "rerank_p50": 186.04339999728836,
+    "rerank_p95": 229.0179999836255,
+    "rerank_total_p50": 186.09679999644868,
+    "rerank_total_p95": 229.06959999818355,
+    "rerank_failed_questions": 0,
+    "rerank_successful_questions": 48
+   },
+   "status": "보고"
+  },
+  "R4 원래 규칙": {
+   "by_type": {},
+   "by_group": {},
+   "rerank": null,
+   "latency_ms": {},
+   "status": "판정 불가(입력 없음)"
+  },
+  "R4 KURE-v1": {
+   "by_type": {},
+   "by_group": {},
+   "rerank": null,
+   "latency_ms": {},
+   "status": "판정 불가(입력 없음)"
+  },
+  "R4 KURE-v2": {
+   "by_type": {},
+   "by_group": {},
+   "rerank": null,
+   "latency_ms": {},
+   "status": "판정 불가(입력 없음)"
+  },
+  "R4 gemini RRF": {
+   "by_type": {},
+   "by_group": {},
+   "rerank": null,
+   "latency_ms": {},
+   "status": "판정 불가(입력 없음)"
+  },
+  "(a)+구간 정보": {
+   "by_type": {},
+   "by_group": {},
+   "rerank": null,
+   "latency_ms": {},
+   "status": "판정 불가(입력 없음)"
+  },
+  "구간 정보 없는 하이브리드": {
+   "by_type": {},
+   "by_group": {},
+   "rerank": null,
+   "latency_ms": {},
+   "status": "판정 불가(입력 없음)"
+  },
+  "고객 표현 뺀 구간 정보": {
+   "by_type": {},
+   "by_group": {},
+   "rerank": null,
+   "latency_ms": {},
+   "status": "판정 불가(입력 없음)"
+  }
+ },
+ "answers": {
+  "R0": {
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "claims": 133,
+     "unsupported_claims": 0,
+     "unsupported_claim_rate": 0.0,
+     "answers_with_unsupported": 0.0,
+     "accuracy": 0.8058252427184466,
+     "hold_rate": 0.11650485436893204,
+     "none_assertion_rate": null
+    },
+    "multi": {
+     "questions": 0,
+     "claims": 0,
+     "unsupported_claims": 0,
+     "unsupported_claim_rate": null,
+     "answers_with_unsupported": null,
+     "accuracy": null,
+     "hold_rate": null,
+     "none_assertion_rate": null
+    },
+    "none": {
+     "questions": 18,
+     "claims": 2,
+     "unsupported_claims": 0,
+     "unsupported_claim_rate": 0.0,
+     "answers_with_unsupported": 0.0,
+     "accuracy": null,
+     "hold_rate": null,
+     "none_assertion_rate": 0.1111111111111111
+    }
+   },
+   "judgment": {
+    "questions": 121,
+    "claims": 135,
+    "unsupported_claims": 0,
+    "unsupported_claim_rate": 0.0,
+    "answers_with_unsupported": 0.0,
+    "accuracy": 0.8058252427184466,
+    "hold_rate": 0.11650485436893204,
+    "none_assertion_rate": 0.1111111111111111
+   },
+   "by_group": {
+    "법령": {
+     "questions": 55,
+     "claims": 63,
+     "unsupported_claims": 0,
+     "unsupported_claim_rate": 0.0,
+     "answers_with_unsupported": 0.0,
+     "accuracy": 0.8297872340425532,
+     "hold_rate": 0.10638297872340426,
+     "none_assertion_rate": 0.25
+    },
+    "고시": {
+     "questions": 40,
+     "claims": 44,
+     "unsupported_claims": 0,
+     "unsupported_claim_rate": 0.0,
+     "answers_with_unsupported": 0.0,
+     "accuracy": 0.7878787878787878,
+     "hold_rate": 0.09090909090909091,
+     "none_assertion_rate": 0.0
+    },
+    "표준약관": {
+     "questions": 26,
+     "claims": 28,
+     "unsupported_claims": 0,
+     "unsupported_claim_rate": 0.0,
+     "answers_with_unsupported": 0.0,
+     "accuracy": 0.782608695652174,
+     "hold_rate": 0.17391304347826086,
+     "none_assertion_rate": 0.0
+    },
+    "넘나듦": {
+     "questions": 0,
+     "claims": 0,
+     "unsupported_claims": 0,
+     "unsupported_claim_rate": null,
+     "answers_with_unsupported": null,
+     "accuracy": null,
+     "hold_rate": null,
+     "none_assertion_rate": null
+    }
+   },
+   "reviewed_passed": {
+    "questions": 38,
+    "claims": 32,
+    "unsupported_claims": 0,
+    "unsupported_claim_rate": 0.0,
+    "answers_with_unsupported": 0.0,
+    "accuracy": 0.9,
+    "hold_rate": 0.05,
+    "none_assertion_rate": 0.1111111111111111
+   }
+  },
+  "R4": {
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "claims": 164,
+     "unsupported_claims": 0,
+     "unsupported_claim_rate": 0.0,
+     "answers_with_unsupported": 0.0,
+     "accuracy": 0.9611650485436893,
+     "hold_rate": 0.0,
+     "none_assertion_rate": null
+    },
+    "multi": {
+     "questions": 0,
+     "claims": 0,
+     "unsupported_claims": 0,
+     "unsupported_claim_rate": null,
+     "answers_with_unsupported": null,
+     "accuracy": null,
+     "hold_rate": null,
+     "none_assertion_rate": null
+    },
+    "none": {
+     "questions": 18,
+     "claims": 6,
+     "unsupported_claims": 0,
+     "unsupported_claim_rate": 0.0,
+     "answers_with_unsupported": 0.0,
+     "accuracy": null,
+     "hold_rate": null,
+     "none_assertion_rate": 0.2777777777777778
+    }
+   },
+   "judgment": {
+    "questions": 121,
+    "claims": 170,
+    "unsupported_claims": 0,
+    "unsupported_claim_rate": 0.0,
+    "answers_with_unsupported": 0.0,
+    "accuracy": 0.9611650485436893,
+    "hold_rate": 0.0,
+    "none_assertion_rate": 0.2777777777777778
+   },
+   "by_group": {
+    "법령": {
+     "questions": 55,
+     "claims": 78,
+     "unsupported_claims": 0,
+     "unsupported_claim_rate": 0.0,
+     "answers_with_unsupported": 0.0,
+     "accuracy": 1.0,
+     "hold_rate": 0.0,
+     "none_assertion_rate": 0.25
+    },
+    "고시": {
+     "questions": 40,
+     "claims": 58,
+     "unsupported_claims": 0,
+     "unsupported_claim_rate": 0.0,
+     "answers_with_unsupported": 0.0,
+     "accuracy": 0.9696969696969697,
+     "hold_rate": 0.0,
+     "none_assertion_rate": 0.2857142857142857
+    },
+    "표준약관": {
+     "questions": 26,
+     "claims": 34,
+     "unsupported_claims": 0,
+     "unsupported_claim_rate": 0.0,
+     "answers_with_unsupported": 0.0,
+     "accuracy": 0.8695652173913043,
+     "hold_rate": 0.0,
+     "none_assertion_rate": 0.3333333333333333
+    },
+    "넘나듦": {
+     "questions": 0,
+     "claims": 0,
+     "unsupported_claims": 0,
+     "unsupported_claim_rate": null,
+     "answers_with_unsupported": null,
+     "accuracy": null,
+     "hold_rate": null,
+     "none_assertion_rate": null
+    }
+   },
+   "reviewed_passed": {
+    "questions": 38,
+    "claims": 36,
+    "unsupported_claims": 0,
+    "unsupported_claim_rate": 0.0,
+    "answers_with_unsupported": 0.0,
+    "accuracy": 1.0,
+    "hold_rate": 0.0,
+    "none_assertion_rate": 0.2777777777777778
+   }
+  }
+ },
+ "chunks": {
+  "article256": {
+   "chunks": 829,
+   "tokens": {
+    "mean": 247.5,
+    "median": 252,
+    "max": 1783
+   },
+   "seconds_wall": null,
+   "calls": null
+  },
+  "article0": {
+   "chunks": 454,
+   "tokens": {
+    "mean": 428.2,
+    "median": 178,
+    "max": 72977
+   },
+   "seconds_wall": null,
+   "calls": null
+  },
+  "fixed256": {
+   "chunks": 859,
+   "tokens": {
+    "mean": 255.2,
+    "median": 256,
+    "max": 285
+   },
+   "seconds_wall": null,
+   "calls": null
+  },
+  "b-W4000-C800-raw": {
+   "chunks": 378,
+   "tokens": {
+    "mean": 514.3,
+    "median": 561,
+    "max": 800
+   },
+   "seconds_wall": 60.9,
+   "calls": {
+    "judge": {
+     "requests": 64,
+     "questions": 0,
+     "input_tokens": 339026,
+     "output_tokens": 2633,
+     "cost_usd": 0.26414,
+     "retries": 0,
+     "errors": 0
+    },
+    "total_cost_usd": 0.26414
+   }
+  },
+  "c-jev-W4000-C800-raw-t0.65": {
+   "chunks": 389,
+   "tokens": {
+    "mean": 499.7,
+    "median": 591,
+    "max": 800
+   },
+   "seconds_wall": null,
+   "calls": null
+  },
+  "c-qwen-W4000-C800-raw-t0.55": {
+   "chunks": 2322,
+   "tokens": {
+    "mean": 83.7,
+    "median": 29,
+    "max": 799
+   },
+   "seconds_wall": null,
+   "calls": null
+  },
+  "c-jev-W4000-C800-raw": {
+   "chunks": 571,
+   "tokens": {
+    "mean": 340.5,
+    "median": 275,
+    "max": 800
+   },
+   "seconds_wall": 8.1,
+   "calls": {
+    "judge": {
+     "requests": 64,
+     "questions": 9674,
+     "input_tokens": 632064,
+     "output_tokens": 196428,
+     "cost_usd": 0.02655,
+     "retries": 0,
+     "errors": 0
+    },
+    "total_cost_usd": 0.02655
+   }
+  },
+  "c-qwen-W4000-C800-raw": {
+   "chunks": 2750,
+   "tokens": {
+    "mean": 70.7,
+    "median": 27,
+    "max": 800
+   },
+   "seconds_wall": 133.4,
+   "calls": {
+    "judge": {
+     "windows": 64,
+     "requests": 273,
+     "questions": 9674,
+     "input_tokens": 2290490,
+     "output_tokens": 0,
+     "cost_usd": 0.0,
+     "retries": 0,
+     "errors": 0
+    },
+    "total_cost_usd": 0.0
+   }
+  }
+ },
+ "qwen_gpu_seconds_wall": 133.4,
+ "word_overlap": {
+  "test": {
+   "all": {
+    "questions": 156,
+    "overlap": 0.191
+   },
+   "by_type": {
+    "single": {
+     "questions": 103,
+     "overlap": 0.1678
+    },
+    "multi": {
+     "questions": 53,
+     "overlap": 0.2362
+    }
+   },
+   "by_group": {
+    "고시": {
+     "questions": 43,
+     "overlap": 0.1604
+    },
+    "넘나듦": {
+     "questions": 18,
+     "overlap": 0.2572
+    },
+    "법령": {
+     "questions": 65,
+     "overlap": 0.2028
+    },
+    "표준약관": {
+     "questions": 30,
+     "overlap": 0.1697
+    }
+   },
+   "excluded_none": 18
+  },
+  "check": {
+   "all": {
+    "questions": 48,
+    "overlap": 0.2036
+   },
+   "by_type": {
+    "single": {
+     "questions": 30,
+     "overlap": 0.1896
+    },
+    "multi": {
+     "questions": 18,
+     "overlap": 0.2268
+    }
+   },
+   "by_group": {
+    "고시": {
+     "questions": 14,
+     "overlap": 0.1892
+    },
+    "법령": {
+     "questions": 20,
+     "overlap": 0.231
+    },
+    "표준약관": {
+     "questions": 14,
+     "overlap": 0.1787
+    }
+   },
+   "excluded_none": 0
+  }
+ },
+ "metadata_costs": {
+  "fixed256": {
+   "cost_usd": 1.3733,
+   "recorded_cost_usd": 1.3733,
+   "additional_local_cost_usd": null
+  },
+  "b-W4000-C800-raw": {
+   "cost_usd": 0.709,
+   "recorded_cost_usd": 0.709,
+   "additional_local_cost_usd": null
+  },
+  "c-jev-W4000-C800-raw-t0.65": {
+   "cost_usd": 0.6971,
+   "recorded_cost_usd": 0.6971,
+   "additional_local_cost_usd": null
+  },
+  "c-qwen-W4000-C800-raw-t0.55": {
+   "cost_usd": 2.3037,
+   "recorded_cost_usd": 2.3037,
+   "additional_local_cost_usd": null
+  },
+  "b-W4000-C800-raw--noexpr": {
+   "cost_usd": 0.6551,
+   "recorded_cost_usd": 0.6551,
+   "additional_local_cost_usd": null
+  }
+ },
+ "boundary": {
+  "astra": {
+   "fixed256": {
+    "precision": 0.2766,
+    "recall": 0.2889,
+    "f1": 0.2826,
+    "exact": {
+     "precision": 0.0532,
+     "recall": 0.0556,
+     "f1": 0.0543
+    },
+    "pk": 0.5107,
+    "windowdiff": 0.5202,
+    "window": 4,
+    "pred": 94,
+    "gold": 90,
+    "f1_ci95": [
+     0.1852,
+     0.3804
+    ]
+   },
+   "article256": {
+    "precision": 0.7802,
+    "recall": 0.7889,
+    "f1": 0.7845,
+    "exact": {
+     "precision": 0.7033,
+     "recall": 0.7111,
+     "f1": 0.7072
+    },
+    "pk": 0.1488,
+    "windowdiff": 0.1583,
+    "window": 4,
+    "pred": 91,
+    "gold": 90,
+    "f1_ci95": [
+     0.5714,
+     0.9637
+    ]
+   },
+   "b-W4000-C800-raw": {
+    "precision": 0.6471,
+    "recall": 0.2444,
+    "f1": 0.3548,
+    "exact": {
+     "precision": 0.5882,
+     "recall": 0.2222,
+     "f1": 0.3226
+    },
+    "pk": 0.3179,
+    "windowdiff": 0.325,
+    "window": 4,
+    "pred": 34,
+    "gold": 90,
+    "f1_ci95": [
+     0.259,
+     0.4717
+    ]
+   },
+   "c-jev-W4000-C800-raw-t0.65": {
+    "precision": 0.4839,
+    "recall": 0.1667,
+    "f1": 0.2479,
+    "exact": {
+     "precision": 0.3871,
+     "recall": 0.1333,
+     "f1": 0.1983
+    },
+    "pk": 0.3512,
+    "windowdiff": 0.3607,
+    "window": 4,
+    "pred": 31,
+    "gold": 90,
+    "f1_ci95": [
+     0.1622,
+     0.3509
+    ]
+   },
+   "c-qwen-W4000-C800-raw-t0.55": {
+    "precision": 0.1848,
+    "recall": 0.4333,
+    "f1": 0.2591,
+    "exact": {
+     "precision": 0.0948,
+     "recall": 0.2222,
+     "f1": 0.1329
+    },
+    "pk": 0.4679,
+    "windowdiff": 0.5702,
+    "window": 4,
+    "pred": 211,
+    "gold": 90,
+    "f1_ci95": [
+     0.1908,
+     0.3186
+    ]
+   }
+  },
+  "sol": {
+   "fixed256": {
+    "precision": 0.2447,
+    "recall": 0.2949,
+    "f1": 0.2674,
+    "exact": {
+     "precision": 0.0319,
+     "recall": 0.0385,
+     "f1": 0.0349
+    },
+    "pk": 0.5248,
+    "windowdiff": 0.537,
+    "window": 5,
+    "pred": 94,
+    "gold": 78,
+    "f1_ci95": [
+     0.1637,
+     0.3708
+    ]
+   },
+   "article256": {
+    "precision": 0.7473,
+    "recall": 0.8718,
+    "f1": 0.8047,
+    "exact": {
+     "precision": 0.6813,
+     "recall": 0.7949,
+     "f1": 0.7337
+    },
+    "pk": 0.1539,
+    "windowdiff": 0.1685,
+    "window": 5,
+    "pred": 91,
+    "gold": 78,
+    "f1_ci95": [
+     0.6,
+     0.9625
+    ]
+   },
+   "b-W4000-C800-raw": {
+    "precision": 0.6176,
+    "recall": 0.2692,
+    "f1": 0.375,
+    "exact": {
+     "precision": 0.5588,
+     "recall": 0.2436,
+     "f1": 0.3393
+    },
+    "pk": 0.3382,
+    "windowdiff": 0.3442,
+    "window": 5,
+    "pred": 34,
+    "gold": 78,
+    "f1_ci95": [
+     0.2883,
+     0.4706
+    ]
+   },
+   "c-jev-W4000-C800-raw-t0.65": {
+    "precision": 0.4516,
+    "recall": 0.1795,
+    "f1": 0.2569,
+    "exact": {
+     "precision": 0.3548,
+     "recall": 0.141,
+     "f1": 0.2018
+    },
+    "pk": 0.3745,
+    "windowdiff": 0.3842,
+    "window": 5,
+    "pred": 31,
+    "gold": 78,
+    "f1_ci95": [
+     0.1636,
+     0.3617
+    ]
+   },
+   "c-qwen-W4000-C800-raw-t0.55": {
+    "precision": 0.1659,
+    "recall": 0.4487,
+    "f1": 0.2422,
+    "exact": {
+     "precision": 0.09,
+     "recall": 0.2436,
+     "f1": 0.1315
+    },
+    "pk": 0.48,
+    "windowdiff": 0.6133,
+    "window": 5,
+    "pred": 211,
+    "gold": 78,
+    "f1_ci95": [
+     0.1728,
+     0.3082
+    ]
+   }
+  },
+  "astra_vs_sol": {
+   "precision": 0.8444,
+   "recall": 0.9744,
+   "f1": 0.9048,
+   "exact": {
+    "precision": 0.8444,
+    "recall": 0.9744,
+    "f1": 0.9048
+   },
+   "pk": 0.0485,
+   "windowdiff": 0.0594,
+   "window": 5,
+   "pred": 90,
+   "gold": 78,
+   "f1_ci95": [
+    0.8063,
+    0.9868
+   ]
+  },
+  "reruns": {
+   "b": {
+    "judgment": {
+     "run1_vs_run2": {
+      "precision": 1.0,
+      "recall": 0.6207,
+      "f1": 0.766,
+      "exact": {
+       "precision": 0.9444,
+       "recall": 0.5862,
+       "f1": 0.7234
+      },
+      "pk": 0.0933,
+      "windowdiff": 0.116,
+      "window": 10,
+      "pred": 18,
+      "gold": 29,
+      "f1_ci95": [
+       0.6129,
+       0.9655
+      ]
+     }
+    },
+    "final": {
+     "run1_vs_run2": {
+      "precision": 0.9412,
+      "recall": 0.7442,
+      "f1": 0.8312,
+      "exact": {
+       "precision": 0.9118,
+       "recall": 0.7209,
+       "f1": 0.8052
+      },
+      "pk": 0.0923,
+      "windowdiff": 0.1026,
+      "window": 8,
+      "pred": 34,
+      "gold": 43,
+      "f1_ci95": [
+       0.68,
+       0.9737
+      ]
+     },
+     "run1_vs_original": {
+      "precision": 0.9706,
+      "recall": 0.9706,
+      "f1": 0.9706,
+      "exact": {
+       "precision": 0.9706,
+       "recall": 0.9706,
+       "f1": 0.9706
+      },
+      "pk": 0.0144,
+      "windowdiff": 0.0235,
+      "window": 9,
+      "pred": 34,
+      "gold": 34,
+      "f1_ci95": [
+       0.9286,
+       1.0
+      ]
+     },
+     "run2_vs_original": {
+      "precision": 0.7209,
+      "recall": 0.9118,
+      "f1": 0.8052,
+      "exact": {
+       "precision": 0.6977,
+       "recall": 0.8824,
+       "f1": 0.7792
+      },
+      "pk": 0.1111,
+      "windowdiff": 0.1359,
+      "window": 9,
+      "pred": 43,
+      "gold": 34,
+      "f1_ci95": [
+       0.6588,
+       0.9434
+      ]
+     }
+    }
+   },
+   "c-jev": {
+    "judgment": {
+     "run1_vs_run2": {
+      "precision": 0.9167,
+      "recall": 0.8462,
+      "f1": 0.88,
+      "exact": {
+       "precision": 0.9167,
+       "recall": 0.8462,
+       "f1": 0.88
+      },
+      "pk": 0.0106,
+      "windowdiff": 0.0197,
+      "window": 16,
+      "pred": 12,
+      "gold": 13,
+      "f1_ci95": [
+       0.7619,
+       1.0
+      ]
+     }
+    },
+    "final": {
+     "run1_vs_run2": {
+      "precision": 0.9375,
+      "recall": 0.9091,
+      "f1": 0.9231,
+      "exact": {
+       "precision": 0.9062,
+       "recall": 0.8788,
+       "f1": 0.8923
+      },
+      "pk": 0.0327,
+      "windowdiff": 0.0431,
+      "window": 9,
+      "pred": 32,
+      "gold": 33,
+      "f1_ci95": [
+       0.8214,
+       1.0
+      ]
+     },
+     "run1_vs_original": {
+      "precision": 0.9062,
+      "recall": 0.9355,
+      "f1": 0.9206,
+      "exact": {
+       "precision": 0.9062,
+       "recall": 0.9355,
+       "f1": 0.9206
+      },
+      "pk": 0.0253,
+      "windowdiff": 0.0267,
+      "window": 10,
+      "pred": 32,
+      "gold": 31,
+      "f1_ci95": [
+       0.8235,
+       0.9851
+      ]
+     },
+     "run2_vs_original": {
+      "precision": 0.8182,
+      "recall": 0.871,
+      "f1": 0.8438,
+      "exact": {
+       "precision": 0.7879,
+       "recall": 0.8387,
+       "f1": 0.8125
+      },
+      "pk": 0.06,
+      "windowdiff": 0.0733,
+      "window": 10,
+      "pred": 33,
+      "gold": 31,
+      "f1_ci95": [
+       0.7213,
+       0.9394
+      ]
+     }
+    }
+   },
+   "c-qwen": {
+    "judgment": {
+     "run1_vs_run2": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "exact": {
+       "precision": 1.0,
+       "recall": 1.0,
+       "f1": 1.0
+      },
+      "pk": 0.0,
+      "windowdiff": 0.0,
+      "window": 2,
+      "pred": 207,
+      "gold": 207,
+      "f1_ci95": [
+       1.0,
+       1.0
+      ]
+     }
+    },
+    "final": {
+     "run1_vs_run2": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "exact": {
+       "precision": 1.0,
+       "recall": 1.0,
+       "f1": 1.0
+      },
+      "pk": 0.0,
+      "windowdiff": 0.0,
+      "window": 2,
+      "pred": 211,
+      "gold": 211,
+      "f1_ci95": [
+       1.0,
+       1.0
+      ]
+     },
+     "run1_vs_original": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "exact": {
+       "precision": 1.0,
+       "recall": 1.0,
+       "f1": 1.0
+      },
+      "pk": 0.0,
+      "windowdiff": 0.0,
+      "window": 2,
+      "pred": 211,
+      "gold": 211,
+      "f1_ci95": [
+       1.0,
+       1.0
+      ]
+     },
+     "run2_vs_original": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "exact": {
+       "precision": 1.0,
+       "recall": 1.0,
+       "f1": 1.0
+      },
+      "pk": 0.0,
+      "windowdiff": 0.0,
+      "window": 2,
+      "pred": 211,
+      "gold": 211,
+      "f1_ci95": [
+       1.0,
+       1.0
+      ]
+     }
+    }
+   }
+  }
+ },
+ "notes": [
+  "임베딩 지연 조건은 val 결과를 본 뒤 추가했다. 원래 규칙 구성은 보고만 한다.",
+  "단일 근거의 사람 검토 문제 비율은 24%, 여러 근거는 62%다. 합성 질문의 결과다.",
+  "엔드투엔드는 제외했다. v2 규모의 근거 갱신 시간은 재지 않았다.",
+  "Qwen GPU 시간은 동시 1 분할의 벽시계 시간이다.",
+  "구형 실행 파일에 by_group·word_overlap이 없으면 빈 값으로 둔다."
+ ]
+}
