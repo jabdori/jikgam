@@ -101,6 +101,63 @@ def verify_manifest(root=ROOT, adr="0025", paths=None) -> list[str]:
     return sorted(changed)
 
 
+def e2e_input_paths(root=ROOT):
+    """검색 test 입력을 열지 않고 엔드투엔드 실행에 쓰는 고정 입력만 수집한다."""
+    paths = {"docs/evaluation.md", "docs/evaluation-v2.md", "uv.lock", "pyproject.toml",
+             "data/scenarios/org_a_v2.jsonl", "data/scenarios/org_a_v2_holdout.jsonl",
+             "domain/org_a/customers.json", "domain/org_a/customers_v2_holdout.json"}
+    for pattern in ("jikgam/engine/*.py", "jikgam/decision/*.py", "jikgam/sim/*.py", "jikgam/v2/*.py",
+                    "jikgam/ingest/*.py", "jikgam/eval/*.py", "config/*.toml", "config/orgs/*.toml",
+                    "config/v2/law.toml", "config/decision_models.d/*.toml", "domain/org_a/*.md",
+                    "data/question_sets/**/*.json", "data/v2/local/emb/**/*", "bizapi/**/*.go",
+                    "bizapi/go.mod", "bizapi/go.sum"):
+        paths.update(p.relative_to(root).as_posix() for p in root.glob(pattern)
+                     if p.is_file() and (not p.name.endswith("_test.go")))
+    # 실행 구간·구간 정보·본문은 QA·점검용·참고 경계와 분리한다.
+    import tomllib
+    cfg_path = root / "config/v2/law.toml"
+    if cfg_path.exists():
+        cfg = tomllib.loads(cfg_path.read_text(encoding="utf-8"))
+        for profile in ("r0", "r4"):
+            name = cfg[profile]["chunks"]
+            paths.add(f"data/v2/chunks/{name}.jsonl")
+            if cfg[profile].get("meta", "none") != "none":
+                for base in ("data/v2/meta", "data/v2/local/meta"):
+                    paths.add(f"{base}/{name}.jsonl")
+    summary = root / "data/v2/extracted/summary.json"
+    paths.add("data/v2/extracted/summary.json")
+    if summary.exists():
+        paths.update(d["output"] for d in json.loads(summary.read_text(encoding="utf-8"))["docs"].values())
+    return sorted(paths)
+
+
+def require_e2e_frozen(scenario_file, adr, root=ROOT):
+    """미공개 v2는 파일을 열기 전에 ADR·전체 고정 해시를 확인한다. 목록은 고정 시 따로 만든다."""
+    from pathlib import Path
+    import re
+
+    target = Path(scenario_file).resolve()
+    expected = (root / "data/scenarios/org_a_v2_holdout.jsonl").resolve()
+    if target != expected and target.name.casefold() != expected.name.casefold():
+        return
+    if not adr or not re.fullmatch(r"\d{4}", adr):
+        raise SystemExit("미공개 v2 실행에는 설정 고정 ADR 번호(--frozen)가 필요합니다")
+    if not any((root / "docs/adr").glob(f"{adr}-*.md")):
+        raise SystemExit(f"설정 고정 ADR {adr}를 찾을 수 없습니다")
+    path = root / f"config/v2/freeze-{adr}.json"
+    if not path.is_file():
+        raise SystemExit(f"설정 고정 해시 목록이 없습니다: {path.relative_to(root)}")
+    try:
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+        if manifest.get("adr") != adr or manifest.get("algorithm") != "sha256":
+            raise ValueError("ADR 번호나 해시 알고리즘이 다릅니다")
+        changed = verify_manifest(root, adr, paths=e2e_input_paths(root))
+    except (ValueError, KeyError, TypeError) as exc:
+        raise SystemExit(f"설정 고정 목록이 올바르지 않습니다: {exc}") from None
+    if changed:
+        raise SystemExit("고정 해시가 다르거나 입력이 빠졌습니다: " + ", ".join(changed))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["prepare", "write", "verify"])

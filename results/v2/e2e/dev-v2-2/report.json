@@ -1,0 +1,196 @@
+{
+ "r0": {
+  "valid": 11,
+  "passed": 3,
+  "claims": 206,
+  "unsupported": 68,
+  "missing": 0,
+  "invalid": 1,
+  "unknown_compliance": 0,
+  "unknown_pass": 0,
+  "ai_judge_errors": 0,
+  "unknown_items": {
+   "1": 0,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 0,
+   "6": 0,
+   "7": 0,
+   "8": 0,
+   "9": 0,
+   "10": 0
+  },
+  "claim_judge_failures": 0,
+  "log_sources": {
+   "private_sessions": 12,
+   "public_sessions": 0
+  },
+  "pass_rate": 0.2727272727272727,
+  "unsupported_claim_rate": 0.3300970873786408,
+  "claim_judgment_complete": true,
+  "refresh_ms": {
+   "events": 11,
+   "p50": 244.307,
+   "p95": 254.878,
+   "misses": 0
+  },
+  "stale": {
+   "by_channel": {
+    "chat": {
+     "invalid": 0,
+     "denominator": 36,
+     "unconfirmed": 0
+    }
+   },
+   "events_total": 9,
+   "events_with_invalid": 0
+  },
+  "failures": {
+   "1": 1,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 0,
+   "6": 0,
+   "7": 0,
+   "8": 0,
+   "9": 6,
+   "10": 7
+  },
+  "precision": 0.5717532467532468,
+  "law_precision": 0.11454545454545455,
+  "law_tokens": {
+   "mean": 2396.7272727272725,
+   "sum": 26364
+  },
+  "cost_usd": {
+   "customer": 0.103986,
+   "decision": 0.054808698,
+   "generation": 0.3158265,
+   "judge": 0.53886,
+   "claims": 2.417366,
+   "total": 3.430847198
+  }
+ },
+ "r4": {
+  "valid": 11,
+  "passed": 3,
+  "claims": 204,
+  "unsupported": 86,
+  "missing": 0,
+  "invalid": 1,
+  "unknown_compliance": 0,
+  "unknown_pass": 0,
+  "ai_judge_errors": 0,
+  "unknown_items": {
+   "1": 0,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 0,
+   "6": 0,
+   "7": 0,
+   "8": 0,
+   "9": 0,
+   "10": 0
+  },
+  "claim_judge_failures": 0,
+  "log_sources": {
+   "private_sessions": 12,
+   "public_sessions": 0
+  },
+  "pass_rate": 0.2727272727272727,
+  "unsupported_claim_rate": 0.4215686274509804,
+  "claim_judgment_complete": true,
+  "refresh_ms": {
+   "events": 10,
+   "p50": 309.004,
+   "p95": 363.20975000000004,
+   "misses": 0
+  },
+  "stale": {
+   "by_channel": {
+    "chat": {
+     "invalid": 0,
+     "denominator": 33,
+     "unconfirmed": 0
+    }
+   },
+   "events_total": 9,
+   "events_with_invalid": 0
+  },
+  "failures": {
+   "1": 1,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 0,
+   "6": 0,
+   "7": 0,
+   "8": 0,
+   "9": 5,
+   "10": 7
+  },
+  "precision": 0.5358585858585859,
+  "law_precision": 0.1549090909090909,
+  "law_tokens": {
+   "mean": 3597.090909090909,
+   "sum": 39568
+  },
+  "cost_usd": {
+   "customer": 0.100554,
+   "decision": 0.075809244,
+   "generation": 0.35608425,
+   "judge": 0.656902,
+   "claims": 2.453818,
+   "total": 3.643167494
+  }
+ },
+ "pass_delta": 0.0,
+ "bootstrap": {
+  "reps": 10000,
+  "seed": 20261016,
+  "scenarios": 12,
+  "ci95": {
+   "pass_r0": [
+    0.0,
+    0.5454545454545454
+   ],
+   "pass_r4": [
+    0.0,
+    0.5454545454545454
+   ],
+   "pass_delta": [
+    -0.2727272727272727,
+    0.2727272727272727
+   ],
+   "unsupported_r0": [
+    0.2545454545454545,
+    0.4123725901333799
+   ],
+   "unsupported_r4": [
+    0.3693680896805897,
+    0.4791690668202765
+   ],
+   "unsupported_delta": [
+    0.035906476557752275,
+    0.14535044484120374
+   ]
+  },
+  "effective_draws": {
+   "pass_r0": 10000,
+   "pass_r4": 10000,
+   "pass_delta": 10000,
+   "unsupported_r0": 10000,
+   "unsupported_r4": 10000,
+   "unsupported_delta": 10000
+  }
+ },
+ "conditions": {
+  "pass_noninferior": true,
+  "pass_improved": false,
+  "unsupported_not_higher": false,
+  "refresh_p95_le_500": true
+ }
+}

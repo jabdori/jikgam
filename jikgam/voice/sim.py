@@ -377,7 +377,7 @@ async def run(args: argparse.Namespace) -> Path:
     }
     write_summary(run_dir, summary)
     voice = CustomerVoice(cfg)
-    judge_client = None if args.no_judge else GeminiJson.from_config(args.judge_model)
+    judge_client = None if args.no_judge else GeminiJson.from_config(args.judge_model, retry_delays_s=())
     try:
         for k in range(args.run_start, args.run_start + args.runs):
             for scn in chosen:

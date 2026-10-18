@@ -283,6 +283,7 @@ def test_forbidden_attempt_limits_and_addon_refund():
 
 def verdict(**over):
     v = {"forbidden": [{"index": 1, "violated": False, "reason": "-"}],
+         "write_consent": [],
          "must_say": [{"index": 0, "said": True, "reason": "-"}, {"index": 1, "said": True, "reason": "-"}],
          "action_content": {"matches": True, "reason": "-"},
          "reveal_rules": [{"index": 0, "status": "followed", "reason": "-"}],
@@ -339,13 +340,43 @@ class FakeJudgeClient:
         return self.replies.pop(0)
 
 
-def test_ai_judge_retries_once_when_items_missing():
+def test_ai_judge_retries_missing_items_at_2_4_8_seconds(monkeypatch):
+    delays = []
+
+    async def sleep(delay):
+        delays.append(delay)
+
+    monkeypatch.setattr(jd.asyncio, "sleep", sleep)
     partial = verdict()["verdict"] | {"must_say": [{"index": 0, "said": True, "reason": "-"}]}
     client = FakeJudgeClient([JsonReply(partial, "m", cost_usd=0.01), JsonReply(verdict()["verdict"], "m", cost_usd=0.02)])
     rec = asyncio.run(jd.ai_judge(scn(), good_log().events, client))
     assert client.calls == 2 and rec["error"] is None and abs(rec["cost_usd"] - 0.03) < 1e-12
     assert rec["prompt_version"] == jd.JUDGE_PROMPT_VERSION and rec["forbidden_ai"] == [1]
-    client = FakeJudgeClient([JsonReply(partial, "m"), JsonReply(partial, "m")])
+    assert delays == [2]
+    delays.clear()
+    client = FakeJudgeClient([JsonReply(partial, "m") for _ in range(4)])
     rec = asyncio.run(jd.ai_judge(scn(), good_log().events, client))
     assert rec["error"] == "빠진 항목: ['must_say#1']"
+    assert client.calls == 4 and delays == [2, 4, 8]
     assert jd.evaluate(scn(), good_log().events, rec)["items"][9]["ok"] is None
+
+
+def test_ai_judge_retries_malformed_values_and_never_treats_them_as_verdicts(monkeypatch):
+    async def sleep(_):
+        pass
+
+    monkeypatch.setattr(jd.asyncio, "sleep", sleep)
+    data = verdict()["verdict"]
+    bad = copy.deepcopy(data)
+    bad["must_say"][0]["said"] = "참"
+    client = FakeJudgeClient([JsonReply(bad, "m", cost_usd=0.01) for _ in range(4)])
+    rec = asyncio.run(jd.ai_judge(scn(), good_log().events, client))
+    assert client.calls == 4 and rec["cost_usd"] == 0.04
+    assert "형식 오류" in rec["error"]
+    assert jd.evaluate(scn(), good_log().events, rec)["items"][9]["ok"] is None
+    client = FakeJudgeClient([JsonReply(None, "m", error="호출 실패"), JsonReply(data, "m")])
+    assert asyncio.run(jd.ai_judge(scn(), good_log().events, client))["error"] is None
+    bad = copy.deepcopy(data)
+    bad["forbidden"].append(dict(bad["forbidden"][0]))
+    assert "중복 항목 번호" in str(jd._shape_errors(bad, jd.JUDGE_SCHEMA))
+    assert jd._safe_verdict(bad)["forbidden"] == []

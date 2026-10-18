@@ -340,6 +340,10 @@ def customers_file(org: OrgConfig) -> Path:
 
 
 async def run(args: argparse.Namespace) -> Path:
+    from jikgam.v2.freeze import require_e2e_frozen
+
+    path = (ROOT / args.scenario_file) if args.scenario_file else scenario_path(args.org)
+    require_e2e_frozen(path, getattr(args, "frozen", None), ROOT)
     if args.policy == "D":
         raise SystemExit("정책 D(미확정 자막 선판단)는 음성 런타임이 필요해 채팅 실행기에서 돌리지 않는다")
     policy = POLICIES[args.policy]
@@ -378,12 +382,15 @@ async def run(args: argparse.Namespace) -> Path:
         "judge_model": None if args.no_judge else models[args.judge_model]["model"],
         "judge_prompt": None if args.no_judge else judge.JUDGE_PROMPT_VERSION,
         "git": git_commit(), "started": datetime.now(ev.KST).isoformat(timespec="seconds"), "ended": None,
+        **({"frozen_adr": args.frozen,
+            "frozen_sha256": file_sha256(ROOT / f"config/v2/freeze-{args.frozen}.json")}
+           if getattr(args, "frozen", None) else {}),
         "note": ("보류용" if "holdout" in path.name else "개발용") + " 시나리오 결과(docs/evaluation.md §4.3). 합성 대화이며 운영 성과가 아니다.",
         "customer_files": [str(c.relative_to(ROOT)).replace("\\", "/") for c in customer_files],
         "sessions": [],
     }
     write_summary(run_dir, summary)
-    judge_client = None if args.no_judge else GeminiJson.from_config(args.judge_model)
+    judge_client = None if args.no_judge else GeminiJson.from_config(args.judge_model, retry_delays_s=())
     try:
         for k in range(args.run_start, args.run_start + args.runs):
             for scn in chosen:
@@ -438,6 +445,7 @@ def main() -> None:
     ap.add_argument("--no-judge", action="store_true", help="AI 판정을 건너뛴다(나중에 jikgam.sim.judge로 한다)")
     ap.add_argument("--decision-backend", help="정책 C의 판별 백엔드(config/decision_models의 이름). 생략하면 조직 설정 값")
     ap.add_argument("--law", choices=["r0", "r4"], help="v2 법령·고시 묶음(config/v2/law.toml의 프로필)")
+    ap.add_argument("--frozen", help="미공개 v2 실행에 필요한 설정 고정 ADR 번호와 해시 목록")
     args = ap.parse_args()
     if args.runs < 1:
         raise SystemExit("--runs는 1 이상이어야 한다")

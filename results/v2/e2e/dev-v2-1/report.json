@@ -1,0 +1,187 @@
+{
+ "r0": {
+  "valid": 11,
+  "passed": 1,
+  "claims": 84,
+  "unsupported": 33,
+  "missing": 41,
+  "invalid": 1,
+  "unknown_compliance": 0,
+  "unknown_pass": 0,
+  "ai_judge_errors": 0,
+  "unknown_items": {
+   "1": 0,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 0,
+   "6": 0,
+   "7": 0,
+   "8": 0,
+   "9": 0,
+   "10": 0
+  },
+  "claim_judge_failures": 0,
+  "log_sources": {
+   "private_sessions": 0,
+   "public_sessions": 12
+  },
+  "pass_rate": 0.09090909090909091,
+  "unsupported_claim_rate": null,
+  "claim_judgment_complete": false,
+  "refresh_ms": {
+   "events": 11,
+   "p50": 233.432,
+   "p95": 279.259,
+   "misses": 0
+  },
+  "stale": {
+   "by_channel": {
+    "chat": {
+     "invalid": 0,
+     "denominator": 35,
+     "unconfirmed": 0
+    }
+   },
+   "events_total": 9,
+   "events_with_invalid": 0
+  },
+  "failures": {
+   "1": 1,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 0,
+   "6": 1,
+   "7": 0,
+   "8": 0,
+   "9": 10,
+   "10": 9
+  },
+  "precision": 0.859090909090909,
+  "law_precision": 0.22614285714285715,
+  "law_tokens": {
+   "mean": 790.0,
+   "sum": 8690
+  },
+  "cost_usd": {
+   "customer": 0.10101525,
+   "decision": 0.052128552,
+   "generation": 0.2513235,
+   "judge": 0.541418,
+   "claims": 0.858656,
+   "total": 1.8045413019999998
+  }
+ },
+ "r4": {
+  "valid": 11,
+  "passed": 0,
+  "claims": 101,
+  "unsupported": 47,
+  "missing": 41,
+  "invalid": 1,
+  "unknown_compliance": 0,
+  "unknown_pass": 0,
+  "ai_judge_errors": 0,
+  "unknown_items": {
+   "1": 0,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 0,
+   "6": 0,
+   "7": 0,
+   "8": 0,
+   "9": 0,
+   "10": 0
+  },
+  "claim_judge_failures": 0,
+  "log_sources": {
+   "private_sessions": 0,
+   "public_sessions": 12
+  },
+  "pass_rate": 0.0,
+  "unsupported_claim_rate": null,
+  "claim_judgment_complete": false,
+  "refresh_ms": {
+   "events": 10,
+   "p50": 314.5645,
+   "p95": 373.15725000000003,
+   "misses": 0
+  },
+  "stale": {
+   "by_channel": {
+    "chat": {
+     "invalid": 0,
+     "denominator": 36,
+     "unconfirmed": 0
+    }
+   },
+   "events_total": 9,
+   "events_with_invalid": 0
+  },
+  "failures": {
+   "1": 1,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 0,
+   "6": 0,
+   "7": 0,
+   "8": 0,
+   "9": 10,
+   "10": 10
+  },
+  "precision": 0.8636363636363636,
+  "law_precision": 0.0875,
+  "law_tokens": {
+   "mean": 978.6363636363636,
+   "sum": 10765
+  },
+  "cost_usd": {
+   "customer": 0.10359375,
+   "decision": 0.07570038000000001,
+   "generation": 0.26157225,
+   "judge": 0.54559,
+   "claims": 1.002318,
+   "total": 1.9887743800000002
+  }
+ },
+ "pass_delta": -0.09090909090909091,
+ "bootstrap": {
+  "reps": 10000,
+  "seed": 20261016,
+  "scenarios": 12,
+  "ci95": {
+   "pass_r0": [
+    0.0,
+    0.2727272727272727
+   ],
+   "pass_r4": [
+    0.0,
+    0.0
+   ],
+   "pass_delta": [
+    -0.2727272727272727,
+    0.0
+   ],
+   "unsupported_r0": null,
+   "unsupported_r4": null,
+   "unsupported_delta": null
+  },
+  "effective_draws": {
+   "pass_r0": 10000,
+   "pass_r4": 10000,
+   "pass_delta": 10000,
+   "unsupported_r0": 0,
+   "unsupported_r4": 0,
+   "unsupported_delta": 0
+  }
+ },
+ "conditions": {
+  "pass_noninferior": false,
+  "pass_improved": false,
+  "unsupported_not_higher": null,
+  "refresh_p95_le_500": true
+ }
+}

@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from jikgam.engine.events import read_log
+from jikgam.v2.e2e_logs import read_log, read_text
 from jikgam.engine.org import ROOT
 
 from . import judge as jd
@@ -37,7 +37,7 @@ def load_run(run_dir: Path) -> dict[str, Any]:
         sid = sess["session"]
         events = read_log(run_dir / f"{sid}.jsonl")
         jp = jd.judge_path(run_dir, sid)
-        ai = json.loads(jp.read_text(encoding="utf-8")) if jp.exists() else None
+        ai = json.loads(read_text(jp)) if jp.exists() else None
         result = jd.evaluate(scenarios[sess["scenario"]], events, ai, jd.sim_end_of(run_dir, sid))
         counts = {t: sum(e["type"] == t for e in events) for t in ("task.cancelled", "result.discarded")}
         sessions.append({**sess, "result": result, "metrics": mt.session_metrics(events), "ai": ai, "counts": counts})

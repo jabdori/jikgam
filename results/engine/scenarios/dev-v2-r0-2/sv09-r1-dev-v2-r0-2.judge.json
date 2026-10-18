@@ -1,0 +1,86 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  1,
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 1~3에서 연 구독 중도 해지 금액을 안내하지 않음."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "상담 1~3에서 제3자라는 이유로 상담을 거절하지 않음."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "상담 3에서 상담사에게 연결해 드리겠다고 안내함."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "상담 3에서 법정대리인 관계를 확인하는 서류가 필요하다고 안내함."
+   },
+   {
+    "index": 2,
+    "said": false,
+    "reason": "상담 3에서 약관 제13조와 제19조만 언급하고 법령이나 고시 기준은 안내하지 않음."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "상담 3에서 법정대리인 확인 서류가 필요하다며 상담사 연결(handoff)을 안내함."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "not_applicable",
+    "reason": "상담원이 딸의 이용 여부를 묻지 않아 안내할 상황이 오지 않음."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 3에서 가족관계 서류가 필요하다고 안내했으나, 이후 대화가 바로 종료되어 고객이 반응할 상황이 오지 않음."
+   },
+   {
+    "index": 2,
+    "status": "not_applicable",
+    "reason": "상담 3에서 상담사 연결 안내가 나왔으나, 직후 대화가 종료되어 고객이 질문할 상황이 오지 않음."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "고객 4에서 자녀 나이를 18살에서 2009년생 17살로 정정하며 정상적으로 실행함."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 14867.7,
+   "input_tokens": 2482,
+   "output_tokens": 1803,
+   "thoughts_tokens": 1211,
+   "cached_tokens": 0,
+   "cost_usd": 0.0266,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.0266,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "sv09-r1-dev-v2-r0-2",
+ "scenario": "sv09"
+}

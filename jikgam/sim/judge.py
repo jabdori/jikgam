@@ -38,10 +38,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
 
-from jikgam.engine.events import read_log
+from jikgam.v2.e2e_logs import read_log, read_text, store_json
 from jikgam.engine.org import ROOT
 
-from .gemini import GeminiJson
+from .gemini import GeminiJson, RETRY_DELAYS_S
 from .scenario import customer_events, customer_view, event_id, load_scenarios
 
 # -2: 상담원이 먼저 답해 필요 없어진 reveal_rules 행동은 지킨 것으로 본다
@@ -738,6 +738,44 @@ def judge_input(scn: dict[str, Any], events: list[dict[str, Any]]) -> str:
     return "```json\n" + json.dumps(payload, ensure_ascii=False, indent=1) + "\n```"
 
 
+def _shape_errors(value, schema, path="응답"):
+    """기존 응답 스키마의 자료형과 필수 필드를 확인한다. 판정 내용은 바꾸지 않는다."""
+    types = {"object": dict, "array": list, "string": str, "boolean": bool, "integer": int}
+    expected = types[schema["type"]]
+    if not isinstance(value, expected) or (expected is int and isinstance(value, bool)):
+        return [f"{path}: {schema['type']} 형식 아님"]
+    if "enum" in schema and value not in schema["enum"]:
+        return [f"{path}: 허용한 값 아님"]
+    errors = []
+    if isinstance(value, dict):
+        errors += [f"{path}.{key}: 필수 필드 없음" for key in schema.get("required", []) if key not in value]
+        for key, child in schema.get("properties", {}).items():
+            if key in value:
+                errors += _shape_errors(value[key], child, f"{path}.{key}")
+    elif isinstance(value, list):
+        for i, child in enumerate(value):
+            errors += _shape_errors(child, schema["items"], f"{path}[{i}]")
+        ids = [v["index"] for v in value if isinstance(v, dict) and type(v.get("index")) is int]
+        if len(ids) != len(set(ids)):
+            errors.append(f"{path}: 중복 항목 번호")
+    return errors
+
+
+def _safe_verdict(data):
+    """재시도를 다 써도 올바른 항목만 남겨, 잘못된 형식은 판정 불가로 처리한다."""
+    data = data if isinstance(data, dict) else {}
+    out = {}
+    for key, schema in JUDGE_SCHEMA["properties"].items():
+        value = data.get(key)
+        if schema["type"] == "array":
+            rows = value if isinstance(value, list) else []
+            ids = [v.get("index") for v in rows if isinstance(v, dict) and type(v.get("index")) is int]
+            out[key] = [v for v in rows if not _shape_errors(v, schema["items"]) and ids.count(v["index"]) == 1]
+        else:
+            out[key] = value if not _shape_errors(value, schema) else None
+    return out
+
+
 def _validate(scn: dict[str, Any], data: dict[str, Any], n_consent: int = 0) -> list[str]:
     """AI 출력에 빠진 항목 번호."""
     want = {
@@ -757,7 +795,7 @@ def _validate(scn: dict[str, Any], data: dict[str, Any], n_consent: int = 0) -> 
 
 
 async def ai_judge(scn: dict[str, Any], events: list[dict[str, Any]], client: GeminiJson) -> dict[str, Any]:
-    """AI 평가 한 번(빠진 항목이 있으면 한 번 더). 결과는 판정 파일에 그대로 저장한다."""
+    """누락·형식·호출 실패는 2·4·8초 뒤 최대 세 번 다시 판정한다. 기준과 지시는 그대로다."""
     user = judge_input(scn, events)
     voice = is_voice(events)
     system = JUDGE_VOICE_SYSTEM if voice else JUDGE_SYSTEM
@@ -765,15 +803,23 @@ async def ai_judge(scn: dict[str, Any], events: list[dict[str, Any]], client: Ge
     record: dict[str, Any] = {"judge_model": client.model,
                               "prompt_version": JUDGE_VOICE_PROMPT_VERSION if voice else JUDGE_PROMPT_VERSION,
                               "forbidden_ai": forbidden_split(scn)[1], "verdict": None, "error": None}
-    for _ in range(2):
+    record["attempt_errors"] = []
+    for delay in (0, *RETRY_DELAYS_S):
+        if delay:
+            await asyncio.sleep(delay)
         reply = await client.ask(system, user, JUDGE_SCHEMA)
         usages.append(reply.usage())
         if reply.data is None:
-            record["error"] = reply.error
+            record["error"] = reply.error or "판정 응답 없음"
+            record["attempt_errors"].append(record["error"])
             continue
-        missing = _validate(scn, reply.data, len(consent_writes(LogView(events))))
-        record["verdict"], record["error"] = reply.data, (f"빠진 항목: {missing}" if missing else None)
-        if not missing:
+        shape = _shape_errors(reply.data, JUDGE_SCHEMA)
+        safe = _safe_verdict(reply.data)
+        missing = _validate(scn, safe, len(consent_writes(LogView(events))))
+        error = f"형식 오류: {shape}" if shape else (f"빠진 항목: {missing}" if missing else None)
+        record["verdict"], record["error"] = safe, error
+        record["attempt_errors"].append(error)
+        if not error:
             break
     record["usage"] = usages
     record["cost_usd"] = sum(u["cost_usd"] for u in usages)
@@ -900,19 +946,24 @@ async def judge_session(scn: dict[str, Any], run_dir: Path, session_id: str, cli
     record = await ai_judge(scn, events, client)
     record["session"] = session_id
     record["scenario"] = scn["id"]
-    judge_path(run_dir, session_id).write_text(json.dumps(record, ensure_ascii=False, indent=1), encoding="utf-8",
-                                               newline="\n")
+    path = judge_path(run_dir, session_id)
+    if path.exists():
+        previous = json.loads(read_text(path))
+        record["cost_usd"] += previous.get("cost_usd", 0)
+        record["usage"] = previous.get("usage", []) + record["usage"]
+        record["previous_judgments"] = previous.get("previous_judgments", 0) + 1
+    store_json(path, record)
     return record
 
 
 def load_summary(run_dir: Path) -> dict[str, Any]:
-    return json.loads((run_dir / "summary.json").read_text(encoding="utf-8"))
+    return json.loads(read_text(run_dir / "summary.json"))
 
 
 async def judge_run(run_dir: Path, model: str = DEFAULT_JUDGE_MODEL, force: bool = False) -> None:
     summary = load_summary(run_dir)
     scenarios = {s["id"]: s for s in load_scenarios(ROOT / summary["scenario_file"])}
-    client = GeminiJson.from_config(model)
+    client = GeminiJson.from_config(model, retry_delays_s=())
     try:
         for sess in summary["sessions"]:
             if judge_path(run_dir, sess["session"]).exists() and not force:
