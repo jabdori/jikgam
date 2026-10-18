@@ -27,6 +27,19 @@ def scenario_path(org: str) -> Path:
     return ROOT / "data/scenarios" / f"{org}.jsonl"
 
 
+def normalize_selection(spec):
+    """선택 순서를 보존하고 같은 세션을 두 번 실행하는 중복은 거절한다."""
+    if spec == "all":
+        return "all"
+    values = spec.split(",") if isinstance(spec, str) else spec
+    selected = [s.strip() for s in values if s.strip()]
+    if not selected:
+        raise ValueError("실행할 시나리오가 없습니다")
+    if len(set(selected)) != len(selected):
+        raise ValueError("시나리오 ID 중복은 허용하지 않습니다")
+    return selected
+
+
 def load_scenarios(path: Path) -> list[dict[str, Any]]:
     rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
     ids = [r["id"] for r in rows]

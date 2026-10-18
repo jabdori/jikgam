@@ -1,0 +1,129 @@
+{
+ "profiles": {
+  "r0": {
+   "current": {
+    "events": 137,
+    "items": 173,
+    "found": 67,
+    "complete": 54,
+    "coverage": 0.3872832369942196,
+    "retrieval_events_total": 139,
+    "canceled_before_evidence": 2
+   },
+   "recent-two": {
+    "events": 137,
+    "items": 173,
+    "found": 18,
+    "complete": 18,
+    "coverage": 0.10404624277456648
+   },
+   "all-customer": {
+    "events": 137,
+    "items": 173,
+    "found": 41,
+    "complete": 41,
+    "coverage": 0.23699421965317918
+   },
+   "recent-two-context": {
+    "events": 137,
+    "items": 173,
+    "found": 26,
+    "complete": 26,
+    "coverage": 0.15028901734104047
+   },
+   "all-expanded": {
+    "events": 137,
+    "items": 173,
+    "found": 67,
+    "complete": 54,
+    "coverage": 0.3872832369942196
+   },
+   "recent-two-expanded": {
+    "events": 137,
+    "items": 173,
+    "found": 43,
+    "complete": 41,
+    "coverage": 0.24855491329479767
+   }
+  },
+  "r4": {
+   "current": {
+    "events": 134,
+    "items": 170,
+    "found": 77,
+    "complete": 63,
+    "coverage": 0.45294117647058824,
+    "retrieval_events_total": 136,
+    "canceled_before_evidence": 2
+   },
+   "recent-two": {
+    "events": 134,
+    "items": 170,
+    "found": 45,
+    "complete": 37,
+    "coverage": 0.2647058823529412
+   },
+   "all-customer": {
+    "events": 134,
+    "items": 170,
+    "found": 78,
+    "complete": 64,
+    "coverage": 0.4588235294117647
+   },
+   "recent-two-context": {
+    "events": 134,
+    "items": 170,
+    "found": 61,
+    "complete": 56,
+    "coverage": 0.3588235294117647
+   },
+   "all-expanded": {
+    "events": 134,
+    "items": 170,
+    "found": 77,
+    "complete": 63,
+    "coverage": 0.45294117647058824
+   },
+   "recent-two-expanded": {
+    "events": 134,
+    "items": 170,
+    "found": 66,
+    "complete": 54,
+    "coverage": 0.38823529411764707
+   }
+  }
+ },
+ "law_applies_not_selected": {
+  "r0": {
+   "count": 16,
+   "min": 0.13,
+   "p50": 0.395,
+   "p95": 0.46,
+   "max": 0.46,
+   "bins": {
+    "0.0~0.1": 0,
+    "0.1~0.2": 5,
+    "0.2~0.3": 1,
+    "0.3~0.4": 2,
+    "0.4~0.5": 8
+   }
+  },
+  "r4": {
+   "count": 17,
+   "min": 0.2,
+   "p50": 0.31,
+   "p95": 0.4179999999999999,
+   "max": 0.49,
+   "bins": {
+    "0.0~0.1": 0,
+    "0.1~0.2": 0,
+    "0.2~0.3": 5,
+    "0.3~0.4": 10,
+    "0.4~0.5": 2
+   }
+  }
+ },
+ "eligible_rules": [],
+ "candidate_count": 8,
+ "paid_cost_usd": 0
+}

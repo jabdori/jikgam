@@ -22,6 +22,28 @@ SCHEMA = {"type": "object", "properties": {"claims": {"type": "array", "items": 
 DEFINITION = "generation-input-v2"
 
 
+def validation_error(data):
+    if not isinstance(data, dict) or not isinstance(data.get("claims"), list):
+        return "주장 판정 구조 오류: claims 배열 필요"
+    for claim in data["claims"]:
+        if (not isinstance(claim, dict) or type(claim.get("claim")) is not str
+                or type(claim.get("supported")) is not bool or type(claim.get("reason")) is not str):
+            return "주장 판정 구조 오류: claim·reason 문자열과 supported 불리언 필요"
+    return None
+
+
+def cache_valid(record):
+    return isinstance(record, dict) and not record.get("error") and validation_error(record) is None
+
+
+def read_cache(path):
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+        return value if isinstance(value, dict) else {}
+    except (ValueError, UnicodeError):
+        return {}
+
+
 def exposed_inputs(events, articles=None):
     """실제 생성 입력 전체를 요청 ID로 연결한다. 이전 로그를 조항 글로 복원하지 않는다."""
     exposed = {e["suggestion_id"] for e in events if e["type"] == "suggestion.exposed"}
@@ -35,6 +57,10 @@ def exposed_inputs(events, articles=None):
                 requests[e["request_id"]] = e
             versions[e.get("version")] = e
         if e["type"] != "suggestion.created" or e["suggestion_id"] not in exposed:
+            continue
+        if e.get("source") in ("engine_error", "checked_fallback"):
+            yield {"suggestion_id": e["suggestion_id"], "excluded": True, "source": e["source"],
+                   "input_missing": False}
             continue
         request = (requests.get(e["generation_request_id"]) if e.get("generation_request_id")
                    else versions.get(e.get("basis_version", e.get("version"))))
@@ -69,10 +95,13 @@ def article_map(summary):
 async def run(run_dir: Path, max_cost: float, retry_failed=False, concurrency=8):
     summary = json.loads((run_dir / "summary.json").read_text(encoding="utf-8"))
     articles = article_map(summary)
-    inputs = {s["session"]: list(exposed_inputs(read_log(run_dir / f"{s['session']}.jsonl")))
+    inputs = {s["session"]: [r for r in exposed_inputs(read_log(run_dir / f"{s['session']}.jsonl"))
+                            if not r.get("excluded")]
               for s in summary["sessions"]}
     if any(r.get("input_missing", False) for rows in inputs.values() for r in rows):
         raise ValueError("입력 없음(이전 정의): 생성 입력 전체가 없는 실행은 주장 판정을 하지 않습니다")
+    if not any(inputs.values()):
+        return 0.0
     dest = local_dir(summary["run_id"])
     dest.mkdir(parents=True, exist_ok=True)
     client = GeminiJson.from_config(answer.JUDGE_MODEL, timeout_s=600, retry_delays_s=())
@@ -86,11 +115,11 @@ async def run(run_dir: Path, max_cost: float, retry_failed=False, concurrency=8)
         path = dest / f"{key}.json"
         prior_cost = 0.0
         if path.exists():
-            old = json.loads(path.read_text(encoding="utf-8"))
-            if old.get("error") or old.get("claims") is None:
+            old = read_cache(path)
+            if not cache_valid(old):
                 if not retry_failed:
                     raise RuntimeError(f"저장된 실패 판정은 --retry-failed로만 다시 돌립니다: {path.name}")
-                prior_cost = old["usage"]["cost_usd"]
+                prior_cost = old.get("usage", {}).get("cost_usd", 0)
             else:
                 return
         async with sem:
@@ -101,7 +130,7 @@ async def run(run_dir: Path, max_cost: float, retry_failed=False, concurrency=8)
             try:
                 user = (f"## 질문\n{row['question']}\n\n## 답변을 만들 때 넘긴 근거 글\n"
                         f"{row['evidence'] or '(없음)'}\n\n## 판정할 답변\n{row['answer']}")
-                reply = await ask_json(client, SYSTEM, user, SCHEMA)
+                reply = await ask_json(client, SYSTEM, user, SCHEMA, validate=validation_error)
                 spent += reply.cost_usd
                 usage = reply.usage()
                 usage["cost_usd"] += prior_cost

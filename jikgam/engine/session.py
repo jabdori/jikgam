@@ -837,6 +837,8 @@ class Session:
                                  action=plan.action, rule=plan.rule, intent=self.state.request,
                                  cited_articles=cited, generator_cited=g.cited_articles, evidence_sources=sources,
                                  generation_request_id=generation_request_id,
+                                 source=("engine_error" if plan.rule == "engine_error" else
+                                         "checked_fallback" if g.fallback else "model"),
                                  amount=g.amount, amount_final=g.amount_final,
                                  proposal=({"signature": proposal.signature, "kind": proposal.kind,
                                             "writes": [w.tool for w in proposal.writes]} if proposal else None),

@@ -1,0 +1,227 @@
+{
+ "r0": {
+  "valid": 11,
+  "passed": 1,
+  "claims": 233,
+  "unsupported": 1,
+  "missing": 0,
+  "invalid": 1,
+  "unknown_compliance": 0,
+  "missing_planned_runs": 0,
+  "excluded_fixed_suggestions": 0,
+  "claim_status": "판정 완료",
+  "generation_inputs_missing": 0,
+  "legacy_cited_articles": {
+   "label": "인용 조항만 준 이전 판정",
+   "claims": 0,
+   "unsupported": 0,
+   "rate": null
+  },
+  "unknown_pass": 0,
+  "ai_judge_errors": 0,
+  "unknown_items": {
+   "1": 0,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 0,
+   "6": 0,
+   "7": 0,
+   "8": 0,
+   "9": 0,
+   "10": 0
+  },
+  "claim_judge_failures": 0,
+  "log_sources": {
+   "private_sessions": 12,
+   "public_sessions": 0
+  },
+  "pass_rate": 0.09090909090909091,
+  "unsupported_claim_rate": 0.004291845493562232,
+  "claim_judgment_complete": true,
+  "refresh_ms": {
+   "events": 11,
+   "p50": 226.669,
+   "p95": 319.70799999999997,
+   "misses": 0
+  },
+  "stale": {
+   "by_channel": {
+    "chat": {
+     "invalid": 0,
+     "denominator": 38,
+     "unconfirmed": 0
+    }
+   },
+   "events_total": 9,
+   "events_with_invalid": 0
+  },
+  "failures": {
+   "1": 1,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 0,
+   "6": 0,
+   "7": 0,
+   "8": 0,
+   "9": 9,
+   "10": 8
+  },
+  "precision": 0.5475108225108225,
+  "law_precision": 0.11672727272727274,
+  "law_tokens": {
+   "mean": 2308.7272727272725,
+   "sum": 25396
+  },
+  "cost_usd": {
+   "customer": 0.11382975,
+   "decision": 0.058870014000000005,
+   "generation": 0.35048775,
+   "judge": 0.581906,
+   "claims": 2.070058,
+   "total": 3.175151514
+  }
+ },
+ "r4": {
+  "valid": 11,
+  "passed": 2,
+  "claims": 240,
+  "unsupported": 2,
+  "missing": 0,
+  "invalid": 1,
+  "unknown_compliance": 0,
+  "missing_planned_runs": 0,
+  "excluded_fixed_suggestions": 0,
+  "claim_status": "판정 완료",
+  "generation_inputs_missing": 0,
+  "legacy_cited_articles": {
+   "label": "인용 조항만 준 이전 판정",
+   "claims": 0,
+   "unsupported": 0,
+   "rate": null
+  },
+  "unknown_pass": 0,
+  "ai_judge_errors": 0,
+  "unknown_items": {
+   "1": 0,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 0,
+   "6": 0,
+   "7": 0,
+   "8": 0,
+   "9": 0,
+   "10": 0
+  },
+  "claim_judge_failures": 0,
+  "log_sources": {
+   "private_sessions": 12,
+   "public_sessions": 0
+  },
+  "pass_rate": 0.18181818181818182,
+  "unsupported_claim_rate": 0.008333333333333333,
+  "claim_judgment_complete": true,
+  "refresh_ms": {
+   "events": 10,
+   "p50": 324.31449999999995,
+   "p95": 412.59770000000003,
+   "misses": 0
+  },
+  "stale": {
+   "by_channel": {
+    "chat": {
+     "invalid": 0,
+     "denominator": 36,
+     "unconfirmed": 0
+    }
+   },
+   "events_total": 9,
+   "events_with_invalid": 0
+  },
+  "failures": {
+   "1": 1,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 0,
+   "6": 0,
+   "7": 0,
+   "8": 0,
+   "9": 6,
+   "10": 8
+  },
+  "precision": 0.49816017316017314,
+  "law_precision": 0.14472727272727273,
+  "law_tokens": {
+   "mean": 3375.818181818182,
+   "sum": 37134
+  },
+  "cost_usd": {
+   "customer": 0.10636275,
+   "decision": 0.078739164,
+   "generation": 0.388767,
+   "judge": 0.574232,
+   "claims": 2.14123,
+   "total": 3.289330914
+  }
+ },
+ "pass_delta": 0.09090909090909091,
+ "bootstrap": {
+  "reps": 10000,
+  "seed": 20261016,
+  "scenarios": 12,
+  "ci95": {
+   "pass_r0": [
+    0.0,
+    0.2727272727272727
+   ],
+   "pass_r4": [
+    0.0,
+    0.4166666666666667
+   ],
+   "pass_delta": [
+    -0.022727272727272707,
+    0.3
+   ],
+   "unsupported_r0": [
+    0.0,
+    0.01276595744680851
+   ],
+   "unsupported_r4": [
+    0.0,
+    0.02030456852791878
+   ],
+   "unsupported_delta": [
+    -0.0007317583527201813,
+    0.013852855735595674
+   ]
+  },
+  "effective_draws": {
+   "pass_r0": 10000,
+   "pass_r4": 10000,
+   "pass_delta": 10000,
+   "unsupported_r0": 10000,
+   "unsupported_r4": 10000,
+   "unsupported_delta": 10000
+  }
+ },
+ "contract_status": "이전 실행(기록된 인자만 대조)",
+ "conditions": {
+  "pass_noninferior": true,
+  "pass_improved": false,
+  "unsupported_not_higher": false,
+  "refresh_p95_le_500": true
+ },
+ "human_check": {
+  "status": "미확인"
+ },
+ "automated_conditions": {
+  "pass_noninferior": true,
+  "pass_improved": false,
+  "unsupported_not_higher": false,
+  "refresh_p95_le_500": true
+ },
+ "deferred_conditions": []
+}

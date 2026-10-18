@@ -18,12 +18,7 @@ def sha(data):
 
 def hide(text, needles):
     """일치한 조각들이 겹치거나 붙으면 하나의 구간으로 가린다."""
-    spans = []
-    for part in needles:
-        start = text.find(part)
-        while start >= 0:
-            spans.append((start, start + len(part)))
-            start = text.find(part, start + 1)
+    spans = [(start, end) for _, start, end in terms_scan.matches(text, needles)]
     merged = []
     for start, end in sorted(spans):
         if merged and start <= merged[-1][1]:
@@ -42,7 +37,11 @@ def hide_value(value, needles):
         result = [] if isinstance(value, list) else {}
         regions = pieces = 0
         for key, v in enumerate(value) if isinstance(value, list) else value.items():
-            changed, n, p = hide_value(v, needles)
+            if (isinstance(value, dict) and key in terms_scan.BODY_FIELDS and terms_scan.terms_object(value)
+                    and isinstance(v, str) and v.strip() and v != MASK):
+                changed, n, p = MASK, 1, 1
+            else:
+                changed, n, p = hide_value(v, needles)
             if isinstance(result, list):
                 result.append(changed)
             else:

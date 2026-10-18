@@ -27,6 +27,7 @@ async def decide(client, state, questions):
 
 async def ask_json(client, *args, **kwargs):
     """v2 생성·판정의 재시도도 같은 횟수로 묶는다. 내부 재시도를 끈 클라이언트를 쓴다."""
+    validate = kwargs.pop("validate", None)
     started = time.perf_counter()
     tin = tout = thoughts = cached = 0
     cost = 0.0
@@ -34,6 +35,8 @@ async def ask_json(client, *args, **kwargs):
         if delay:
             await asyncio.sleep(delay)
         reply = await client.ask(*args, **kwargs)
+        if not reply.error and validate is not None:
+            reply = replace(reply, error=validate(reply.data))
         tin += reply.input_tokens
         tout += reply.output_tokens
         thoughts += reply.thoughts_tokens

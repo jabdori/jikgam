@@ -11,7 +11,9 @@ from jikgam.v2.e2e_logs import read_log, original_path
 from jikgam.engine.org import ROOT
 from jikgam.sim import metrics
 from jikgam.sim.report import load_run
+from jikgam.sim.scenario import load_scenarios
 from jikgam.v2 import answer, e2e_claims
+from jikgam.v2.e2e_contract import legacy_contract, verify_comparison
 
 SEED = 20261016
 REPS = 10_000
@@ -29,6 +31,8 @@ def ratio(a, b):
 def claim_counts(events, articles, directory, model):
     total = unsupported = missing = failed = 0
     for row in e2e_claims.exposed_inputs(events, articles):
+        if row.get("excluded"):
+            continue
         if row.get("input_missing"):
             missing += 1
             continue
@@ -36,8 +40,11 @@ def claim_counts(events, articles, directory, model):
         if not path.exists():
             missing += 1
             continue
-        rec = json.loads(path.read_text(encoding="utf-8"))
-        if rec.get("error") or not isinstance(rec.get("claims"), list):
+        try:
+            rec = json.loads(path.read_text(encoding="utf-8"))
+        except ValueError:
+            rec = {}
+        if not e2e_claims.cache_valid(rec):
             missing += 1
             failed += 1
             continue
@@ -54,36 +61,52 @@ def collect(run_dir, expected_law=None):
     articles = e2e_claims.article_map(run["summary"])
     model = load_config()[answer.JUDGE_MODEL]["model"]
     rows = []
-    cached = [json.loads(p.read_text(encoding="utf-8")) for p in directory.glob("*.json")]
+    cached = [e2e_claims.read_cache(p) for p in directory.glob("*.json")]
     for s in run["sessions"]:
         r = s["result"]
         events = read_log(run_dir / f"{s['session']}.jsonl")
         total, unsupported, missing, failed = claim_counts(events, articles, directory, model)
         legacy = [c for rec in cached if rec.get("session") == s["session"]
                   and rec.get("definition") != e2e_claims.DEFINITION and not rec.get("error")
+                  and e2e_claims.cache_valid(rec)
                   for c in rec.get("claims") or []]
         input_missing = sum(r["input_missing"] for r in e2e_claims.exposed_inputs(events))
         rows.append({"scenario": s["scenario"], "run": s.get("run", 1),
+                     "execution_contract": run["summary"].get("contract") or legacy_contract(run["summary"]),
                      "private_log": original_path(run_dir / f"{s['session']}.jsonl").parent != run_dir,
                      "valid": r["compliance"]["valid"], "pass": r["pass"], "claims": total,
                      "unsupported": unsupported, "missing": missing, "claim_failures": failed,
                      "input_missing": input_missing, "legacy_claims": len(legacy),
+                     "excluded_fixed_suggestions": sum(bool(x.get("excluded")) for x in e2e_claims.exposed_inputs(events)),
                      "legacy_unsupported": sum(not c["supported"] for c in legacy),
                      "ai_error": bool((s.get("ai") or {}).get("error")),
                      "items": {n: v["ok"] for n, v in r["items"].items()},
                      "aux": r["aux"], "metrics": s["metrics"]})
+    summary = run["summary"]
+    selection = (summary.get("contract") or {}).get("arguments", {}).get("scenarios", summary.get("scenarios", "all"))
+    if isinstance(selection, str) and selection != "all":
+        selection = selection.split(",")
+    planned = {s["id"] for s in load_scenarios(ROOT / summary["scenario_file"])
+               if selection == "all" or s["id"] in selection}
+    seen = {(r["scenario"], r["run"]) for r in rows}
+    for sid in sorted(planned):
+        for k in range(summary.get("run_start", 1), summary.get("run_start", 1) + summary["runs"]):
+            if (sid, k) not in seen:
+                rows.append({"scenario": sid, "run": k, "valid": None, "pass": None, "claims": 0,
+                             "unsupported": 0, "missing": 0, "planned_missing": True,
+                             "execution_contract": summary.get("contract") or legacy_contract(summary),
+                             "items": {n: None for n in range(1, 11)}, "aux": {"precision": None},
+                             "metrics": metrics.session_metrics([])})
     cost = {k: sum((s["costs"].get(k + "_usd") or 0) for s in run["sessions"])
             for k in ("customer", "decision", "generation")}
     cost["judge"] = sum((s.get("ai") or {}).get("cost_usd", 0) for s in run["sessions"])
-    cost["claims"] = sum(json.loads(p.read_text(encoding="utf-8"))["usage"]["cost_usd"]
-                         for p in directory.glob("*.json"))
+    cost["claims"] = sum(rec.get("usage", {}).get("cost_usd", 0) for rec in cached)
     cost["total"] = sum(cost.values())
     return rows, cost
 
 
 def totals(rows):
-    # 유효 여부가 미판정인 실행은 기존 v1 보고와 같이 두되 별도로 세어 판정 완료 여부를 드러낸다.
-    valid = [r for r in rows if r["valid"] is not False]
+    valid = [r for r in rows if r["valid"] is True]
     return {"valid": len(valid), "passed": sum(r["pass"] is True for r in valid),
             "claims": sum(r["claims"] for r in valid), "unsupported": sum(r["unsupported"] for r in valid),
             "missing": sum(r["missing"] for r in valid)}
@@ -96,9 +119,11 @@ def rates(rows):
 
 def summarize(rows, cost):
     t = totals(rows)
-    valid = [r for r in rows if r["valid"] is not False]
+    valid = [r for r in rows if r["valid"] is True]
     agg = metrics.aggregate([r["metrics"] for r in valid])
-    return {**t, "invalid": len(rows) - t["valid"], "unknown_compliance": sum(r["valid"] is None for r in rows),
+    return {**t, "invalid": sum(r["valid"] is False for r in rows), "unknown_compliance": sum(r["valid"] is None for r in rows),
+            "missing_planned_runs": sum(r.get("planned_missing", False) for r in rows),
+            "excluded_fixed_suggestions": sum(r.get("excluded_fixed_suggestions", 0) for r in valid),
             "claim_status": "입력 없음(이전 정의)" if any(r.get("input_missing", 0) for r in valid)
                             else ("판정 완료" if not t["missing"] else "미판정 제안 있음"),
             "generation_inputs_missing": sum(r.get("input_missing", 0) for r in valid),
@@ -141,11 +166,13 @@ def paired_bootstrap(r0, r4, reps=REPS, seed=SEED):
     draws = {"pass_r0": [], "pass_r4": [], "pass_delta": [],
              "unsupported_r0": [], "unsupported_r4": [], "unsupported_delta": []}
     complete_claims = not any(totals(rows)["missing"] for rows in (r0, r4))
+    known = not any(r["valid"] is None for rows in (r0, r4) for r in rows)
+    known_pass = known and not any(r["pass"] is None for rows in (r0, r4) for r in rows if r["valid"] is True)
     for _ in range(reps):
         chosen = rng.choices(ids, k=len(ids))
         values = [rates([r for sid in chosen for r in g[sid]]) for g in groups]
         for i, name in enumerate(("pass", "unsupported")):
-            if i == 1 and not complete_claims:
+            if not known or (i == 0 and not known_pass) or (i == 1 and not complete_claims):
                 continue
             a, b = values[0][i], values[1][i]
             if a is not None:
@@ -160,17 +187,21 @@ def paired_bootstrap(r0, r4, reps=REPS, seed=SEED):
 
 
 def compare(r0, r4, costs):
+    contract_status = verify_comparison(r0, r4)
     a, b = summarize(r0, costs[0]), summarize(r4, costs[1])
     delta = b["pass_rate"] - a["pass_rate"] if None not in (a["pass_rate"], b["pass_rate"]) else None
     unsupported = None if None in (a["unsupported_claim_rate"], b["unsupported_claim_rate"]) else (
         b["unsupported_claim_rate"] <= a["unsupported_claim_rate"])
     known = not any(s["unknown_compliance"] or s["unknown_pass"] for s in (a, b))
     p95 = b["refresh_ms"]["p95"]
-    return {"r0": a, "r4": b, "pass_delta": delta, "bootstrap": paired_bootstrap(r0, r4),
+    bootstrap = paired_bootstrap(r0, r4)
+    ci = bootstrap["ci95"]["pass_delta"]
+    compliance_known = not any(s["unknown_compliance"] for s in (a, b))
+    return {"r0": a, "r4": b, "pass_delta": delta, "bootstrap": bootstrap, "contract_status": contract_status,
             "conditions": {"pass_noninferior": delta >= -0.05 if delta is not None and known else None,
-                           "pass_improved": delta >= 0.10 if delta is not None and known else None,
-                           "unsupported_not_higher": unsupported,
-                           "refresh_p95_le_500": p95 <= 500 if not math.isnan(p95) else None}}
+                           "pass_improved": delta >= 0.10 and ci[0] > 0 if delta is not None and known and ci else None,
+                           "unsupported_not_higher": unsupported if compliance_known else None,
+                           "refresh_p95_le_500": p95 <= 500 if compliance_known and not math.isnan(p95) else None}}
 
 
 def serializable(value):
@@ -182,6 +213,24 @@ def serializable(value):
     if isinstance(value, list):
         return [serializable(v) for v in value]
     return value
+
+
+def reflect_check(report, check):
+    """일치율 미달 조건만 보류한다. 자동 계산 결과는 비교용으로 보존한다."""
+    report["human_check"] = check
+    report["automated_conditions"] = dict(report["conditions"])
+    deferred = []
+    if check["status"] == "확인 완료":
+        if check["claims"]["agreement"] < 0.80:
+            deferred.append("unsupported_not_higher")
+        if check["scenario_items"]["agreement"] < 0.80:
+            deferred += ["pass_noninferior", "pass_improved"]
+    elif check["status"] != "미확인":
+        deferred = ["unsupported_not_higher", "pass_noninferior", "pass_improved"]
+    report["deferred_conditions"] = deferred
+    for key in deferred:
+        report["conditions"][key] = None
+    return report
 
 
 def render(report):
@@ -208,6 +257,19 @@ def render(report):
               f"시나리오 단위 짝지은 부트스트랩 95% 구간: {report['bootstrap']['ci95']}",
               f"판정 조건: {report['conditions']}",
               f"입력 로그 출처: R0 {report['r0']['log_sources']}, R4 {report['r4']['log_sources']}"]
+    lines += [f"실행 계약: {report.get('contract_status', '미확인')}",
+              f"준수 미판정: R0 {report['r0']['unknown_compliance']}, R4 {report['r4']['unknown_compliance']}",
+              f"주장 판정 제외 고정 제안: R0 {report['r0']['excluded_fixed_suggestions']}, R4 {report['r4']['excluded_fixed_suggestions']}"]
+    check = report.get("human_check")
+    if check:
+        lines += ["", f"사람 확인: {check['status']}"]
+        if check["status"] == "확인 완료":
+            lines += ["| 사람 확인 | 일치/표본 | 일치율 |", "|---|---:|---:|"]
+            for key, title in (("claims", "주장 근거"), ("scenario_items", "시나리오 항목")):
+                c = check[key]
+                lines.append(f"| {title} | {c['matched']}/{c['sampled']} | {c['agreement']:.2%} |")
+        if report.get("deferred_conditions"):
+            lines.append("판정 보류(일치율 0.80 미만 또는 입력 변경): " + ", ".join(report["deferred_conditions"]))
     if any(report[k]["legacy_cited_articles"]["claims"] for k in ("r0", "r4")):
         lines += ["", "인용 조항만 준 이전 판정(새 정의와 직접 비교하지 않음)"]
         for key in ("r0", "r4"):
@@ -216,24 +278,29 @@ def render(report):
     return "\n".join(lines) + "\n"
 
 
+def write_report(r0_dir, r4_dir, name, root=ROOT):
+    from jikgam.v2.e2e_check import load_check, public_path
+
+    public_path(name, root)
+    r0, c0 = collect(r0_dir, "r0")
+    r4, c4 = collect(r4_dir, "r4")
+    report = serializable(reflect_check(compare(r0, r4, [c0, c4]),
+                                       load_check(name, r0_dir, r4_dir, root)))
+    dest = root / "results/v2/e2e" / name
+    dest.mkdir(parents=True, exist_ok=True)
+    (dest / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=1, allow_nan=False) + "\n",
+                                      encoding="utf-8", newline="\n")
+    (dest / "report.md").write_text(render(report), encoding="utf-8", newline="\n")
+    return report
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("r0", type=Path)
     ap.add_argument("r4", type=Path)
     ap.add_argument("--name", required=True)
     args = ap.parse_args()
-    if Path(args.name).name != args.name or args.name in (".", ".."):
-        raise SystemExit("보고서 이름에 경로를 쓸 수 없습니다")
-    r0, c0 = collect(args.r0, "r0")
-    r4, c4 = collect(args.r4, "r4")
-    report = serializable(compare(r0, r4, [c0, c4]))
-    dest = ROOT / "results/v2/e2e" / args.name
-    dest.mkdir(parents=True, exist_ok=True)
-    (dest / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=1, allow_nan=False) + "\n",
-                                      encoding="utf-8", newline="\n")
-    table = render(report)
-    (dest / "report.md").write_text(table, encoding="utf-8", newline="\n")
-    print(table)
+    print(render(write_report(args.r0, args.r4, args.name)))
 
 
 if __name__ == "__main__":

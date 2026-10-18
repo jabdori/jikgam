@@ -81,10 +81,11 @@ type toolFunc func(s *Server, sessionID string, body []byte) (any, *apiError)
 
 // Server는 http.Handler다.
 type Server struct {
-	ds      *orga.Dataset
-	log     *slog.Logger
-	tools   map[string]toolFunc
-	handler http.Handler
+	ds       *orga.Dataset
+	log      *slog.Logger
+	tools    map[string]toolFunc
+	handler  http.Handler
+	instance *InstanceInfo
 
 	mu sync.Mutex
 	st *state
@@ -110,6 +111,7 @@ func New(ds *orga.Dataset, logger *slog.Logger) *Server {
 	mux.HandleFunc("/v1/{tool}", s.handleTool)
 	mux.HandleFunc("/_admin/faults", s.handleFaults)
 	mux.HandleFunc("/_admin/reset", s.handleReset)
+	mux.HandleFunc("GET /_admin/instance", s.handleInstance)
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		writeError(w, notFound("경로가 없다: "+r.URL.Path))
 	})

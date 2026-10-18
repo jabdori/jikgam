@@ -118,9 +118,9 @@
   },
   "sv07-r1-dev-v2-r0-2.jsonl": {
    "sha256": "2b4006fc445233bf360f66c3707144afca9f746179e6ce50e9e23cfa4ffa9fcb",
-   "redacted_regions": 2,
-   "redacted_fragments": 16,
-   "public_sha256": "bbecae1b7cb1b07432697a6cc9d41da43ebc68b82c7f3dd32d143596fcfe39ae"
+   "redacted_regions": 0,
+   "redacted_fragments": 0,
+   "public_sha256": "2b4006fc445233bf360f66c3707144afca9f746179e6ce50e9e23cfa4ffa9fcb"
   },
   "sv07-r1-dev-v2-r0-2.judge.json": {
    "sha256": "d3f5d4ca545e765f752ad5494a880715790301cb284147326fc909c144e0b455",
@@ -130,9 +130,9 @@
   },
   "sv07-r1-dev-v2-r0-2.sim.jsonl": {
    "sha256": "c40b17b12e173efd92b494c84718579242f3f88afad8bcfe83fd1eda70667e7c",
-   "redacted_regions": 1,
-   "redacted_fragments": 8,
-   "public_sha256": "f8c8568ef3330aed697f06986c22df4aa88f47280eb052f7836bc1b78626078c"
+   "redacted_regions": 0,
+   "redacted_fragments": 0,
+   "public_sha256": "c40b17b12e173efd92b494c84718579242f3f88afad8bcfe83fd1eda70667e7c"
   },
   "sv08-r1-dev-v2-r0-2.jsonl": {
    "sha256": "a8f815fec49d2720386222c352ec5c09428e453eae0cb19f7b7ce8e6c0fd52d5",

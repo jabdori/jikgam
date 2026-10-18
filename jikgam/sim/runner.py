@@ -319,9 +319,13 @@ def git_commit() -> dict[str, Any]:
 
 
 def select(scenarios: list[dict[str, Any]], spec: str) -> list[dict[str, Any]]:
-    if spec == "all":
+    from jikgam.sim.scenario import normalize_selection
+    try:
+        want = normalize_selection(spec)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+    if want == "all":
         return scenarios
-    want = [s.strip() for s in spec.split(",") if s.strip()]
     by_id = {s["id"]: s for s in scenarios}
     unknown = [w for w in want if w not in by_id]
     if unknown:
@@ -341,9 +345,21 @@ def customers_file(org: OrgConfig) -> Path:
 
 async def run(args: argparse.Namespace) -> Path:
     from jikgam.v2.freeze import require_e2e_frozen
+    from jikgam.sim.scenario import normalize_selection
+
+    args.scenarios = normalize_selection(getattr(args, "scenarios", "all"))
 
     path = (ROOT / args.scenario_file) if args.scenario_file else scenario_path(args.org)
-    require_e2e_frozen(path, getattr(args, "frozen", None), ROOT)
+    contract = require_e2e_frozen(path, getattr(args, "frozen", None), ROOT, args)
+    if contract is not None and not getattr(args, "bizapi_record", None):
+        raise SystemExit("미공개 v2는 e2e_run이 빌드해 띄운 업무 API 기록이 필요합니다")
+    if contract is None and getattr(args, "law", None):
+        from jikgam.v2.e2e_contract import build_contract
+        contract = build_contract(args, ROOT)
+    bizapi_record = None
+    if getattr(args, "bizapi_record", None):
+        from jikgam.v2.e2e_run import verify_bizapi_record
+        bizapi_record = verify_bizapi_record(args.bizapi_record, args, contract, ROOT)
     if args.policy == "D":
         raise SystemExit("정책 D(미확정 자막 선판단)는 음성 런타임이 필요해 채팅 실행기에서 돌리지 않는다")
     policy = POLICIES[args.policy]
@@ -364,7 +380,8 @@ async def run(args: argparse.Namespace) -> Path:
     path = (ROOT / args.scenario_file) if args.scenario_file else scenario_path(org.org)
     chosen = select(load_scenarios(path), args.scenarios)
     # 보류용 평가는 보류용 고객 데이터도 모의 업무 API에 올리므로, 인증 문자 대상 번호도 그 파일까지 본다.
-    customer_files = [ROOT / c for c in args.customers] if args.customers else [customers_file(org)]
+    customer_files = ([ROOT / c for c in contract["arguments"]["customers"]] if contract else
+                      [ROOT / c for c in args.customers] if args.customers else [customers_file(org)])
     registered = frozenset().union(*(registered_phones(c) for c in customer_files))
     run_id = args.run_id or f"{datetime.now(ev.KST):%Y%m%dT%H%M%S}-{policy.name}"
     run_dir = args.out_dir / run_id
@@ -377,6 +394,7 @@ async def run(args: argparse.Namespace) -> Path:
         "generator": org.generator, "generator_model": models[org.generator]["model"], "org": org.org,
         "bizapi_url": org.bizapi_url, "scenario_file": str(path.relative_to(ROOT)).replace("\\", "/"),
         "scenario_sha256": file_sha256(path), "runs": args.runs, "run_start": args.run_start, "max_turns": args.max_turns,
+        "scenarios": args.scenarios,
         "fast_delay_ms": args.fast_delay_ms,
         "customer_model": models[args.customer_model]["model"], "customer_prompt": cust.PROMPT_VERSION,
         "judge_model": None if args.no_judge else models[args.judge_model]["model"],
@@ -388,6 +406,9 @@ async def run(args: argparse.Namespace) -> Path:
         "note": ("보류용" if "holdout" in path.name else "개발용") + " 시나리오 결과(docs/evaluation.md §4.3). 합성 대화이며 운영 성과가 아니다.",
         "customer_files": [str(c.relative_to(ROOT)).replace("\\", "/") for c in customer_files],
         "sessions": [],
+        **({"contract": contract} if contract is not None else {}),
+        **({"frozen_verification": args.frozen_verification} if getattr(args, "frozen_verification", None) else {}),
+        **({"bizapi_record": bizapi_record} if bizapi_record is not None else {}),
     }
     write_summary(run_dir, summary)
     judge_client = None if args.no_judge else GeminiJson.from_config(args.judge_model, retry_delays_s=())
@@ -423,7 +444,7 @@ async def run(args: argparse.Namespace) -> Path:
     return run_dir
 
 
-def main() -> None:
+def argument_parser():
     ap = argparse.ArgumentParser(description="AI 고객 시나리오 실행기")
     ap.add_argument("--org", default="org_a")
     ap.add_argument("--scenarios", default="all", help="쉼표로 구분한 시나리오 ID 또는 all")
@@ -432,6 +453,7 @@ def main() -> None:
     ap.add_argument("--scenario-file", help="시나리오 파일(저장소 기준 경로). 생략하면 data/scenarios/<org>.jsonl")
     ap.add_argument("--customers", action="append",
                     help="인증 문자를 줄 등록 번호를 읽을 고객 데이터(저장소 기준 경로, 여러 번 줄 수 있다). 생략하면 domain/<org>/customers.json")
+    ap.add_argument("--bizapi-data", action="append", help="모의 업무 API에 순서대로 병합할 데이터 파일. 인증 대상 --customers와 별개")
     ap.add_argument("--run-start", type=int, default=1,
                     help="첫 회차 번호. 회차를 나눠 실행할 때 고객 AI seed가 회차마다 달라지게 한다(예: --runs 1 --run-start 2)")
     ap.add_argument("--run-id")
@@ -446,6 +468,12 @@ def main() -> None:
     ap.add_argument("--decision-backend", help="정책 C의 판별 백엔드(config/decision_models의 이름). 생략하면 조직 설정 값")
     ap.add_argument("--law", choices=["r0", "r4"], help="v2 법령·고시 묶음(config/v2/law.toml의 프로필)")
     ap.add_argument("--frozen", help="미공개 v2 실행에 필요한 설정 고정 ADR 번호와 해시 목록")
+    ap.add_argument("--bizapi-record", type=Path, help=argparse.SUPPRESS)
+    return ap
+
+
+def main() -> None:
+    ap = argument_parser()
     args = ap.parse_args()
     if args.runs < 1:
         raise SystemExit("--runs는 1 이상이어야 한다")

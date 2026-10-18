@@ -10,6 +10,7 @@ import (
 	"errors"
 	"flag"
 	"log/slog"
+	"maps"
 	"net/http"
 	"os"
 	"os/signal"
@@ -48,25 +49,37 @@ func (p *dataPaths) Set(v string) error {
 
 func main() {
 	addr := flag.String("addr", "127.0.0.1:8081", "수신 주소")
+	nonce := flag.String("instance-nonce", "", "현재 기동의 식별자. 생략하면 새로 만든다")
 	data := &dataPaths{paths: []string{defaultData}}
 	flag.Var(data, "data", "조직 A 고객 데이터(customers.json) 경로. 여러 번 주거나 쉼표로 나누면 합쳐 읽는다")
 	flag.Parse()
 
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	if err := run(*addr, data.paths, logger); err != nil {
+	if err := run(*addr, data.paths, logger, *nonce); err != nil {
 		logger.Error("종료", "error", err.Error())
 		os.Exit(1)
 	}
 }
 
-func run(addr string, dataPaths []string, logger *slog.Logger) error {
+func run(addr string, dataPaths []string, logger *slog.Logger, nonce string) error {
+	instance, err := instanceInfo(dataPaths, nonce)
+	if err != nil {
+		return err
+	}
 	ds, err := orga.LoadAll(dataPaths...)
 	if err != nil {
 		return err
 	}
+	loaded, err := instanceInfo(dataPaths, instance.Nonce)
+	if err != nil {
+		return err
+	}
+	if !maps.Equal(instance.DataFiles, loaded.DataFiles) || instance.BinarySHA256 != loaded.BinarySHA256 {
+		return errors.New("적재 중 바이너리 또는 데이터가 바뀌었다")
+	}
 	srv := &http.Server{
 		Addr:              addr,
-		Handler:           server.New(ds, logger),
+		Handler:           server.NewWithInstance(ds, logger, instance),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       10 * time.Second,
 		WriteTimeout:      10 * time.Second,

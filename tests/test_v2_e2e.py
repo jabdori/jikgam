@@ -78,7 +78,7 @@ def test_claim_counts_missing_or_error_cannot_become_zero_unsupported(tmp_path):
     assert report.claim_counts(es, articles, tmp_path, "모델") == (0, 0, 1, 0)
     put(path, {"claims": [], "error": "실패"})
     assert report.claim_counts(es, articles, tmp_path, "모델") == (0, 0, 1, 1)
-    put(path, {"claims": [{"supported": True}, {"supported": False}], "error": None})
+    put(path, {"claims": [{"claim": "주장", "supported": x, "reason": "근거"} for x in (True, False)], "error": None})
     assert report.claim_counts(es, articles, tmp_path, "모델") == (2, 1, 0, 0)
 
 
@@ -143,6 +143,8 @@ def test_terms_scan_matches_25_character_substrings_and_escaped_json(tmp_path):
 
 
 def setup_frozen(root, monkeypatch):
+    from jikgam.v2 import e2e_contract
+    monkeypatch.setattr(e2e_contract, "build_contract", lambda *_: {"files": {}, "law_profiles": {}})
     target = root / "data/scenarios/org_a_v2_holdout.jsonl"
     put(target, {"합성": True})
     (root / "docs/adr").mkdir(parents=True)
@@ -157,18 +159,18 @@ def test_holdout_lock_requires_adr_and_manifest_before_opening_scenario(tmp_path
     for adr in (None, "../../탈출", "0027"):
         with pytest.raises(SystemExit):
             freeze.require_e2e_frozen(target, adr, tmp_path)
-    freeze.write_manifest(tmp_path, "0027", paths)
-    freeze.require_e2e_frozen(target, "0027", tmp_path)
+    freeze.write_manifest(tmp_path, "0027", paths, contract={"files": {}, "law_profiles": {}})
+    freeze.require_e2e_frozen(target, "0027", tmp_path, SimpleNamespace(law="r0"))
     put(target, {"합성": False})
     with pytest.raises(SystemExit, match="해시"):
-        freeze.require_e2e_frozen(target, "0027", tmp_path)
+        freeze.require_e2e_frozen(target, "0027", tmp_path, SimpleNamespace(law="r0"))
 
 
 def test_holdout_lock_rejects_incomplete_manifest_and_wrong_adr(tmp_path, monkeypatch):
     target, paths = setup_frozen(tmp_path, monkeypatch)
-    manifest = freeze.write_manifest(tmp_path, "0027", paths=[])
+    manifest = freeze.write_manifest(tmp_path, "0027", paths=[], contract={"files": {}, "law_profiles": {}})
     with pytest.raises(SystemExit, match="입력이 빠졌"):
-        freeze.require_e2e_frozen(target, "0027", tmp_path)
+        freeze.require_e2e_frozen(target, "0027", tmp_path, SimpleNamespace(law="r0"))
     manifest["adr"] = "0025"
     put(tmp_path / "config/v2/freeze-0027.json", manifest)
     with pytest.raises(SystemExit, match="올바르지"):
@@ -324,7 +326,7 @@ def test_single_command_failure_still_archives_and_missing_summary_is_not_succes
     monkeypatch.setattr(e2e_run, "load_fragment_sets", lambda: (set(), set()))
     monkeypatch.setattr(e2e_run.subprocess, "run", lambda *_a, **_kw: SimpleNamespace(returncode=0))
     with pytest.raises(RuntimeError, match="요약이 없습니다"):
-        e2e_run.run(["--run-id", "빈실행"])
+        e2e_run.run(["--policy", "C", "--run-id", "빈실행"])
     calls = []
 
     def failed(*_a, **_kw):
@@ -334,7 +336,7 @@ def test_single_command_failure_still_archives_and_missing_summary_is_not_succes
     monkeypatch.setattr(e2e_run.subprocess, "run", failed)
     monkeypatch.setattr(e2e_run, "publish", lambda *_a: calls.append("원본 보존"))
     with pytest.raises(SystemExit) as result:
-        e2e_run.run(["--run-id", "실패실행"])
+        e2e_run.run(["--policy", "C", "--run-id", "실패실행"])
     assert result.value.code == 1 and calls == ["원본 보존"]
 
 

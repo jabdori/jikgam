@@ -53,6 +53,20 @@ def found(gold, ids):
     return tools["scorer"].found({"evidence": gold}, coverage)
 
 
+def current_candidates(event, profile, law, cache):
+    if (profile not in ("r0", "r4") or event.get("law_profile") != profile
+            or type(event.get("version")) is not int or not isinstance(event.get("law_candidates"), list)):
+        raise ValueError("지원하지 않는 법령 검색 로그 형식 또는 프로필입니다")
+    query = event.get("law_query", event.get("query"))
+    if not isinstance(query, str):
+        raise ValueError("기록된 법령 검색어가 없습니다")
+    if query not in cache:
+        cache[query] = law.search(query)[0]
+    if cache[query] != event["law_candidates"]:
+        raise ValueError("현재 검색어로 재계산한 후보가 law_candidates와 다릅니다")
+    return query
+
+
 def run(run_dirs, name):
     scenarios = {s["id"]: s for s in load_scenarios(ROOT / "data/scenarios/org_a_v2.jsonl")}
     org = load_org("org_a")
@@ -68,7 +82,12 @@ def run(run_dirs, name):
         for directory in run_dirs:
             summary = json.loads((directory / "summary.json").read_text(encoding="utf-8"))
             profile = summary["law"]
+            if (summary.get("scenario_file") != "data/scenarios/org_a_v2.jsonl"
+                    or profile not in ("r0", "r4") or profile in reports):
+                raise ValueError("개발용 v2의 서로 다른 R0·R4 실행만 지원합니다")
             law = bundle(load_law(profile))
+            if law.cfg.max_candidates != 8:
+                raise ValueError("지원하는 후보 수는 8개입니다")
             results = {rule: {"events": 0, "items": 0, "found": 0, "complete": 0} for rule in RULES}
             probabilities = []
             cache = {}
@@ -94,6 +113,7 @@ def run(run_dirs, name):
                     if e["type"] != "retrieval.done":
                         continue
                     retrieval_events += 1
+                    current = current_candidates(e, profile, law, cache)
                     if e["version"] not in evidence_versions:
                         continue
                     for rule in RULES:
@@ -102,7 +122,7 @@ def run(run_dirs, name):
                             dummy = SimpleNamespace(cfg=replace(org.retrieval, query_turns=turns))
                             query = ArticleIndex.query_text(dummy, RetrievalContext(tuple(customer), intent=intent_label))
                         else:
-                            query = query_text(rule, e["query"], customer, intent, facts)
+                            query = query_text(rule, current, customer, intent, facts)
                         if query not in cache:
                             cache[query] = law.search(query)[0]
                         ids = cache[query]

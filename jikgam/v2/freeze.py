@@ -74,12 +74,17 @@ def prepare():
     return {"ready": ready, "missing_gemini": missing}
 
 
-def write_manifest(root=ROOT, adr="0025", paths=None):
+def write_manifest(root=ROOT, adr="0025", paths=None, contract=None):
+    if contract is not None:
+        from jikgam.v2.e2e_contract import contract_files
+        paths = sorted(set(e2e_input_paths(root) if paths is None else paths) | contract_files(contract))
     paths = input_paths(root) if paths is None else sorted(paths)
     missing = [p for p in paths if not (root / p).is_file()]
     if missing:
         raise FileNotFoundError("\n".join(missing))
     manifest = {"adr": adr, "algorithm": "sha256", "files": {p: sha256(root / p) for p in paths}}
+    if contract is not None:
+        manifest["contract"] = contract
     path = root / "config/v2" / f"freeze-{adr}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(manifest, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n")
@@ -106,6 +111,7 @@ def e2e_input_paths(root=ROOT):
     paths = {"docs/evaluation.md", "docs/evaluation-v2.md", "uv.lock", "pyproject.toml",
              "data/scenarios/org_a_v2.jsonl", "data/scenarios/org_a_v2_holdout.jsonl",
              "domain/org_a/customers.json", "domain/org_a/customers_v2_holdout.json"}
+    paths.add("domain/org_a/customers_holdout.json")
     for pattern in ("jikgam/engine/*.py", "jikgam/decision/*.py", "jikgam/sim/*.py", "jikgam/v2/*.py",
                     "jikgam/ingest/*.py", "jikgam/eval/*.py", "config/*.toml", "config/orgs/*.toml",
                     "config/v2/law.toml", "config/decision_models.d/*.toml", "domain/org_a/*.md",
@@ -131,15 +137,20 @@ def e2e_input_paths(root=ROOT):
     return sorted(paths)
 
 
-def require_e2e_frozen(scenario_file, adr, root=ROOT):
+def require_e2e_frozen(scenario_file, adr, root=ROOT, args=None):
     """미공개 v2는 파일을 열기 전에 ADR·전체 고정 해시를 확인한다. 목록은 고정 시 따로 만든다."""
     from pathlib import Path
     import re
 
     target = Path(scenario_file).resolve()
     expected = (root / "data/scenarios/org_a_v2_holdout.jsonl").resolve()
-    if target != expected and target.name.casefold() != expected.name.casefold():
+    requested = adr is not None
+    if not requested and target != expected and target.name.casefold() != expected.name.casefold():
+        if "holdout" in target.name.casefold() and "v2" in target.name.casefold():
+            raise SystemExit("미공개 v2 파일은 정확한 저장소 경로만 허용합니다")
         return
+    if not requested and target != expected:
+        raise SystemExit("미공개 v2 파일은 정확한 저장소 경로만 허용합니다")
     if not adr or not re.fullmatch(r"\d{4}", adr):
         raise SystemExit("미공개 v2 실행에는 설정 고정 ADR 번호(--frozen)가 필요합니다")
     if not any((root / "docs/adr").glob(f"{adr}-*.md")):
@@ -147,34 +158,81 @@ def require_e2e_frozen(scenario_file, adr, root=ROOT):
     path = root / f"config/v2/freeze-{adr}.json"
     if not path.is_file():
         raise SystemExit(f"설정 고정 해시 목록이 없습니다: {path.relative_to(root)}")
+    verification = {"adr": adr, "contract_match": None, "manifest_match": None, "scenario_path_match": None}
+    if args is not None:
+        args.frozen_verification = verification
     try:
         manifest = json.loads(path.read_text(encoding="utf-8"))
         if manifest.get("adr") != adr or manifest.get("algorithm") != "sha256":
             raise ValueError("ADR 번호나 해시 알고리즘이 다릅니다")
-        changed = verify_manifest(root, adr, paths=e2e_input_paths(root))
-    except (ValueError, KeyError, TypeError) as exc:
+        from jikgam.v2.e2e_contract import build_contract, contract_files
+        if args is None or not isinstance(manifest.get("contract"), dict):
+            raise ValueError("정규화한 실행 계약이 필요합니다")
+        if getattr(args, "law", None) not in ("r0", "r4") or getattr(args, "no_judge", False):
+            raise ValueError("미공개 v2는 R0·R4와 시나리오 판정이 필요합니다")
+        frozen_scenario = manifest["contract"].get("arguments", {}).get("scenario_file")
+        holdout_contract = frozen_scenario == "data/scenarios/org_a_v2_holdout.jsonl"
+        verification["scenario_path_match"] = not holdout_contract or target == expected
+        frozen_paths = set(e2e_input_paths(root)) | contract_files(manifest["contract"])
+        changed = verify_manifest(root, adr, paths=frozen_paths)
+        verification["manifest_match"] = not changed
+        verification["manifest_sha256"] = sha256(path)
+        if not verification["scenario_path_match"]:
+            verification["contract_match"] = False
+            raise ValueError("미공개 고정 계약은 정확한 저장소 경로만 허용합니다")
+        contract = build_contract(args, root)
+        verification["contract_match"] = contract == manifest["contract"]
+        if not verification["contract_match"]:
+            raise ValueError("실행 계약의 인자 또는 선택 파일 해시가 다릅니다")
+    except (ValueError, KeyError, TypeError, OSError) as exc:
         raise SystemExit(f"설정 고정 목록이 올바르지 않습니다: {exc}") from None
+    finally:
+        # 거절된 사전 검사도 비공개 기록으로 남겨 계약 비교와 목록 대조를 구분한다.
+        run_id = getattr(args, "run_id", None)
+        if run_id and Path(run_id).name == run_id and run_id not in (".", ".."):
+            from jikgam.v2.claim_check import atomic_json
+            atomic_json(root / "data/v2/local/e2e" / run_id / "frozen-verification.json", verification)
     if changed:
         raise SystemExit("고정 해시가 다르거나 입력이 빠졌습니다: " + ", ".join(changed))
+    return contract
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["prepare", "write", "verify"])
-    ap.add_argument("--adr", required=True, choices=["0025"])
+    ap.add_argument("--adr", required=True)
+    ap.add_argument("--e2e", action="store_true", help="엔드투엔드 입력과 실행 계약을 고정")
+    ap.add_argument("--contract-args", help="실행 인자를 담은 비공개 JSON 파일")
     args = ap.parse_args()
+    import re
+    if not re.fullmatch(r"\d{4}", args.adr):
+        ap.error("ADR 번호는 네 자리 숫자여야 합니다")
+    contract = None
+    paths = None
+    if args.e2e:
+        if not args.contract_args:
+            ap.error("--e2e에는 --contract-args가 필요합니다")
+        from types import SimpleNamespace
+        from pathlib import Path
+        from jikgam.v2.e2e_contract import build_contract, contract_files
+        contract = build_contract(SimpleNamespace(**json.loads(Path(args.contract_args).read_text(encoding="utf-8"))))
+        paths = sorted(set(e2e_input_paths()) | contract_files(contract))
     if args.cmd == "prepare":
         out = prepare()
         print(json.dumps(out, ensure_ascii=False))
         raise SystemExit(bool(out["missing_gemini"]))
     if args.cmd == "write":
         try:
-            write_manifest(ROOT, args.adr)
+            write_manifest(ROOT, args.adr, paths=paths, contract=contract)
         except FileNotFoundError as exc:
             print(str(exc))
             raise SystemExit(1) from None
     else:
-        changed = verify_manifest(ROOT, args.adr)
+        changed = verify_manifest(ROOT, args.adr, paths=paths)
+        if contract is not None:
+            manifest = json.loads((ROOT / f"config/v2/freeze-{args.adr}.json").read_text(encoding="utf-8"))
+            if manifest.get("contract") != contract:
+                changed.append("contract")
         for path in changed:
             print(path)
         raise SystemExit(bool(changed))

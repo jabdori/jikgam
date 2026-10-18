@@ -12,6 +12,11 @@
 시나리오 단위 짝지은 부트스트랩 95% 구간: {'pass_r0': [0.0, 0.5454545454545454], 'pass_r4': [0.0, 0.5454545454545454], 'pass_delta': [-0.2727272727272727, 0.2727272727272727], 'unsupported_r0': None, 'unsupported_r4': None, 'unsupported_delta': None}
 판정 조건: {'pass_noninferior': True, 'pass_improved': False, 'unsupported_not_higher': None, 'refresh_p95_le_500': True}
 입력 로그 출처: R0 {'private_sessions': 12, 'public_sessions': 0}, R4 {'private_sessions': 12, 'public_sessions': 0}
+실행 계약: 이전 실행(기록된 인자만 대조)
+준수 미판정: R0 0, R4 0
+주장 판정 제외 고정 제안: R0 0, R4 0
+
+사람 확인: 미확인
 
 인용 조항만 준 이전 판정(새 정의와 직접 비교하지 않음)
 - R0: 68/206 (0.3300970873786408)

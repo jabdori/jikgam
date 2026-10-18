@@ -114,7 +114,7 @@ def test_offline_query_comparison_only_counts_evidence_events(tmp_path, monkeypa
     monkeypatch.setattr(e2e_queries, "ROOT", tmp_path)
     monkeypatch.setattr(e2e_queries, "load_org", lambda _: SimpleNamespace(retrieval=cfg))
     monkeypatch.setattr(e2e_queries, "load_law", lambda profile: profile)
-    monkeypatch.setattr(e2e_queries, "bundle", lambda _: SimpleNamespace(search=lambda q: (["근거"], 0)))
+    monkeypatch.setattr(e2e_queries, "bundle", lambda _: SimpleNamespace(cfg=SimpleNamespace(max_candidates=8), search=lambda q: (["근거"], 0)))
     monkeypatch.setattr(e2e_queries, "found", lambda gold, ids: [bool(ids)])
     monkeypatch.setattr(e2e_queries, "load_scenarios", lambda _: [{"id": "개발", "expected": {"law_evidence": [{}]}}])
     events = [{"type": "utterance.end", "text": "첫 질문"},
@@ -122,12 +122,13 @@ def test_offline_query_comparison_only_counts_evidence_events(tmp_path, monkeypa
               {"type": "utterance.end", "text": "정정 질문"},
               {"type": "retrieval.done", "version": 2, "query": "실제 근거 갱신"},
               {"type": "evidence.updated", "version": 2, "intent": None, "candidates": [], "applies": {}}]
-    monkeypatch.setattr(e2e_queries, "read_log", lambda _: events)
+    monkeypatch.setattr(e2e_queries, "read_log", lambda p: [
+        {**e, "law_profile": p.parent.name, "law_candidates": ["근거"]} if e["type"] == "retrieval.done" else e for e in events])
     dirs = []
     for profile in ("r0", "r4"):
         directory = tmp_path / profile
         directory.mkdir()
-        (directory / "summary.json").write_text(json.dumps({"law": profile, "sessions": [{"session": "합성", "scenario": "개발"}]}), encoding="utf-8")
+        (directory / "summary.json").write_text(json.dumps({"law": profile, "scenario_file": "data/scenarios/org_a_v2.jsonl", "sessions": [{"session": "합성", "scenario": "개발"}]}), encoding="utf-8")
         dirs.append(directory)
     result = e2e_queries.run(dirs, "검사")
     for profile in ("r0", "r4"):
