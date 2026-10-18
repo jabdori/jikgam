@@ -1,0 +1,100 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "상담 3 등에서 연장 보상 시간을 다른 값이 아닌 15시간으로 일관되게 안내했다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "상담 엔진은 보상을 금전 환불이라고 잘못 안내한 바 없다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "상담 2 직후 업무 API를 정상적으로 호출하여 장애 기록을 확인한 뒤 보상 대상임을 안내했다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "상담 3, 4 등에서 15시간 이용 기간 연장 보상 대상에 해당함을 안내했다."
+   },
+   {
+    "index": 1,
+    "said": false,
+    "reason": "상담 중 이용 기간 연장 보상에 대해서만 안내했을 뿐, 금전 환불이 아니라는 점은 명시적으로 언급하지 않았다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "상담 4에서 소비자분쟁해결기준에 따른 4시간 이상 장애 시 3배 무료 연장 기준을 고객에게 명확히 안내했다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객이 문의한 보상 기준과 관련 법령에 대한 정보를 안내하고 질문에 답변하며 대화를 마무리하여 answer에 부합한다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "고객 3에서 인증번호를 요구받거나 읽어주기 전에 먼저 장애 시점을 정정했다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "고객 5에서 보상 안내를 들은 후 지시된 대로 소비자분쟁해결기준과 배수에 대해 질문했다."
+   },
+   {
+    "index": 2,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 고객에게 해지나 환불을 권하지 않아 해당 규칙이 적용될 상황이 오지 않았다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "고객 4에서 상담 엔진의 요청에 맞게 인증번호를 제시했다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "고객 3에서 (사건 #0 실행 표시)와 함께 지시된 내용으로 장애 시점을 정정했다."
+   }
+  ]
+ },
+ "error": null,
+ "attempt_errors": [
+  null
+ ],
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 29189.8,
+   "input_tokens": 3453,
+   "output_tokens": 4224,
+   "thoughts_tokens": 3521,
+   "cached_tokens": 0,
+   "cost_usd": 0.057594,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.057594,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "hv10-r3-holdout-v2-r4",
+ "scenario": "hv10"
+}

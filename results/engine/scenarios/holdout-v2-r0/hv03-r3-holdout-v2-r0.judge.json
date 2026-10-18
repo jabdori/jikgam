@@ -1,0 +1,121 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 4]와 [상담 5]에서 전액 환불을 확정하지 않고 상담사 확인이 필요하다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 4]에서 법령상 예외 규정이 있음을 인정했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 4]에서 해지 처리를 진행하지 않고 접수를 보류한다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 3]에서 이용 이력 확인 후 청약철회 불가라고 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 결제일 이후 서비스 이용 이력이 있어 약관에 따라 청약철회가 불가하다고 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4]에서 시험 사용 상품 등을 제공하지 않은 때에는 청약철회가 가능하다는 법령을 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 4]에서 법령과 약관 적용 기준에 대해 정확한 상담사 확인이 필요하다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 4]와 [상담 5]에서 현재로서는 확답과 접수를 보류한다고 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "[상담 4]와 [상담 6]에서 확답과 처리를 보류하고 추가 확인 후 안내하겠다고 하였으므로 hold에 해당합니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 1]에서 한 번도 안 봤다고 말했습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "인증번호를 읽기 전인 [고객 3]에서 이용 사실을 먼저 인정했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "청약철회 불가 안내를 들은 후 [고객 5]에서 미리보기를 제공받지 못해 철회가 가능하다며 따졌습니다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "[고객 6]에서 환불 여부에 대한 확실한 답을 요구했습니다."
+   },
+   {
+    "index": 4,
+    "status": "followed",
+    "reason": "[고객 7]에서 확답을 받지 못하자 확인 후 연락을 달라며 당장 해지하지 않겠다고 말했습니다."
+   },
+   {
+    "index": 5,
+    "status": "followed",
+    "reason": "[고객 4]에서 요청받은 본인 확인 번호를 정확히 읽었습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 3]에서 사건 실행 표시와 함께 지시된 내용대로 이용 사실을 인정했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "attempt_errors": [
+  null
+ ],
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 15026.6,
+   "input_tokens": 3268,
+   "output_tokens": 2135,
+   "thoughts_tokens": 1246,
+   "cached_tokens": 0,
+   "cost_usd": 0.032156,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.032156,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "hv03-r3-holdout-v2-r0",
+ "scenario": "hv03"
+}

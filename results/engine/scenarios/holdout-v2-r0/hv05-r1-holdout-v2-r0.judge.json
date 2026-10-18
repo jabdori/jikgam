@@ -1,0 +1,105 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "중도 해지 금액을 안내한 바 없이 상담사 연결로 대화가 종료되었다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "제3자라는 이유로 상담을 거절하지 않고 상담사 연결을 안내했다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "환불 금액이나 확정 여부를 안내하지 않았다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 상담사에게 연결해 드리겠다고 안내했다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 법정대리인 관계 확인 서류가 필요하다고 안내했다."
+   },
+   {
+    "index": 2,
+    "said": false,
+    "reason": "법정대리인 동의 없는 미성년자 계약의 취소에 대한 법령 내용을 안내하지 않았다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "[상담 3]에서 고객의 요청 처리를 위해 상담사에게 연결한다고 안내하며 대화를 마쳤다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 1]에서 '제가 허락은 했었는데'라고 먼저 밝혔다."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "본인만 해지/환불 신청이 가능하다는 안내나 중도 해지 금액 안내를 받지 않았다."
+   },
+   {
+    "index": 2,
+    "status": "not_applicable",
+    "reason": "동의 여부를 정정할 상황이 발생하지 않아 질문할 기회가 없었다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "[상담 2]의 요청에 따라 [고객 3]에서 인증번호 4087을 제공했다."
+   },
+   {
+    "index": 4,
+    "status": "not_applicable",
+    "reason": "[상담 3]에서 서류 필요성 안내와 함께 바로 상담사 연결로 대화가 종료되어 서류 종류를 물어볼 수 없었다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "no_opportunity",
+    "reason": "[상담 3]에서 상담원이 바로 상담사 연결을 진행하며 대화가 종료되어 정정 발화를 할 상황이 오지 않았다."
+   }
+  ]
+ },
+ "error": null,
+ "attempt_errors": [
+  null
+ ],
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 31568.6,
+   "input_tokens": 2757,
+   "output_tokens": 4270,
+   "thoughts_tokens": 3557,
+   "cached_tokens": 0,
+   "cost_usd": 0.056754,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.056754,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "hv05-r1-holdout-v2-r0",
+ "scenario": "hv05"
+}

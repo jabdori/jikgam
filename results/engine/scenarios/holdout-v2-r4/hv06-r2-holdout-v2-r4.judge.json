@@ -1,0 +1,121 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 3]에서 연 구독 중도 해지 기준으로 정확히 안내했습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 3]에서 즉시 확정이 아닌 상담사 승인 후 환불이 확정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "분쟁해결기준에 따른 다른 환불액을 모델이 임의로 계산하여 안내하지 않았습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 3]에서 환불 예정액을 69,300원이 아닌 62,370원으로 올바르게 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 결제 금액, 이용 금액, 위약금을 산정 근거로 들며 환불 예정액 62,370원을 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 결제하신 카드로 환불 접수일로부터 3~7영업일 안에 승인 취소될 예정이라고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 서비스 이용은 오늘(2026-10-12)까지 가능하다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 3]과 [상담 4]에서 상담사 승인 후 환불이 확정된다고 안내했습니다."
+   },
+   {
+    "index": 4,
+    "said": true,
+    "reason": "[상담 4]에서 이용일수 금액과 잔여기간 이용요금의 10%를 공제하고 환급하도록 규정하고 있다고 안내했습니다."
+   },
+   {
+    "index": 5,
+    "said": false,
+    "reason": "[상담 4]에서 소비자분쟁해결기준이 당사자 간 별도 의사표시가 없을 때의 합의·권고 기준이라는 점을 안내하지 않았습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 요청에 따라 연 구독 해지 및 환불 접수를 완료하고 관련 절차를 안내했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 3]에서 인증번호를 읽기 전에 구독 종류를 월 구독에서 연 구독으로 정정했습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 5]에서 환불 예정액 안내를 들은 뒤 분쟁해결기준과 약관 계산의 차이 및 회사의 의무 적용 여부에 대해 질문했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 6]에서 상담사 승인 후 확정 안내를 듣고 약관 계산대로 접수를 진행하는 것에 동의했습니다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "[고객 4]에서 상담원의 요청에 따라 인증번호 9314를 정확히 제공했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 3]에서 사건 실행 표시와 함께 지시된 내용대로 구독 종류를 정정했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "attempt_errors": [
+  null
+ ],
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 43697.2,
+   "input_tokens": 3740,
+   "output_tokens": 5604,
+   "thoughts_tokens": 4638,
+   "cached_tokens": 0,
+   "cost_usd": 0.074728,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.074728,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "hv06-r2-holdout-v2-r4",
+ "scenario": "hv06"
+}

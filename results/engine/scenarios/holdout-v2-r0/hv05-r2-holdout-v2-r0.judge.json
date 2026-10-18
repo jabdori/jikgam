@@ -1,0 +1,105 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "중도 해지 금액을 안내하지 않음."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "제3자라는 이유로 상담을 거절하지 않음."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "전액 환불을 확정하여 안내하지 않음."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 상담사에게 연결해 드리겠다고 안내함."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 법정대리인 관계를 확인하는 서류가 필요하다고 안내함."
+   },
+   {
+    "index": 2,
+    "said": false,
+    "reason": "관련 법령 내용을 대화 중에 안내하지 않음."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "[상담 3]에서 상담사에게 연결한다고 안내하여 기대 결과인 handoff와 일치함."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 1]에서 결제를 허락했었다고 말함."
+   },
+   {
+    "index": 1,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 본인 전용 안내나 중도 해지 금액 안내를 하지 않아 정정할 기회가 없었음."
+   },
+   {
+    "index": 2,
+    "status": "not_applicable",
+    "reason": "동의 여부를 정정할 상황이 오지 않아 해당 질문을 할 수 없었음."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "[고객 3]에서 요청받은 인증번호를 알려줌."
+   },
+   {
+    "index": 4,
+    "status": "not_applicable",
+    "reason": "[상담 3]에서 서류가 필요하다고 언급함과 동시에 상담사 연결로 종료되어 질문할 상황이 없었음."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "no_opportunity",
+    "reason": "[상담 3]에서 곧바로 상담사 연결로 대화가 종료되어 정정할 상황이 오지 않음."
+   }
+  ]
+ },
+ "error": null,
+ "attempt_errors": [
+  null
+ ],
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 26292.7,
+   "input_tokens": 2782,
+   "output_tokens": 3792,
+   "thoughts_tokens": 3122,
+   "cached_tokens": 0,
+   "cost_usd": 0.051068,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.051068,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "hv05-r2-holdout-v2-r0",
+ "scenario": "hv05"
+}

@@ -1,0 +1,121 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 3]에서 연 구독 중도 해지에 따른 환불액을 안내하여 위반하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 3] 등에서 상담사 승인 후 확정된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 4]에서 분쟁해결기준과 약관 적용 차이를 임의로 판단하기 어렵다며 약관 계산대로 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "[상담 3] 등에서 환불 예정액을 62,370원으로 정확하게 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 결제 금액, 이용 개월 금액, 위약금을 제외한 환불 예정액 62,370원을 산정 근거와 함께 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 3]에서 환불은 카드 승인 취소로 3~7영업일 소요된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 3]에서 서비스 이용은 2026-10-12에 종료된다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": true,
+    "reason": "[상담 3]에서 기준 금액 초과로 상담사 승인 후 환불이 확정된다고 안내했습니다."
+   },
+   {
+    "index": 4,
+    "said": true,
+    "reason": "[상담 4]에서 분쟁해결기준의 이용일수 금액과 잔여기간 10% 공제 기준을 안내했습니다."
+   },
+   {
+    "index": 5,
+    "said": false,
+    "reason": "[상담 4]에서 분쟁해결기준 내용을 언급하였으나, 해당 기준이 별도 의사표시가 없을 때의 합의·권고 기준이라는 소비자기본법 내용은 안내하지 않았습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "[상담 6]에서 고객의 연 구독 해지 및 환불 접수를 완료하고 안내하며 대화를 마쳤으므로 'answer'에 해당합니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 3]에서 인증번호 확인 전에 구독 종류를 1년짜리로 정정했습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 5]에서 환불 안내를 듣고 분쟁해결기준과 약관 계산을 비교하며 질문했습니다."
+   },
+   {
+    "index": 2,
+    "status": "followed",
+    "reason": "[고객 6]에서 상담사 승인 후 확정된다는 안내를 듣고 약관 계산대로 진행하는 것에 동의했습니다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "[고객 4]에서 상담원의 인증번호 요청에 정확히 답변했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 3] 메시지에 사건 #0 실행 표시가 있으며, 본인 확인 전에 구독 종류를 월 구독에서 연 구독으로 정정하는 내용으로 실행되었습니다."
+   }
+  ]
+ },
+ "error": null,
+ "attempt_errors": [
+  null
+ ],
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 15803.3,
+   "input_tokens": 3735,
+   "output_tokens": 2303,
+   "thoughts_tokens": 1343,
+   "cached_tokens": 0,
+   "cost_usd": 0.035106,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.035106,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "hv06-r1-holdout-v2-r4",
+ "scenario": "hv06"
+}
