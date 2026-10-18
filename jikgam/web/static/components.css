@@ -477,7 +477,14 @@ a.play-item:hover { background: var(--color-surface-alt); }
 .play-text { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 
 .rank-bars { display: flex; flex-direction: column; gap: var(--space-4); }
-.rank-row { display: grid; grid-template-columns: var(--size-step) var(--size-play-time) var(--size-time-col) minmax(var(--space-0), 1fr) auto; gap: var(--space-4); align-items: center; font-size: var(--text-sm); font-family: var(--font-mono); color: var(--color-text-muted); }
+/* 조항 이름이 길어 이름은 위 줄, 막대와 확률은 아래 줄에 둔다 */
+.rank-row { display: grid; grid-template-columns: var(--size-step) minmax(var(--space-0), 1fr) auto; grid-template-areas: "no name delta" ". track p"; column-gap: var(--space-4); row-gap: var(--space-2); align-items: center; font-size: var(--text-sm); font-family: var(--font-mono); color: var(--color-text-muted); }
+.rank-no { grid-area: no; }
+.rank-name { grid-area: name; font-family: var(--font-sans); }
+.rank-delta { grid-area: delta; text-align: right; }
+.rank-track { grid-area: track; }
+.rank-name .t-mono, .heatmap tbody th .t-mono { white-space: nowrap; }  /* 조항 번호(A-15)는 줄을 나누지 않는다 */
+.rank-p { grid-area: p; }
 .rank-row.is-selected { color: var(--color-text); }
 .rank-no { color: var(--color-text-muted); }
 .rank-gold { color: var(--color-caution); margin-left: var(--space-1); }
@@ -495,7 +502,7 @@ a.play-item:hover { background: var(--color-surface-alt); }
 .heatmap thead th { font-weight: var(--weight-regular); color: var(--color-text-muted); text-align: center; }
 .heatmap thead th.is-current { color: var(--color-text); font-weight: var(--weight-bold); }
 .heatmap tbody th, .heatmap thead td { width: var(--size-heat-label); }
-.heatmap tbody th { text-align: left; color: var(--color-text-2); font-weight: var(--weight-regular); white-space: nowrap; padding-right: var(--space-4); }
+.heatmap tbody th { text-align: left; color: var(--color-text-2); font-weight: var(--weight-regular); padding-right: var(--space-4); font-family: var(--font-sans); }
 .heatmap td { height: var(--size-heat); text-align: center; border-radius: var(--radius-xs); }
 .heatmap td.heat { background: color-mix(in srgb, var(--color-accent) calc(var(--alpha) * 100%), var(--color-surface-sunk)); color: var(--color-text); }
 .heatmap td.heat.is-dark { color: var(--color-on-accent); }

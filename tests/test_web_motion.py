@@ -12,6 +12,7 @@ from web_fixture import build
 
 from jikgam.web import auth, settings
 from jikgam.web.app import WebConfig, create_app
+from jikgam.web.data.calls import build_call
 from jikgam.web.data.live import Feed, speech_plan
 from jikgam.web.saas import live as saas_live
 from jikgam.web.ui import components as ui
@@ -70,6 +71,23 @@ def test_cut_answer_shows_only_what_was_heard():
     assert "카타파하…" in html and "카타파하거" not in html
     assert "말을 끊음" in html  # 기존 끊김 표시는 그대로
     assert "reveal" not in html  # 다 말한 답은 글자 공개를 하지 않는다
+
+
+def test_voice_call_draws_only_answers_that_went_out_by_voice():
+    """2026-10-14 음성 실행의 로그는 답을 만들 때 채팅 채널 노출도 남긴다. 같은 답이 두 줄이 되면 안 되고, 고객이 말하는 중이라
+    붙잡혔다 버려진 답(음성 노출 없음)은 대화에 없어야 한다."""
+    events = voice_events()
+    held = [{"type": "suggestion.created", "t_ms": 1200.0, "suggestion_id": "s0", "text": "나가지 않은 답", "basis_version": 1},
+            {"type": "suggestion.exposed", "t_ms": 1200.0, "suggestion_id": "s0", "channel": "chat", "start_ms": 1200.0,
+             "end_ms": 1200.0},
+            {"type": "voice.reply_held", "t_ms": 1200.0, "suggestion_id": "s0"}]
+    chat_copy = {"type": "suggestion.exposed", "t_ms": 1450.0, "suggestion_id": "s1", "channel": "chat", "start_ms": 1450.0,
+                 "end_ms": 1450.0}
+    events = events[:3] + held + events[3:4] + [chat_copy] + events[4:]
+    assert [ln.sid for ln in build_call(events, "m1").lines if ln.kind == "ai"] == ["s1", "s2"]
+    feed = Feed("m-live-1", "org_t", Path("m1.jsonl"), events, None, 1.0, lambda: 0.0)
+    ai = [ln for ln in feed.call().lines if ln.kind == "ai"]
+    assert [(ln.sid, ln.playing) for ln in ai] == [("s1", True)]  # 피드 시각 2,000ms: 첫 답을 말하는 중
 
 
 def test_rows_have_stable_keys_and_taken_over_feed_stops_the_clock():

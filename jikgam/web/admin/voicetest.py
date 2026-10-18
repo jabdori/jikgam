@@ -17,7 +17,7 @@ from ..data.calls import build_call, mask_text
 from ..data.live import speech_plan
 from ..ui import components as ui
 from ..ui import fmt
-from .common import Ctx, shell
+from .common import Ctx, article_namer, shell
 
 EXAMPLES = (
     "결제일 문의에서 해지로 바꾸기: \"다음 결제가 언제 되나요?\"라고 묻고, 답을 듣는 도중에 \"아니요, 그냥 해지할게요\"",
@@ -72,7 +72,7 @@ def interim(events: list[dict[str, Any]]) -> dict[str, Any] | None:
     return part if part is not None and part.get("utt_id") not in finals else None
 
 
-def conversation(call: vt.TestCall, events: list[dict[str, Any]], now: float | None) -> Any:
+def conversation(call: vt.TestCall, events: list[dict[str, Any]], now: float | None, name: Any) -> Any:
     c = build_call(events, call.id, None, now_ms=now)
     plan = speech_plan(events)
     changes = {ch.line_index: ch for ch in c.changes}
@@ -87,7 +87,7 @@ def conversation(call: vt.TestCall, events: list[dict[str, Any]], now: float | N
             text = ln.text[:sp.chars] + "…"  # 고객이 들은 데까지만
         who = "고객" if ln.kind == "customer" else ("AI · 말하는 중" if ln.playing else "AI")
         notes = [ui.joined("고객이 끼어들어", fmt.seconds_fine(ln.played_s, digits=1), "만에 멈춤", sep=" ") if ln.cut else None,
-                 ui.joined("근거", ", ".join(ln.articles), sep=" ") if ln.articles else None]
+                 ui.joined("근거", ui.joined(*[name(a) for a in ln.articles], sep=", "), sep=" ") if ln.articles else None]
         items.append(ui.Turn(who, text, fmt.clock(ln.elapsed_s), ln.kind, current=ln.playing,
                              note=ui.joined(*notes) if any(notes) else None, key=ln.key, reveal=reveal))
         if i in changes:
@@ -113,7 +113,7 @@ def _p(answer: Any) -> float | None:
     return answer.get("p_true", answer.get("p"))
 
 
-def log_rows(events: list[dict[str, Any]], t0: float) -> list[ui.Row]:
+def log_rows(events: list[dict[str, Any]], t0: float, name: Any) -> list[ui.Row]:
     rows = []
     for e in events:
         t, kind, body = e["type"], None, None
@@ -132,9 +132,10 @@ def log_rows(events: list[dict[str, Any]], t0: float) -> list[ui.Row]:
         elif t == ev.EVIDENCE_UPDATED:
             applies = sorted((e.get("applies") or {}).items(), key=lambda kv: -kv[1])[:settings.VOICE_TEST_TOP_ARTICLES]
             kind = "근거"
-            body = ui.joined(ui.joined("적용 조항 상위", ", ".join(a for a, _ in applies) or "-", sep=" "),
-                             ui.joined(*[fmt.prob(p) for _, p in applies], sep=" / ") if applies else None,
-                             ui.joined("고름", ", ".join(e.get("articles") or []) or "없음", sep=" "),
+            body = ui.joined(ui.joined("적용 조항 상위", ui.joined(*[ui.joined(name(a), fmt.prob(p), sep=" ") for a, p in applies],
+                                                                   sep=", ") if applies else "-", sep=" "),
+                             ui.joined("고름", ui.joined(*[name(a) for a in e.get("articles") or []], sep=", ")
+                                       if e.get("articles") else "없음", sep=" "),
                              {True: "정보 충분", False: "정보 부족"}.get(e.get("sufficient")),
                              lb.label(lb.ACTION, e.get("action")))
         elif t == ev.TOOL_RESULT:
@@ -167,8 +168,8 @@ def log_rows(events: list[dict[str, Any]], t0: float) -> list[ui.Row]:
     return rows
 
 
-def decision_log(events: list[dict[str, Any]], t0: float) -> Any:
-    rows = log_rows(events, t0)
+def decision_log(events: list[dict[str, Any]], t0: float, name: Any) -> Any:
+    rows = log_rows(events, t0, name)
     return ui.table([ui.Col("시각", num=True), ui.Col("버전"), ui.Col("종류"), ui.Col("내용")], rows, caption="판단 로그",
                     empty_text="판단이 생기면 시각순으로 쌓입니다.", row_header=False, stack=True)
 
@@ -231,9 +232,10 @@ def page(ctx: Ctx, tests: vt.VoiceTests) -> Any:
         events = vt.read_events(call.log_path)
         now = ev.now_ms() if call.running else None
         t0 = float(events[0]["t_ms"]) if events else 0.0
+        name = article_namer(ctx, next((e.get("org") for e in events if e["type"] == ev.SESSION_START), None))
         view = ui.stack(ui.slot("state", status_line(call, events, now)),
-                        ui.card(ui.slot("conv", conversation(call, events, now)), title="대화", label="대화"),
-                        ui.card(ui.slot("log", decision_log(events, t0)), title="판단 로그", label="판단 로그"), gap="lg")
+                        ui.card(ui.slot("conv", conversation(call, events, now, name)), title="대화", label="대화"),
+                        ui.card(ui.slot("log", decision_log(events, t0, name)), title="판단 로그", label="판단 로그"), gap="lg")
         parts.append(ui.live(href(call.id, cid), settings.LIVE_REFRESH_MS, view) if call.running else view)
     else:
         parts.append(ui.card(ui.empty("시작을 누르면 대화와 판단 로그가 여기에 쌓입니다.",

@@ -149,6 +149,7 @@ class Replay:
     ai: list[tuple[float, float, Answer]]
     barges: list[tuple[float, float, str]]            # (위치, 재생된 초, 제안)
     decisions: list[Decision]
+    org: str | None = None                            # 통화한 고객사(조항 이름을 그 고객사 약관에서 찾는다)
 
 
 def build(root: Path, s: Session, allow_holdout: bool) -> Replay:
@@ -213,4 +214,5 @@ def build(root: Path, s: Session, allow_holdout: bool) -> Replay:
 
     ends = [c[1] for c in customer] + [x[1] for x in ai] + [d.at_s for d in decisions]
     duration = rec["duration_ms"] / 1000 if rec else (max(ends) if ends else 0.0)
-    return Replay(s, duration, t0, gold, (sc or {}).get("title"), threshold, customer, ai, barges, decisions)
+    return Replay(s, duration, t0, gold, (sc or {}).get("title"), threshold, customer, ai, barges, decisions,
+                  start.get("org"))

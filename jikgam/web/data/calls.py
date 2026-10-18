@@ -221,7 +221,9 @@ def build_call(events: list[dict[str, Any]], call_id: str, recording: dict[str, 
             s1 = audio(float(seg["speech_end_ms"])) if seg and seg.get("speech_end_ms") else None
             call.lines.append(Line("customer", mask_text(e.get("text", "")), tm, s0, s1, elapsed_s=(tm - t_start) / 1000))
             end_ms = max(end_ms, tm)
-        elif t == ev.SUGGESTION_EXPOSED:
+        elif t == ev.SUGGESTION_EXPOSED and not (voice and e.get("channel") == "chat"):
+            # 음성 통화의 채팅 채널 노출(2026-10-14 음성 실행의 로그 형식)은 엔진이 답을 만들었다는 기록이고 고객이 들은 것이
+            # 아니다. 대화 줄은 음성으로 나간 것만 그린다(같은 답이 두 줄이 되거나, 붙잡혔다 버려진 답이 보이지 않게)
             sug = suggestions.get(e["suggestion_id"], {})
             pb = playback.get(e["suggestion_id"])
             st = float(e.get("start_ms") or tm)

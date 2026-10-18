@@ -3,6 +3,7 @@
 (ADR 0021, jikgam/web/data/replay.py). 이전·다음 판단은 문서를 새로 열지 않고 바뀐 부분만 맞추며(셸의 data-swap), 순위가 바뀐
 조항 행은 새 자리로 옮겨 가고 재생 위치 선은 다음 판단 위치로 미끄러진다(static/console.js)."""
 
+from collections.abc import Callable
 from typing import Any
 from urllib.parse import quote
 
@@ -11,7 +12,7 @@ from .. import settings
 from ..data import replay as rp
 from ..ui import components as ui
 from ..ui import fmt
-from .common import Ctx, shell
+from .common import Ctx, article_namer, shell
 
 
 LIVE_PREFIX = "live/"  # results/voice/live/: 관리 콘솔 음성 시험 기록
@@ -112,8 +113,8 @@ def playlist(r: rp.Replay, cur: rp.Decision, s: rp.Session) -> Any:
     return ui.stack(ui.pane_head("재생 목록", demoted=True), ui.anchor("playlist", ui.playlist(out, label="재생 목록")), gap="xs")
 
 
-def rank_card(r: rp.Replay, cur: rp.Decision, prev: rp.Decision | None) -> Any:
-    rows = [ui.RankRow(fmt.rank(x.rank), x.article, fmt.rank_delta(x.prev_rank, x.rank), x.p, fmt.prob(x.p), prev=x.prev_p,
+def rank_card(r: rp.Replay, cur: rp.Decision, prev: rp.Decision | None, name: Callable[[str], Any]) -> Any:
+    rows = [ui.RankRow(fmt.rank(x.rank), name(x.article), fmt.rank_delta(x.prev_rank, x.rank), x.p, fmt.prob(x.p), prev=x.prev_p,
                        prev_shown=fmt.prob(x.prev_p) if x.prev_p is not None else None, selected=x.selected, gold=x.gold,
                        key=x.article)
             for x in cur.ranks[:settings.REPLAY_RANK_ROWS]]
@@ -136,8 +137,8 @@ def answers_card(cur: rp.Decision) -> Any:
     for a in cur.invalidated:
         blocks.append(ui.version_block(ui.text(answer_line(a), tone="negative", size="sm", mono=True),
                                        ui.text(a.text, tone="muted", strike=True),
-                                       ui.text(ui.joined("무효 사유", ui.code(" · ".join(
-                                           [x for x in a.reasons if x != "suggestion_valid=false"] or a.reasons)), sep=" "),
+                                       ui.text(ui.joined("무효 사유", ui.joined(*[lb.invalidation_reason(x) for x in (
+                                           [x for x in a.reasons if x != "suggestion_valid=false"] or a.reasons)]), sep=" "),
                                                tone="muted", size="sm"), tone="negative"))
     for a in cur.new:
         when = ui.joined("판단 ", fmt.seconds_fine(a.start_s - cur.at_s), " 뒤 재생 시작", sep="") if a.start_s is not None \
@@ -149,7 +150,7 @@ def answers_card(cur: rp.Decision) -> Any:
     return ui.card(*blocks, title="답변 버전", label="답변 버전")
 
 
-def heat_card(r: rp.Replay, cur: rp.Decision) -> Any:
+def heat_card(r: rp.Replay, cur: rp.Decision, name: Callable[[str], Any]) -> Any:
     seen: list[str] = list(r.gold)
     for d in r.decisions:
         for a in d.selected:
@@ -164,7 +165,7 @@ def heat_card(r: rp.Replay, cur: rp.Decision) -> Any:
         for d in r.decisions:
             rk = next((x for x in d.ranks if x.article == a), None)
             cells.append(ui.HeatCell(None) if rk is None else ui.HeatCell(fmt.rank(rk.rank), rk.p, rk.selected))
-        rows.append((ui.joined(a, ui.text("★", tone="caution") if a in r.gold else None, sep=" "), cells))
+        rows.append((ui.joined(name(a), ui.text("★", tone="caution") if a in r.gold else None, sep=" "), cells))
     cols = [f"v{d.version}" for d in r.decisions]
     foot = [("요청", [lb.label(lb.INTENT, d.intent) or "-" for d in r.decisions])]
     if r.gold:
@@ -207,7 +208,9 @@ def page(ctx: Ctx) -> Any:
                              {True: "정보 충분", False: "정보 부족", None: None}[cur.sufficient]), tone="muted", size="sm")
     head = ui.row(ui.heading(ui.joined(f"v{cur.version} 판단", fmt.clock(cur.at_s, tenths=True)), level=1), *badges, meta,
                   align="baseline", gap="sm")
-    main = ui.stack(head, ui.grid(rank_card(r, cur, prev), answers_card(cur), min="panel"), heat_card(r, cur), gap="lg")
+    name = article_namer(ctx, r.org)
+    main = ui.stack(head, ui.grid(rank_card(r, cur, prev, name), answers_card(cur), min="panel"), heat_card(r, cur, name),
+                    gap="lg")
     body = ui.stack(
         ui.stack(picker(ctx, sessions, s), band(r, cur, s, audio), gap="sm"),
         ui.columns(("list-wide", playlist(r, cur, s)), ("main", main)), gap="lg")

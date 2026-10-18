@@ -129,3 +129,16 @@ def test_ended_call_links_to_replay_and_stops_refreshing(tmp_path, monkeypatch):
     assert "data-live" not in html and "리플레이에서 열기" in html
     assert f"/admin/replay?s=live/{call.id}/{call.session_id}" in html
     assert tests.find("../escape") is None
+
+
+def test_articles_show_their_names_with_the_number_beside(tmp_path, monkeypatch):
+    """관리 콘솔도 조항을 번호만이 아니라 그 고객사 약관의 이름으로 보인다(번호는 옆에 작게)."""
+    from jikgam.web.data.tenants import load_tenants
+
+    monkeypatch.setattr(vt, "bizapi_up", lambda url: True)
+    call = write_call(tmp_path, "20991231-000002", session_events(1000.0))
+    tests = vt.VoiceTests(tmp_path)
+    html = str(screen.page(Ctx(ROOT, load_tenants(ROOT), False, {"call": call.id}, "a"), tests))
+    assert "적용 조항 상위 제4조 " in html and ">A-04</span>" in html
+    replay = client().get("/admin/replay", headers=hdr(A)).text
+    assert 'class="rank-name">제' in replay

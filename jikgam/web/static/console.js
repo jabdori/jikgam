@@ -364,12 +364,15 @@
       var cursor = document.querySelector("[data-cursor]");
       if (cursor && audio.duration) cursor.style.setProperty("--at", (t / audio.duration) * 100 + "%");
     });
-    // 영역을 바꾼 뒤(다른 판단으로 이동) 멈춰 있으면 새 판단 시각에서 다시 듣게 한다
+    // 영역을 바꾼 뒤(다른 판단으로 이동) 새 판단 시각으로 옮긴다. 재생 중이면 그 시각부터 이어서 재생한다(옛 위치에서 계속
+    // 재생되면 재생 줄을 따라 내리는 스크롤이 화면을 옛 위치로 되돌린다). 같은 판단이면 위치를 그대로 둔다
     players.set(box, function () {
-      start = parseFloat(box.getAttribute("data-start") || "");
-      if (isNaN(start)) return;
+      var next = parseFloat(box.getAttribute("data-start") || "");
+      if (isNaN(next) || next === start) return;
+      start = next;
       last = start;
-      if (audio.paused && audio.readyState > 0) audio.currentTime = start;
+      current = null;
+      if (audio.readyState > 0) audio.currentTime = start;
     });
   }
 
