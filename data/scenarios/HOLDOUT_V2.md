@@ -168,3 +168,16 @@ sha256 앞 16자리(LF 줄바꿈, 이 문서를 쓴 시점의 내용 기준):
 
 - `data/scenarios/org_a_v2_holdout.jsonl`: `997cf9f1a63e3318`
 - `domain/org_a/customers_v2_holdout.json`: `7ade634df06199fe`
+
+
+## 보완(2026-10-18): 독립 재도출 대조 판정
+
+**대조 방법.** 가린 묶음(`data/v2/local/holdout-v2/rederive/packet.jsonl`)만 보고 다른 모델이 독립 도출한 기대값(`rederive/derived.jsonl`)을 작성자 기대값과 항목별(최종 행동, 도구 호출, 환불액, 반드시 안내, 하면 안 되는 말, 근거 조항, 법령·고시 근거)로 맞대었다. 분류는 일치 / 같은 뜻의 표현 차이 / 불일치이고, 불일치는 문서를 다시 읽어 (가) 작성자 유지, (나) 작성자 수정, (다) 어느 쪽도 정할 수 없음으로 판정했다. 판정 상세는 `rederive/adjudication.md`, 개수 요약은 `rederive/summary_counts.json`에 있다.
+
+**분류별 개수.** 84칸(7항목 x 12시나리오) 중 일치 25, 표현 차이 15, 불일치 44. 불일치의 판정은 (가) 36, (나) 8, (다) 0이다.
+
+**고친 항목과 이유.** hv03, hv04, hv06, hv07, hv08, hv09, hv11, hv12의 `expected.articles`에 A-15(본인 확인 절차 조항)를 추가했다. `docs/evaluation.md` 4.1 10 보완이 articles에 제15조 같은 한 단계 절차 조항도 들어간다고 적고, `docs/data-format.md` applies 기준은 본인 확인 전 해지·환불 요청 시 제15조를 true로 보며, 작성자도 hv01·hv02·hv05에는 A-15를 넣었기 때문에 같은 구조의 이 여덟 시나리오에만 빠진 것은 내적으로 일관되지 않다. 이외 불일치는 모두 (가)로 작성자 값을 유지했다. 대표적인 두 곳: hv07의 최종 행동 `refuse`와 hv09의 환불액은 `docs/evaluation.md` 4.1 6·7의 정의(refuse는 약관상 거절 안내와 쓰기 미호출, refund_amount가 있으면 그 금액을 안내)대로다. 작성자 판단 거리(위 해석 여지)도 같은 규칙으로 모두 판정해 기록했다.
+
+**확인.** 전체본 기준 `uv run python -m jikgam.v2.holdout map` 실패 0, `cd bizapi && go test ./...` 전체 통과. 저장소 파일은 표준약관 문장 없이 `strip_standard_terms.py`로 다시 만들었다.
+
+**같은 날 덧붙임(표준약관 조각).** 저장소 사본의 서술 필드에 섞여 있던 표준약관 고유 문장 한 곳(hv05 `expected.outcome`)을 같은 뜻의 다른 말로 바꿨고, `strip_standard_terms.py`는 서술 필드 바꿔 쓰기와 고유 조각 잔존 검사(표준약관 줄의 25자 조각 중 공개 문서·조직 A 약관에 공백 무시로 없는 것)를 하도록 고쳤다. 전체본은 그대로다.
