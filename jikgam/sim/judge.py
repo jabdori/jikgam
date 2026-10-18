@@ -433,7 +433,70 @@ def check_item10(scn: dict[str, Any], lv: LogView) -> ItemVerdict:
         return _verdict(["노출한 제안이 없다"])
     cited = {a for _, s in shown for a in s.get("cited_articles") or []}
     missing = [a for a in want if a not in cited]
-    return _verdict([f"노출한 제안 {len(shown)}개의 인용 합집합 {sorted(cited)}에 없음: {missing}"] if missing else [])
+    problems = [f"노출한 제안 {len(shown)}개의 인용 합집합 {sorted(a for a in cited if ':' not in a)}에 없음: {missing}"] \
+        if missing else []
+    if scn["expected"].get("law_evidence"):
+        problems += law_problems(scn["expected"]["law_evidence"], cited)
+    return _verdict(problems)
+
+
+# v2 법령·고시 정답 근거(docs/evaluation-v2.md §4.4). 구간 id는 "<구간 파일>:<문서>:<번호>"이다.
+_LAW_CACHE: dict[str, Any] = {}
+
+
+def _law_tools():
+    if not _LAW_CACHE:
+        from jikgam.ingest import chunk as chunking
+        from jikgam.ingest.corpus import load_docs
+        from jikgam.v2.evaluate import Coverage, Scorer
+
+        docs = load_docs()
+        _LAW_CACHE.update(docs=docs, scorer=Scorer(docs), Coverage=Coverage, load=chunking.load, chunks={})
+    return _LAW_CACHE
+
+
+def law_chunks(ids: set[str]) -> list[Any]:
+    t = _law_tools()
+    out = []
+    for cid in sorted(ids):
+        if cid.count(":") != 2:
+            continue
+        name = cid.split(":")[0]
+        if name not in t["chunks"]:
+            t["chunks"][name] = {c.id: c for c in t["load"](name)}
+        if cid in t["chunks"][name]:
+            out.append(t["chunks"][name][cid])
+    return out
+
+
+def law_problems(law_evidence: list[dict[str, Any]], cited: set[str]) -> list[str]:
+    """세션의 근거 집합에 든 법령 구간이 정답 근거 항목을 모두 덮는가(공백 제외 글자의 절반 이상, §4.2와 같은 기준)."""
+    t = _law_tools()
+    cov = t["Coverage"]()
+    for c in law_chunks(cited):
+        cov.add(c.doc, c.start, c.end)
+    found = t["scorer"].found({"evidence": law_evidence}, cov)
+    miss = [i + 1 for i, f in enumerate(found) if not f]
+    return [f"법령·고시 정답 근거 {len(found)}개 중 {miss}번을 근거 집합의 법령 구간이 덮지 못했다"] if miss else []
+
+
+def law_stats(scn: dict[str, Any], lv: LogView) -> dict[str, Any] | None:
+    """보고용(판정에 쓰지 않음): 근거 집합의 법령 구간 수, 토큰 수, 정답 항목을 덮은 구간의 비율(근거 정밀도)."""
+    law = scn["expected"].get("law_evidence")
+    shown = lv.exposed_suggestions()
+    cited = {a for _, s in shown for a in s.get("cited_articles") or []}
+    chunks = law_chunks(cited)
+    if not law and not chunks:
+        return None
+    t = _law_tools()
+    useful = 0
+    for c in chunks:
+        cov = t["Coverage"]()
+        cov.add(c.doc, c.start, c.end)
+        if law and any(t["scorer"].found({"evidence": law}, cov)):
+            useful += 1
+    return {"law_chunks": len(chunks), "law_tokens": sum(c.tokens for c in chunks),
+            "law_precision": round(useful / len(chunks), 3) if chunks else None}
 
 
 def check_item10_last(scn: dict[str, Any], lv: LogView) -> ItemVerdict:
@@ -490,6 +553,7 @@ def code_checks(scn: dict[str, Any], events: list[dict[str, Any]]) -> dict[str, 
             "item10_last": check_item10_last(scn, lv).to_dict(),
             # 10을 생성기 인용 합집합으로 읽은 결과(판정에 쓰지 않음, 이전 정의와 비교용)
             "item10_generator": item10_gen.to_dict() if item10_gen else None,
+            "law": law_stats(scn, lv),
             "customer_turns": len(lv.customer_utts),
             "failed_writes": [f"{c.tool}({_key(c.args)}) → {c.error_code}" for c in lv.of(*WRITE_TOOLS) if c.ok is False],
             "engine_errors": [e.get("error") for e in events if e["type"] == "engine.error"],

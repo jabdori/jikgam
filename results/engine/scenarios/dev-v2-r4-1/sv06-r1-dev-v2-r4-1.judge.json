@@ -1,0 +1,80 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  1
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "[상담 5]에서 위약금 없이 19,800원이 환불된다고 안내하여 위약금을 차감한다고 말하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 5]에서 결제 금액 99,000원에서 이용 금액 79,200원을 제외하고 19,800원이 환불된다고 산정 근거와 예정액을 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 5]에서 접수일로부터 3~7영업일 안에 카드 승인 취소로 처리된다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": true,
+    "reason": "[상담 5]에서 서비스는 2026년 10월 12일까지 이용할 수 있다고 마지막 이용 가능일을 안내했습니다."
+   },
+   {
+    "index": 3,
+    "said": false,
+    "reason": "[고객 7]의 사업자 정보 법적 표시 의무에 대한 질문에 상담원이 적절한 법령·고시 안내를 하지 않고 해지 안내만 반복했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": true,
+   "reason": "고객의 연간 구독 해지 및 환불 요청을 성공적으로 접수하고 완료 안내를 제공하여 요청을 처리했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[상담 2]에서 본인이 아니면 불가하다고 안내받은 후 [고객 3]과 [고객 4]에서 본인인 아버지로 전화를 바꿨습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[상담 5]에서 해지 안내를 들은 후 [고객 7]에서 사업자 정보 확인 및 법적 표시 의무에 대해 질문했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 4]에서 사건 실행 표시와 함께 아버지가 전화를 넘겨받았으며, [고객 6]에서 인증번호를 정확히 읽어주었습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 17108.6,
+   "input_tokens": 3148,
+   "output_tokens": 2505,
+   "thoughts_tokens": 1874,
+   "cached_tokens": 0,
+   "cost_usd": 0.036356,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.036356,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "sv06-r1-dev-v2-r4-1",
+ "scenario": "sv06"
+}

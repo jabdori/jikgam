@@ -350,6 +350,13 @@ async def run(args: argparse.Namespace) -> Path:
     org = load_org(args.org)
     if args.bizapi_url:
         org = replace(org, bizapi_url=args.bizapi_url.rstrip("/"))
+    if args.law:
+        # v2: 법령·고시 묶음(config/v2/law.toml)을 켠 엔진. 정책 C에만 쓴다(docs/evaluation-v2.md §4.4)
+        if policy.name != "C":
+            raise SystemExit("--law는 정책 C에만 쓴다")
+        from jikgam.engine.law import load_law
+
+        org = replace(org, law=load_law(args.law))
     path = (ROOT / args.scenario_file) if args.scenario_file else scenario_path(org.org)
     chosen = select(load_scenarios(path), args.scenarios)
     # 보류용 평가는 보류용 고객 데이터도 모의 업무 API에 올리므로, 인증 문자 대상 번호도 그 파일까지 본다.
@@ -361,7 +368,7 @@ async def run(args: argparse.Namespace) -> Path:
     models = load_config()
     backend = {"B": "gemini-flash", "C": args.decision_backend or org.decision_backend}.get(policy.name)
     summary: dict[str, Any] = {
-        "run_id": run_id, "policy": policy.name, "policy_description": policy.description,
+        "run_id": run_id, "policy": policy.name, "policy_description": policy.description, "law": args.law,
         "decision_backend": backend, "decision_model": (models.get(backend) or {}).get("model") if backend else None,
         "generator": org.generator, "generator_model": models[org.generator]["model"], "org": org.org,
         "bizapi_url": org.bizapi_url, "scenario_file": str(path.relative_to(ROOT)).replace("\\", "/"),
@@ -430,6 +437,7 @@ def main() -> None:
     ap.add_argument("--judge-model", default=judge.DEFAULT_JUDGE_MODEL)
     ap.add_argument("--no-judge", action="store_true", help="AI 판정을 건너뛴다(나중에 jikgam.sim.judge로 한다)")
     ap.add_argument("--decision-backend", help="정책 C의 판별 백엔드(config/decision_models의 이름). 생략하면 조직 설정 값")
+    ap.add_argument("--law", choices=["r0", "r4"], help="v2 법령·고시 묶음(config/v2/law.toml의 프로필)")
     args = ap.parse_args()
     if args.runs < 1:
         raise SystemExit("--runs는 1 이상이어야 한다")

@@ -1,0 +1,30 @@
+# v2 엔드투엔드의 법령·고시 묶음(docs/evaluation-v2.md §4.4). 조직 A 약관은 v1 그대로 두고, 이 묶음의 구간을 함께 찾는다.
+# 법령 구간은 엔진이 이미 하는 근거 판별(applies, Jev)에 같은 호출로 넣는다. 확률 0.5 이상을 근거로 고른다.
+# 실행: uv run --group embed python -m jikgam.sim.runner --org org_a --law r4 ...
+
+[r0]
+# 기준선 R0: 조 단위 + 대체 규칙(256토큰) 구간, v1 검색 규칙(상위 4개에서 참조·별표 한 단계)
+mode = "r0"
+chunks = "article256"
+meta = "none"
+max_candidates = 8
+
+[r4]
+# 새 방식 R4: (b) 구간 + 구간 정보, snowflake-ko + BM25 RRF 결합(val에서 고름, ADR 0024 보완)
+# 리랭킹은 엔진의 근거 판별 호출(applies)이 한다. 근거는 확률 순으로 세운다
+mode = "r4"
+chunks = "b-W4000-C800-raw"
+meta = "full"
+embed = "snow"
+fusion = "rrf"
+max_candidates = 8
+
+# 약관과 법령이 어긋날 때 생성 모델이 판단하지 않게 하는 결정적 검사(결정 기록 0004와 같은 원칙).
+# 금액과 환불 자격은 지금처럼 업무 API 결과(견적)를 따른다(대상 견적이 없으면 환불이 된다고 말할 수 없다).
+# 아래 검사는 법령 묶음을 켠 세션의 생성 결과에 더한다. 위반이면 지적을 붙여 한 번 더 생성하고, 그래도 남으면 고정 문구다.
+[[guards]]
+id = "withdrawal-days-floor"
+# "청약철회 … N일"에서 N이 법정 기간보다 짧으면 위반이다(전자상거래법 제17조 제1항: 7일)
+pattern = "청약\\s*철회[^.?!\\n]{0,40}?(\\d+)\\s*일"
+min = 7
+message = "청약철회 기간을 법정 기간(7일)보다 짧게 안내했다"

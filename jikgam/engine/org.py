@@ -111,6 +111,8 @@ class OrgConfig:
     required_notices: tuple[str, ...]
     retrieval: RetrievalConfig
     policy: PolicyConfig
+    # v2 법령·고시 묶음(jikgam.engine.law.LawConfig). 실행기에서 --law로 켠다. 없으면 v1과 같다
+    law: Any = None
 
 
 def _retrieval(raw: dict[str, Any]) -> RetrievalConfig:

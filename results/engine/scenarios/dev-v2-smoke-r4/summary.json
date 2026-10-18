@@ -1,0 +1,106 @@
+{
+ "run_id": "dev-v2-smoke-r4",
+ "policy": "C",
+ "policy_description": "엔진 + 판별 모델(조직 설정 기본 백엔드), 확정 발화",
+ "law": "r4",
+ "decision_backend": "jev",
+ "decision_model": "jev-1.13.0",
+ "generator": "gemini-flash",
+ "generator_model": "gemini-3.8-flash",
+ "org": "org_a",
+ "bizapi_url": "http://127.0.0.1:8121",
+ "scenario_file": "data/scenarios/org_a_v2.jsonl",
+ "scenario_sha256": "3e731137d0c7d63671efa0557b46a238dd93c0f641e9ab68f11809e046b65441",
+ "runs": 1,
+ "run_start": 1,
+ "max_turns": 16,
+ "fast_delay_ms": 1000.0,
+ "customer_model": "gemini-3.8-flash",
+ "customer_prompt": "sim-customer-2026.10.14-3",
+ "judge_model": "gemini-3.1-pro-preview",
+ "judge_prompt": "sim-judge-2026.10.14-3",
+ "git": {
+  "commit": "40c495bc30061848835636dd98425e9b8f9e049e",
+  "dirty": true
+ },
+ "started": "2026-10-16T13:53:14+09:00",
+ "ended": "2026-10-16T13:56:00+09:00",
+ "note": "개발용 시나리오 결과(docs/evaluation.md §4.3). 합성 대화이며 운영 성과가 아니다.",
+ "customer_files": [
+  "domain/org_a/customers.json"
+ ],
+ "sessions": [
+  {
+   "scenario": "sv01",
+   "session": "sv01-r1-dev-v2-smoke-r4",
+   "run": 1,
+   "customer_seed": 1522378827,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 8,
+   "executed_events": [
+    0
+   ],
+   "missing_events": [],
+   "fast_corrections": [
+    {
+     "event": "sv01#0",
+     "gap_ms": 1014.4,
+     "first_done_before_followup": false
+    }
+   ],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 55530.1,
+   "costs": {
+    "customer_usd": 0.009066749999999998,
+    "decision_calls": 12,
+    "warmup_calls": 1,
+    "prejudge_calls": 0,
+    "decision_usd": 0.006838692,
+    "generation_calls": 7,
+    "generation_usd": 0.019824,
+    "engine_errors": 0,
+    "judge_usd": 0.045238
+   },
+   "judge_error": null
+  },
+  {
+   "scenario": "sv07",
+   "session": "sv07-r1-dev-v2-smoke-r4",
+   "run": 1,
+   "customer_seed": 967750422,
+   "end_reason": "customer_done",
+   "error": null,
+   "customer_turns": 10,
+   "executed_events": [
+    0,
+    1,
+    2
+   ],
+   "missing_events": [],
+   "fast_corrections": [
+    {
+     "event": "sv07#2",
+     "gap_ms": 1006.4,
+     "first_done_before_followup": false
+    }
+   ],
+   "fast_missing": [],
+   "injections": [],
+   "duration_ms": 52164.8,
+   "costs": {
+    "customer_usd": 0.013957500000000001,
+    "decision_calls": 14,
+    "warmup_calls": 1,
+    "prejudge_calls": 0,
+    "decision_usd": 0.008198484,
+    "generation_calls": 9,
+    "generation_usd": 0.035913,
+    "engine_errors": 0,
+    "judge_usd": 0.062424
+   },
+   "judge_error": null
+  }
+ ]
+}

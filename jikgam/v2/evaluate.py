@@ -180,3 +180,14 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+def per_question_found(cs: ChunkSet, questions: list[dict], rankings: dict[str, list[str]], scorer: Scorer,
+                       budget: int = 2000) -> dict[str, dict[str, list[bool]]]:
+    """유형 → 질문 id → 근거 항목별 찾음(짝지은 부트스트랩용). 내용은 없고 id와 참거짓만 담는다."""
+    out: dict[str, dict[str, list[bool]]] = {"single": {}, "multi": {}}
+    for q in questions:
+        if q["type"] == "none":
+            continue
+        out[q["type"]][q["id"]] = scorer.found(q, budget_coverage(cs, rankings[q["id"]], budget))
+    return out

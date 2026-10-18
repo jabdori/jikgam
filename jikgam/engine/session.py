@@ -111,7 +111,14 @@ class Session:
         self.log = EventLog(Path(log_dir) / f"{session_id}.jsonl", session_id)
         self.state = SessionState(org.org, org.today)
         self.articles = parse_terms(org.terms)
-        self.index = ArticleIndex(self.articles, org.retrieval)
+        self.index = ArticleIndex(dict(self.articles), org.retrieval)
+        # v2 법령·고시 묶음: 구간을 종류 "law"인 조항으로 사전에 더한다. 약관 색인(위)은 약관만 본다
+        self.law = None
+        if org.law is not None:
+            from jikgam.engine import law as law_bundle
+
+            self.law = law_bundle.bundle(org.law)
+            self.articles.update(self.law.articles)
         base_version, base = load_bank(org.question_set)
         extra_version, extra = load_bank(org.extra_question_set)
         if set(base) & set(extra):
@@ -315,9 +322,17 @@ class Session:
                 stage = "retrieval"
                 t0 = now_ms()
                 result = self.index.search(self._retrieval_context())
+                law_extra: dict[str, Any] = {}
+                if self.law is not None:
+                    # 같은 검색어로 법령·고시 구간을 찾아 약관 후보 뒤에 붙인다(판별은 같은 applies 호출)
+                    law_ids, law_ms = self.law.search(result.query)
+                    law_ids = [a for a in law_ids if a not in result.candidates]
+                    result.candidates = result.candidates + law_ids
+                    result.sources.update({a: "law" for a in law_ids})
+                    law_extra = {"law_candidates": law_ids, "law_ms": round(law_ms, 3), "law_profile": self.law.cfg.profile}
                 out.append(self.log.emit(ev.RETRIEVAL_DONE, self.state.version, started_version=my_v,
                                          duration_ms=round(now_ms() - t0, 3), candidates=result.candidates,
-                                         sources=result.sources, query=result.query))
+                                         sources=result.sources, query=result.query, **law_extra))
                 if self._stale(my_v):
                     out.append(self._discard(stage, my_v))
                     return
@@ -330,6 +345,11 @@ class Session:
                 labels, probs = self._labels(res, qids)
                 # 5. 근거 선택과 이전 제안 무효화
                 selected = [a for a in result.candidates if probs.get(f"applies:{a}", 0.0) >= self.org.applies_threshold]
+                if self.law is not None and self.law.cfg.mode == "r4":
+                    # R4: 법령 근거는 판별 확률 순(리랭킹). 약관 근거는 v1처럼 검색 순서다
+                    law_sel = [a for a in selected if result.sources.get(a) == "law"]
+                    law_sel.sort(key=lambda a: -probs.get(f"applies:{a}", 0.0))
+                    selected = [a for a in selected if result.sources.get(a) != "law"] + law_sel
                 if "addon_only" in qids and "addon_only" in labels:
                     self.state.addon_only = probs["addon_only"] >= self.org.addon_threshold
                 if first:
@@ -767,6 +787,9 @@ class Session:
             self.state.request in self.org.policy.records_intents,
             "conversation": [{"speaker": t.speaker, "text": t.text}
                              for t in self.state.conversation[-CONVERSATION_FOR_GENERATION:]],
+            # v2 법령 묶음을 켠 세션: 약관과 법령이 어긋날 때의 결정적 검사(config/v2/law.toml)
+            **({"law_guards": [{"id": g.id, "pattern": g.pattern.pattern, "min": g.min, "message": g.message}
+                               for g in self.law.cfg.guards]} if self.law is not None else {}),
         }
 
     def _expose(self, plan: policy.Plan, g: gen.GenerationResult, my_v: int, out: list[dict[str, Any]],

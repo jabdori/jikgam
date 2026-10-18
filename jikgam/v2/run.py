@@ -21,7 +21,7 @@ import time
 from jikgam.ingest import chunk as chunking
 from jikgam.ingest import metadata
 from jikgam.ingest.corpus import ROOT, load_docs
-from jikgam.v2.evaluate import Scorer, evaluate_rankings, load_questions
+from jikgam.v2.evaluate import Scorer, evaluate_rankings, load_questions, per_question_found
 from jikgam.v2.hybrid import Hybrid, HybridConfig
 from jikgam.v2.search import ChunkSet, rank_r0
 
@@ -97,13 +97,15 @@ async def run(args) -> dict:
         finally:
             if jev:
                 await jev.aclose()
-    metrics = evaluate_rankings(cs, questions, rankings, Scorer(docs))
+    scorer = Scorer(docs)
+    metrics = evaluate_rankings(cs, questions, rankings, scorer)
     ret = [t["retrieval_ms"] for t in traces.values()]
     rr = [t["rerank_ms"] for t in traces.values() if t.get("rerank_ms") is not None]
     out = {"name": name, "split": args.split, "chunks": args.chunks, "meta": args.meta,
            "config": {"r0": args.r0, "embed": args.embed, "fusion": args.fusion, "related": args.related,
                       "rerank": args.rerank},
            "metrics": metrics,
+           "per_question@2000": per_question_found(cs, questions, rankings, scorer),
            "latency_ms": {"retrieval_p50": pct(ret, 0.5), "retrieval_p95": pct(ret, 0.95),
                           "rerank_p50": pct(rr, 0.5), "rerank_p95": pct(rr, 0.95)},
            "rerank": {"cost_usd": round(sum(t.get("rerank_cost_usd") or 0 for t in traces.values()), 5),

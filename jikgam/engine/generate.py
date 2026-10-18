@@ -62,6 +62,15 @@ SYSTEM_PROMPT = """당신은 구독 서비스 고객센터의 채팅 상담 메�
 16. plan.proposal.cancel.because_refund_ends_period가 참이면 이 환불로 이용 기간이 끝나 구독도 함께 해지된다고 안내한다.
 설명 없이 지정된 JSON만 출력한다."""
 
+# v2 법령·고시 묶음을 켠 세션에서만 덧붙이는 규칙(docs/evaluation-v2.md §4.4). v1 세션의 프롬프트는 바뀌지 않는다.
+LAW_PROMPT_VERSION = "engine-gen-law-2026.10.16-1"
+LAW_RULES = """
+
+법령·고시 근거 규칙(articles의 type이 law인 근거):
+17. type이 law인 근거는 법령·고시 원문 구간이고, 조직 약관보다 상위 문서다. 고객의 권리, 사업자의 의무, 기간과 기준을 설명할 때 쓰고, 그 근거의 ID를 cited_articles에 넣는다. 원문에 없는 내용을 덧붙이지 않는다.
+18. 환불 가능 여부와 금액은 법령을 근거로 판단하지 않는다. 규칙 2처럼 quotes와 system_facts(업무 API 결과)만 따른다. 법령과 약관이 다르게 읽히면 어느 쪽이 맞는지 판단하지 말고, 법령 내용과 약관 내용을 있는 그대로 알리고 상담사 확인이 필요하다고 안내한다.
+19. 청약철회 기간은 법정 기간보다 짧게 말하지 않는다."""
+
 RESPONSE_SCHEMA = {
     "type": "object",
     "properties": {
@@ -135,7 +144,8 @@ class GeminiGenerator:
         gen: dict[str, Any] = {"responseMimeType": "application/json", "responseJsonSchema": RESPONSE_SCHEMA}
         if self.thinking_level:
             gen["thinkingConfig"] = {"thinkingLevel": self.thinking_level}
-        body = {"systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+        has_law = bool(payload.get("law_guards")) or any(a.get("type") == "law" for a in payload.get("articles", []))
+        body = {"systemInstruction": {"parts": [{"text": SYSTEM_PROMPT + (LAW_RULES if has_law else "")}]},
                 "contents": [{"role": "user", "parts": [{"text": text}]}], "generationConfig": gen}
         t0 = time.perf_counter()
         try:
@@ -192,6 +202,7 @@ class Allowed:
     refund_claims_ok: bool = True  # 환불이 된다는 말을 해도 되는가(대상 견적·환불 접수가 있거나, 계정과 무관한 일반 안내)
     deduction_amounts: frozenset[int] = frozenset()  # 차감액 견적의 금액. 문장에는 써도 되지만 amount가 될 수 없다
     must_mention: tuple[str, ...] = ()  # 문장에 반드시 들어가야 하는 말
+    law_guards: tuple[dict[str, Any], ...] = ()  # v2 법령 묶음의 결정적 검사(config/v2/law.toml guards)
 
 
 # 환불이 된다·받을 수 있다는 말. 서술어 꼴만 본다("장애 전액 환불 신청 기간", "환불 가능 기간"처럼 규정 이름이나
@@ -248,7 +259,8 @@ def allowed_from(payload: dict[str, Any], today: date) -> Allowed:
     return Allowed(frozenset(amounts), frozenset(quote_amounts), frozenset(a["id"] for a in payload.get("articles", [])),
                    refund_backed or not payload.get("refund_claims_need_quote", True),
                    frozenset(_ints([q.get("refund_amount") for q in deductions]) - quote_amounts),
-                   tuple(payload.get("plan", {}).get("must_mention") or ()))
+                   tuple(payload.get("plan", {}).get("must_mention") or ()),
+                   tuple(payload.get("law_guards") or ()))
 
 
 def check(result: GenerationResult, allowed: Allowed, today: date) -> list[str]:
@@ -265,6 +277,10 @@ def check(result: GenerationResult, allowed: Allowed, today: date) -> list[str]:
     if not allowed.refund_claims_ok:
         for claim in refund_claims(result.say):
             problems.append(f"'{claim}': 대상 견적이 없는데 환불이 된다고 말했다(조건을 붙여도 안 된다)")
+    if allowed.law_guards:
+        from jikgam.engine.law import guard_violations
+
+        problems += guard_violations(result.say, list(allowed.law_guards))
     return problems
 
 

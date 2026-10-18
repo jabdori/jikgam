@@ -1,0 +1,339 @@
+{
+ "name": "R0-article0",
+ "split": "val",
+ "chunks": "article0",
+ "meta": "none",
+ "config": {
+  "r0": true,
+  "embed": null,
+  "fusion": "rrf",
+  "related": false,
+  "rerank": 0
+ },
+ "metrics": {
+  "single": {
+   "questions": 43,
+   "evidence_items": 43,
+   "items@1000": 0.4884,
+   "complete@1000": 0.4884,
+   "items@2000": 0.5581,
+   "complete@2000": 0.5581,
+   "items@4000": 0.6047,
+   "complete@4000": 0.6047,
+   "recall@5": 0.814,
+   "recall@10": 0.907,
+   "ndcg@10": 0.7113
+  },
+  "multi": {
+   "questions": 34,
+   "evidence_items": 75,
+   "items@1000": 0.28,
+   "complete@1000": 0.0588,
+   "items@2000": 0.4933,
+   "complete@2000": 0.2059,
+   "items@4000": 0.6533,
+   "complete@4000": 0.4118,
+   "recall@5": 0.68,
+   "recall@10": 0.8533,
+   "ndcg@10": 0.7544
+  },
+  "all": {
+   "questions": 77,
+   "evidence_items": 118,
+   "items@1000": 0.3559,
+   "complete@1000": 0.2987,
+   "items@2000": 0.5169,
+   "complete@2000": 0.4026,
+   "items@4000": 0.6356,
+   "complete@4000": 0.5195,
+   "recall@5": 0.7288,
+   "recall@10": 0.8729,
+   "ndcg@10": 0.7303
+  }
+ },
+ "per_question@2000": {
+  "single": {
+   "qa-0005": [
+    true
+   ],
+   "qa-0011": [
+    false
+   ],
+   "qa-0017": [
+    false
+   ],
+   "qa-0020": [
+    true
+   ],
+   "qa-0040": [
+    true
+   ],
+   "qa-0041": [
+    true
+   ],
+   "qa-0050": [
+    true
+   ],
+   "qa-0067": [
+    true
+   ],
+   "qa-0079": [
+    false
+   ],
+   "qa-0097": [
+    false
+   ],
+   "qa-0098": [
+    false
+   ],
+   "qa-0100": [
+    true
+   ],
+   "qa-0110": [
+    false
+   ],
+   "qa-0117": [
+    true
+   ],
+   "qa-0129": [
+    false
+   ],
+   "qa-0132": [
+    true
+   ],
+   "qa-0136": [
+    true
+   ],
+   "qa-0140": [
+    false
+   ],
+   "qa-0154": [
+    false
+   ],
+   "qa-0175": [
+    false
+   ],
+   "qa-0181": [
+    false
+   ],
+   "qa-0183": [
+    true
+   ],
+   "qa-0199": [
+    true
+   ],
+   "qa-0203": [
+    false
+   ],
+   "qa-0223": [
+    false
+   ],
+   "qa-0224": [
+    true
+   ],
+   "qa-0225": [
+    true
+   ],
+   "qa-0236": [
+    true
+   ],
+   "qa-0237": [
+    true
+   ],
+   "qa-0259": [
+    false
+   ],
+   "qa-0260": [
+    false
+   ],
+   "qa-0261": [
+    false
+   ],
+   "qa-0265": [
+    false
+   ],
+   "qa-0274": [
+    true
+   ],
+   "qa-0282": [
+    true
+   ],
+   "qa-0284": [
+    false
+   ],
+   "qa-0307": [
+    true
+   ],
+   "qa-0337": [
+    true
+   ],
+   "qa-0342": [
+    false
+   ],
+   "qa-0355": [
+    true
+   ],
+   "qa-0373": [
+    true
+   ],
+   "qa-0383": [
+    true
+   ],
+   "qa-0386": [
+    true
+   ]
+  },
+  "multi": {
+   "qa-0001": [
+    true,
+    false
+   ],
+   "qa-0002": [
+    false,
+    false
+   ],
+   "qa-0029": [
+    false,
+    false
+   ],
+   "qa-0076": [
+    false,
+    false
+   ],
+   "qa-0099": [
+    false,
+    true
+   ],
+   "qa-0141": [
+    true,
+    false
+   ],
+   "qa-0165": [
+    true,
+    true
+   ],
+   "qa-0195": [
+    true,
+    true
+   ],
+   "qa-0202": [
+    false,
+    false
+   ],
+   "qa-0205": [
+    true,
+    false
+   ],
+   "qa-0207": [
+    true,
+    false
+   ],
+   "qa-0216": [
+    true,
+    true
+   ],
+   "qa-0221": [
+    true,
+    false
+   ],
+   "qa-0222": [
+    false,
+    false,
+    false
+   ],
+   "qa-0247": [
+    true,
+    false,
+    false
+   ],
+   "qa-0248": [
+    true,
+    true
+   ],
+   "qa-0266": [
+    true,
+    true
+   ],
+   "qa-0268": [
+    false,
+    true
+   ],
+   "qa-0269": [
+    true,
+    false
+   ],
+   "qa-0286": [
+    false,
+    true,
+    false
+   ],
+   "qa-0288": [
+    true,
+    true
+   ],
+   "qa-0306": [
+    false,
+    true,
+    false
+   ],
+   "qa-0308": [
+    true,
+    false
+   ],
+   "qa-0320": [
+    true,
+    false
+   ],
+   "qa-0323": [
+    true,
+    false
+   ],
+   "qa-0324": [
+    true,
+    false
+   ],
+   "qa-0348": [
+    true,
+    false,
+    false
+   ],
+   "qa-0353": [
+    false,
+    true,
+    true
+   ],
+   "qa-0354": [
+    false,
+    true
+   ],
+   "qa-0365": [
+    false,
+    true
+   ],
+   "qa-0367": [
+    false,
+    true
+   ],
+   "qa-0369": [
+    true,
+    true,
+    true
+   ],
+   "qa-0370": [
+    false,
+    false
+   ],
+   "qa-0374": [
+    false,
+    true
+   ]
+  }
+ },
+ "latency_ms": {
+  "retrieval_p50": 1.87,
+  "retrieval_p95": 3.53,
+  "rerank_p50": null,
+  "rerank_p95": null
+ },
+ "rerank": null
+}

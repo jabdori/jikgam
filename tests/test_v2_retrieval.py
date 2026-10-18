@@ -85,3 +85,19 @@ def test_scorer_needs_half_of_nonspace_chars_covered():
     assert not sc.covered(alt, cov2.merged("d"))
     item = {"evidence": [{"alternatives": [{"doc": "d", "start": 10, "end": 14}, alt]}]}
     assert sc.found(item, cov) == [True]  # 대체 근거 하나만 덮어도 찾은 것이다
+
+
+def test_boundary_match_pairs_closest_first_within_one_line():
+    from jikgam.v2.stats import match, pk_windowdiff
+    assert match([10, 11], [11]) == 1  # 한 참고 경계에는 한 예측만
+    assert match([10, 20], [11, 22]) == 1  # 22는 두 줄 차이라 맞지 않는다
+    assert match([5], [5], tol=0) == 1
+    pk, wd = pk_windowdiff({1, 5}, {1, 5}, 1, 10, 2)
+    assert pk == 0.0 and wd == 0.0
+
+
+def test_paired_recall_diff_is_zero_for_identical_runs():
+    from jikgam.v2.stats import paired_recall_diff
+    a = {"q1": [True], "q2": [False, True], "q3": [True]}
+    d = paired_recall_diff(a, dict(a), n=200)
+    assert d["diff"] == 0.0 and d["ci95"] == [0.0, 0.0] and d["questions"] == 3

@@ -51,9 +51,287 @@
    "ndcg@10": 0.6888
   }
  },
+ "per_question@2000": {
+  "single": {
+   "qa-0005": [
+    true
+   ],
+   "qa-0011": [
+    true
+   ],
+   "qa-0017": [
+    false
+   ],
+   "qa-0020": [
+    false
+   ],
+   "qa-0040": [
+    true
+   ],
+   "qa-0041": [
+    true
+   ],
+   "qa-0050": [
+    true
+   ],
+   "qa-0067": [
+    true
+   ],
+   "qa-0079": [
+    false
+   ],
+   "qa-0097": [
+    false
+   ],
+   "qa-0098": [
+    true
+   ],
+   "qa-0100": [
+    true
+   ],
+   "qa-0110": [
+    true
+   ],
+   "qa-0117": [
+    false
+   ],
+   "qa-0129": [
+    true
+   ],
+   "qa-0132": [
+    true
+   ],
+   "qa-0136": [
+    true
+   ],
+   "qa-0140": [
+    false
+   ],
+   "qa-0154": [
+    true
+   ],
+   "qa-0175": [
+    false
+   ],
+   "qa-0181": [
+    false
+   ],
+   "qa-0183": [
+    true
+   ],
+   "qa-0199": [
+    true
+   ],
+   "qa-0203": [
+    true
+   ],
+   "qa-0223": [
+    true
+   ],
+   "qa-0224": [
+    true
+   ],
+   "qa-0225": [
+    true
+   ],
+   "qa-0236": [
+    true
+   ],
+   "qa-0237": [
+    true
+   ],
+   "qa-0259": [
+    true
+   ],
+   "qa-0260": [
+    true
+   ],
+   "qa-0261": [
+    true
+   ],
+   "qa-0265": [
+    true
+   ],
+   "qa-0274": [
+    true
+   ],
+   "qa-0282": [
+    true
+   ],
+   "qa-0284": [
+    true
+   ],
+   "qa-0307": [
+    true
+   ],
+   "qa-0337": [
+    true
+   ],
+   "qa-0342": [
+    true
+   ],
+   "qa-0355": [
+    true
+   ],
+   "qa-0373": [
+    true
+   ],
+   "qa-0383": [
+    true
+   ],
+   "qa-0386": [
+    true
+   ]
+  },
+  "multi": {
+   "qa-0001": [
+    true,
+    false
+   ],
+   "qa-0002": [
+    false,
+    false
+   ],
+   "qa-0029": [
+    false,
+    false
+   ],
+   "qa-0076": [
+    true,
+    false
+   ],
+   "qa-0099": [
+    false,
+    true
+   ],
+   "qa-0141": [
+    true,
+    false
+   ],
+   "qa-0165": [
+    false,
+    true
+   ],
+   "qa-0195": [
+    true,
+    true
+   ],
+   "qa-0202": [
+    false,
+    true
+   ],
+   "qa-0205": [
+    true,
+    false
+   ],
+   "qa-0207": [
+    true,
+    false
+   ],
+   "qa-0216": [
+    true,
+    true
+   ],
+   "qa-0221": [
+    true,
+    false
+   ],
+   "qa-0222": [
+    false,
+    true,
+    false
+   ],
+   "qa-0247": [
+    true,
+    false,
+    false
+   ],
+   "qa-0248": [
+    true,
+    true
+   ],
+   "qa-0266": [
+    false,
+    true
+   ],
+   "qa-0268": [
+    false,
+    true
+   ],
+   "qa-0269": [
+    true,
+    false
+   ],
+   "qa-0286": [
+    false,
+    false,
+    false
+   ],
+   "qa-0288": [
+    false,
+    true
+   ],
+   "qa-0306": [
+    true,
+    false,
+    false
+   ],
+   "qa-0308": [
+    true,
+    true
+   ],
+   "qa-0320": [
+    true,
+    false
+   ],
+   "qa-0323": [
+    true,
+    false
+   ],
+   "qa-0324": [
+    true,
+    false
+   ],
+   "qa-0348": [
+    false,
+    false,
+    false
+   ],
+   "qa-0353": [
+    false,
+    true,
+    false
+   ],
+   "qa-0354": [
+    false,
+    true
+   ],
+   "qa-0365": [
+    false,
+    false
+   ],
+   "qa-0367": [
+    false,
+    false
+   ],
+   "qa-0369": [
+    true,
+    false,
+    false
+   ],
+   "qa-0370": [
+    false,
+    true
+   ],
+   "qa-0374": [
+    false,
+    false
+   ]
+  }
+ },
  "latency_ms": {
-  "retrieval_p50": 3.6,
-  "retrieval_p95": 6.73,
+  "retrieval_p50": 3.94,
+  "retrieval_p95": 6.61,
   "rerank_p50": null,
   "rerank_p95": null
  },

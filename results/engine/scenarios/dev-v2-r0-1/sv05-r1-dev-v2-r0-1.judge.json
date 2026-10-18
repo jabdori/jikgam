@@ -1,0 +1,75 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  2
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 5]를 비롯한 여러 대화에서 연장 보상 시간을 5시간이 아닌 15시간으로 정확히 안내했습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": true,
+    "reason": "[상담 3]에서 결제일로부터 7일 이내 해지 신청 시에만 전액 환불이 적용된다며 환불 불가 사유를 명확히 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 5]에서 장애 시간에 대한 3배 보상으로 15시간 연장 보상 대상임을 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": false,
+    "reason": "[상담 4]에서 고객의 법적인 처리 기준에 대한 질문에 소비자분쟁해결기준 등의 법령·고시를 근거로 들지 않고, 자사 약관(제9조)만을 근거로 안내했습니다."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "환불 불가(거절) 안내로 상황을 마무리해야 했으나, 연장 적용을 핑계로 [상담 8]과 [상담 9]에서 상담사 연결(handoff)을 진행하며 종료했습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "환불이 불가하다는 안내를 확인한 직후 [고객 6]에서 해지를 안 하고 보상(연장)만 받겠다고 정상적으로 발화했습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[상담 3]에서 환불 대상이 아니라는 말을 듣고 [고객 4]에서 법으로는 장애 발생 시 어떻게 처리해야 하는지 질문했습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 6] 메시지에 (사건 #0 실행 표시)가 있으며 내용대로 해지 대신 보상 연장만 요구하여 성공적으로 실행되었습니다."
+   }
+  ]
+ },
+ "error": null,
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 24008.3,
+   "input_tokens": 2987,
+   "output_tokens": 3052,
+   "thoughts_tokens": 2468,
+   "cached_tokens": 0,
+   "cost_usd": 0.042598,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.042598,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "sv05-r1-dev-v2-r0-1",
+ "scenario": "sv05"
+}

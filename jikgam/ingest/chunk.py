@@ -106,8 +106,10 @@ def refs_in(text: str) -> list[str]:
 
 
 def article(doc: Doc, size: int, lt: list[int] | None = None) -> list[Chunk]:
-    """기준선 R0: 조 단위 + 조가 없는 부분은 size토큰 고정 길이(§3.6)."""
+    """기준선 R0: 조 단위 + 조가 없는 부분은 size토큰 고정 길이(§3.6). size 0은 R0-원형(조가 없는 부분을 파일마다 한 구간)."""
     lt = lt or line_tokens(doc)
+    method = f"article{size}"
+    size = size if size > 0 else 10 ** 9
     heads = []  # (줄 번호, 조 이름)
     seen: dict[str, int] = {}
     for line in doc.lines:
@@ -132,7 +134,7 @@ def article(doc: Doc, size: int, lt: list[int] | None = None) -> list[Chunk]:
             if f.startswith("별표") and (m := TABLE_OF.search(head)):
                 table = f"제{m.group(1)}조" + (f"의{m.group(2)}" if m.group(2) else "")
             for x, y in fixed_ranges(lt, cur, end, size):
-                chunks.append(make(doc, "article", x, y, lt, len(chunks), kind="fixed", table_of=table))
+                chunks.append(make(doc, method, x, y, lt, len(chunks), kind="fixed", table_of=table))
             cur = end + 1
 
     prev_end = 0
@@ -147,7 +149,7 @@ def article(doc: Doc, size: int, lt: list[int] | None = None) -> list[Chunk]:
             stop += 1
         st, en = span(doc, no, stop)
         refs = [r for r in refs_in(doc.text[st:en]) if r != name.split("#")[0]]
-        chunks.append(make(doc, "article", no, stop, lt, len(chunks), kind="article", article=name, refs=refs))
+        chunks.append(make(doc, method, no, stop, lt, len(chunks), kind="article", article=name, refs=refs))
         if stop < end:
             filler(stop + 1, end)
         prev_end = end
