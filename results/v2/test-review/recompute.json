@@ -1,0 +1,446 @@
+{
+ "task": "T5 v2 test §8 판정 수치 독립 재계산(GLM-5.3)",
+ "rows": [
+  {
+   "section": "8.1",
+   "condition": "R0 정확도 병목",
+   "reporter": 0.7475728155339806,
+   "mine": 0.7475728155339806,
+   "absdiff": 0.0,
+   "match": true,
+   "reporter_result": "만족",
+   "my_result": "만족",
+   "same_verdict": true
+  },
+  {
+   "section": "8.1",
+   "condition": "R0 지연 병목(ms)",
+   "reporter": 5.865099985385314,
+   "mine": 5.865099985385314,
+   "absdiff": 0.0,
+   "match": true,
+   "reporter_result": "불만족",
+   "my_result": "불만족",
+   "same_verdict": true
+  },
+  {
+   "section": "8.2",
+   "condition": "R4 − R0 재현율",
+   "reporter": 0.20388349514563106,
+   "mine": 0.20388349514563106,
+   "absdiff": 0.0,
+   "match": true,
+   "reporter_result": "만족",
+   "my_result": "만족",
+   "same_verdict": true,
+   "ci95_reporter": [
+    0.11650485436893204,
+    0.2912621359223301
+   ],
+   "ci95_mine": [
+    0.11650485436893204,
+    0.2912621359223301
+   ],
+   "ci_match": true
+  },
+  {
+   "section": "8.2",
+   "condition": "R4 − R0 구간 아래 끝",
+   "reporter": 0.11650485436893204,
+   "mine": 0.11650485436893204,
+   "absdiff": 0.0,
+   "match": true,
+   "reporter_result": "만족",
+   "my_result": "만족",
+   "same_verdict": true,
+   "ci95_reporter": [
+    0.11650485436893204,
+    0.2912621359223301
+   ],
+   "ci95_mine": [
+    0.11650485436893204,
+    0.2912621359223301
+   ],
+   "ci_match": true
+  },
+  {
+   "section": "8.2",
+   "condition": "R4 − R1 구간 아래 끝",
+   "reporter": 0.0970873786407767,
+   "mine": 0.0970873786407767,
+   "absdiff": 0.0,
+   "match": true,
+   "reporter_result": "만족",
+   "my_result": "만족",
+   "same_verdict": true,
+   "ci95_reporter": [
+    0.0970873786407767,
+    0.27184466019417475
+   ],
+   "ci95_mine": [
+    0.0970873786407767,
+    0.27184466019417475
+   ],
+   "ci_match": true
+  },
+  {
+   "section": "8.2",
+   "condition": "점검용 R4 − R0 재현율",
+   "reporter": 0.06666666666666667,
+   "mine": 0.06666666666666667,
+   "absdiff": 0.0,
+   "match": true,
+   "reporter_result": "만족",
+   "my_result": "만족",
+   "same_verdict": true,
+   "ci95_reporter": [
+    0.0,
+    0.16666666666666666
+   ],
+   "ci95_mine": [
+    0.0,
+    0.16666666666666666
+   ],
+   "ci_match": true
+  },
+  {
+   "section": "8.2",
+   "condition": "R4 검색 p95(ms)",
+   "reporter": 83.36180000333115,
+   "mine": 83.36180000333115,
+   "absdiff": 0.0,
+   "match": true,
+   "reporter_result": "만족",
+   "my_result": "만족",
+   "same_verdict": true
+  },
+  {
+   "section": "8.2",
+   "condition": "R4 리랭킹 p95(ms)",
+   "reporter": 259.7492999921087,
+   "mine": 259.7492999921087,
+   "absdiff": 0.0,
+   "match": true,
+   "reporter_result": "불만족",
+   "my_result": "불만족",
+   "same_verdict": true
+  },
+  {
+   "section": "8.2",
+   "condition": "R4 − R0 근거 없는 주장 비율",
+   "reporter": 0.0,
+   "mine": 0.0,
+   "absdiff": 0.0,
+   "match": true,
+   "reporter_result": "만족",
+   "my_result": "만족",
+   "same_verdict": true,
+   "ci95_reporter": [
+    0.0,
+    0.0
+   ],
+   "ci95_mine": [
+    0.0,
+    0.0
+   ],
+   "ci_match": true,
+   "human_check": "사람 확인 전"
+  },
+  {
+   "section": "8.2",
+   "condition": "R4 − R0 정답률",
+   "reporter": 0.1553398058252427,
+   "mine": 0.1553398058252427,
+   "absdiff": 0.0,
+   "match": true,
+   "reporter_result": "만족",
+   "my_result": "만족",
+   "same_verdict": true,
+   "ci95_reporter": [
+    0.07766990291262135,
+    0.23300970873786409
+   ],
+   "ci95_mine": [
+    0.07766990291262135,
+    0.23300970873786409
+   ],
+   "ci_match": true,
+   "human_check": "사람 확인 전"
+  },
+  {
+   "section": "8.3 R4c-Jev",
+   "condition": "R4c-Jev − R4 재현율",
+   "reporter": -0.038834951456310676,
+   "mine": -0.038834951456310676,
+   "absdiff": 0.0,
+   "match": true,
+   "reporter_result": "불만족",
+   "my_result": "불만족",
+   "same_verdict": true,
+   "ci95_reporter": [
+    -0.08737864077669903,
+    0.0
+   ],
+   "ci95_mine": [
+    -0.08737864077669903,
+    0.0
+   ],
+   "ci_match": true
+  },
+  {
+   "section": "8.3 R4c-Jev",
+   "condition": "R4c-Jev 분할 비용(USD)",
+   "reporter": 0.02655,
+   "mine": 0.02655,
+   "absdiff": 0.0,
+   "match": true,
+   "reporter_result": "만족",
+   "my_result": "만족",
+   "same_verdict": true
+  },
+  {
+   "section": "8.3 R4c-Jev",
+   "condition": "R4c-Jev 분할 시간(초)",
+   "reporter": 8.1,
+   "mine": 8.1,
+   "absdiff": 0.0,
+   "match": true,
+   "reporter_result": "만족",
+   "my_result": "만족",
+   "same_verdict": true
+  },
+  {
+   "section": "8.3 R4c-Qwen",
+   "condition": "R4c-Qwen − R4 재현율",
+   "reporter": -0.02912621359223301,
+   "mine": -0.02912621359223301,
+   "absdiff": 0.0,
+   "match": true,
+   "reporter_result": "만족",
+   "my_result": "만족",
+   "same_verdict": true,
+   "ci95_reporter": [
+    -0.0970873786407767,
+    0.02912621359223301
+   ],
+   "ci95_mine": [
+    -0.0970873786407767,
+    0.02912621359223301
+   ],
+   "ci_match": true
+  },
+  {
+   "section": "8.3 R4c-Qwen",
+   "condition": "R4c-Qwen 분할 비용(USD)",
+   "reporter": 0.0,
+   "mine": 0.0,
+   "absdiff": 0.0,
+   "match": true,
+   "reporter_result": "만족",
+   "my_result": "만족",
+   "same_verdict": true
+  },
+  {
+   "section": "8.3 R4c-Qwen",
+   "condition": "R4c-Qwen 분할 시간(초)",
+   "reporter": 133.4,
+   "mine": 133.4,
+   "absdiff": 0.0,
+   "match": true,
+   "reporter_result": "불만족",
+   "my_result": "불만족",
+   "same_verdict": true
+  }
+ ],
+ "ci_rows": [
+  {
+   "pair": "R4-R0",
+   "point": 0.20388349514563106,
+   "ci95": [
+    0.11650485436893204,
+    0.2912621359223301
+   ],
+   "questions": 103
+  },
+  {
+   "pair": "R4-R1",
+   "point": 0.18446601941747573,
+   "ci95": [
+    0.0970873786407767,
+    0.27184466019417475
+   ],
+   "questions": 103
+  },
+  {
+   "pair": "R4c-Jev-R4",
+   "point": -0.038834951456310676,
+   "ci95": [
+    -0.08737864077669903,
+    0.0
+   ],
+   "questions": 103
+  },
+  {
+   "pair": "R4c-Qwen-R4",
+   "point": -0.02912621359223301,
+   "ci95": [
+    -0.0970873786407767,
+    0.02912621359223301
+   ],
+   "questions": 103
+  },
+  {
+   "pair": "check:R4-R0",
+   "point": 0.06666666666666667,
+   "ci95": [
+    0.0,
+    0.16666666666666666
+   ],
+   "questions": 30
+  }
+ ],
+ "extra": {
+  "question_counts": {
+   "test": {
+    "single": 103,
+    "multi": 53,
+    "none": 18
+   },
+   "check": {
+    "single": 30,
+    "multi": 18
+   }
+  },
+  "expected_counts_match": true,
+  "R0_original": {
+   "single@2000_reporter": 0.5631067961165048,
+   "single@2000_mine": 0.5631067961165048,
+   "retrieval_p95_reporter": 3.7121000059414655,
+   "retrieval_p95_mine": 3.7121000059414655
+  },
+  "recall_single_all": {
+   "R0": 0.7475728155339806,
+   "R0-original": 0.5631067961165048,
+   "R1": 0.7669902912621359,
+   "R4": 0.9514563106796117,
+   "R4c-Jev": 0.912621359223301,
+   "R4c-Qwen": 0.9223300970873787,
+   "check:R0": 0.9333333333333333,
+   "check:R4": 1.0
+  },
+  "recall_multi": {
+   "R0": 0.6371681415929203,
+   "R0-original": 0.5132743362831859,
+   "R1": 0.6548672566371682,
+   "R4": 0.7610619469026548,
+   "R4c-Jev": 0.6637168141592921,
+   "R4c-Qwen": 0.7433628318584071
+  },
+  "p95_nearest_rank": {
+   "R0_retrieval": 5.915699992328882,
+   "R0_retrieval_verdict": "불만족 같음(250ms 초과 아님)",
+   "R4_retrieval": 83.87940001557581,
+   "R4_retrieval_verdict": "만족 같음(250ms 이하)",
+   "R4_rerank": 269.072099996265,
+   "R4_rerank_verdict": "불만족 같음(250ms 초과)"
+  },
+  "rerank_total_p95_ms": 259.79790001292713,
+  "rerank_successful_questions": 174,
+  "rerank_failed_questions": 0,
+  "answers_detail": {
+   "R0": {
+    "rows": 121,
+    "questions": 121,
+    "single": 103,
+    "none": 18,
+    "judgment_questions": 121,
+    "claims": 135,
+    "unsupported_claims": 0,
+    "unsupported_rate": 0.0,
+    "accuracy": 0.8058252427184466,
+    "hold_rate": 0.11650485436893204,
+    "none_assertion_rate": 0.1111111111111111
+   },
+   "R4": {
+    "rows": 121,
+    "questions": 121,
+    "single": 103,
+    "none": 18,
+    "judgment_questions": 121,
+    "claims": 170,
+    "unsupported_claims": 0,
+    "unsupported_rate": 0.0,
+    "accuracy": 0.9611650485436893,
+    "hold_rate": 0.0,
+    "none_assertion_rate": 0.2777777777777778
+   }
+  },
+  "answer_ci": {
+   "unsupported": {
+    "point": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "questions": 121
+   },
+   "accuracy": {
+    "point": 0.1553398058252427,
+    "ci95": [
+     0.07766990291262135,
+     0.23300970873786409
+    ],
+    "questions": 103
+   }
+  },
+  "chunk_costs": {
+   "b-W4000-C800-raw": {
+    "cost_usd": 0.26414,
+    "seconds_wall": 60.9
+   },
+   "c-jev-W4000-C800-raw": {
+    "cost_usd": 0.02655,
+    "seconds_wall": 8.1
+   },
+   "c-qwen-W4000-C800-raw": {
+    "cost_usd": 0.0,
+    "seconds_wall": 133.4
+   }
+  },
+  "boundary_summary": {
+   "b": {
+    "judgment_f1_run1_vs_run2": 0.766,
+    "final_f1_run1_vs_run2": 0.8312,
+    "final_f1_run1_vs_original": 0.9706,
+    "final_f1_run2_vs_original": 0.8052,
+    "same_as_file": true,
+    "report_json_equal_to_file": true
+   },
+   "c-jev": {
+    "judgment_f1_run1_vs_run2": 0.88,
+    "final_f1_run1_vs_run2": 0.9231,
+    "final_f1_run1_vs_original": 0.9206,
+    "final_f1_run2_vs_original": 0.8438,
+    "same_as_file": true,
+    "report_json_equal_to_file": true
+   },
+   "c-qwen": {
+    "judgment_f1_run1_vs_run2": 1.0,
+    "final_f1_run1_vs_run2": 1.0,
+    "final_f1_run1_vs_original": 1.0,
+    "final_f1_run2_vs_original": 1.0,
+    "same_as_file": true,
+    "report_json_equal_to_file": true
+   }
+  },
+  "per_question_item_mismatch": {},
+  "human_check_status": "사람 확인 전"
+ },
+ "mismatches": [],
+ "summary": {
+  "conditions": 16,
+  "matched": 16,
+  "mismatched": 0,
+  "human_check": "사람 확인 전"
+ }
+}

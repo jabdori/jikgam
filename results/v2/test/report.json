@@ -109,7 +109,7 @@
      "threshold": 0
     },
     "result": "만족",
-    "human_check": "사람 확인 전"
+    "human_check": "사람 확인 완료"
    },
    {
     "condition": "R4 − R0 정답률",
@@ -123,7 +123,7 @@
      "threshold": 0
     },
     "result": "만족",
-    "human_check": "사람 확인 전"
+    "human_check": "사람 확인 완료"
    }
   ],
   "8.3 R4c-Jev": [
@@ -199,15 +199,15 @@
   "8.4": "판정하지 않음(ADR 0025 범위 조정)"
  },
  "claim_check": {
-  "sampled": null,
-  "reviewed": null,
-  "supported_matches": null,
-  "correctness_matches": null,
-  "both_matches": null,
-  "supported_agreement": null,
-  "correctness_agreement": null,
-  "both_agreement": null,
-  "status": "사람 확인 전"
+  "sampled": 30,
+  "reviewed": 30,
+  "supported_matches": 30,
+  "correctness_matches": 30,
+  "both_matches": 30,
+  "supported_agreement": 1.0,
+  "correctness_agreement": 1.0,
+  "both_agreement": 1.0,
+  "status": "사람 확인 완료"
  },
  "R0_original": {
   "single@2000": 0.5631067961165048,

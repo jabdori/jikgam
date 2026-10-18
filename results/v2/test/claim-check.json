@@ -1,0 +1,18 @@
+{
+ "sampled": 30,
+ "reviewed": 30,
+ "supported_matches": 30,
+ "correctness_matches": 30,
+ "both_matches": 30,
+ "supported_agreement": 1.0,
+ "correctness_agreement": 1.0,
+ "both_agreement": 1.0,
+ "valid": true,
+ "sample_digest": "8d372a16b9553c96e5942b454498af5c64767116f65fb2793e22004deeb7c96b",
+ "source_hashes": {
+  "data/v2/local/answers/test/R0-article256.jsonl": "5e54d26886219f2375bddf886899ad70347e7c2fe78e6918a3b1fb151b7a99bc",
+  "data/v2/local/runs/test/R0-article256.jsonl": "1446071b7563e27c67d92bb8bbe99f1e7f4936097c4899df6754d1aff13fea85",
+  "data/v2/local/answers/test/b-W4000-C800-raw--full--snow+rrf+jev8.jsonl": "bc0d0ef9941432177281db711ae43b30e9db18ee7273140ede791ca6102e5062",
+  "data/v2/local/runs/test/b-W4000-C800-raw--full--snow+rrf+jev8.jsonl": "0b8001fdb0c06be542c95ceefdd595523cec1a1c94579eb87c57199398ca0f55"
+ }
+}
