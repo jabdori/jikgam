@@ -43,7 +43,11 @@ def jobs_card(jobs):
                                             rows, caption="검색 실행 단계", stack=True),
                                    ui.notice(j["error"], tone="negative") if j.get("error") else None,
                                    open=j["status"] != "완료"))
-    return ui.card(*parts, ui.button("진행 상태 새로고침", href="/admin/models"), title="검색 실행 상태", label="검색 실행 상태")
+    card = ui.card(*parts, ui.button("진행 상태 새로고침", href="/admin/models"), title="검색 실행 상태", label="검색 실행 상태")
+    if all(j["status"] in ("완료", "실패") for j in jobs):
+        return card
+    # 실행 중에는 단계 상태를 스스로 다시 받아 온다. 끝나면 화면 전체를 한 번 맞추고 멈춘다(console.js)
+    return ui.live("/admin/models", settings.PROGRESS_REFRESH_MS, ui.slot("jobs", card, polite=True))
 
 
 def identity(result):

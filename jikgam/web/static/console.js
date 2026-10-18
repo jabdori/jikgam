@@ -4,13 +4,15 @@
 //   data-player           녹음 재생 위치에 맞춰 data-cue-start/end 요소에 is-playing을 붙인다.
 //                         data-start(초)에서 시작, data-stops(초 목록)와 data-stop-toggle 상자로 판단 시점마다 멈춘다
 //   data-live="주소"       data-interval(밀리초)마다 그 주소의 문서를 다시 받아, 안의 data-slot 영역에서 바뀐 부분만 맞춘다.
-//                         이미 있는 요소는 그대로 두므로 색이 바뀌는 상태는 CSS 전환으로 부드럽게 바뀐다
+//                         이미 있는 요소는 그대로 두므로 색이 바뀌는 상태는 CSS 전환으로 부드럽게 바뀐다. 받아 온 문서에
+//                         갱신 영역이 없으면(처리가 끝남) 화면 전체를 한 번 맞추고 멈춘다
 //   data-key              갱신·영역 교체 때 같은 이름의 요소를 같은 것으로 본다. 새로 붙은 요소에는 c-enter를 잠깐 붙인다
 //   data-now              실시간 대화의 시계(재생 피드 시각, 밀리초). data-running이 false면 멈춘 통화다
 //   data-reveal-from/to   그 시각 사이에 .reveal 안의 글자(.rv)를 차례로 드러낸다(말하는 중인 AI 답)
 //   data-follow           따로 스크롤되는 영역. 맨 아래를 보고 있으면 새 줄과 글자를 따라 내린다
-//   data-swap             같은 화면의 다른 상태로 가는 링크를 누르면 문서를 새로 열지 않고 이 영역만 바꾼다.
-//                         data-key가 같은 순위 행은 새 자리로 옮겨 가고 막대는 새 길이로 바뀐다
+//   data-swap             셸. 같은 주소의 다른 상태로 가는 링크(필터, 기간, 문서·구간, 상세 서랍, 이전·다음)와 같은 주소로
+//                         보내는 GET 폼은 문서를 새로 열지 않고 이 영역에서 바뀐 부분만 맞춘다. data-key가 같은 순위 행·표 행·
+//                         목록 항목은 새 자리로 옮겨 가고 막대는 새 길이로 바뀐다. 다른 화면으로 가는 링크는 CSS 화면 전환으로 연다
 //   data-listen="audio id" 누르면 그 녹음을 data-audio-at 요소가 가리키는 지금 위치부터 재생하거나 멈춘다
 //   data-cursor           재생 위치를 전체 길이 대비 비율(--at)로 옮긴다
 // 움직임의 시간과 곡선은 tokens.css의 --motion-*, --ease-*에서 읽는다. 움직임 줄이기 설정이면 움직이지 않는다.
@@ -18,6 +20,7 @@
   "use strict";
 
   var OWN = "c-";  // 스크립트가 붙이는 클래스의 접두어. 갱신 때 서버 내용으로 지우지 않는다
+  var keepOpen = false;  // 실시간 갱신 중에는 사용자가 펼치거나 접은 펼침 영역(details)의 상태를 그대로 둔다
   var reduceQuery = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
 
   function onReady(fn) {
@@ -55,15 +58,19 @@
     else from.removeAttribute("class");
   }
 
+  function userOwned(el, name) {
+    return keepOpen && name === "open" && el.nodeName === "DETAILS";
+  }
+
   function syncAttrs(from, to) {
     var i, a;
     for (i = from.attributes.length - 1; i >= 0; i--) {
       a = from.attributes[i];
-      if (a.name !== "class" && !to.hasAttribute(a.name)) from.removeAttribute(a.name);
+      if (a.name !== "class" && !userOwned(from, a.name) && !to.hasAttribute(a.name)) from.removeAttribute(a.name);
     }
     for (i = 0; i < to.attributes.length; i++) {
       a = to.attributes[i];
-      if (a.name !== "class" && from.getAttribute(a.name) !== a.value) from.setAttribute(a.name, a.value);
+      if (a.name !== "class" && !userOwned(from, a.name) && from.getAttribute(a.name) !== a.value) from.setAttribute(a.name, a.value);
     }
     syncClass(from, to);
   }
@@ -122,12 +129,14 @@
     olds.forEach(function (n) { if (!used.has(n) && n.parentNode === from) from.removeChild(n); });
   }
 
-  // 새로 붙은 이름 있는 요소(대화 줄, 구분선, 순위 행, 근거)에 나타나는 움직임을 한 번 준다
+  // 새로 붙은 요소 중 이름 있는 것(대화 줄, 구분선, 순위·표 행, 목록 항목, 근거)과 카드·알림·펼침에 나타나는 움직임을 한 번 준다
+  var ENTER = ".card, .notice, .disclosure, .steps";
+
   function enter(nodes) {
     if (reduced()) return;
     var keep = duration("--motion-emphasis") + duration("--motion-base");
     nodes.forEach(function (el) {
-      if (!el.hasAttribute || !el.hasAttribute("data-key")) return;
+      if (!el.hasAttribute || !(el.hasAttribute("data-key") || el.matches(ENTER))) return;
       el.classList.add(OWN + "enter");
       setTimeout(function () { el.classList.remove(OWN + "enter"); }, keep);
     });
@@ -215,6 +224,23 @@
     return st;
   }
 
+  function firstKey(area) {
+    var row = area.querySelector("[data-key]");
+    return row ? row.getAttribute("data-key") : null;
+  }
+
+  // 영역 안의 대화가 다른 통화로 바뀌었으면(첫 줄 이름이 다르다) 다시 맨 아래를 보는 상태에서 시작한다
+  function resetIfOther(area) {
+    var st = followState(area);
+    var first = firstKey(area);
+    if (st.first !== undefined && st.first !== first) {
+      st.pinned = true;
+      st.autoUntil = 0;
+      area.scrollTop = area.scrollHeight;
+    }
+    st.first = first;
+  }
+
   // 맨 아래를 보고 있던 영역만 맨 아래로 내린다. smooth면 새 줄이 생긴 것이라 부드럽게 내린다
   function keepBottom(area, smooth) {
     var st = followState(area);
@@ -228,40 +254,51 @@
   }
 
   function live(el) {
-    var url = el.getAttribute("data-live");
     var every = parseInt(el.getAttribute("data-interval") || "", 10);
-    if (!url || !every) return;
+    if (!el.getAttribute("data-live") || !every) return;
     var busy = false;
+    var timer = null;
     clockFrom(el);
     el.querySelectorAll("[data-follow]").forEach(function (area) {
-      followState(area);
+      resetIfOther(area);
       area.scrollTop = area.scrollHeight;
     });
     startReveal();
-    setInterval(function () {
+    timer = setInterval(function () {
+      if (!document.contains(el)) { clearInterval(timer); return; }  // 영역을 바꾸며 이 갱신 영역이 사라졌다
       if (busy || document.hidden) return;
       busy = true;
-      fetch(url, { credentials: "same-origin" })
+      fetch(el.getAttribute("data-live"), { credentials: "same-origin" })
         .then(function (r) { return r.ok ? r.text() : null; })
         .then(function (text) {
-          if (text === null) return;
+          if (text === null || !document.contains(el)) return;
           var doc = new DOMParser().parseFromString(text, "text/html");
+          if (!doc.querySelector("[data-live]")) {  // 처리가 끝나 더 받아 올 것이 없다
+            clearInterval(timer);
+            swapTo(window.location.href, false);
+            return;
+          }
           el.querySelectorAll("[data-follow]").forEach(function (area) {
             var st = followState(area);
             if (performance.now() >= st.autoUntil) st.pinned = nearBottom(area);
           });
           var entered = [];
-          el.querySelectorAll("[data-slot]").forEach(function (target) {
-            var src = doc.querySelector('[data-slot="' + target.getAttribute("data-slot") + '"]');
-            if (src) morphChildren(target, src, entered);
-          });
+          keepOpen = true;
+          try {
+            el.querySelectorAll("[data-slot]").forEach(function (target) {
+              var src = doc.querySelector('[data-slot="' + target.getAttribute("data-slot") + '"]');
+              if (src) morphChildren(target, src, entered);
+            });
+          } finally {
+            keepOpen = false;
+          }
           enter(entered);
           var at = doc.querySelector("[data-audio-at]");
           var mine = document.querySelector("[data-audio-at]");
           if (at && mine) mine.setAttribute("data-audio-at", at.getAttribute("data-audio-at"));
           clockFrom(el);
           var rows = entered.some(function (n) { return n.hasAttribute && n.hasAttribute("data-key"); });
-          el.querySelectorAll("[data-follow]").forEach(function (area) { keepBottom(area, rows); });
+          el.querySelectorAll("[data-follow]").forEach(function (area) { resetIfOther(area); keepBottom(area, rows); });
           startReveal();
         })
         .catch(function () {})
@@ -332,7 +369,9 @@
     });
   }
 
-  // --- 같은 화면의 다른 상태로 가기(관리 콘솔 리플레이) ------------------------------------------------------
+  // --- 같은 주소의 다른 상태로 가기(모든 화면의 셸) ----------------------------------------------------------
+
+  var MOVERS = ".rank-row[data-key], tbody tr[data-key], .item-list li[data-key]";
 
   function rowBox(row, sel) {
     var el = row.querySelector(sel);
@@ -341,7 +380,7 @@
 
   function measure(root) {
     var m = {};
-    root.querySelectorAll(".rank-row[data-key]").forEach(function (row) {
+    root.querySelectorAll(MOVERS).forEach(function (row) {
       m[row.getAttribute("data-key")] = { top: row.getBoundingClientRect().top, fill: rowBox(row, ".rank-fill"),
                                           prev: rowBox(row, ".rank-prev") };
     });
@@ -355,17 +394,15 @@
     el.animate([{ width: from + "px" }, { width: to + "px" }], { duration: ms, easing: ease });
   }
 
-  // 순위 행은 이전 자리에서 새 자리로 미끄러지고(FLIP), 막대는 이전 길이에서 새 길이로 바뀐다
-  function animateRanks(root, before) {
+  // 남아 있는 행은 이전 자리에서 새 자리로 미끄러지고(FLIP), 순위 막대는 이전 길이에서 새 길이로 바뀐다.
+  // 새로 생긴 행의 막대는 CSS가 0에서 자라게 한다
+  function animateMoves(root, before) {
     if (reduced() || !Element.prototype.animate) return;
     var ms = duration("--motion-slow");
     var ease = token("--ease-standard") || "ease";
-    root.querySelectorAll(".rank-row[data-key]").forEach(function (row) {
+    root.querySelectorAll(MOVERS).forEach(function (row) {
       var b = before[row.getAttribute("data-key")];
-      if (!b) {
-        grow(row.querySelector(".rank-fill"), 0, ms, ease);
-        return;
-      }
+      if (!b) return;
       var dy = b.top - row.getBoundingClientRect().top;
       if (Math.abs(dy) > 0.5) row.animate([{ transform: "translateY(" + dy + "px)" }, { transform: "none" }], { duration: ms, easing: ease });
       grow(row.querySelector(".rank-fill"), b.fill, ms, ease);
@@ -380,13 +417,25 @@
     return k ? k.getAttribute("data-key") : null;
   }
 
-  function restoreFocus(root, key) {
+  function restoreFocus(root, key, entered) {
+    var auto = null;
+    entered.some(function (n) {
+      if (!n.matches) return false;
+      auto = n.matches("[data-autofocus]") ? n : n.querySelector("[data-autofocus]");
+      return !!auto;
+    });
+    if (auto) { auto.focus(); return; }  // 새로 열린 상세 서랍의 제목
     var a = document.activeElement;
-    if (!key || (a && a !== document.body && root.contains(a))) return;
-    var el = root.querySelector('[data-key="' + CSS.escape(key) + '"]');
-    if (el && !el.disabled) { el.focus(); return; }
-    var alt = root.querySelector('a[data-key="prev"], a[data-key="next"]');
-    if (alt) alt.focus();
+    if (a && a !== document.body && root.contains(a)) return;
+    var el = key ? root.querySelector('[data-key="' + CSS.escape(key) + '"]') : null;
+    var target = el && (el.matches("a, button") ? el : el.querySelector("a, button"));
+    if (target && !target.disabled) { target.focus(); return; }
+    if (key) {
+      var alt = root.querySelector('a[data-key="prev"], a[data-key="next"]');
+      if (alt) { alt.focus(); return; }
+    }
+    var main = document.getElementById("main");
+    if (main) main.focus({ preventScroll: true });
   }
 
   function scrollCurrent(box, smooth) {
@@ -399,11 +448,15 @@
 
   var swapping = null;
 
-  function swapTo(root, href, push) {
+  // href의 문서를 받아 셸에서 바뀐 부분만 맞춘다. push면 주소를 기록에 더한다(뒤로 가기로 돌아올 수 있다)
+  function swapTo(href, push) {
+    var root = document.querySelector("[data-swap]");
+    if (!root) { window.location.href = href; return; }
     var mine = {};
     swapping = mine;
+    root.setAttribute("aria-busy", "true");
     fetch(href, { credentials: "same-origin" })
-      .then(function (r) { return r.ok ? r.text() : null; })
+      .then(function (r) { return r.ok && !r.redirected ? r.text() : null; })
       .then(function (text) {
         if (swapping !== mine) return;  // 더 나중에 누른 이동이 있다
         var doc = text === null ? null : new DOMParser().parseFromString(text, "text/html");
@@ -415,29 +468,52 @@
         morphChildren(root, src, entered);
         if (push) window.history.pushState(null, "", href);
         if (doc.title) document.title = doc.title;
-        animateRanks(root, before);
+        animateMoves(root, before);
         enter(entered);
-        restoreFocus(root, key);
+        init(root);
+        restoreFocus(root, key, entered);
         root.querySelectorAll("[data-player]").forEach(function (box) {
           var reset = players.get(box);
-          if (reset) reset(); else syncPlayer(box);
+          if (reset) reset();
         });
         root.querySelectorAll("[data-scroll-current]").forEach(function (box) { scrollCurrent(box, true); });
+        root.querySelectorAll("[data-live]").forEach(function (el) {
+          clockFrom(el);
+          el.querySelectorAll("[data-follow]").forEach(resetIfOther);
+        });
+        startReveal();
       })
-      .catch(function () { window.location.href = href; });
+      .catch(function () { window.location.href = href; })
+      .then(function () { if (swapping === mine) root.removeAttribute("aria-busy"); });
   }
 
-  function swapArea(root) {
-    root.addEventListener("click", function (e) {
+  function sameScreen(url) {
+    return url.origin === window.location.origin && url.pathname === window.location.pathname;
+  }
+
+  function swapLinks() {
+    if (!document.querySelector("[data-swap]") || !window.fetch || !window.history.pushState) return;
+    document.addEventListener("click", function (e) {
       if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       var a = e.target.closest ? e.target.closest("a[href]") : null;
-      if (!a || !root.contains(a) || a.target) return;
-      var url = new URL(a.getAttribute("href"), window.location.href);
-      if (url.origin !== window.location.origin || url.pathname !== window.location.pathname) return;
+      if (!a || a.target || a.hasAttribute("download")) return;
+      var raw = a.getAttribute("href");
+      if (raw.charAt(0) === "#") return;  // 같은 문서 안의 자리(본문으로 건너뛰기 등)
+      var url = new URL(raw, window.location.href);
+      if (!sameScreen(url)) return;  // 다른 화면은 문서를 연다(CSS 화면 전환)
       e.preventDefault();
-      swapTo(root, url.href, true);
+      swapTo(url.href, url.href !== window.location.href);
     });
-    window.addEventListener("popstate", function () { swapTo(root, window.location.href, false); });
+    document.addEventListener("submit", function (e) {
+      var form = e.target;
+      if (e.defaultPrevented || (form.getAttribute("method") || "get").toLowerCase() !== "get") return;
+      var url = new URL(form.getAttribute("action") || window.location.href, window.location.href);
+      if (!sameScreen(url)) return;
+      e.preventDefault();
+      url.search = new URLSearchParams(new FormData(form, e.submitter || null)).toString();
+      swapTo(url.href, true);
+    });
+    window.addEventListener("popstate", function () { swapTo(window.location.href, false); });
   }
 
   // --- 그 밖의 동작 ------------------------------------------------------------------------------------
@@ -451,7 +527,10 @@
     document.addEventListener("keydown", function (e) {
       if (e.key !== "Escape") return;
       var d = document.querySelector("[data-drawer]");
-      if (d) window.location.href = d.getAttribute("data-drawer");
+      if (!d) return;
+      var url = new URL(d.getAttribute("data-drawer"), window.location.href);
+      if (document.querySelector("[data-swap]") && sameScreen(url)) swapTo(url.href, true);
+      else window.location.href = url.href;
     });
   }
 
@@ -496,15 +575,28 @@
     apply();
   }
 
+  var inited = new WeakSet();
+
+  function once(el, fn) {
+    if (inited.has(el)) return;
+    inited.add(el);
+    fn(el);
+  }
+
+  // 처음 연 문서와, 영역을 바꾼 뒤 새로 생긴 요소에 동작을 붙인다
+  function init(scope) {
+    scope.querySelectorAll("[data-player]").forEach(syncPlayer);
+    scope.querySelectorAll("[data-live]").forEach(function (el) { once(el, live); });
+    scope.querySelectorAll("[data-listen]").forEach(function (el) { once(el, listen); });
+    scope.querySelectorAll("[data-play]").forEach(function (el) { once(el, playButton); });
+    scope.querySelectorAll("form").forEach(function (el) { once(el, showFor); });
+  }
+
   onReady(function () {
     focusDrawer();
     drawerEscape();
-    document.querySelectorAll("[data-player]").forEach(syncPlayer);
-    document.querySelectorAll("[data-live]").forEach(live);
-    document.querySelectorAll("[data-swap]").forEach(swapArea);
-    document.querySelectorAll("[data-listen]").forEach(listen);
-    document.querySelectorAll("[data-play]").forEach(playButton);
-    document.querySelectorAll("form").forEach(showFor);
+    init(document);
+    swapLinks();
     document.querySelectorAll("[data-scroll-current]").forEach(function (box) { scrollCurrent(box, false); });
   });
 })();

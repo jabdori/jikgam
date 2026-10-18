@@ -39,7 +39,14 @@ def processing_card(state: dict) -> Any:
         body.append(ui.notice("문서 처리를 마치지 못했습니다. 완료된 단계와 실패한 단계를 확인하세요.", tone="negative"))
     status = "처리 완료" if state["status"] == "완료" else state["status"]
     title = ui.joined(state["title"], "처리 단계", status)
-    return ui.disclosure(title, *body) if state["status"] == "완료" else ui.card(*body, title=title, label="문서 처리")
+    if state["status"] == "완료":
+        return ui.disclosure(title, *body)
+    card = ui.card(*body, title=title, label="문서 처리")
+    if state["status"] != "진행":
+        return card
+    # 진행 중에는 단계 상태를 스스로 다시 받아 온다. 끝나면 화면 전체를 한 번 맞추고 멈춘다(console.js)
+    url = "/app/knowledge?" + urlencode({"doc": state["id"]})
+    return ui.live(url, settings.PROGRESS_REFRESH_MS, ui.slot("progress", card, polite=True))
 
 
 def original_pipeline(item: dict) -> Any:

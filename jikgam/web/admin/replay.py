@@ -1,6 +1,6 @@
 """관리 콘솔: 통화 리플레이. 음성을 재생하면 재생 목록(고객 발화, 판단, AI 발화, 끼어들기)이 따라 움직이고, 고른 판단의
 조항 순위와 직전 대비 변화, 무효가 된 답과 새 답, 통화 전체 조항 × 판단 순위 표와 정답 일치도를 보여 준다
-(ADR 0021, jikgam/web/data/replay.py). 이전·다음 판단은 문서를 새로 열지 않고 화면 영역(ui.swap)만 바꾸며, 순위가 바뀐
+(ADR 0021, jikgam/web/data/replay.py). 이전·다음 판단은 문서를 새로 열지 않고 바뀐 부분만 맞추며(셸의 data-swap), 순위가 바뀐
 조항 행은 새 자리로 옮겨 가고 재생 위치 선은 다음 판단 위치로 미끄러진다(static/console.js)."""
 
 from typing import Any
@@ -207,4 +207,4 @@ def page(ctx: Ctx) -> Any:
         ui.stack(picker(ctx, sessions, s), band(r, cur, s, audio), gap="sm"),
         ui.columns(("list-wide", playlist(r, cur, s)), ("main", main)), gap="lg")
     crumbs = [ui.Crumb("통화 리플레이", "/admin/replay"), ui.Crumb(r.title or "시나리오 정보 없음")]
-    return shell(ctx, "replay", "통화 리플레이", ui.anchor("top", ui.swap(body)), crumbs=crumbs)
+    return shell(ctx, "replay", "통화 리플레이", ui.anchor("top", body), crumbs=crumbs)

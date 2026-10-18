@@ -591,7 +591,8 @@ a.play-item:hover { background: var(--color-surface-alt); }
 
 /* 상태가 바뀔 때 색과 배경이 부드럽게 바뀐다(버튼, 목록, 단계, 배지, 근거, 재생 목록, 순위 표) */
 .btn, .item, .link-list a, .badge, .badge-dot, .step-mark, .step-label, .step-state, .conv-who, .lane-mark,
-.play-item, .play-at, .rank-row, .rank-no, .heatmap td, .heatmap thead th, .version-block {
+.play-item, .play-at, .rank-row, .rank-no, .heatmap td, .heatmap thead th, .version-block,
+.chip, .nav-link, .nav-count, .table tr, .row-link, .disclosure, .disclosure-summary, .notice, .card, .step, .conv-turn.is-playing {
   transition-property: color, background-color, border-color, box-shadow, opacity, outline-color;
   transition-duration: var(--motion-fast);
   transition-timing-function: var(--ease-standard);
@@ -618,7 +619,8 @@ a.play-item:hover { background: var(--color-surface-alt); }
   from { opacity: 0; }
   to { opacity: 1; }
 }
-.conv-turn.c-enter, .conv-divider.c-enter, .version-block.c-enter, .rank-row.c-enter, .link-list li.c-enter {
+.conv-turn.c-enter, .conv-divider.c-enter, .version-block.c-enter, .rank-row.c-enter, .link-list li.c-enter,
+.card.c-enter, .notice.c-enter, .disclosure.c-enter, tr.c-enter, .item-list li.c-enter, .steps.c-enter {
   animation: rise-in var(--motion-base) var(--ease-enter) both;
 }
 
@@ -673,7 +675,45 @@ a.play-item:hover { background: var(--color-surface-alt); }
 /* 관리 콘솔 리플레이: 재생 위치 선이 다음 판단 위치로 미끄러진다. 순위 행 이동과 막대 길이는 console.js가 같은 토큰으로 움직인다 */
 .lane-cursor { transition: left var(--motion-slow) var(--ease-standard); }
 
+/* 막대: 처음 그릴 때 0에서 자라고, 같은 화면 안에서 값이 바뀌면 새 길이로 늘거나 준다 */
+@keyframes bar-grow {
+  from { width: var(--space-0); }
+}
+@keyframes seg-grow {
+  from { flex-basis: var(--space-0); }
+}
+.bar-fill, .rank-fill, .rank-prev {
+  transition: width var(--motion-slow) var(--ease-standard);
+  animation: bar-grow var(--motion-slow) var(--ease-enter) both;
+}
+.stack-seg {
+  transition: flex-basis var(--motion-slow) var(--ease-standard);
+  animation: seg-grow var(--motion-slow) var(--ease-enter) both;
+}
+
+/* 상세 서랍은 옆에서 밀려 들어오고, 펼침 영역은 펼칠 때 내용이 올라오며 나타난다 */
+@keyframes drawer-in {
+  from { opacity: 0; transform: translateX(var(--space-8)); }
+  to { opacity: 1; transform: none; }
+}
+.drawer { animation: drawer-in var(--motion-base) var(--ease-enter) both; }
+.disclosure[open] > .disclosure-body { animation: rise-in var(--motion-base) var(--ease-enter) both; }
+
+/* 버튼과 고를 수 있는 칩은 누르는 순간 살짝 눌린다 */
+.btn, .chip { transition-property: color, background-color, border-color, box-shadow, opacity, transform; }
+.btn:active:not(:disabled):not([aria-disabled="true"]), .chip:active { transform: translateY(var(--border-1)); }
+
+/* 다른 화면으로 넘어갈 때(문서를 새로 여는 이동) 본문이 부드럽게 바뀐다. 메뉴와 상단바는 제자리에 있다 */
+@view-transition { navigation: auto; }
+.shell-nav { view-transition-name: shell-nav; }
+.topbar { view-transition-name: topbar; }
+::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) {
+  animation-duration: var(--motion-base);
+  animation-timing-function: var(--ease-standard);
+}
+
 @media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
   *, *::before, *::after {
     animation: none !important;
     transition: none !important;

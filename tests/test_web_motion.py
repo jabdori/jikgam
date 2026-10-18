@@ -100,3 +100,31 @@ def test_replay_swaps_in_place_with_keyed_rank_rows(tmp_path):
     rows = re.findall(r'<li class="rank-row[^"]*" data-key="([^"]+)"', page)
     assert rows and len(rows) == len(set(rows))
     assert re.search(r'data-key="(prev|next)"', page)
+
+
+def test_progress_refreshes_itself_only_while_running():
+    from jikgam.web.admin import retrieval
+    from jikgam.web.saas import knowledge
+
+    stages = [{"name": "텍스트 추출", "status": "완료"}, {"name": "문맥 분할", "status": "진행"}]
+    running = str(knowledge.processing_card({"id": "u1", "title": "가상 문서", "status": "진행", "chunks": 0, "stages": stages}))
+    assert 'data-live="/app/knowledge?doc=u1"' in running and 'data-slot="progress"' in running
+    done = str(knowledge.processing_card({"id": "u1", "title": "가상 문서", "status": "완료", "chunks": 3,
+                                          "stages": [dict(s, status="완료") for s in stages]}))
+    assert "data-live" not in done
+
+    def job(status):
+        return {"title": "화면 실행", "status": status, "chunks": 0, "metadata_done": 0, "questions_done": 0,
+                "stages": [{"name": "분할", "status": status, "seconds": None, "cost_usd": None}]}
+    assert 'data-live="/admin/models"' in str(retrieval.jobs_card([job("완료"), job("진행")]))
+    assert "data-live" not in str(retrieval.jobs_card([job("완료"), job("실패")]))
+
+
+def test_shell_swaps_in_place_and_rows_are_keyed(tmp_path):
+    root = build(tmp_path, 0)
+    t = auth.Account("t", "pw-t", "tenant", "org_t")
+    c = TestClient(create_app(WebConfig(root=root, accounts={"t": t}, clock=lambda: 0.0)))
+    page = c.get("/app/calls", headers={"Authorization": auth.basic_header("t", "pw-t")}).text
+    assert '<div class="shell" data-swap>' in page
+    rows = re.findall(r'<tr class="[^"]*has-link[^"]*" data-key="([^"]+)"', page)
+    assert rows and all(k.startswith("/app/calls?") for k in rows)

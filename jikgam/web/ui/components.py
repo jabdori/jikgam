@@ -256,7 +256,8 @@ def table(cols: Sequence[Col], rows: Sequence[Row], caption: str, wide: bool = F
             cells.append(h(tag, {"class": cls, "scope": "row" if tag == "th" else None,
                                  "data-label": _plain(c.label) if stack and i else None}, v))
         body.append(h("tr", {"class": classes("is-selected" if r.selected else None,
-                                              "has-link" if r.href else None, f"tone-{r.tone}" if r.tone else None)},
+                                              "has-link" if r.href else None, f"tone-{r.tone}" if r.tone else None),
+                             "data-key": r.href},
                       *cells))
     tbl = h("table", {"class": classes("table", "table-stack" if stack else None, "table-fixed" if fixed else None)},
             h("caption", {"class": "sr-only"}, caption),
@@ -419,7 +420,9 @@ def shell(*, theme: str, title: str, product: str, nav: Sequence[NavGroup], main
           crumbs: Sequence[Crumb] = (), admin_badge: bool = False, wide: bool = False, live: str | None = None,
           search_fields: Sequence[tuple[str, str]] = ()) -> Markup:
     """화면 전체 문서. theme: saas, admin. search는 (폼 주소, 자리 표시 글자, 현재 검색어), crumbs는 상단바 경로.
-    tenant는 (조직 이름, 설명)으로 메뉴 위에 보인다. live가 있으면 그 주소에서 실시간 갱신 조각을 받는다."""
+    tenant는 (조직 이름, 설명)으로 메뉴 위에 보인다. live가 있으면 그 주소에서 실시간 갱신 조각을 받는다.
+    같은 화면의 다른 상태로 가는 링크(필터, 기간, 문서·구간, 상세 서랍, 이전·다음)와 같은 주소로 보내는 검색 폼은 문서를 새로
+    열지 않고 셸(data-swap)에서 바뀐 부분만 맞춘다. 다른 화면으로 가는 링크는 화면 전환 효과와 함께 문서를 연다(console.js)."""
     if theme not in ("saas", "admin"):
         raise ValueError(theme)
     logo = h("div", {"class": "brand"}, h("span", {"class": "brand-mark", "aria-hidden": "true"}, "직"),
@@ -454,7 +457,7 @@ def shell(*, theme: str, title: str, product: str, nav: Sequence[NavGroup], main
               *[h("link", {"rel": "stylesheet", "href": f"/static/{n}.css"}) for n in ("tokens", "base", "components")],
               h("script", {"src": "/static/console.js", "defer": True})),
             h("body", None, h("a", {"class": "skip", "href": "#main"}, "본문으로 건너뛰기"),
-              h("div", {"class": "shell"}, side, body)))
+              h("div", {"class": "shell", "data-swap": True}, side, body)))
     return Markup("<!doctype html>") + doc
 
 
@@ -548,7 +551,7 @@ class ListItem:
 def item_list(items: Sequence[ListItem], label: str, cards: bool = False) -> Markup:
     """고를 수 있는 목록(진행 중인 통화 등). 고른 것은 aria-current. cards면 가로로 늘어선 카드(고객사 고르기)."""
     return h("ul", {"class": classes("item-list", "item-cards" if cards else None), "aria-label": label}, *[
-        h("li", None, h("a", {"class": "item", "href": i.href, "aria-current": "true" if i.active else None},
+        h("li", {"data-key": i.href}, h("a", {"class": "item", "href": i.href, "aria-current": "true" if i.active else None},
                         h("span", {"class": "item-top"}, h("span", {"class": "item-title"}, i.title),
                           h("span", {"class": "item-meta"}, i.meta) if i.meta is not None else None),
                         h("span", {"class": "item-sub"}, i.sub) if i.sub is not None else None,
@@ -584,12 +587,6 @@ def toggle(name: str, label: str, checked: bool = False, **data: str) -> Markup:
 def live(url: str, every_ms: int, *children: Node) -> Markup:
     """every_ms마다 url을 다시 받아 안의 data-slot 영역만 새 내용으로 바꾼다(실시간 통화)."""
     return h("div", {"class": "live", "data-live": url, "data-interval": str(every_ms)}, *children)
-
-
-def swap(*children: Node) -> Markup:
-    """같은 화면의 다른 상태로 가는 링크(이전·다음 판단 등)를 누르면 문서를 새로 열지 않고 이 영역만 바꾼다.
-    바뀌는 동안 data-key가 같은 행은 새 자리로 옮겨 가고 막대는 새 길이로 늘거나 준다(관리 콘솔 리플레이)."""
-    return h("div", {"class": "swap", "data-swap": True}, *children)
 
 
 def slot(name: str, *children: Node, polite: bool = False, inline: bool = False) -> Markup:

@@ -30,6 +30,7 @@ from typing import Callable
 
 import uvicorn
 from PIL import Image, ImageChops
+from playwright.sync_api import Error as PlaywrightError
 from playwright.sync_api import Page, sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -92,22 +93,27 @@ def tab_until(page: Page, selector: str, limit: int = 80) -> None:
 
 
 def press_and_wait(page: Page, key: str, until: str = "networkidle") -> None:
-    """링크·폼에서 키를 눌러 다음 문서가 뜰 때까지 기다린다."""
-    with page.expect_navigation(wait_until=until):
-        page.keyboard.press(key)
+    """링크·폼에서 키를 눌러 다음 상태가 뜰 때까지 기다린다. 다른 화면은 새 문서가 뜨고, 같은 화면의 다른 상태(필터, 상세 서랍,
+    이전·다음)는 문서를 새로 열지 않고 셸만 바뀐 뒤 주소가 바뀐다. 둘 중 하나가 될 때까지 기다린다."""
+    before = page.url
+    page.evaluate("() => { window.__uiCheckMark = true; }")
+    page.keyboard.press(key)
+    for _ in range(300):
+        try:
+            if page.evaluate("u => location.href !== u || !window.__uiCheckMark", before):
+                break
+        except PlaywrightError:  # 새 문서로 넘어가는 중
+            pass
+        page.wait_for_timeout(50)
+    else:
+        raise AssertionError(f"{key}를 눌러도 다음 상태로 넘어가지 않는다")
+    page.wait_for_load_state(until)
+    page.wait_for_function("() => !document.querySelector('[data-swap][aria-busy]')")
 
 
 def ready_state(path: str) -> str:
     """문서가 뜬 것으로 볼 때. 실시간 통화는 짧은 간격으로 계속 갱신해 네트워크가 쉬지 않으므로 문서 로드까지만 기다린다."""
     return "load" if path.startswith("/app/live") else "networkidle"
-
-
-def press_and_wait_swap(page: Page, key: str) -> None:
-    """같은 화면 안의 이동(문서를 새로 열지 않고 영역만 바꾸고 주소만 바꾼다)에서 키를 눌러 주소가 바뀔 때까지 기다린다."""
-    before = page.url
-    page.keyboard.press(key)
-    page.wait_for_function("u => window.location.href !== u", arg=before)
-    page.wait_for_load_state("networkidle")
 
 
 def focus_visible(page: Page) -> None:
@@ -231,7 +237,7 @@ def keys_replay(page: Page, base: str) -> None:
     tab_until(page, "a.btn[href*='at=']")
     focus_visible(page)
     before = page.url
-    press_and_wait_swap(page, "Enter")
+    press_and_wait(page, "Enter")
     if page.url == before or "at=" not in page.url:
         raise AssertionError("이전/다음 판단으로 키보드로 갈 수 없다")
     if page.evaluate("() => !document.activeElement || document.activeElement === document.body"):
