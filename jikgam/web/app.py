@@ -11,10 +11,13 @@
 - GET  /app/calls/{call}            대화 전체와 녹음 다시 듣기, /app/calls/{call}/audio 녹음 파일
 - GET  /app/report[?period=]        운영 리포트
 - GET  /app/knowledge[?doc=&seg=&q=] 지식·정책
+- POST /app/knowledge/upload        PDF 추출과 예상 비용
+- POST /app/knowledge/process       비용 확인 뒤 문서 처리
 - GET  /app/integrations            연동
 
 관리 콘솔
 - GET  /admin/models                모델·벤치마크. POST /admin/models(등록), POST /admin/benchmarks(실행)
+- POST /admin/retrieval             검색 val 실행의 비용 확인과 시작
 - GET  /admin/replay[/{run}/{session}][?at=]  통화 리플레이, /admin/replay/{run}/{session}/audio 녹음
 - GET  /admin/tenants[?org=]        고객사 관리
 """
@@ -41,6 +44,7 @@ from .admin import replay as admin_replay
 from .admin import tenants as admin_tenants
 from .admin.common import Ctx as AdminCtx
 from .data import benchmarks as bm
+from .data import processing as proc
 from .data import replay as replay_data
 from .data.live import Feeds
 from .data.tenants import calls_of, load_tenants
@@ -62,6 +66,8 @@ class WebConfig:
     clock: Callable[[], float] = time.monotonic
     # 벤치마크 실행기(작업, 동시 요청, 시간) → 성공 여부. 테스트에서 하위 프로세스 대신 넣는다
     job_runner: Callable[[Any, int, float], bool] | None = None
+    # 기본값은 실제 문서 공급자다. 테스트에서는 고정된 문서 상태를 주입한다.
+    knowledge_documents: Callable[[Path, str], list[dict]] | None = None
 
 
 class AuthMiddleware(BaseHTTPMiddleware):
@@ -89,13 +95,15 @@ def create_app(cfg: WebConfig) -> Starlette:
     tenants = load_tenants(cfg.root)
     feeds = Feeds(cfg.root, tenants, cfg.clock)
     jobs = bm.Jobs(cfg.root, cfg.job_runner)
+    processing = proc.Processing(cfg.root)
 
     def ctx(request: Request) -> Ctx:
         acct: auth.Account = request.state.account
         tenant = tenants.get(acct.org or "")
         if tenant is None:
             raise PermissionError(f"계정 {acct.name}의 조직 {acct.org}가 고객사 목록에 없습니다.")
-        return Ctx(cfg.root, tenant, feeds, cfg.allow_holdout, dict(request.query_params), acct.name)
+        return Ctx(cfg.root, tenant, feeds, cfg.allow_holdout, dict(request.query_params), acct.name,
+                   cfg.knowledge_documents or proc.documents)
 
     def actx(request: Request, message: str | None = None) -> AdminCtx:
         q = dict(request.query_params)
@@ -156,11 +164,54 @@ def create_app(cfg: WebConfig) -> Starlette:
     async def knowledge_page(request: Request) -> Response:
         return html(saas_knowledge.page(ctx(request)))
 
+    async def knowledge_upload(request: Request) -> Response:
+        import asyncio
+
+        c = ctx(request)
+        try:
+            async with request.form(max_files=1, max_fields=2) as form:
+                upload = form.get("pdf")
+                if upload is None or not hasattr(upload, "read"):
+                    raise ValueError("PDF 문서를 선택하세요.")
+                payload = await upload.read(settings.PDF_MAX_BYTES + 1)
+                title = Path((upload.filename or "문서.pdf").replace("\\", "/")).name
+            state = await asyncio.to_thread(processing.prepare_pdf, c.tenant.org, title, payload)
+            c.query["doc"] = state["id"]
+            return html(saas_knowledge.page(c, pending=state))
+        except Exception:
+            return html(saas_knowledge.page(c, message="PDF를 읽거나 비용을 계산하지 못했습니다. 파일과 처리 기준 자료를 확인하세요."), 400)
+
+    async def knowledge_process(request: Request) -> Response:
+        c = ctx(request)
+        form = await request.form()
+        if form.get("confirm") != "yes":
+            return html(saas_knowledge.page(c, message="예상 비용을 확인하고 처리를 시작하세요."), 400)
+        try:
+            state = processing.confirm_pdf(c.tenant.org, str(form.get("upload", "")))
+        except ValueError as exc:
+            return html(saas_knowledge.page(c, message=str(exc)), 400)
+        return RedirectResponse("/app/knowledge?doc=" + state["id"], status_code=303)
+
     async def integrations_page(request: Request) -> Response:
         return html(saas_integrations.page(ctx(request)))
 
     async def models_page(request: Request) -> Response:
-        return html(admin_models.page(actx(request)))
+        confirm = request.query_params.get("retrieval")
+        if confirm not in settings.RETRIEVAL_MODELS:
+            confirm = None
+        return html(admin_models.page(actx(request), retrieval_jobs=processing.recent(), retrieval_confirm=confirm))
+
+    async def retrieval_run(request: Request) -> Response:
+        form = await request.form()
+        model, split = str(form.get("boundary_model", "")), str(form.get("split", "val"))
+        try:
+            proc.validate(model, split)
+            if form.get("confirm") != "yes":
+                return html(admin_models.page(actx(request), retrieval_confirm=model, retrieval_jobs=processing.recent()))
+            processing.submit(model, split)
+        except ValueError as exc:
+            return html(admin_models.page(actx(request, str(exc)), retrieval_jobs=processing.recent()), 400)
+        return RedirectResponse("/admin/models", status_code=303)
 
     async def models_register(request: Request) -> Response:
         form = await request.form()
@@ -217,10 +268,13 @@ def create_app(cfg: WebConfig) -> Starlette:
         Route("/app/calls/{cid}/audio", call_audio),
         Route("/app/report", report_page),
         Route("/app/knowledge", knowledge_page),
+        Route("/app/knowledge/upload", knowledge_upload, methods=["POST"]),
+        Route("/app/knowledge/process", knowledge_process, methods=["POST"]),
         Route("/app/integrations", integrations_page),
         Route("/admin/models", models_page),
         Route("/admin/models", models_register, methods=["POST"]),
         Route("/admin/benchmarks", benchmarks_run, methods=["POST"]),
+        Route("/admin/retrieval", retrieval_run, methods=["POST"]),
         Route("/admin/replay", replay_page),
         Route("/admin/tenants", tenants_page),
         Route("/admin", admin_home),

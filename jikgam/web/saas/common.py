@@ -25,6 +25,7 @@ class Ctx:
     allow_holdout: bool
     query: dict[str, str]
     user: str
+    knowledge_documents: Any = None
 
 
 def shell(ctx: Ctx, active: str, title: str, main: Any, search: str | None = None, wide: bool = False) -> Any:
@@ -44,7 +45,8 @@ def shell(ctx: Ctx, active: str, title: str, main: Any, search: str | None = Non
     action = "/app/knowledge" if active == "knowledge" else "/app/calls"
     return ui.shell(theme="saas", title=title, product="직감", nav=nav, main=main, note=NOTE,
                     user_initial="운", user_label="사용자 상담 운영팀", tenant=(ctx.tenant.name, ctx.tenant.desc),
-                    search=(action, placeholder, search or ""), wide=wide)
+                    search=(action, placeholder, search or ""), wide=wide,
+                    search_fields=[("doc", ctx.query["doc"])] if active == "knowledge" and ctx.query.get("doc") else [])
 
 
 def who(call: Call) -> str:

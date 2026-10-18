@@ -18,6 +18,7 @@
 import argparse
 import importlib.util
 import io
+import runpy
 import socket
 import sys
 import threading
@@ -59,6 +60,7 @@ class Screen:
     title: str
     path: Callable[[], str]
     keys: Callable[[Page, str], None] | None = None
+    prepare: Callable[[Page], None] | None = None
 
 
 def free_port() -> int:
@@ -166,16 +168,18 @@ def keys_report(page: Page, base: str) -> None:
 
 
 def keys_knowledge(page: Page, base: str) -> None:
-    page.goto(base + "/app/knowledge", wait_until="networkidle")
+    page.goto(base + "/app/knowledge?doc=ecom-act", wait_until="networkidle")
     keys_skip(page)
-    tab_until(page, "a.btn[href*='seg=']")
+    tab_until(page, "a.btn[href*='seg=']:not([aria-disabled])")
     focus_visible(page)
     press_and_wait(page, "Enter")
     if "seg=" not in page.url:
         raise AssertionError("다음 구간으로 키보드로 갈 수 없다")
     page.focus("#q")
-    page.keyboard.type("해지")
+    page.keyboard.type("소비자")
     press_and_wait(page, "Enter")
+    tab_until(page, "#segment-chooser summary")
+    page.keyboard.press("Enter")
     tab_until(page, ".item-list a.item")
     press_and_wait(page, "Enter")
     if "seg=" not in page.url:
@@ -190,6 +194,20 @@ def keys_integrations(page: Page, base: str) -> None:
     press_and_wait(page, "Enter")
     if "seg=" not in page.url:
         raise AssertionError("상담사 연결 조건의 약관 원문을 키보드로 열 수 없다")
+
+
+def prepare_published_documents(page: Page) -> None:
+    page.locator("#published-documents summary").click()
+    clipped = page.evaluate("""() => {
+        const card = document.querySelector('#published-documents .disclosure-body');
+        const bounds = card.getBoundingClientRect();
+        return Array.from(card.querySelectorAll('.row-link, .badge')).some(el => {
+            const rect = el.getBoundingClientRect();
+            return rect.left < bounds.left || rect.right > bounds.right || el.scrollWidth > el.clientWidth + 1;
+        });
+    }""")
+    if clipped:
+        raise AssertionError("게시 문서명 또는 상태 배지가 카드에서 잘린다")
 
 
 def keys_replay(page: Page, base: str) -> None:
@@ -219,7 +237,7 @@ def keys_replay(page: Page, base: str) -> None:
 
 
 def keys_models(page: Page, base: str) -> None:
-    page.goto(base + "/admin/models", wait_until="networkidle")
+    page.goto(base + "/admin/models?view=other", wait_until="networkidle")
     keys_skip(page)
     tab_until(page, "#f-name")
     focus_visible(page)
@@ -247,9 +265,33 @@ SCREENS = [
     Screen("saas-calls", "saas", "통화 기록", lambda: f"/app/calls?call={pick_call()}", keys_calls),
     Screen("saas-call", "saas", "통화 다시 듣기", lambda: f"/app/calls/{pick_call()}", keys_call),
     Screen("saas-report", "saas", "운영 리포트", lambda: "/app/report", keys_report),
-    Screen("saas-knowledge", "saas", "지식·정책", lambda: "/app/knowledge?doc=terms&seg=A-07", keys_knowledge),
+    Screen("saas-knowledge", "saas", "지식·정책", lambda: "/app/knowledge", keys_knowledge),
+    Screen("saas-knowledge-law", "saas", "지식·정책(법령 원문과 구간 정보)",
+           lambda: "/app/knowledge?doc=ecom-act", lambda page, base: (
+               page.goto(base + "/app/knowledge?doc=ecom-act", wait_until="networkidle"), keys_skip(page),
+               tab_until(page, "a.btn[href*='seg=']:not([aria-disabled])"), focus_visible(page),
+               press_and_wait(page, "Enter"))),
+    Screen("saas-knowledge-progress", "saas", "지식·정책(고정 자료 · 진행 중)",
+           lambda: "/app/knowledge?doc=support-refund", lambda page, base: (
+               page.goto(base + "/app/knowledge?doc=support-refund", wait_until="networkidle"), keys_skip(page),
+               tab_until(page, "a.btn[href*='upload=']"), focus_visible(page), press_and_wait(page, "Enter"),
+               tab_until(page, "input[type=file]"), focus_visible(page))),
+    Screen("saas-knowledge-complete", "saas", "지식·정책(고정 자료 · 완료)",
+           lambda: "/app/knowledge?doc=support-retention", lambda page, base: (
+               page.goto(base + "/app/knowledge?doc=support-retention", wait_until="networkidle"), keys_skip(page),
+               tab_until(page, "#document-stages summary"), focus_visible(page), page.keyboard.press("Enter")),
+           lambda page: page.locator("#document-stages summary").click()),
+    Screen("saas-knowledge-published", "saas", "지식·정책(게시 설정 펼침)",
+           lambda: "/app/knowledge?doc=ecom-act", lambda page, base: (
+               page.goto(base + "/app/knowledge?doc=ecom-act", wait_until="networkidle"), keys_skip(page),
+               tab_until(page, "#published-documents summary"), focus_visible(page), page.keyboard.press("Enter")),
+           prepare_published_documents),
     Screen("saas-integrations", "saas", "연동", lambda: "/app/integrations", keys_integrations),
     Screen("admin-models", "admin", "모델·벤치마크", lambda: "/admin/models", keys_models),
+    Screen("admin-retrieval-confirm", "admin", "검색 벤치마크 비용 확인",
+           lambda: "/admin/models?retrieval=jev", lambda page, base: (
+               page.goto(base + "/admin/models?retrieval=jev", wait_until="networkidle"), keys_skip(page),
+               tab_until(page, "form[aria-label='검색 실행 확인'] a.btn"), focus_visible(page), press_and_wait(page, "Enter"))),
     Screen("admin-tenants", "admin", "고객사 관리", lambda: "/admin/tenants?org=org_b", keys_tenants),
     Screen("admin-replay", "admin", "통화 리플레이(s20 음성 2회차)", lambda: "/admin/replay", keys_replay),
     Screen("admin-replay-barge", "admin", "통화 리플레이(1단계 끼어들기 재생)",
@@ -294,7 +336,8 @@ def main() -> None:
     accounts = auth.generate_accounts(list(load_tenants(ROOT)))
     tenant = next(a for a in accounts.values() if a.org == "org_a")
     admin = next(a for a in accounts.values() if a.role == "admin")
-    cfg = WebConfig(root=ROOT, accounts=accounts, clock=lambda: 0.0)
+    fixture = runpy.run_path(str(ROOT / "tests/web_knowledge_fixture.py"))
+    cfg = WebConfig(root=ROOT, accounts=accounts, clock=lambda: 0.0, knowledge_documents=fixture["documents"])
     port = free_port()
     server = uvicorn.Server(uvicorn.Config(create_app(cfg), host="127.0.0.1", port=port, log_level="warning"))
     th = threading.Thread(target=server.run, daemon=True)
@@ -321,6 +364,8 @@ def main() -> None:
                         ctx.close()
                         continue
                     page.wait_for_timeout(300)
+                    if s.prepare:
+                        s.prepare(page)
                     shot = page.screenshot(full_page=True, animations="disabled")
                     out = SCREENS_DIR / f"{s.name}-{w}.png"
                     ratio = diff_ratio(out.read_bytes() if out.exists() else None, shot)

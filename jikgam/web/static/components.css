@@ -253,6 +253,10 @@ h2.pane-title { font-size: var(--text-lg); font-weight: var(--weight-semibold); 
 .kv dd { font-weight: var(--weight-medium); text-align: right; }
 .keyvals.wide-key .kv dt { flex-grow: 0; min-width: var(--size-key-col); }
 .keyvals.wide-key .kv dd { flex-grow: 1; text-align: left; font-weight: var(--weight-regular); }
+.keyvals.narrative .kv { display: block; }
+.keyvals.narrative .kv dt { margin-bottom: var(--space-2); }
+.keyvals.narrative .kv dd { text-align: left; font-weight: var(--weight-regular); }
+.viewport-narrow { display: none; }
 .keyvals.divided { gap: var(--space-0); }
 .keyvals.divided .kv { padding: var(--space-4) var(--space-0); border-top: var(--border-1) solid var(--color-divider); }
 
@@ -529,6 +533,8 @@ a.play-item:hover { background: var(--color-surface-alt); }
 /* --- 좁은 화면 -------------------------------------------------------------------------------- */
 
 @media (max-width: 48em) {
+  .viewport-wide { display: none; }
+  .viewport-narrow { display: block; }
   .shell-nav { flex-basis: 100%; max-width: none; min-width: var(--space-0); border-right: var(--space-0); border-bottom: var(--border-1) solid var(--color-border); padding: var(--space-6) var(--space-8); gap: var(--space-5); }
   .tenant-desc, .nav-group-label { display: none; }
   .nav-note { margin-top: var(--space-0); padding: var(--space-3) var(--space-5); }
@@ -571,4 +577,11 @@ a.play-item:hover { background: var(--color-surface-alt); }
   .table-stack td.hide-narrow, .table-stack th.hide-narrow { display: block; }
   .card { padding: var(--space-7); }
   .card-flush > .card-head { padding: var(--space-7) var(--space-7) var(--space-4); }
+}
+/* 문서 원문의 줄바꿈을 보존하되 좁은 화면에서는 줄을 감싼다. */
+.document-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+  margin: 0;
 }

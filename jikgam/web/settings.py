@@ -35,3 +35,19 @@ COST_DIGITS = 6
 # 모델·벤치마크: 부하 예상 비용을 보여 주는 호출 수 단위
 COST_PER_N_CALLS = 1000
 LOAD_DURATION_S = 300
+
+# 검색 결과의 표시 분할. 실행은 이 값과 별개로 val만 허용한다.
+RETRIEVAL_SPLIT = "val"
+RETRIEVAL_BUDGET = 2000
+RETRIEVAL_NDCG_K = 10
+RETRIEVAL_METRIC_DIGITS = 4
+RETRIEVAL_CHUNKS = "b-W4000-C800-raw"
+RETRIEVAL_MODELS = {
+    "flash": ("flash = (b)", "llm", "b-W4000-C800-raw", 0.5),
+    "jev": ("Jev = (c-Jev, θ 0.65)", "jev", "c-jev-W4000-C800-raw-t0.65", 0.65),
+    "qwen": ("조정한 Qwen 2B = (c-Qwen, θ 0.55)", "qwen", "c-qwen-W4000-C800-raw-t0.55", 0.55),
+}
+PDF_MAX_BYTES = 20 * 1024 * 1024
+KNOWLEDGE_PAGE_SIZE = 12
+KNOWLEDGE_STAGE_COUNT = 4
+RETRIEVAL_PIPELINE = "full · snow+RRF · Jev 8"

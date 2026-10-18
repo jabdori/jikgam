@@ -6,9 +6,9 @@
 계정은 저장소 밖 .env 또는 환경 변수 JIKGAM_WEB_ACCOUNTS에 둔다(jikgam/web/auth.py). 없으면 관리자 하나와 고객사마다
 하나씩 임의 비밀번호로 만들고 이 터미널에만 보여 준다.
 
-화면은 결과 폴더의 원본 로그와 녹음을 읽기만 한다. 엔진과 외부 API를 부르지 않는다. 예외는 관리 콘솔에서 확인을 거쳐
-시작하는 벤치마크 실행이다(하위 프로세스, 출력은 outputs/benchmarks/). 상담 시나리오·음성 재생 벤치마크는 모의 업무
-API(Go)를 임시로 빌드해 띄운다(start_bizapi).
+화면은 기본적으로 결과 폴더를 읽는다. 비용 확인 뒤에는 PDF 처리와 val 검색 벤치마크를 실행하며 새 자료는
+data/v2/local/web/에 둔다. 기존 관리 벤치마크의 하위 프로세스 출력은 outputs/benchmarks/에 둔다.
+상담 시나리오·음성 재생 벤치마크는 모의 업무 API(Go)를 임시로 빌드해 띄운다(start_bizapi).
 """
 
 import argparse

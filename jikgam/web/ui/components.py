@@ -273,9 +273,16 @@ def table_footer(*children: Node) -> Markup:
 # --- 키·값, 태그, 단계 --------------------------------------------------------------------------------
 
 
-def keyvals(rows: Sequence[tuple[Node, Node]], divided: bool = False, wide_key: bool = False) -> Markup:
-    return h("dl", {"class": classes("keyvals", "divided" if divided else None, "wide-key" if wide_key else None)},
+def keyvals(rows: Sequence[tuple[Node, Node]], divided: bool = False, wide_key: bool = False, narrative: bool = False) -> Markup:
+    return h("dl", {"class": classes("keyvals", "divided" if divided else None, "wide-key" if wide_key else None,
+                                     "narrative" if narrative else None)},
              *[h("div", {"class": "kv"}, h("dt", None, k), h("dd", None, v)) for k, v in rows])
+
+
+def responsive(wide: Node, narrow: Node) -> Markup:
+    """비교 자료는 넓은 표와 좁은 핵심 목록 중 화면에 맞는 것만 표시한다."""
+    return h("div", {"class": "responsive"}, h("div", {"class": "viewport-wide"}, wide),
+             h("div", {"class": "viewport-narrow"}, narrow))
 
 
 def ordered(items: Sequence[Node], label: str | None = None) -> Markup:
@@ -403,7 +410,8 @@ def _nav(groups: Sequence[NavGroup], label: str) -> Markup:
 
 def shell(*, theme: str, title: str, product: str, nav: Sequence[NavGroup], main: Node, note: Node,
           user_initial: str, user_label: str, tenant: tuple[str, str] | None = None, search: tuple[str, str, str] | None = None,
-          crumbs: Sequence[Crumb] = (), admin_badge: bool = False, wide: bool = False, live: str | None = None) -> Markup:
+          crumbs: Sequence[Crumb] = (), admin_badge: bool = False, wide: bool = False, live: str | None = None,
+          search_fields: Sequence[tuple[str, str]] = ()) -> Markup:
     """화면 전체 문서. theme: saas, admin. search는 (폼 주소, 자리 표시 글자, 현재 검색어), crumbs는 상단바 경로.
     tenant는 (조직 이름, 설명)으로 메뉴 위에 보인다. live가 있으면 그 주소에서 실시간 갱신 조각을 받는다."""
     if theme not in ("saas", "admin"):
@@ -426,6 +434,7 @@ def shell(*, theme: str, title: str, product: str, nav: Sequence[NavGroup], main
     if search is not None:
         action, placeholder, q = search
         top.append(h("form", {"class": "search", "action": action, "method": "get", "role": "search"},
+                     *[hidden(name, value) for name, value in search_fields],
                      h("label", {"class": "sr-only", "for": "q"}, "검색"),
                      h("input", {"id": "q", "name": "q", "type": "search", "placeholder": placeholder, "value": q or None})))
     top.append(h("span", {"class": "avatar", "role": "img", "aria-label": user_label}, user_initial))
@@ -716,8 +725,30 @@ def check_list(items: Sequence[tuple[bool, Node, Node]], label: str) -> Markup:
 # --- 폼 ----------------------------------------------------------------------------------------------
 
 
-def form(*children: Node, action: str, method: str = "post", label: str | None = None) -> Markup:
-    return h("form", {"class": "form", "action": action, "method": method, "aria-label": label}, *children)
+def form(*children: Node, action: str, method: str = "post", label: str | None = None, multipart: bool = False) -> Markup:
+    return h("form", {"class": "form", "action": action, "method": method, "aria-label": label,
+                      "enctype": "multipart/form-data" if multipart else None}, *children)
+
+
+def field_file(name: str, label: str, accept: str = ".pdf") -> Markup:
+    """키보드로 고를 수 있는 파일 입력."""
+    fid = f"f-{name}"
+    return h("div", {"class": "field"}, h("label", {"for": fid}, label),
+             h("input", {"id": fid, "name": name, "type": "file", "accept": accept, "required": True}))
+
+
+def preformatted(text: str) -> Markup:
+    """원문의 줄바꿈을 보존한다."""
+    return h("pre", {"class": "document-text"}, text)
+
+
+def field_choices(name: str, label: str, options: Sequence[tuple[str, str, bool]], selected: str) -> Markup:
+    """연결되지 않은 실행 대상을 고를 수 없게 표시한다."""
+    fid = f"f-{name}"
+    return h("div", {"class": "field"}, h("label", {"for": fid}, label),
+             h("select", {"id": fid, "name": name}, *[
+                 h("option", {"value": v, "selected": v == selected, "disabled": not enabled}, text)
+                 for v, text, enabled in options]))
 
 
 def field_text(name: str, label: str, value: str | None = None, mono: bool = False, required: bool = False,

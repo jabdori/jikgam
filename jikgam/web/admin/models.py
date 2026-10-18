@@ -8,6 +8,7 @@ from ..data import benchmarks as bm
 from ..ui import components as ui
 from ..ui import fmt
 from .common import Ctx, shell
+from . import retrieval
 
 VERDICT_TONE = {"통과": "positive", "기준선": "neutral", "기준선 없음": "neutral"}
 
@@ -210,7 +211,8 @@ def confirm_card(ctx: Ctx, model: str, suites: list[str], concurrency: int, dura
         title=ui.joined(model, "실행 확인", sep=" "), label="실행 확인")
 
 
-def page(ctx: Ctx, confirm: tuple[str, list[str], int, float] | None = None) -> Any:
+def page(ctx: Ctx, confirm: tuple[str, list[str], int, float] | None = None, retrieval_confirm: str | None = None,
+         retrieval_jobs: list | None = None) -> Any:
     cfgs = bm.models(ctx.root)
     names = sorted((n, f"{n} · {c.get('model', n)}") for n, c in cfgs.items() if c.get("kind") in ("systemone", "openai", "gemini"))
     head = ui.page_header("모델·벤치마크", "모델은 어댑터로 등록하고 같은 벤치마크 세트, 같은 채점기로 비교합니다.")
@@ -219,7 +221,12 @@ def page(ctx: Ctx, confirm: tuple[str, list[str], int, float] | None = None) -> 
         parts.append(ui.notice(ctx.message, tone="negative" if ctx.query.get("error") else "positive"))
     if confirm is not None:
         parts.append(confirm_card(ctx, *confirm))
-    parts += [jobs_card(ctx), decision_card(ctx), tuned_card(ctx), policy_card(ctx), load_card(ctx)]
+    parts += [ui.card(retrieval.cost_card(ctx.root, retrieval_confirm) if retrieval_confirm else None,
+                      retrieval.card(ctx), retrieval.jobs_card(retrieval_jobs), title="검색 비교·실행", label="검색 비교·실행")]
+    other = [jobs_card(ctx), decision_card(ctx), tuned_card(ctx), policy_card(ctx), load_card(ctx)]
     side = ui.stack(ui.card(add_form(ctx), title="모델 추가", label="모델 추가"),
-                    ui.card(run_form(ctx, names), title="벤치마크 실행", label="벤치마크 실행"), gap="lg")
-    return shell(ctx, "models", "모델·벤치마크", ui.split(ui.stack(*parts, gap="lg"), side, aside_first=False))
+                    ui.card(run_form(ctx, names), title="판별·상담·음성·부하 실행", label="일반 벤치마크 실행"), gap="lg")
+    parts.append(ui.disclosure("판별·상담·음성·부하 및 모델 등록",
+                               ui.split(ui.stack(*other, gap="lg"), side, aside_first=False),
+                               open=confirm is not None or ctx.query.get("view") == "other"))
+    return shell(ctx, "models", "모델·벤치마크", ui.stack(*parts, gap="lg"))
