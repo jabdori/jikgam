@@ -91,10 +91,23 @@ def tab_until(page: Page, selector: str, limit: int = 80) -> None:
     raise AssertionError(f"Tab {limit}번 안에 {selector}에 닿지 않는다")
 
 
-def press_and_wait(page: Page, key: str) -> None:
+def press_and_wait(page: Page, key: str, until: str = "networkidle") -> None:
     """링크·폼에서 키를 눌러 다음 문서가 뜰 때까지 기다린다."""
-    with page.expect_navigation(wait_until="networkidle"):
+    with page.expect_navigation(wait_until=until):
         page.keyboard.press(key)
+
+
+def ready_state(path: str) -> str:
+    """문서가 뜬 것으로 볼 때. 실시간 통화는 짧은 간격으로 계속 갱신해 네트워크가 쉬지 않으므로 문서 로드까지만 기다린다."""
+    return "load" if path.startswith("/app/live") else "networkidle"
+
+
+def press_and_wait_swap(page: Page, key: str) -> None:
+    """같은 화면 안의 이동(문서를 새로 열지 않고 영역만 바꾸고 주소만 바꾼다)에서 키를 눌러 주소가 바뀔 때까지 기다린다."""
+    before = page.url
+    page.keyboard.press(key)
+    page.wait_for_function("u => window.location.href !== u", arg=before)
+    page.wait_for_load_state("networkidle")
 
 
 def focus_visible(page: Page) -> None:
@@ -142,11 +155,11 @@ def keys_call(page: Page, base: str) -> None:
 
 
 def keys_live(page: Page, base: str) -> None:
-    page.goto(base + "/app/live", wait_until="networkidle")
+    page.goto(base + "/app/live", wait_until=ready_state("/app/live"))
     keys_skip(page)
     tab_until(page, ".item-list a.item:not([aria-current])")
     focus_visible(page)
-    press_and_wait(page, "Enter")
+    press_and_wait(page, "Enter", until=ready_state("/app/live"))
     if "call=" not in page.url:
         raise AssertionError("다른 통화를 Enter로 고를 수 없다")
     tab_until(page, "button[data-listen]")
@@ -218,9 +231,11 @@ def keys_replay(page: Page, base: str) -> None:
     tab_until(page, "a.btn[href*='at=']")
     focus_visible(page)
     before = page.url
-    press_and_wait(page, "Enter")
+    press_and_wait_swap(page, "Enter")
     if page.url == before or "at=" not in page.url:
         raise AssertionError("이전/다음 판단으로 키보드로 갈 수 없다")
+    if page.evaluate("() => !document.activeElement || document.activeElement === document.body"):
+        raise AssertionError("판단을 옮긴 뒤 포커스를 잃는다")
     tab_until(page, "button[data-play]")
     page.keyboard.press("Enter")
     page.wait_for_timeout(1500)
@@ -380,7 +395,7 @@ def main() -> None:
                                                   http_credentials={"username": acct.name, "password": acct.password},
                                                   reduced_motion="reduce", locale="ko-KR")
                         page = ctx.new_page()
-                        resp = page.goto(base + s.path(), wait_until="networkidle")
+                        resp = page.goto(base + s.path(), wait_until=ready_state(s.path()))
                         if resp is None or resp.status != 200:
                             failures.append(f"{s.name} {w}px: 응답 {resp.status if resp else '없음'}")
                             ctx.close()

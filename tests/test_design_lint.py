@@ -79,3 +79,16 @@ def bad():
 '''
     got = lint.lint_python(code, "ui/components.py", page=False)
     assert [p.rule for p in got if p.rule == "style"] == ["style"]
+
+
+def test_repeated_token_blocks_are_merged():
+    """움직임 줄이기 설정처럼 @media 안에서 :root를 다시 정의해도 앞 블록의 토큰이 사라지지 않는다."""
+    css = """
+    :root { --space-4: 8px; --motion-base: 200ms; }
+    @media (prefers-reduced-motion: reduce) { :root { --motion-base: 0ms; } }
+    :root[data-theme="saas"] { --color-text: #000000; }
+    :root[data-theme="admin"] { --color-text: #ffffff; }
+    """
+    names = lint.token_names(css)
+    assert {"--space-4", "--motion-base"} <= names["root"]
+    assert not lint.lint_tokens(css)

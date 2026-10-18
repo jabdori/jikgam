@@ -585,3 +585,98 @@ a.play-item:hover { background: var(--color-surface-alt); }
   font: inherit;
   margin: 0;
 }
+
+/* --- 움직임 ---------------------------------------------------------------------------------------
+   시간과 곡선은 tokens.css의 --motion-*, --ease-*만 쓴다. 움직임 줄이기 설정이면 토큰이 0이 되고 맨 아래에서 모두 끈다. */
+
+/* 상태가 바뀔 때 색과 배경이 부드럽게 바뀐다(버튼, 목록, 단계, 배지, 근거, 재생 목록, 순위 표) */
+.btn, .item, .link-list a, .badge, .badge-dot, .step-mark, .step-label, .step-state, .conv-who, .lane-mark,
+.play-item, .play-at, .rank-row, .rank-no, .heatmap td, .heatmap thead th, .version-block {
+  transition-property: color, background-color, border-color, box-shadow, opacity, outline-color;
+  transition-duration: var(--motion-fast);
+  transition-timing-function: var(--ease-standard);
+}
+.step-mark, .step-label, .step-state, .link-list a, .conv-who { transition-duration: var(--motion-base); }
+
+/* 실시간 통화: 대화는 따로 스크롤되는 영역이고, 새 줄을 부드럽게 따라 내린다(사용자가 위를 보고 있으면 따라가지 않는다) */
+.conv-scroll {
+  max-height: var(--size-conv-max);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: var(--space-0) calc(var(--space-7) * -1);
+  padding: var(--space-1) var(--space-7);
+}
+.conv-turn { transition: background-color var(--motion-base) var(--ease-standard), padding var(--motion-base) var(--ease-standard),
+  margin var(--motion-base) var(--ease-standard); }
+
+/* 새 대화 줄은 아래에서 살짝 올라오며 나타난다. 처음 연 화면의 줄에는 붙지 않는다(console.js가 새로 붙인 줄에만 c-enter) */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(var(--motion-rise)); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.conv-turn.c-enter, .conv-divider.c-enter, .version-block.c-enter, .rank-row.c-enter, .link-list li.c-enter {
+  animation: rise-in var(--motion-base) var(--ease-enter) both;
+}
+
+/* '요청 변경' 구분선은 처음 나타날 때 한 번만 강조한다 */
+@keyframes divider-flash {
+  from { background-color: var(--color-caution-soft); }
+  to { background-color: transparent; }
+}
+@keyframes divider-line {
+  from { background-color: var(--color-caution); }
+  to { background-color: var(--color-caution-line); }
+}
+.conv-divider { border-radius: var(--radius-sm); }
+.conv-divider.c-enter {
+  animation: rise-in var(--motion-base) var(--ease-enter) both, divider-flash var(--motion-emphasis) var(--ease-standard) both;
+}
+.conv-divider.c-enter::before, .conv-divider.c-enter::after { animation: divider-line var(--motion-emphasis) var(--ease-standard) both; }
+
+/* 말하는 중인 AI 답: 기록된 재생 시각에 맞춰 글자가 차례로 드러난다(console.js가 on을 붙인다) */
+.reveal .rv { display: none; }
+.reveal .rv.on { display: inline; animation: fade-in var(--motion-char) var(--ease-enter) both; }
+
+/* 지금 말하는 중, 응대 중 표시는 숨 쉬듯 깜빡인다 */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.conv-turn.is-current { position: relative; }
+.conv-turn.is-current .conv-who::after {
+  content: "";
+  position: absolute;
+  left: var(--space-1);
+  top: calc(var(--space-6) + var(--space-2));
+  width: var(--size-dot);
+  height: var(--size-dot);
+  border-radius: var(--radius-round);
+  background: currentColor;
+  animation: pulse var(--motion-pulse) var(--ease-standard) infinite;
+}
+.live .page-header .badge-dot { animation: pulse var(--motion-pulse) var(--ease-standard) infinite; }
+
+/* 진행 단계: 지금 단계가 되면 표시에 고리가 한 번 퍼진다 */
+@keyframes step-ring {
+  from { box-shadow: var(--space-0) var(--space-0) var(--space-0) var(--space-2) var(--color-accent-soft); }
+  to { box-shadow: var(--space-0) var(--space-0) var(--space-0) var(--space-0) transparent; }
+}
+.step.is-now .step-mark { animation: step-ring var(--motion-emphasis) var(--ease-standard) both; }
+
+/* 안내 근거: 지금 나가는 답의 근거 조항 */
+.link-list li.is-current a { color: var(--color-accent-strong); font-weight: var(--weight-semibold); }
+
+/* 관리 콘솔 리플레이: 재생 위치 선이 다음 판단 위치로 미끄러진다. 순위 행 이동과 막대 길이는 console.js가 같은 토큰으로 움직인다 */
+.lane-cursor { transition: left var(--motion-slow) var(--ease-standard); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

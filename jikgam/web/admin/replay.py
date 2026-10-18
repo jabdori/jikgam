@@ -1,6 +1,7 @@
 """관리 콘솔: 통화 리플레이. 음성을 재생하면 재생 목록(고객 발화, 판단, AI 발화, 끼어들기)이 따라 움직이고, 고른 판단의
 조항 순위와 직전 대비 변화, 무효가 된 답과 새 답, 통화 전체 조항 × 판단 순위 표와 정답 일치도를 보여 준다
-(ADR 0021, jikgam/web/data/replay.py)."""
+(ADR 0021, jikgam/web/data/replay.py). 이전·다음 판단은 문서를 새로 열지 않고 화면 영역(ui.swap)만 바꾸며, 순위가 바뀐
+조항 행은 새 자리로 옮겨 가고 재생 위치 선은 다음 판단 위치로 미끄러진다(static/console.js)."""
 
 from typing import Any
 from urllib.parse import quote
@@ -63,8 +64,8 @@ def marks(r: rp.Replay, cur: rp.Decision, s: rp.Session) -> list[ui.Mark]:
 
 def band(r: rp.Replay, cur: rp.Decision, s: rp.Session, audio: str | None) -> Any:
     idx = cur.index
-    prev = ui.button("◀ 이전 판단", href=href(s, idx - 1), size="sm", disabled=idx <= 1)
-    nxt = ui.button("다음 판단 ▶", href=href(s, idx + 1), size="sm", disabled=idx >= len(r.decisions))
+    prev = ui.button("◀ 이전 판단", href=href(s, idx - 1), size="sm", disabled=idx <= 1, key="prev")
+    nxt = ui.button("다음 판단 ▶", href=href(s, idx + 1), size="sm", disabled=idx >= len(r.decisions), key="next")
     stop = ui.toggle("stop", "판단 시점마다 멈춤", True, stop_toggle="yes")
     controls = ui.row(prev, nxt, ui.text(ui.joined(fmt.clock(cur.at_s, tenths=True), fmt.clock(r.duration_s, tenths=True),
                                                    sep=" / "), mono=True), stop, gap="sm")
@@ -108,7 +109,8 @@ def playlist(r: rp.Replay, cur: rp.Decision, s: rp.Session) -> Any:
 
 def rank_card(r: rp.Replay, cur: rp.Decision, prev: rp.Decision | None) -> Any:
     rows = [ui.RankRow(fmt.rank(x.rank), x.article, fmt.rank_delta(x.prev_rank, x.rank), x.p, fmt.prob(x.p), prev=x.prev_p,
-                       prev_shown=fmt.prob(x.prev_p) if x.prev_p is not None else None, selected=x.selected, gold=x.gold)
+                       prev_shown=fmt.prob(x.prev_p) if x.prev_p is not None else None, selected=x.selected, gold=x.gold,
+                       key=x.article)
             for x in cur.ranks[:settings.REPLAY_RANK_ROWS]]
     side = ui.joined(f"v{prev.version} 대비" if prev else "첫 판단", "← 직전 확률", "세로선 = 선택 기준")
     return ui.card(ui.rank_bars(rows, label="조항 순위", threshold=r.threshold), title="조항 순위", side=side, label="조항 순위")
@@ -205,4 +207,4 @@ def page(ctx: Ctx) -> Any:
         ui.stack(picker(ctx, sessions, s), band(r, cur, s, audio), gap="sm"),
         ui.columns(("list-wide", playlist(r, cur, s)), ("main", main)), gap="lg")
     crumbs = [ui.Crumb("통화 리플레이", "/admin/replay"), ui.Crumb(r.title or "시나리오 정보 없음")]
-    return shell(ctx, "replay", "통화 리플레이", ui.anchor("top", body), crumbs=crumbs)
+    return shell(ctx, "replay", "통화 리플레이", ui.anchor("top", ui.swap(body)), crumbs=crumbs)

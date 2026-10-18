@@ -296,9 +296,15 @@ def disclosure(summary: Node, *body: Node, open: bool = False) -> Markup:
              h("div", {"class": "disclosure-body"}, *body))
 
 
-def link_list(items: Sequence[tuple[Node, str]], label: str) -> Markup:
-    """링크 목록(안내 근거 조항 등). items는 (글자, 주소)."""
-    return h("ul", {"class": "link-list", "aria-label": label}, *[h("li", None, h("a", {"href": href}, t)) for t, href in items])
+def link_list(items: Sequence[tuple[Node, str] | tuple[Node, str, bool]], label: str) -> Markup:
+    """링크 목록(안내 근거 조항 등). items는 (글자, 주소) 또는 (글자, 주소, 강조). 강조한 항목(지금 나가는 답의 근거 등)은
+    색으로 구분한다. 항목은 주소로 이름 붙어, 갱신 때 순서가 바뀌어도 같은 항목으로 이어진다."""
+    out = []
+    for it in items:
+        t, href, *rest = it
+        on = bool(rest and rest[0])
+        out.append(h("li", {"data-key": href, "class": "is-current" if on else None}, h("a", {"href": href}, t)))
+    return h("ul", {"class": "link-list", "aria-label": label}, *out)
 
 
 def tags(items: Sequence[Node], label: str | None = None) -> Markup:
@@ -472,6 +478,16 @@ def drawer(*body: Node, title: Node, close_href: str, label: str, sub: Node = No
 
 
 @dataclass
+class Reveal:
+    """말하는 중인 답. 재생 시작(start_ms)부터 끝(end_ms)까지 text의 글자를 차례로 드러낸다. 시각은 data-now와 같은 시계다.
+    shown은 그린 순간까지 드러난 글자 수(스크립트 없이도 그만큼만 보인다)."""
+    text: str
+    start_ms: float
+    end_ms: float
+    shown: int
+
+
+@dataclass
 class Turn:
     who: str          # 화자 이름(고객, AI, 상담사)
     text: Node
@@ -480,27 +496,43 @@ class Turn:
     current: bool = False   # 지금 말하는 중
     cue: tuple[float, float] | None = None  # 녹음과 맞출 (시작, 끝) 초
     note: Node = None       # 말 아래 작은 글자(그 말의 근거 조항 등)
+    key: str | None = None  # 줄 이름. 실시간 갱신이 이미 있는 줄을 그대로 두고 새 줄만 붙인다
+    reveal: Reveal | None = None  # 있으면 text 대신 글자를 차례로 드러낸다
 
 
 @dataclass
 class Divider:
     text: Node
+    key: str | None = None
 
 
-def conversation(items: Sequence[Turn | Divider], label: str = "대화", id: str | None = None) -> Markup:
-    """대화 줄과 그 사이의 한 줄 표시(고객이 요청을 바꾼 순간). cue가 있으면 재생 위치에 맞춰 강조된다."""
+def _reveal(r: Reveal) -> Markup:
+    chars = [h("span", {"class": classes("rv", "on" if i < r.shown else None)}, ch) for i, ch in enumerate(r.text)]
+    return h("span", {"class": "reveal", "data-reveal-from": f"{r.start_ms:.1f}", "data-reveal-to": f"{r.end_ms:.1f}",
+                      "data-reveal-sig": f"{len(r.text)}"}, *chars)
+
+
+def conversation(items: Sequence[Turn | Divider], label: str = "대화", id: str | None = None, now_ms: float | None = None,
+                 running: bool = True, follow: bool = False) -> Markup:
+    """대화 줄과 그 사이의 한 줄 표시(고객이 요청을 바꾼 순간). cue가 있으면 재생 위치에 맞춰 강조된다.
+    now_ms는 말하는 중인 답을 드러낼 시계(실시간 통화), follow면 대화를 따로 스크롤되는 영역에 두고 새 줄을 따라 내린다."""
     out = []
     for it in items:
         if isinstance(it, Divider):
-            out.append(h("li", {"class": "conv-divider"}, h("span", {"class": "conv-divider-text"}, it.text)))
+            out.append(h("li", {"class": "conv-divider", "data-key": it.key}, h("span", {"class": "conv-divider-text"}, it.text)))
             continue
         cue = {"data-cue-start": f"{it.cue[0]:.3f}", "data-cue-end": f"{it.cue[1]:.3f}"} if it.cue else {}
-        out.append(h("li", {"class": classes("conv-turn", f"is-{it.kind}", "is-current" if it.current else None), **cue},
+        out.append(h("li", {"class": classes("conv-turn", f"is-{it.kind}", "is-current" if it.current else None),
+                            "data-key": it.key, **cue},
                      h("span", {"class": "conv-who"}, it.who),
-                     h("span", {"class": "conv-text"}, it.text,
+                     h("span", {"class": "conv-text"}, _reveal(it.reveal) if it.reveal is not None else it.text,
                        h("span", {"class": "conv-note"}, it.note) if it.note is not None else None),
                      h("span", {"class": "conv-at"}, it.at) if it.at is not None else h("span", {"class": "conv-at"})))
-    return h("ol", {"class": "conversation", "aria-label": label, "id": id}, *out)
+    clock = {"data-now": f"{now_ms:.1f}", "data-running": "true" if running else "false"} if now_ms is not None else {}
+    ol = h("ol", {"class": "conversation", "aria-label": None if follow else label, "id": id, **clock}, *out)
+    if not follow:
+        return ol
+    return h("div", {"class": "conv-scroll", "data-follow": True, "tabindex": "0", "role": "region", "aria-label": label}, ol)
 
 
 @dataclass
@@ -552,6 +584,12 @@ def toggle(name: str, label: str, checked: bool = False, **data: str) -> Markup:
 def live(url: str, every_ms: int, *children: Node) -> Markup:
     """every_ms마다 url을 다시 받아 안의 data-slot 영역만 새 내용으로 바꾼다(실시간 통화)."""
     return h("div", {"class": "live", "data-live": url, "data-interval": str(every_ms)}, *children)
+
+
+def swap(*children: Node) -> Markup:
+    """같은 화면의 다른 상태로 가는 링크(이전·다음 판단 등)를 누르면 문서를 새로 열지 않고 이 영역만 바꾼다.
+    바뀌는 동안 data-key가 같은 행은 새 자리로 옮겨 가고 막대는 새 길이로 늘거나 준다(관리 콘솔 리플레이)."""
+    return h("div", {"class": "swap", "data-swap": True}, *children)
 
 
 def slot(name: str, *children: Node, polite: bool = False, inline: bool = False) -> Markup:
@@ -651,13 +689,14 @@ class RankRow:
     prev_shown: Node = None    # 직전 확률 글자
     selected: bool = False
     gold: bool = False
+    key: str | None = None     # 행 이름(조항). 다른 판단으로 넘어갈 때 같은 조항의 행이 새 순위 자리로 옮겨 간다
 
 
 def rank_bars(rows: Sequence[RankRow], label: str, threshold: float | None = None) -> Markup:
     """조항 순위와 직전 대비 변화. 막대는 이번 확률, 흐린 막대는 직전 확률, 세로선은 선택 기준."""
     out = []
     for r in rows:
-        out.append(h("li", {"class": classes("rank-row", "is-selected" if r.selected else None)},
+        out.append(h("li", {"class": classes("rank-row", "is-selected" if r.selected else None), "data-key": r.key},
                      h("span", {"class": "rank-no"}, r.rank),
                      h("span", {"class": "rank-name"}, r.name, h("span", {"class": "rank-gold", "aria-label": "정답 조항"}, "★")
                        if r.gold else None),

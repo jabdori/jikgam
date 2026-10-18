@@ -54,6 +54,12 @@ class Line:
     articles: list[str] = field(default_factory=list)  # AI 답이 근거로 든 조항
     playing: bool = False     # 재생 피드에서 지금 나가는 중
     elapsed_s: float = 0.0    # 통화 시작 뒤 시각(초)
+    sid: str | None = None    # AI 답의 제안 id(재생 피드가 그 답의 재생 시각을 찾는다)
+
+    @property
+    def key(self) -> str:
+        """화면이 줄을 다시 그리지 않고 이어 붙일 때 쓰는 줄 이름(화자와 시각)."""
+        return f"{self.kind}:{self.t_ms:.0f}"
 
 
 @dataclass
@@ -64,6 +70,10 @@ class Change:
     after: str | None
     wrong: int                # 그 변경 뒤 나간 잘못된 안내 수
     line_index: int           # 대화에서 이 발화의 위치(그 뒤에 한 줄 표시를 둔다)
+
+    @property
+    def key(self) -> str:
+        return f"change:{self.t_ms:.0f}"
 
 
 @dataclass
@@ -221,7 +231,7 @@ def build_call(events: list[dict[str, Any]], call_id: str, recording: dict[str, 
                                    cut=e["suggestion_id"] in barged or bool(pb and pb.get("interrupted") == "barge_in"),
                                    playing=playing, elapsed_s=(st - t_start) / 1000,
                                    played_s=round(float(pb["played_ms"]) / 1000, 2) if pb and pb.get("played_ms") else None,
-                                   articles=list(sug.get("cited_articles") or [])))
+                                   articles=list(sug.get("cited_articles") or []), sid=e["suggestion_id"]))
             for a in sug.get("cited_articles") or []:
                 if a not in call.articles:
                     call.articles.append(a)

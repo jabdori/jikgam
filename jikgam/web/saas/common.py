@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence
 
 from ..data.calls import Call
 from ..data.live import Feeds
@@ -73,9 +73,10 @@ def article_short(article_id: str, ctx: Ctx) -> str:
     return article_names(ctx, [article_id])[0].split(" ")[0]
 
 
-def evidence_links(ctx: Ctx, ids: list[str]) -> Any:
+def evidence_links(ctx: Ctx, ids: list[str], current: Sequence[str] = ()) -> Any:
+    """안내 근거 조항 링크. current에 든 조항(지금 나가는 답의 근거)은 강조한다."""
     if not ids:
         return ui.text("근거 조항을 든 안내가 없습니다.", tone="muted", size="md")
-    return ui.link_list([(f"이용약관 {n.replace(' ', ' · ', 1)}", article_href(a)) for a, n in zip(ids, article_names(ctx, ids))],
-                        label="안내 근거 조항")
+    return ui.link_list([(f"이용약관 {n.replace(' ', ' · ', 1)}", article_href(a), a in current)
+                         for a, n in zip(ids, article_names(ctx, ids))], label="안내 근거 조항")
 

@@ -1,6 +1,8 @@
 """고객사 콘솔: 실시간 통화. 재생 피드(jikgam/web/data/live.py)가 지금까지 흘린 기록으로 그린다(ADR 0021).
 
-화면은 settings.LIVE_REFRESH_MS마다 같은 주소를 다시 받아 data-slot 영역(통화 목록, 상태, 대화, 오른쪽 정보)만 바꾼다.
+화면은 settings.LIVE_REFRESH_MS마다 같은 주소를 다시 받아 data-slot 영역(통화 목록, 상태, 대화, 오른쪽 정보)에서 바뀐 부분만
+반영한다(static/console.js). 대화 줄은 이름(data-key)으로 이어 붙여 이미 있는 줄은 그대로 두고, 말하는 중인 AI 답은 기록된
+재생 시작·끝 시각에 맞춰 글자를 차례로 드러낸다. 끼어들기로 끊긴 답은 끊긴 지점까지만 보인다.
 녹음과 버튼은 갱신 영역 밖에 두어 듣는 중에 끊기지 않는다.
 """
 
@@ -40,20 +42,28 @@ def call_list(ctx: Ctx, feeds: list[Feed], current: Feed) -> Any:
     return ui.stack(head, ui.item_list(items, label="진행 중인 통화"), gap="xs")
 
 
-def conversation(ctx: Ctx, call: Call) -> Any:
+def conversation(ctx: Ctx, feed: Feed, call: Call) -> Any:
     items: list[Any] = []
     changes = {ch.line_index: ch for ch in call.changes}
+    now = feed.now_ms()
     for i, ln in enumerate(call.lines):
         who_ = "고객" if ln.kind == "customer" else ("AI · 말하는 중" if ln.playing else "AI")
         notes = [cut_note(ln) if ln.cut else None,
                  ("근거 " + ", ".join(article_short(a, ctx) for a in ln.articles)) if ln.articles else None]
-        items.append(ui.Turn(who_, ln.text, fmt.clock(ln.elapsed_s), ln.kind, current=ln.playing,
-                             note=ui.joined(*notes) if any(notes) else None))
+        sp = feed.speech.get(ln.sid) if ln.sid else None
+        text: Any = ln.text
+        reveal = None
+        if sp is not None and ln.playing:
+            reveal = ui.Reveal(ln.text[:sp.chars], sp.start_ms, sp.end_ms, sp.shown(now))
+        elif sp is not None and sp.cut:
+            text = ln.text[:sp.chars] + "…"  # 고객이 들은 데까지만
+        items.append(ui.Turn(who_, text, fmt.clock(ln.elapsed_s), ln.kind, current=ln.playing,
+                             note=ui.joined(*notes) if any(notes) else None, key=ln.key, reveal=reveal))
         if i in changes:
-            items.append(ui.Divider(change_text(changes[i])))
+            items.append(ui.Divider(change_text(changes[i]), key=changes[i].key))
     if not items:
         return ui.empty("고객이 아직 말하지 않았습니다.")
-    return ui.conversation(items)
+    return ui.conversation(items, now_ms=now, running=not feed.taken_over, follow=True)
 
 
 def side(ctx: Ctx, feed: Feed, call: Call) -> Any:
@@ -62,13 +72,18 @@ def side(ctx: Ctx, feed: Feed, call: Call) -> Any:
     return ui.stack(
         ui.card(ui.steps(steps, label="진행 단계"), title="진행 단계", label="진행 단계"),
         ui.card(facts, title="고객 정보", label="고객 정보"),
-        ui.card(evidence_links(ctx, ordered_articles(call)), title="안내 근거", label="안내 근거"), gap="lg")
+        ui.card(evidence_links(ctx, ordered_articles(call), current_articles(call)), title="안내 근거", label="안내 근거"), gap="lg")
+
+
+def current_articles(call: Call) -> list[str]:
+    """지금(마지막으로) 나가는 답의 근거."""
+    return list(next((ln.articles for ln in reversed(call.lines) if ln.kind == "ai" and ln.articles), []))
 
 
 def ordered_articles(call: Call) -> list[str]:
     """지금 나가는 답의 근거를 맨 앞에, 나머지는 처음 나온 순서로."""
-    now = next((ln.articles for ln in reversed(call.lines) if ln.kind == "ai" and ln.articles), [])
-    return list(now) + [a for a in call.articles if a not in now]
+    now = current_articles(call)
+    return now + [a for a in call.articles if a not in now]
 
 
 def page(ctx: Ctx) -> Any:
@@ -94,7 +109,7 @@ def page(ctx: Ctx) -> Any:
                                            listen, takeover, gap="sm"))
     body = ui.columns(
         ("list", ui.slot("calls", call_list(ctx, feeds, feed))),
-        ("main", ui.stack(header, ui.card(ui.slot("conv", conversation(ctx, call)), label="대화"), gap="lg")),
+        ("main", ui.stack(header, ui.card(ui.slot("conv", conversation(ctx, feed, call)), label="대화"), gap="lg")),
         ("aside", ui.slot("side", side(ctx, feed, call))))
     main = ui.live(f"/app/live?call={feed.id}", settings.LIVE_REFRESH_MS, body,
                    ui.listen_source("live-audio", f"/app/live/{feed.id}/audio", feed.audio_s) if rec is not None else None)

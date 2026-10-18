@@ -5,6 +5,7 @@
 시계는 바꿔 넣을 수 있다(스크린샷은 고정 시계로 찍는다, ADR 0022).
 """
 
+import statistics
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -15,6 +16,48 @@ from jikgam.engine import events as ev
 from .. import settings
 from .calls import Call, build_call
 from .tenants import Tenant, recording_of
+
+
+@dataclass
+class Speech:
+    """AI 답 하나가 음성으로 나간 기록. 재생 시작·끝(엔진 시계, 밀리초)과 그동안 드러낼 글자 수."""
+    start_ms: float
+    end_ms: float
+    chars: int    # 끝까지 드러낼 글자 수. 끊긴 답은 끊긴 지점까지다
+    cut: bool
+
+    def shown(self, now_ms: float) -> int:
+        """now_ms까지 말한 글자 수. 재생 길이에 고르게 나눈다."""
+        if now_ms <= self.start_ms:
+            return 0
+        if now_ms >= self.end_ms or self.end_ms <= self.start_ms:
+            return self.chars
+        return round(self.chars * (now_ms - self.start_ms) / (self.end_ms - self.start_ms))
+
+
+def speech_plan(events: list[dict[str, Any]]) -> dict[str, Speech]:
+    """제안 id → 음성으로 나간 기록. 끊긴 답이 들린 글자 수는 같은 통화에서 끝까지 재생된 답의 속도(글자/밀리초)로 어림한다.
+    화면에 보이는 글자의 양만 정하며, 기록이나 수치는 바꾸지 않는다."""
+    texts = {e["suggestion_id"]: e.get("text", "") for e in events if e["type"] == ev.SUGGESTION_CREATED}
+    starts = {e["suggestion_id"]: float(e.get("start_ms") or e["t_ms"]) for e in events
+              if e["type"] == ev.SUGGESTION_EXPOSED and e.get("channel") == "voice"}
+    ends = {e["suggestion_id"]: e for e in events if e["type"] == "tts.playback_end"}
+    rates = [len(texts[sid]) / float(pb["played_ms"]) for sid, pb in ends.items()
+             if sid in texts and texts[sid] and not pb.get("interrupted") and pb.get("played_ms")]
+    rate = statistics.median(rates) if rates else settings.LIVE_SPEECH_CHARS_PER_S / 1000
+    plan = {}
+    for sid, st in starts.items():
+        text = texts.get(sid, "")
+        pb = ends.get(sid)
+        if pb and pb.get("end_ms"):
+            en = float(pb["end_ms"])
+            cut = bool(pb.get("interrupted"))
+            heard = float(pb.get("played_ms") or (en - st))
+            chars = min(len(text), round(heard * rate)) if cut else len(text)
+        else:
+            en, cut, chars = st + len(text) / rate, False, len(text)
+        plan[sid] = Speech(st, en, chars, cut)
+    return plan
 
 
 @dataclass
@@ -31,11 +74,13 @@ class Feed:
     t_start: float = 0.0
     t_end: float = 0.0
     full: Call | None = field(default=None, repr=False)
+    speech: dict[str, Speech] = field(default_factory=dict, repr=False)
 
     def __post_init__(self) -> None:
         self.started = self.clock()
         self.full = build_call(self.events, self.id, self.recording)
         self.t_start, self.t_end = self.full.start_ms, self.full.end_ms
+        self.speech = speech_plan(self.events)
 
     def now_ms(self) -> float:
         if self.taken_over_ms is not None:

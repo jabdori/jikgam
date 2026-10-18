@@ -82,11 +82,12 @@ def _strip_css_comments(text: str) -> str:
 
 
 def token_names(text: str | None = None) -> dict[str, set[str]]:
-    """토큰 파일의 블록별 정의 이름. 키는 "root", "saas", "admin"."""
+    """토큰 파일의 블록별 정의 이름. 키는 "root", "saas", "admin". 같은 블록이 여러 번 나오면(움직임 줄이기 설정의
+    @media 안 :root 등) 이름을 합친다."""
     text = _strip_css_comments(TOKENS.read_text(encoding="utf-8") if text is None else text)
     out: dict[str, set[str]] = {}
     for m in re.finditer(r"(:root(?:\[data-theme=\"(\w+)\"\])?)\s*\{(.*?)\}", text, re.S):
-        out[m.group(2) or "root"] = set(VAR_DEF.findall(m.group(3)))
+        out.setdefault(m.group(2) or "root", set()).update(VAR_DEF.findall(m.group(3)))
     return out
 
 
