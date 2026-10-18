@@ -19,7 +19,7 @@ def render(qids: list[str], bank: dict[str, dict[str, Any]]) -> dict[str, dict[s
     for qid in qids:
         base, _, arg = qid.partition(":")
         q = json.loads(json.dumps(bank[base]))
-        if base == "applies":
+        if base in ("applies", "law_applies"):
             q["instructions"] = q["instructions"].replace("{article_id}", arg)
         out[qid] = q
     return out

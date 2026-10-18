@@ -46,3 +46,20 @@ def test_judge_law_problems_use_half_coverage_of_gold_spans():
     gold = [{"alternatives": [{"doc": c.doc, "start": c.start, "end": c.end}]}]
     assert law_problems(gold, {cid}) == []
     assert law_problems(gold, set())  # 근거 집합에 없으면 문제다
+
+
+def test_session_asks_law_applies_for_law_chunks_only(tmp_path):
+    from dataclasses import replace
+
+    from jikgam.engine.org import load_org
+    from jikgam.engine.session import Session
+    from jikgam.eval.questions import render
+
+    s = Session(replace(load_org("org_a"), law=load_law("r0")), "t", tmp_path)
+    law_id = next(a for a, x in s.articles.items() if x.type == LAW_TYPE)
+    assert s._applies_qid(law_id) == f"law_applies:{law_id}"
+    assert s._applies_qid("A-05") == "applies:A-05"
+    q = render([s._applies_qid(law_id)], s.bank)[f"law_applies:{law_id}"]
+    assert law_id in q["instructions"] and q["type"] == "noul"
+    v1 = Session(load_org("org_a"), "t1", tmp_path)  # 법령 묶음이 없으면 질문 세트도 v1 그대로다
+    assert "law_applies" not in v1.bank

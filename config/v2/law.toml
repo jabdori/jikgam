@@ -2,6 +2,9 @@
 # 법령 구간은 엔진이 이미 하는 근거 판별(applies, Jev)에 같은 호출로 넣는다. 확률 0.5 이상을 근거로 고른다.
 # 실행: uv run --group embed python -m jikgam.sim.runner --org org_a --law r4 ...
 
+# 법령 구간에 묻는 판별 질문(law_applies). 두 프로필이 같은 질문을 쓴다
+question_set = "data/question_sets/extra/law-v2.json"
+
 [r0]
 # 기준선 R0: 조 단위 + 대체 규칙(256토큰) 구간, v1 검색 규칙(상위 4개에서 참조·별표 한 단계)
 mode = "r0"

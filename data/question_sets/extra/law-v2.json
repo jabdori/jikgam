@@ -1,0 +1,10 @@
+{
+  "version": "law-v2-2026.10.18-1",
+  "note": "v2 법령·고시 묶음을 켠 세션에서만 쓰는 판별 질문(docs/evaluation-v2.md §3.5, §4.4). 법령 구간마다 law_applies:<구간 id>로 묻는다. 확률 0.5 이상을 근거로 고른다(조직 설정 applies_threshold).",
+  "questions": {
+    "law_applies": {
+      "type": "noul",
+      "instructions": "state.articles의 {article_id}는 법령·고시 원문 구간이다. 이 구간이 고객의 최근 질문이나 지금 처리하는 요청에 답하는 근거를 담고 있는가? 고객이 법령, 기준, 권리, 사업자의 의무를 묻고 이 구간이 그 내용을 정하고 있으면 참이다. 같은 주제라도 다른 대상이나 다른 조건을 정한 구간이면 거짓이다."
+    }
+  }
+}

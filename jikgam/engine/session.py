@@ -124,6 +124,12 @@ class Session:
         if set(base) & set(extra):
             raise ValueError(f"추가 질문 세트의 ID가 기본 질문 세트와 겹친다: {sorted(set(base) & set(extra))}")
         self.bank = {**base, **extra}
+        if self.law is not None and org.law.question_set is not None:
+            # 법령 구간의 판별 질문(law_applies). 법령 묶음을 켠 세션만 더한다
+            _, law_bank = load_bank(org.law.question_set)
+            if set(law_bank) & set(self.bank):
+                raise ValueError(f"법령 질문 세트의 ID가 겹친다: {sorted(set(law_bank) & set(self.bank))}")
+            self.bank.update(law_bank)
         self.decider = decision_client or make_client(self.backend)
         self.generator = generator or gen.make_generator(org.generator)
         self.biz = bizapi or BizApiClient(org.bizapi_url, session_id)
@@ -344,11 +350,11 @@ class Session:
                     return
                 labels, probs = self._labels(res, qids)
                 # 5. 근거 선택과 이전 제안 무효화
-                selected = [a for a in result.candidates if probs.get(f"applies:{a}", 0.0) >= self.org.applies_threshold]
+                selected = [a for a in result.candidates if probs.get(self._applies_qid(a), 0.0) >= self.org.applies_threshold]
                 if self.law is not None and self.law.cfg.mode == "r4":
                     # R4: 법령 근거는 판별 확률 순(리랭킹). 약관 근거는 v1처럼 검색 순서다
                     law_sel = [a for a in selected if result.sources.get(a) == "law"]
-                    law_sel.sort(key=lambda a: -probs.get(f"applies:{a}", 0.0))
+                    law_sel.sort(key=lambda a: -probs.get(self._applies_qid(a), 0.0))
                     selected = [a for a in selected if result.sources.get(a) != "law"] + law_sel
                 if "addon_only" in qids and "addon_only" in labels:
                     self.state.addon_only = probs["addon_only"] >= self.org.addon_threshold
@@ -369,7 +375,7 @@ class Session:
                 sufficient = labels.get("sufficient")
                 attached = [a for a in result.candidates if result.sources.get(a) == "rule"]
                 self.state.evidence = Evidence(my_v, result.candidates, selected,
-                                               {a: probs.get(f"applies:{a}", 0.0) for a in result.candidates},
+                                               {a: probs.get(self._applies_qid(a), 0.0) for a in result.candidates},
                                                None if sufficient is None else sufficient == "true",
                                                labels.get("next_info"), labels.get("action"), self.state.request,
                                                attached)
@@ -471,7 +477,7 @@ class Session:
             qids += ["intent", "caller"]
             if s.known_facts():
                 qids.append("condition_changed")
-        qids += [f"applies:{a}" for a in candidates]
+        qids += [self._applies_qid(a) for a in candidates]
         if candidates:
             qids.append("sufficient")
         qids += ["next_info", "action"]
@@ -738,6 +744,13 @@ class Session:
             out[source] = [a for a in dict.fromkeys(ids) if a in self.articles and a not in seen]
             seen.update(out[source])
         return out
+
+    def _applies_qid(self, article_id: str) -> str:
+        """근거 판별 질문 ID. v2 법령 구간(종류 law)에 법령 질문 세트가 있으면 law_applies, 나머지는 v1의 applies."""
+        a = self.articles.get(article_id)
+        if self.law is not None and a is not None and a.type == "law" and "law_applies" in self.bank:
+            return f"law_applies:{article_id}"
+        return f"applies:{article_id}"
 
     def _generation_payload(self, plan: policy.Plan, evidence: dict[str, list[str]]) -> dict[str, Any]:
         """생성 입력. 조항은 이 응답의 근거 집합(_answer_evidence) 전부를 넣는다. 정책·상태가 붙인 조항은 판별의 applies와
