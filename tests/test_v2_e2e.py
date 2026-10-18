@@ -16,12 +16,19 @@ def put(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False), encoding="utf-8")
 
 
-def events():
-    return [{"type": "utterance.end", "text": "질문"},
+def events(full=True):
+    values = [{"type": "utterance.end", "text": "질문"},
             {"type": "suggestion.created", "suggestion_id": "s1", "text": "주장", "cited_articles": ["A"]},
             {"type": "suggestion.exposed", "suggestion_id": "s1"},
             {"type": "suggestion.exposed", "suggestion_id": "s1"},
             {"type": "suggestion.created", "suggestion_id": "s2", "text": "미노출", "cited_articles": []}]
+    if full:
+        values[1].update(basis_version=1, generation_request_id="g1")
+        values.insert(1, {"type": "generation.request", "version": 1, "request_id": "g1",
+                          "input": {"articles": [{"id": "A", "text": "근거"}, {"id": "B", "text": "미인용 근거"}],
+                                    "quotes": {"환불": 100}, "system_facts": {"계정": "활성"},
+                                    "plan": {"action": "answer"}, "conversation": [{"text": "질문"}]}})
+    return values
 
 
 def row(scenario="가", valid=True, passed=True, total=10, unsupported=1, run=1):
@@ -31,30 +38,27 @@ def row(scenario="가", valid=True, passed=True, total=10, unsupported=1, run=1)
             "metrics": metrics.session_metrics([])}
 
 
-def test_claims_use_only_exposed_distinct_suggestions_and_logged_text_first():
+def test_claims_use_full_generation_input_and_only_exposed_distinct_suggestions():
     es = events()
-    es[1]["articles"] = [{"id": "A", "text": "로그의 근거"}]
     result = list(claims.exposed_inputs(es, {"A": {"text": "현재 근거"}}))
     assert len(result) == 1
-    assert result[0]["evidence"] == "[근거 A]\n로그의 근거"
+    assert json.loads(result[0]["evidence"]) == es[1]["input"]
+    assert "미인용 근거" in result[0]["evidence"] and "활성" in result[0]["evidence"]
     assert result[0]["question"] == "질문"
     assert "정답" not in result[0]
     assert "correctness" not in claims.SYSTEM and "correctness" not in str(claims.SCHEMA)
 
 
-def test_claims_fail_closed_when_evidence_id_cannot_be_rebuilt():
-    with pytest.raises(ValueError, match="복원"):
-        list(claims.exposed_inputs(events(), {}))
+def test_claims_mark_previous_logs_without_full_input_instead_of_rebuilding_articles():
+    result = next(claims.exposed_inputs(events(full=False), {"A": {"text": "근거"}}))
+    assert result["input_missing"] and not result["evidence"]
 
 
-def test_claims_prefer_generation_log_text_for_the_matching_version():
+def test_claims_match_request_id_even_when_a_later_request_has_the_same_version():
     es = events()
-    es[1]["basis_version"] = 2
-    es.insert(1, {"type": "generation.request", "version": 2,
-                  "payload": {"articles": [{"id": "A", "text": "생성 당시 원문"}]}})
-    es.insert(1, {"type": "generation.request", "version": 1,
-                  "articles": [{"id": "A", "text": "다른 버전의 원문"}]})
-    assert next(claims.exposed_inputs(es, {}))["evidence"] == "[근거 A]\n생성 당시 원문"
+    es.insert(2, {"type": "generation.request", "version": 1, "request_id": "g2",
+                  "input": {"articles": []}, "feedback": "다시 생성"})
+    assert next(claims.exposed_inputs(es))["generation_input"] == es[1]["input"]
 
 
 def test_claim_cache_is_bound_to_prompt_model_answer_and_evidence(tmp_path):
@@ -298,7 +302,7 @@ def test_single_command_runs_archives_and_checks_without_overwriting_existing_ru
     calls = []
     monkeypatch.setattr(e2e_run, "ROOT", tmp_path)
     monkeypatch.setattr(e2e_run, "OUT_DIR", tmp_path / "results")
-    monkeypatch.setattr(e2e_run, "load_docs", lambda _: {})
+    monkeypatch.setattr(e2e_run, "load_fragment_sets", lambda: (set(), set()))
 
     def execute(cmd, **kwargs):
         calls.append("실행")
@@ -317,7 +321,7 @@ def test_single_command_runs_archives_and_checks_without_overwriting_existing_ru
 def test_single_command_failure_still_archives_and_missing_summary_is_not_success(tmp_path, monkeypatch):
     monkeypatch.setattr(e2e_run, "ROOT", tmp_path)
     monkeypatch.setattr(e2e_run, "OUT_DIR", tmp_path / "results")
-    monkeypatch.setattr(e2e_run, "load_docs", lambda _: {})
+    monkeypatch.setattr(e2e_run, "load_fragment_sets", lambda: (set(), set()))
     monkeypatch.setattr(e2e_run.subprocess, "run", lambda *_a, **_kw: SimpleNamespace(returncode=0))
     with pytest.raises(RuntimeError, match="요약이 없습니다"):
         e2e_run.run(["--run-id", "빈실행"])

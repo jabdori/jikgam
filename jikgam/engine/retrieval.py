@@ -134,8 +134,8 @@ class ArticleIndex:
                     if r in self.modifiers:
                         self.modifiers[r].append(a.id)
 
-    def query_text(self, ctx: RetrievalContext) -> str:
-        recent = list(ctx.customer_texts)[-self.cfg.query_turns:]
+    def query_text(self, ctx: RetrievalContext, *, all_turns: bool = False) -> str:
+        recent = list(ctx.customer_texts) if all_turns else list(ctx.customer_texts)[-self.cfg.query_turns:]
         parts = list(recent)
         if ctx.intent and ctx.intent in self.cfg.intent_terms:
             parts.append(self.cfg.intent_terms[ctx.intent])

@@ -42,6 +42,7 @@ class LawConfig:
     max_candidates: int = 8
     guards: tuple[Guard, ...] = field(default_factory=tuple)
     question_set: Path | None = None  # 법령 구간의 판별 질문(law_applies)
+    query_scope: str = "recent"
 
 
 def load_law(profile: str, path: Path = CONFIG) -> LawConfig:
@@ -50,7 +51,7 @@ def load_law(profile: str, path: Path = CONFIG) -> LawConfig:
     guards = tuple(Guard(g["id"], re.compile(g["pattern"]), int(g["min"]), g["message"]) for g in raw.get("guards", []))
     qs = raw.get("question_set")
     return LawConfig(profile, p["mode"], p["chunks"], p.get("meta", "none"), p.get("embed"), p.get("fusion", "rrf"),
-                     int(p.get("max_candidates", 8)), guards, ROOT / qs if qs else None)
+                     int(p.get("max_candidates", 8)), guards, ROOT / qs if qs else None, raw.get("query_scope", "recent"))
 
 
 def guard_violations(text: str, guards: list[dict[str, Any]]) -> list[str]:

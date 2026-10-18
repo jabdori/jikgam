@@ -2,11 +2,19 @@
  "r0": {
   "valid": 11,
   "passed": 3,
-  "claims": 206,
-  "unsupported": 68,
-  "missing": 0,
+  "claims": 0,
+  "unsupported": 0,
+  "missing": 72,
   "invalid": 1,
   "unknown_compliance": 0,
+  "claim_status": "입력 없음(이전 정의)",
+  "generation_inputs_missing": 72,
+  "legacy_cited_articles": {
+   "label": "인용 조항만 준 이전 판정",
+   "claims": 206,
+   "unsupported": 68,
+   "rate": 0.3300970873786408
+  },
   "unknown_pass": 0,
   "ai_judge_errors": 0,
   "unknown_items": {
@@ -27,8 +35,8 @@
    "public_sessions": 0
   },
   "pass_rate": 0.2727272727272727,
-  "unsupported_claim_rate": 0.3300970873786408,
-  "claim_judgment_complete": true,
+  "unsupported_claim_rate": null,
+  "claim_judgment_complete": false,
   "refresh_ms": {
    "events": 11,
    "p50": 244.307,
@@ -76,11 +84,19 @@
  "r4": {
   "valid": 11,
   "passed": 3,
-  "claims": 204,
-  "unsupported": 86,
-  "missing": 0,
+  "claims": 0,
+  "unsupported": 0,
+  "missing": 73,
   "invalid": 1,
   "unknown_compliance": 0,
+  "claim_status": "입력 없음(이전 정의)",
+  "generation_inputs_missing": 73,
+  "legacy_cited_articles": {
+   "label": "인용 조항만 준 이전 판정",
+   "claims": 204,
+   "unsupported": 86,
+   "rate": 0.4215686274509804
+  },
   "unknown_pass": 0,
   "ai_judge_errors": 0,
   "unknown_items": {
@@ -101,8 +117,8 @@
    "public_sessions": 0
   },
   "pass_rate": 0.2727272727272727,
-  "unsupported_claim_rate": 0.4215686274509804,
-  "claim_judgment_complete": true,
+  "unsupported_claim_rate": null,
+  "claim_judgment_complete": false,
   "refresh_ms": {
    "events": 10,
    "p50": 309.004,
@@ -165,32 +181,23 @@
     -0.2727272727272727,
     0.2727272727272727
    ],
-   "unsupported_r0": [
-    0.2545454545454545,
-    0.4123725901333799
-   ],
-   "unsupported_r4": [
-    0.3693680896805897,
-    0.4791690668202765
-   ],
-   "unsupported_delta": [
-    0.035906476557752275,
-    0.14535044484120374
-   ]
+   "unsupported_r0": null,
+   "unsupported_r4": null,
+   "unsupported_delta": null
   },
   "effective_draws": {
    "pass_r0": 10000,
    "pass_r4": 10000,
    "pass_delta": 10000,
-   "unsupported_r0": 10000,
-   "unsupported_r4": 10000,
-   "unsupported_delta": 10000
+   "unsupported_r0": 0,
+   "unsupported_r4": 0,
+   "unsupported_delta": 0
   }
  },
  "conditions": {
   "pass_noninferior": true,
   "pass_improved": false,
-  "unsupported_not_higher": false,
+  "unsupported_not_higher": null,
   "refresh_p95_le_500": true
  }
 }

@@ -12,6 +12,24 @@ def fragments(docs):
             for i in range(max(0, len(line.text) - 24))}
 
 
+def fragment_sets(docs, org_text=""):
+    """공개 법령·고시나 조직 A 약관에도 있는 조각을 공백 없이 비교해 따로 센다."""
+    terms = {k: d for k, d in docs.items() if k in ("game-terms", "ecom-terms")}
+    public = ["".join(d.text.split()) for k, d in docs.items() if k not in terms]
+    public.append("".join(org_text.split()))
+    unique, shared = set(), set()
+    for part in fragments(terms):
+        normalized = "".join(part.split())
+        (shared if any(normalized in text for text in public) else unique).add(part)
+    return unique, shared
+
+
+def load_fragment_sets():
+    from jikgam.engine.org import load_org
+
+    return fragment_sets(load_docs(), load_org("org_a").terms.read_text(encoding="utf-8"))
+
+
 def scan(paths, needles):
     found = []
     for directory in paths:
@@ -39,8 +57,10 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("paths", nargs="+", type=Path)
     args = ap.parse_args()
-    found = scan(args.paths, fragments(load_docs({"game-terms", "ecom-terms"})))
-    print(json.dumps({"files": found, "count": sum(r["count"] for r in found)}, ensure_ascii=False))
+    unique, shared = load_fragment_sets()
+    found, common = scan(args.paths, unique), scan(args.paths, shared)
+    print(json.dumps({"files": found, "count": sum(r["count"] for r in found), "shared_files": common,
+                      "shared_count": sum(r["count"] for r in common)}, ensure_ascii=False))
     raise SystemExit(bool(found))
 
 

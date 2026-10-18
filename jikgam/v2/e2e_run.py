@@ -9,10 +9,9 @@ import sys
 from pathlib import Path
 
 from jikgam.engine.org import ROOT
-from jikgam.ingest.corpus import load_docs
 from jikgam.sim.runner import OUT_DIR
 from jikgam.v2.e2e_logs import publish
-from jikgam.v2.terms_scan import fragments
+from jikgam.v2.terms_scan import load_fragment_sets
 
 
 def run(args):
@@ -28,7 +27,7 @@ def run(args):
     run_dir = out / run_id
     if run_dir.exists():
         raise SystemExit("기존 실행을 덮어쓸 수 없습니다. 새 --run-id를 지정하세요")
-    needles = fragments(load_docs({"game-terms", "ecom-terms"}))
+    needles, _ = load_fragment_sets()
     result = subprocess.run([sys.executable, "-m", "jikgam.sim.runner", *args], cwd=ROOT, check=False)
     if (run_dir / "summary.json").exists():
         publish(run_dir, needles)

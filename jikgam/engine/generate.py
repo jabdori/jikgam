@@ -304,7 +304,7 @@ def fallback(action: str, ask: str | None, model: str) -> GenerationResult:
     return GenerationResult(text or FALLBACK.get(action, FALLBACK["answer"]), [], None, False, model, fallback=True)
 
 
-async def generate_checked(gen: Generator, payload: dict[str, Any], today: date) -> GenerationResult:
+async def generate_checked(gen: Generator, payload: dict[str, Any], today: date, on_request=None) -> GenerationResult:
     """생성 → 검사 → (위반이면) 지적을 붙여 한 번 더 → 금액·환불 주장 위반이 남으면 고정 문구.
 
     must_mention만 빠진 경우는 두 번째 결과를 쓰고 위반을 기록한다."""
@@ -314,6 +314,8 @@ async def generate_checked(gen: Generator, payload: dict[str, Any], today: date)
     feedback = None
     violations: list[str] = []
     for attempt in (1, 2):
+        if on_request is not None:
+            on_request(payload, feedback, attempt)
         r = await gen.generate(payload, feedback)
         total_ms, tin, tout, cost = total_ms + r.latency_ms, tin + r.input_tokens, tout + r.output_tokens, cost + r.cost_usd
         if r.error:

@@ -330,12 +330,15 @@ class Session:
                 result = self.index.search(self._retrieval_context())
                 law_extra: dict[str, Any] = {}
                 if self.law is not None:
-                    # 같은 검색어로 법령·고시 구간을 찾아 약관 후보 뒤에 붙인다(판별은 같은 applies 호출)
-                    law_ids, law_ms = self.law.search(result.query)
+                    # 법령만 전체 고객 발화와 기존 의도·표현 확장을 쓴다. 조직 약관 검색어는 그대로다.
+                    law_query = self.index.query_text(self._retrieval_context(), all_turns=True) \
+                        if self.law.cfg.query_scope == "all" else result.query
+                    law_ids, law_ms = self.law.search(law_query)
                     law_ids = [a for a in law_ids if a not in result.candidates]
                     result.candidates = result.candidates + law_ids
                     result.sources.update({a: "law" for a in law_ids})
-                    law_extra = {"law_candidates": law_ids, "law_ms": round(law_ms, 3), "law_profile": self.law.cfg.profile}
+                    law_extra = {"law_candidates": law_ids, "law_ms": round(law_ms, 3),
+                                 "law_profile": self.law.cfg.profile, "law_query": law_query}
                 out.append(self.log.emit(ev.RETRIEVAL_DONE, self.state.version, started_version=my_v,
                                          duration_ms=round(now_ms() - t0, 3), candidates=result.candidates,
                                          sources=result.sources, query=result.query, **law_extra))
@@ -426,9 +429,16 @@ class Session:
             stage = "generation"
             evidence = self._answer_evidence(plan)
             payload = self._generation_payload(plan, evidence)
-            out.append(self.log.emit(ev.GENERATION_REQUEST, my_v, model=self.generator.model, action=plan.action,
-                                     rule=plan.rule, articles=[a["id"] for a in payload["articles"]]))
-            g = await gen.generate_checked(self.generator, payload, self.org.today)
+            request_ids = []
+
+            def record_generation(value, feedback, attempt):
+                request_id = f"{self.session_id}-g{my_v}-{attempt}"
+                request_ids.append(request_id)
+                out.append(self.log.emit(ev.GENERATION_REQUEST, my_v, model=self.generator.model, action=plan.action,
+                                         rule=plan.rule, articles=[a["id"] for a in value["articles"]],
+                                         request_id=request_id, input=value, feedback=feedback, attempt=attempt))
+
+            g = await gen.generate_checked(self.generator, payload, self.org.today, on_request=record_generation)
             out.append(self.log.emit(ev.GENERATION_RESPONSE, self.state.version, request_version=my_v, model=g.model,
                                      latency_ms=round(g.latency_ms, 1), input_tokens=g.input_tokens,
                                      output_tokens=g.output_tokens, cost_usd=g.cost_usd, attempts=g.attempts,
@@ -437,7 +447,7 @@ class Session:
                 out.append(self._discard(stage, my_v))
                 return
             # 9. 제안과 노출
-            self._expose(plan, g, my_v, out, evidence)
+            self._expose(plan, g, my_v, out, evidence, generation_request_id=request_ids[-1])
         except asyncio.CancelledError:
             out.append(self.log.emit(ev.TASK_CANCELLED, self.state.version, stage=stage, started_version=my_v))
             raise
@@ -806,7 +816,7 @@ class Session:
         }
 
     def _expose(self, plan: policy.Plan, g: gen.GenerationResult, my_v: int, out: list[dict[str, Any]],
-                evidence: dict[str, list[str]]) -> None:
+                evidence: dict[str, list[str]], generation_request_id: str | None = None) -> None:
         """제안을 만들고 채널에 낸다. cited_articles는 이 응답의 근거 집합(_answer_evidence)이고, 생성기가 문장의 근거로 든
         조항은 generator_cited로 따로 남긴다(docs/engine.md §12). 고정 문구(생성 실패·검사 위반, 엔진 오류)는 근거 조항으로
         만든 문장이 아니므로 근거 집합을 비운다."""
@@ -826,6 +836,7 @@ class Session:
         out.append(self.log.emit(ev.SUGGESTION_CREATED, my_v, suggestion_id=sid, basis_version=my_v, text=g.say,
                                  action=plan.action, rule=plan.rule, intent=self.state.request,
                                  cited_articles=cited, generator_cited=g.cited_articles, evidence_sources=sources,
+                                 generation_request_id=generation_request_id,
                                  amount=g.amount, amount_final=g.amount_final,
                                  proposal=({"signature": proposal.signature, "kind": proposal.kind,
                                             "writes": [w.tool for w in proposal.writes]} if proposal else None),

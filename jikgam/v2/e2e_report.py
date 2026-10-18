@@ -29,6 +29,9 @@ def ratio(a, b):
 def claim_counts(events, articles, directory, model):
     total = unsupported = missing = failed = 0
     for row in e2e_claims.exposed_inputs(events, articles):
+        if row.get("input_missing"):
+            missing += 1
+            continue
         path = directory / f"{e2e_claims.fingerprint(row, model)}.json"
         if not path.exists():
             missing += 1
@@ -51,14 +54,21 @@ def collect(run_dir, expected_law=None):
     articles = e2e_claims.article_map(run["summary"])
     model = load_config()[answer.JUDGE_MODEL]["model"]
     rows = []
+    cached = [json.loads(p.read_text(encoding="utf-8")) for p in directory.glob("*.json")]
     for s in run["sessions"]:
         r = s["result"]
         events = read_log(run_dir / f"{s['session']}.jsonl")
         total, unsupported, missing, failed = claim_counts(events, articles, directory, model)
+        legacy = [c for rec in cached if rec.get("session") == s["session"]
+                  and rec.get("definition") != e2e_claims.DEFINITION and not rec.get("error")
+                  for c in rec.get("claims") or []]
+        input_missing = sum(r["input_missing"] for r in e2e_claims.exposed_inputs(events))
         rows.append({"scenario": s["scenario"], "run": s.get("run", 1),
                      "private_log": original_path(run_dir / f"{s['session']}.jsonl").parent != run_dir,
                      "valid": r["compliance"]["valid"], "pass": r["pass"], "claims": total,
                      "unsupported": unsupported, "missing": missing, "claim_failures": failed,
+                     "input_missing": input_missing, "legacy_claims": len(legacy),
+                     "legacy_unsupported": sum(not c["supported"] for c in legacy),
                      "ai_error": bool((s.get("ai") or {}).get("error")),
                      "items": {n: v["ok"] for n, v in r["items"].items()},
                      "aux": r["aux"], "metrics": s["metrics"]})
@@ -89,6 +99,15 @@ def summarize(rows, cost):
     valid = [r for r in rows if r["valid"] is not False]
     agg = metrics.aggregate([r["metrics"] for r in valid])
     return {**t, "invalid": len(rows) - t["valid"], "unknown_compliance": sum(r["valid"] is None for r in rows),
+            "claim_status": "입력 없음(이전 정의)" if any(r.get("input_missing", 0) for r in valid)
+                            else ("판정 완료" if not t["missing"] else "미판정 제안 있음"),
+            "generation_inputs_missing": sum(r.get("input_missing", 0) for r in valid),
+            "legacy_cited_articles": {
+                "label": "인용 조항만 준 이전 판정",
+                "claims": sum(r.get("legacy_claims", 0) for r in valid),
+                "unsupported": sum(r.get("legacy_unsupported", 0) for r in valid),
+                "rate": ratio(sum(r.get("legacy_unsupported", 0) for r in valid),
+                              sum(r.get("legacy_claims", 0) for r in valid))},
             "unknown_pass": sum(r["pass"] is None for r in valid),
             "ai_judge_errors": sum(r.get("ai_error", False) for r in rows),
             "unknown_items": {str(n): sum(r["items"][n] is None for r in valid) for n in range(1, 11)},
@@ -172,7 +191,7 @@ def render(report):
         s = report[key]
         rate = s["unsupported_claim_rate"]
         claim_text = (f"{s['unsupported']}/{s['claims']} ({rate:.2%})" if rate is not None
-                      else f"미판정(완료 주장 {s['claims']}, 미판정 제안 {s['missing']})")
+                      else f"{s['claim_status']}(완료 주장 {s['claims']}, 미판정 제안 {s['missing']})")
         lines.append(f"| {key.upper()} | {s['passed']}/{s['valid']} | {s['invalid']} | "
                      f"{','.join(str(x) for x in s['failures'].values())} | "
                      f"{claim_text} | "
@@ -189,6 +208,11 @@ def render(report):
               f"시나리오 단위 짝지은 부트스트랩 95% 구간: {report['bootstrap']['ci95']}",
               f"판정 조건: {report['conditions']}",
               f"입력 로그 출처: R0 {report['r0']['log_sources']}, R4 {report['r4']['log_sources']}"]
+    if any(report[k]["legacy_cited_articles"]["claims"] for k in ("r0", "r4")):
+        lines += ["", "인용 조항만 준 이전 판정(새 정의와 직접 비교하지 않음)"]
+        for key in ("r0", "r4"):
+            legacy = report[key]["legacy_cited_articles"]
+            lines.append(f"- {key.upper()}: {legacy['unsupported']}/{legacy['claims']} ({legacy['rate']})")
     return "\n".join(lines) + "\n"
 
 
@@ -206,9 +230,9 @@ def main():
     dest = ROOT / "results/v2/e2e" / args.name
     dest.mkdir(parents=True, exist_ok=True)
     (dest / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=1, allow_nan=False) + "\n",
-                                      encoding="utf-8")
+                                      encoding="utf-8", newline="\n")
     table = render(report)
-    (dest / "report.md").write_text(table, encoding="utf-8")
+    (dest / "report.md").write_text(table, encoding="utf-8", newline="\n")
     print(table)
 
 

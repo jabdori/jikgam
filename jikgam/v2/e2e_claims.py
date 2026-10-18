@@ -7,8 +7,7 @@ import json
 from pathlib import Path
 
 from jikgam.v2.e2e_logs import read_log
-from jikgam.engine.org import ROOT, load_org
-from jikgam.engine.retrieval import parse_terms
+from jikgam.engine.org import ROOT
 from jikgam.sim.gemini import GeminiJson
 from jikgam.v2 import answer
 from jikgam.v2.retry import ask_json
@@ -20,35 +19,35 @@ SCHEMA = {"type": "object", "properties": {"claims": {"type": "array", "items": 
     "type": "object", "properties": {"claim": {"type": "string"}, "supported": {"type": "boolean"},
                                      "reason": {"type": "string"}},
     "required": ["claim", "supported", "reason"]}}}, "required": ["claims"]}
+DEFINITION = "generation-input-v2"
 
 
-def exposed_inputs(events, articles):
-    """중복 채널 노출은 제안 하나로 센다. 로그의 본문이 있으면 현재 색인보다 우선한다."""
+def exposed_inputs(events, articles=None):
+    """실제 생성 입력 전체를 요청 ID로 연결한다. 이전 로그를 조항 글로 복원하지 않는다."""
     exposed = {e["suggestion_id"] for e in events if e["type"] == "suggestion.exposed"}
     conversation = []
-    generation_text = {}
+    requests, versions = {}, {}
     for e in events:
         if e["type"] == "utterance.end" and e.get("speaker", "customer") == "customer":
             conversation.append(e["text"])
         if e["type"] == "generation.request":
-            given = (e.get("payload") or {}).get("articles", e.get("articles", []))
-            generation_text[e.get("version")] = {a["id"]: a for a in given
-                                                  if isinstance(a, dict) and isinstance(a.get("text"), str)}
+            if e.get("request_id"):
+                requests[e["request_id"]] = e
+            versions[e.get("version")] = e
         if e["type"] != "suggestion.created" or e["suggestion_id"] not in exposed:
             continue
-        logged = dict(generation_text.get(e.get("basis_version", e.get("version")), {}))
-        logged.update({a["id"]: a for a in e.get("articles", [])
-                       if isinstance(a, dict) and isinstance(a.get("text"), str)})
-        ids = e.get("cited_articles", [])
-        parts = []
-        for aid in ids:
-            a = logged.get(aid) or articles.get(aid)
-            if a is None:
-                raise ValueError(f"생성 근거를 복원할 수 없습니다: {aid}")
-            text = a["text"] if isinstance(a, dict) else a.text
-            parts.append(f"[근거 {aid}]\n{text}")
+        request = (requests.get(e["generation_request_id"]) if e.get("generation_request_id")
+                   else versions.get(e.get("basis_version", e.get("version"))))
+        value = request.get("input") if request else None
+        missing = not isinstance(value, dict)
+        evidence = "" if missing else json.dumps(value, ensure_ascii=False, indent=1, default=str)
+        feedback = request.get("feedback") if request else None
+        if feedback and not missing:
+            evidence += "\n\n이전 출력의 문제(고쳐서 다시 쓴다): " + feedback
         yield {"suggestion_id": e["suggestion_id"], "question": "\n".join(conversation),
-               "answer": e["text"], "evidence": "\n\n".join(parts), "evidence_ids": ids}
+               "answer": e["text"], "evidence": evidence, "generation_input": value,
+               "generation_request_id": request.get("request_id") if request else None,
+               "input_missing": missing, "definition": DEFINITION}
 
 
 def fingerprint(row, model):
@@ -63,21 +62,17 @@ def local_dir(run_id, root=ROOT):
 
 
 def article_map(summary):
-    from jikgam.ingest import chunk
-    from jikgam.ingest.corpus import load_docs
-    from jikgam.engine.law import load_law
-
-    articles = dict(parse_terms(load_org(summary["org"]).terms))
-    # 복원에는 검색·임베딩 모델을 띄울 필요가 없다.
-    docs = load_docs()
-    for c in chunk.load(load_law(summary["law"]).chunks):
-        articles[c.id] = {"text": docs[c.doc].text[c.start:c.end]}
-    return articles
+    """기존 호출 호환용. 이전 정의의 조항 복원은 더 이상 사용하지 않는다."""
+    return {}
 
 
 async def run(run_dir: Path, max_cost: float, retry_failed=False, concurrency=8):
     summary = json.loads((run_dir / "summary.json").read_text(encoding="utf-8"))
     articles = article_map(summary)
+    inputs = {s["session"]: list(exposed_inputs(read_log(run_dir / f"{s['session']}.jsonl")))
+              for s in summary["sessions"]}
+    if any(r.get("input_missing", False) for rows in inputs.values() for r in rows):
+        raise ValueError("입력 없음(이전 정의): 생성 입력 전체가 없는 실행은 주장 판정을 하지 않습니다")
     dest = local_dir(summary["run_id"])
     dest.mkdir(parents=True, exist_ok=True)
     client = GeminiJson.from_config(answer.JUDGE_MODEL, timeout_s=600, retry_delays_s=())
@@ -121,9 +116,8 @@ async def run(run_dir: Path, max_cost: float, retry_failed=False, concurrency=8)
                 reserved -= 0.20
     try:
         for sess in summary["sessions"]:
-            events = read_log(run_dir / f"{sess['session']}.jsonl")
             # 실패하더라도 진행 중 호출을 회수하고 과금 기록을 남긴 뒤 멈춘다.
-            results = await asyncio.gather(*(one(row, sess) for row in exposed_inputs(events, articles)),
+            results = await asyncio.gather(*(one(row, sess) for row in inputs[sess["session"]]),
                                            return_exceptions=True)
             print(f"{sess['session']}: 주장 판정 누적 ${spent:.4f}", flush=True)
             failure = next((r for r in results if isinstance(r, BaseException)), None)

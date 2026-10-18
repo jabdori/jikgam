@@ -84,12 +84,13 @@ def publish(run_dir, needles, root=ROOT):
             public = json.dumps(changed, ensure_ascii=False, indent=1) + "\n"
         if not regions:
             public = text
+        public = public.replace("\r\n", "\n").replace("\r", "\n")
         if not private.exists():
             private.write_bytes(raw)
         manifest["files"][path.name] = {"sha256": sha(raw), "redacted_regions": regions,
-                                         "redacted_fragments": pieces}
+                                         "redacted_fragments": pieces, "public_sha256": sha(public.encode("utf-8"))}
         # 먼저 출처를 기록해, 중단되더라도 사본을 원본으로 오인하지 않게 한다.
-        manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n")
         path.write_bytes(public.encode("utf-8"))
     found = terms_scan.scan([run_dir], needles)
     if found:
@@ -118,7 +119,7 @@ def original_path(path, root=ROOT):
         return private
     if entry["redacted_regions"]:
         raise FileNotFoundError(f"가려진 사본으로는 판정할 수 없습니다. 비공개 원본이 필요합니다: {path.name}")
-    if sha(path.read_bytes()) != entry["sha256"]:
+    if sha(path.read_bytes()) != entry.get("public_sha256", entry["sha256"]):
         # 무가림 사본도 직렬화가 달라질 수 있으므로 원본 파일을 복원해야 한다.
         raise FileNotFoundError(f"원본과 같은 사본이 아닙니다: {path.name}")
     return path
@@ -152,26 +153,24 @@ def store_json(path, value, root=ROOT):
     if not manifest:
         path.write_bytes(text.encode("utf-8"))
         return
-    from jikgam.ingest.corpus import load_docs
-
-    needles = terms_scan.fragments(load_docs({"game-terms", "ecom-terms"}))
+    needles, _ = terms_scan.load_fragment_sets()
     safe, regions, pieces = hide_value(value, needles)
     dest.mkdir(parents=True, exist_ok=True)
     (dest / path.name).write_bytes(text.encode("utf-8"))
     manifest["files"][path.name] = {"sha256": sha(text.encode("utf-8")), "redacted_regions": regions,
                                      "redacted_fragments": pieces}
-    mp.write_text(json.dumps(manifest, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     public = json.dumps(safe, ensure_ascii=False, indent=1) + "\n" if regions else text
+    public = public.replace("\r\n", "\n").replace("\r", "\n")
+    manifest["files"][path.name]["public_sha256"] = sha(public.encode("utf-8"))
+    mp.write_text(json.dumps(manifest, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n")
     path.write_bytes(public.encode("utf-8"))
 
 
 def main():
-    from jikgam.ingest.corpus import load_docs
-
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("run_dir", type=Path)
     args = ap.parse_args()
-    print(json.dumps(publish(args.run_dir, terms_scan.fragments(load_docs({"game-terms", "ecom-terms"}))),
+    print(json.dumps(publish(args.run_dir, terms_scan.load_fragment_sets()[0]),
                      ensure_ascii=False))
 
 
