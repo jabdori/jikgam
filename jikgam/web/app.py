@@ -20,10 +20,11 @@
 - POST /admin/retrieval             검색 val 실행의 비용 확인과 시작
 - GET  /admin/replay[/{run}/{session}][?at=]  통화 리플레이, /admin/replay/{run}/{session}/audio 녹음
 - GET  /admin/tenants[?org=]        고객사 관리
-- GET  /admin/voice-test[?call=&customer=]  음성 시험(이 PC에서만). POST /admin/voice-test/offer(브라우저 WebRTC 제안 → 응답),
+- GET  /admin/voice-test[?call=&customer=]  음성 시험(이 PC와 같은 Tailscale 네트워크에서만). POST /admin/voice-test/offer(브라우저 WebRTC 제안 → 응답),
   POST /admin/voice-test/stop(종료)
 """
 
+import ipaddress
 import time
 from dataclasses import dataclass, field
 from urllib.parse import quote, urlsplit
@@ -262,11 +263,18 @@ def create_app(cfg: WebConfig) -> Starlette:
             return not_found()
         return FileResponse(rec["path"], media_type="audio/wav")
 
+    voice_nets = [ipaddress.ip_network(n) for n in settings.VOICE_TEST_ALLOWED_NETS]
+
     def local_only(request: Request) -> Response | None:
-        """음성 시험은 이 PC에서만 연다. 쓰기 요청은 같은 출처에서 온 것만 받는다(다른 사이트가 통화를 열지 못하게)."""
-        host = request.client.host if request.client else ""
-        if host not in settings.VOICE_TEST_LOCAL_HOSTS:
-            return PlainTextResponse("음성 시험은 이 PC(127.0.0.1)에서만 열 수 있습니다.", status_code=403)
+        """음성 시험은 이 PC와 같은 Tailscale 네트워크의 기기에서만 연다. tailscale serve를 거치면 웹 서버가 실제 접속 기기
+        주소(X-Forwarded-For, 이 PC의 프록시가 보낸 것만 믿는다)를 본다. 쓰기 요청은 같은 출처에서 온 것만 받는다(다른 사이트가
+        통화를 열지 못하게)."""
+        try:
+            addr = ipaddress.ip_address(request.client.host if request.client else "")
+        except ValueError:
+            addr = None
+        if addr is None or not any(addr in n for n in voice_nets):
+            return PlainTextResponse("음성 시험은 이 PC와 같은 Tailscale 네트워크의 기기에서만 열 수 있습니다.", status_code=403)
         origin = request.headers.get("origin")
         if request.method == "POST" and origin and urlsplit(origin).netloc != request.url.netloc:
             return PlainTextResponse("다른 출처의 요청은 받지 않습니다.", status_code=403)

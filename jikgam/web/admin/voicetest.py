@@ -2,7 +2,7 @@
 
 한 화면에 시작·종료, 대화(고객의 미확정 자막이 말하는 도중 바뀌고, AI 답은 재생에 맞춰 글자가 드러난다), 판단 로그(대화 버전,
 판별 결과와 지연, 근거, 업무 API, 끼어들기, 폐기된 답과 사유), 시험자가 연기할 가상 고객 정보가 있다. 통화 중에는 세션 로그를
-읽어 갱신한다. 이 PC(127.0.0.1)에서만 연다. 기록은 평가 수치에 쓰지 않는다.
+읽어 갱신한다. 이 PC와 같은 Tailscale 네트워크의 기기에서만 연다. 기록은 평가 수치에 쓰지 않는다.
 """
 
 from typing import Any
@@ -238,7 +238,7 @@ def page(ctx: Ctx, tests: vt.VoiceTests) -> Any:
     else:
         parts.append(ui.card(ui.empty("시작을 누르면 대화와 판단 로그가 여기에 쌓입니다.",
                                       "처음에는 브라우저가 마이크 권한을 묻습니다."), title="대화", label="대화"))
-    main = ui.stack(ui.page_header("음성 시험", "브라우저 마이크로 직접 말하며 상담 엔진을 시험합니다. 이 PC에서만 열리고, "
+    main = ui.stack(ui.page_header("음성 시험", "브라우저 마이크로 직접 말하며 상담 엔진을 시험합니다. 이 PC와 같은 Tailscale 네트워크에서만 열리고, "
                                                "기록(results/voice/live/)은 평가 수치에 쓰지 않습니다."),
                     ui.split(ui.stack(*parts, gap="lg"), side), gap="lg")
     return shell(ctx, "voice-test", "음성 시험", main)

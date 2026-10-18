@@ -135,7 +135,8 @@ uv run python -m jikgam.web             # 다른 터미널에서. http://127.0.0
 
 - **전송:** Pipecat 1.12.0의 SmallWebRTC(`pipecat.transports.smallwebrtc`, aiortc). aiortc는 기본 의존성 묶음 `voice-web`에 있다. 브라우저는 에코 제거·잡음 억제·자동 음량을 켠 마이크를 보내고, AI 음성은 같은 연결로 받아 브라우저 스피커로 재생한다(`static/console.js`의 `data-voice-test`).
 - **한도:** 한 번에 한 통화, 최대 5분(`settings.VOICE_TEST_MAX_S`). 종료 버튼, 브라우저 연결 끊김, 한도 중 먼저 오는 것으로 끝난다. 시작 전 화면에 분당 예상 비용(정책 C 음성 기록 `results/voice/voice-barge-C`의 엔진·STT·TTS 추정 합 ÷ STT 연결 시간)을 보인다. 청구 금액은 아니다.
-- **접근:** 이 PC(127.0.0.1)에서 온 요청만 받고, 쓰기 요청은 같은 출처만 받는다. API 키는 `.env`에서만 읽는다.
+- **접근:** 이 PC와 같은 Tailscale 네트워크(`100.64.0.0/10`, `fd7a:115c:a1e0::/48`)의 기기에서 온 요청만 받고(`settings.VOICE_TEST_ALLOWED_NETS`), 쓰기 요청은 같은 출처만 받는다. API 키는 `.env`에서만 읽는다.
+- **다른 PC에서 열기:** 웹 서버는 127.0.0.1에 둔 채 이 PC에서 `tailscale serve --bg 8100`을 실행하고, 같은 tailnet의 PC에서 `https://<이 PC의 Tailscale 이름>/admin/voice-test`를 연다. 브라우저는 HTTPS나 localhost에서만 마이크를 허용하므로 `--host 0.0.0.0`으로 HTTP를 열어서는 마이크를 쓸 수 없다. tailnet에서 Serve와 HTTPS 인증서를 먼저 켜야 한다(인증서를 켜면 PC 이름이 공개 인증서 기록에 남는다). 웹 서버는 이 PC의 프록시가 보낸 실제 접속 주소(`X-Forwarded-For`)로 위 대역을 검사한다. 끄려면 `tailscale serve --https=443 off`.
 - **기록:** `results/voice/live/<시험 id>/`에 세션 로그(`.jsonl`, 기존 형식)와 스테레오 녹음(`.wav`, 왼쪽 고객·오른쪽 AI)을 남긴다. git에 넣지 않고 평가 수치에 쓰지 않는다. 끝난 통화는 통화 리플레이 목록에 "음성 시험 · <id>"로 나오고 녹음과 함께 열린다.
 - **녹음:** STT가 입력 음성을 다음 단계로 넘기지 않아(`audio_passthrough=False`) 출력 뒤 한 곳에서는 고객 음성을 받을 수 없다. 입력 전송 바로 뒤와 출력 전송 바로 뒤에 프레임을 그대로 넘기는 탭을 두고(`after_input`, `after_output`), 엔진 시계로 두 채널 위치를 맞춘다(`jikgam/voice/recorder.py`). 녹음 시작 시각은 `voice.recording`의 `t0_ms`다.
 - **말 시작 시점:** 연결 뒤 음성 엔진이 준비될 때까지(이 PC의 두 번 시험에서 2.55초, 2.73초) 들어온 말은 받지 못한다. 화면 상태가 '통화 중'으로 바뀐 뒤 말한다.
@@ -145,3 +146,5 @@ uv run python -m jikgam.web             # 다른 터미널에서. http://127.0.0
 - 첫 응답(첫 고객 말 끝 → AI 음성 시작): 4.13초. 확정 자막 1.12초, 판별 0.20초, 생성 1.88초, TTS 첫 소리 0.93초. 나머지 세 응답은 3.94~4.46초.
 - 끼어들기: AI가 말하는 중에 고객이 다음 말을 시작한 1회, VAD 시작과 같은 시각(0.1ms 뒤)에 끼어들기로 판정해 재생을 멈췄다(AI 음성 3.9초 재생). 그 말("아 그냥 해지할게요")로 요청이 결제 문의에서 해지로 바뀌어 이전 답이 무효가 됐고, 해지 안내로 이어졌다.
 - 녹음 71.8초, 두 채널의 말 구간이 VAD·재생 이벤트 시각과 맞았다. 리플레이와 녹음 파일 응답 200.
+
+Tailscale을 거친 확인(2026-10-19, `20261019-081349`): `tailscale serve`의 HTTPS 주소로 연 같은 PC의 브라우저(가짜 마이크)에서 통화가 이어졌다(응답 4.04초, 녹음 15.6초). 프록시를 거쳐도 같은 출처 검사는 통과하고 다른 출처는 403이었다. 서버(aiortc)는 Tailscale 주소를 연결 후보로 낸다. 다른 PC에서 실제로 말해 본 연결은 아직 확인하지 않았다.

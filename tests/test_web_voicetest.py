@@ -29,10 +29,12 @@ def client(host="127.0.0.1"):
     return TestClient(create_app(WebConfig(root=ROOT, accounts={"a": A, "t": T}, clock=lambda: 0.0)), client=(host, 50000))
 
 
-def test_only_admins_on_this_pc_can_open_it(monkeypatch):
+def test_only_admins_on_this_pc_or_the_tailnet_can_open_it(monkeypatch):
     monkeypatch.setattr(vt, "bizapi_up", lambda url: False)
     assert client().get("/admin/voice-test", headers=hdr(A)).status_code == 200
-    assert client("10.0.0.7").get("/admin/voice-test", headers=hdr(A)).status_code == 403
+    assert client("100.101.7.9").get("/admin/voice-test", headers=hdr(A)).status_code == 200  # Tailscale 기기
+    for host in ("10.0.0.7", "192.168.0.12", "testclient"):
+        assert client(host).get("/admin/voice-test", headers=hdr(A)).status_code == 403, host
     assert client().get("/admin/voice-test", headers=hdr(T)).status_code == 403
     r = client().post("/admin/voice-test/offer", headers={**hdr(A), "origin": "http://evil.example"}, json={"sdp": "x", "type": "offer"})
     assert r.status_code == 403
