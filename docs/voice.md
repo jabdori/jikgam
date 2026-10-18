@@ -121,3 +121,27 @@ uv run python -m jikgam.voice.replay --replays s01 s20 s21 --bizapi-url http://1
 - 잠정 확정 뒤 고객이 다시 말하기 전에 늦게 온 실시간 자막은 끝난 말의 것으로 보고 기록만 한다(끼어들기로 보지 않는다).
 
 음성 시나리오 실행기(`jikgam/voice/sim.py`)는 AI 고객의 문장을 고객 목소리 TTS로 읽혀 넣고, 녹음과 그 시작 시각(`voice.recording`)을 남긴다. 실행과 보고는 `scripts/run_voice_eval.sh`, `jikgam/voice/report.py`다.
+
+## 8. 관리 콘솔 음성 시험(2026-10-19)
+
+사람이 브라우저 마이크로 직접 말하며 엔진을 시험하는 화면이다(`/admin/voice-test`, 관리자 계정). 엔진, VAD, STT, TTS, 응답 재생 규칙(§4), 로그 형식(§3)은 음성 재생 실행기와 같고 전송만 다르다. 세션은 `make_voice_session`과 `voice_options`(정책 C), 파이프라인은 `build_voice_pipeline`으로 만든다(`jikgam/web/data/voicetest.py`).
+
+실행:
+
+```sh
+cd bizapi && go run ./cmd/bizapi        # 모의 업무 API(127.0.0.1:8081). 꺼져 있으면 화면이 시작 버튼 옆에 이 명령을 안내한다
+uv run python -m jikgam.web             # 다른 터미널에서. http://127.0.0.1:8100/admin/voice-test
+```
+
+- **전송:** Pipecat 1.12.0의 SmallWebRTC(`pipecat.transports.smallwebrtc`, aiortc). aiortc는 기본 의존성 묶음 `voice-web`에 있다. 브라우저는 에코 제거·잡음 억제·자동 음량을 켠 마이크를 보내고, AI 음성은 같은 연결로 받아 브라우저 스피커로 재생한다(`static/console.js`의 `data-voice-test`).
+- **한도:** 한 번에 한 통화, 최대 5분(`settings.VOICE_TEST_MAX_S`). 종료 버튼, 브라우저 연결 끊김, 한도 중 먼저 오는 것으로 끝난다. 시작 전 화면에 분당 예상 비용(정책 C 음성 기록 `results/voice/voice-barge-C`의 엔진·STT·TTS 추정 합 ÷ STT 연결 시간)을 보인다. 청구 금액은 아니다.
+- **접근:** 이 PC(127.0.0.1)에서 온 요청만 받고, 쓰기 요청은 같은 출처만 받는다. API 키는 `.env`에서만 읽는다.
+- **기록:** `results/voice/live/<시험 id>/`에 세션 로그(`.jsonl`, 기존 형식)와 스테레오 녹음(`.wav`, 왼쪽 고객·오른쪽 AI)을 남긴다. git에 넣지 않고 평가 수치에 쓰지 않는다. 끝난 통화는 통화 리플레이 목록에 "음성 시험 · <id>"로 나오고 녹음과 함께 열린다.
+- **녹음:** STT가 입력 음성을 다음 단계로 넘기지 않아(`audio_passthrough=False`) 출력 뒤 한 곳에서는 고객 음성을 받을 수 없다. 입력 전송 바로 뒤와 출력 전송 바로 뒤에 프레임을 그대로 넘기는 탭을 두고(`after_input`, `after_output`), 엔진 시계로 두 채널 위치를 맞춘다(`jikgam/voice/recorder.py`). 녹음 시작 시각은 `voice.recording`의 `t0_ms`다.
+- **말 시작 시점:** 연결 뒤 음성 엔진이 준비될 때까지(이 PC의 두 번 시험에서 2.55초, 2.73초) 들어온 말은 받지 못한다. 화면 상태가 '통화 중'으로 바뀐 뒤 말한다.
+
+가짜 마이크로 확인한 결과(2026-10-19, `20261019-072944`, 유료 호출 약 1분): Chromium 가짜 마이크 장치에 s20 고객 녹음(TTS로 만든 가상 고객 음성, `data/voice/s20/u1~u4.wav`)을 사이 쉼과 함께 넣었다. 사람의 목소리가 아니고, 가짜 장치는 스피커 소리가 마이크로 다시 들어가지 않아 에코 제거는 확인하지 못했다.
+
+- 첫 응답(첫 고객 말 끝 → AI 음성 시작): 4.13초. 확정 자막 1.12초, 판별 0.20초, 생성 1.88초, TTS 첫 소리 0.93초. 나머지 세 응답은 3.94~4.46초.
+- 끼어들기: AI가 말하는 중에 고객이 다음 말을 시작한 1회, VAD 시작과 같은 시각(0.1ms 뒤)에 끼어들기로 판정해 재생을 멈췄다(AI 음성 3.9초 재생). 그 말("아 그냥 해지할게요")로 요청이 결제 문의에서 해지로 바뀌어 이전 답이 무효가 됐고, 해지 안내로 이어졌다.
+- 녹음 71.8초, 두 채널의 말 구간이 VAD·재생 이벤트 시각과 맞았다. 리플레이와 녹음 파일 응답 200.

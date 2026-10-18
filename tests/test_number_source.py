@@ -4,7 +4,8 @@
 건수, 금액, 날짜, 시각, 확률, 지연, 비용을 모두 바꾼 것이다. 화면의 숫자는 fmt를 거쳐 data-num 요소로만 나가므로, 두 벌의
 data-num 값이 하나라도 겹치면 자료와 무관하게 늘 같은 숫자(코드에 박힌 숫자)로 본다.
 
-결과 자료가 아닌 종류는 뺀다: index(목록의 몇 번째), rank(순위), axis(재생 띠 눈금), criterion(평가 기준 문서의 사전 기준 값).
+결과 자료가 아닌 종류는 뺀다: index(목록의 몇 번째), rank(순위), axis(재생 띠 눈금), criterion(평가 기준 문서의 사전 기준 값),
+setting(화면 설정값, 예: 음성 시험의 최대 통화 시간).
 """
 
 import re
@@ -17,7 +18,7 @@ from web_fixture import build
 from jikgam.web import auth
 from jikgam.web.app import WebConfig, create_app
 
-EXCLUDED_KINDS = {"index", "rank", "axis", "criterion"}
+EXCLUDED_KINDS = {"index", "rank", "axis", "criterion", "setting"}
 TENANT = auth.Account("t", "pw", "tenant", "org_t")
 ADMIN = auth.Account("a", "pw", "admin")
 
@@ -47,7 +48,7 @@ def clients(tmp_path):
         if v:  # 둘째 벌은 조직 유에도 계정이 있어 온보딩 남은 항목이 없다(첫째 벌은 1개)
             accounts["u"] = auth.Account("u", "pw", "tenant", "org_u")
         app = create_app(WebConfig(root=root, accounts=accounts, clock=lambda v=v: 0.0 + 7.3 * v))
-        out.append(TestClient(app))
+        out.append(TestClient(app, client=("127.0.0.1", 50000)))  # 음성 시험은 이 PC에서만 열린다
     return out
 
 
@@ -57,7 +58,8 @@ def first_call_id(html: str) -> str:
 
 SAAS = ["/app/live", "/app/calls", "/app/report?period=0", "/app/knowledge?doc=terms&seg=T-02", "/app/knowledge?doc=notices",
         "/app/integrations"]
-ADMIN_PAGES = ["/admin/models", "/admin/tenants?org=org_u", "/admin/replay?s=rp-C/s20-r1-rp-C&at=2"]
+ADMIN_PAGES = ["/admin/models", "/admin/tenants?org=org_u", "/admin/replay?s=rp-C/s20-r1-rp-C&at=2",
+               "/admin/voice-test?call=20990101-000000"]
 
 
 @pytest.fixture(scope="module")

@@ -57,3 +57,13 @@ PDF_MAX_BYTES = 20 * 1024 * 1024
 KNOWLEDGE_PAGE_SIZE = 12
 KNOWLEDGE_STAGE_COUNT = 4
 RETRIEVAL_PIPELINE = "full · snow+RRF · Jev 8"
+
+# 관리 콘솔 음성 시험(/admin/voice-test). 이 PC에서만 연다. 한 번에 한 통화, 최대 시간(초)이 지나면 끝낸다
+VOICE_TEST_LOCAL_HOSTS = ("127.0.0.1", "::1", "localhost")
+VOICE_TEST_MAX_S = 300
+VOICE_TEST_POLICY = "C"          # 엔진 + 조직 기본 판별 백엔드(음성 재생 실행기의 기본과 같다)
+VOICE_TEST_CUSTOMER = "C001"     # 처음 보여 줄 시험용 가상 고객(모의 업무 API 자료)
+VOICE_TEST_TOP_ARTICLES = 3      # 판단 로그에 보이는 적용 조항 수
+# 분당 예상 비용을 계산할 음성 기록(정책 C). 세션별 엔진 비용과 STT·TTS 추정의 합 ÷ STT 연결 시간
+VOICE_TEST_COST_RUN = "results/voice/voice-barge-C"
+VOICE_TEST_COST_DIGITS = 3        # 분당 예상 비용의 소수 자릿수

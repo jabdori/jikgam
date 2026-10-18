@@ -19,14 +19,16 @@ import argparse
 import importlib.util
 import io
 import runpy
+import shutil
 import socket
 import sys
 import threading
 import time
-from contextlib import nullcontext
+from contextlib import contextmanager, nullcontext
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
+from unittest.mock import patch
 
 import uvicorn
 from PIL import Image, ImageChops
@@ -38,6 +40,8 @@ sys.path.insert(0, str(ROOT))
 
 from jikgam.web import auth  # noqa: E402
 from jikgam.web.app import WebConfig, create_app  # noqa: E402
+from jikgam.web.data import replay as rp  # noqa: E402
+from jikgam.web.data import voicetest as vt  # noqa: E402
 from jikgam.web.data.tenants import calls_of, load_tenants  # noqa: E402
 from jikgam.web.ui import terms as tm  # noqa: E402
 
@@ -283,6 +287,52 @@ def keys_tenants(page: Page, base: str) -> None:
         raise AssertionError("다른 고객사를 키보드로 고를 수 없다")
 
 
+VOICE_CALL = "ui-check"  # 끝난 시험 통화 화면이 잠시 쓰는 results/voice/live/ 아래 폴더
+VOICE_SOURCE = "results/voice/voice-barge-C/s20-C-r1-voice-voice-barge-C.jsonl"  # 저장소의 s20 음성 기록(정책 C 1회차)
+
+
+def repo_sessions(sessions: Callable) -> Callable:
+    """로컬 음성 시험 기록(results/voice/live/, git에 넣지 않는다)은 PC마다 달라 리플레이 목록에서 뺀다. 검사용 통화만 둔다."""
+    def only(root: Path, allow_holdout: bool) -> list:
+        return [s for s in sessions(root, allow_holdout) if not s.run.startswith("live/") or s.run == f"live/{VOICE_CALL}"]
+    return only
+
+
+@contextmanager
+def voice_test_up():
+    """음성 시험 화면은 이 PC에서 모의 업무 API가 켜져 있는지와 무관하게 켜진 상태로 찍는다."""
+    with patch.object(vt, "bizapi_up", lambda url: True):
+        yield
+
+
+@contextmanager
+def voice_test_call():
+    """끝난 시험 통화: 저장소의 음성 기록을 results/voice/live/ui-check/에 잠시 복사해 그리고, 찍은 뒤 그 폴더만 지운다."""
+    run_dir = ROOT / vt.LIVE_DIR / VOICE_CALL
+    if run_dir.exists():
+        raise RuntimeError(f"{run_dir}가 이미 있다. 검사용 폴더라 지우고 다시 실행한다")
+    run_dir.mkdir(parents=True)
+    try:
+        shutil.copyfile(ROOT / VOICE_SOURCE, run_dir / f"voice-test-{VOICE_CALL}.jsonl")
+        with voice_test_up():
+            yield
+    finally:
+        shutil.rmtree(run_dir)
+
+
+def keys_voice_test(page: Page, base: str) -> None:
+    page.goto(base + "/admin/voice-test?customer=C016", wait_until="networkidle")
+    keys_skip(page)
+    tab_until(page, "[data-voice-start]")
+    focus_visible(page)
+    tab_until(page, "select[name=customer]")
+    page.keyboard.press("ArrowUp")
+    tab_until(page, "form[action='/admin/voice-test'] button[type=submit]")
+    press_and_wait(page, "Enter")
+    if "customer=C015" not in page.url:
+        raise AssertionError("연기할 고객을 키보드로 바꿀 수 없다")
+
+
 def simulated_val_results():
     """가상 실행은 해당 화면 촬영 중에만 임시 폴더에서 읽는다."""
     fixture = runpy.run_path(str(ROOT / "tests/web_retrieval_fixture.py"))
@@ -338,6 +388,10 @@ SCREENS = [
     Screen("admin-replay", "admin", "통화 리플레이(s20 음성 2회차)", lambda: "/admin/replay", keys_replay),
     Screen("admin-replay-barge", "admin", "통화 리플레이(1단계 끼어들기 재생)",
            lambda: "/admin/replay?s=voice-barge-C/s20-C-r1-voice-voice-barge-C", None),
+    Screen("admin-voice-test", "admin", "음성 시험(시작 전)", lambda: "/admin/voice-test?customer=C016", keys_voice_test,
+           fixture=voice_test_up),
+    Screen("admin-voice-test-call", "admin", "음성 시험(끝난 시험 통화 · s20 음성 기록 복사)",
+           lambda: f"/admin/voice-test?call={VOICE_CALL}&customer=C016", None, fixture=voice_test_call),
 ]
 
 
@@ -381,6 +435,7 @@ def main() -> None:
     fixture = runpy.run_path(str(ROOT / "tests/web_knowledge_fixture.py"))
     cfg = WebConfig(root=ROOT, accounts=accounts, clock=lambda: 0.0, knowledge_documents=fixture["documents"])
     port = free_port()
+    patch.object(rp, "sessions", repo_sessions(rp.sessions)).start()
     server = uvicorn.Server(uvicorn.Config(create_app(cfg), host="127.0.0.1", port=port, log_level="warning"))
     th = threading.Thread(target=server.run, daemon=True)
     th.start()

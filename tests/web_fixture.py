@@ -300,6 +300,15 @@ price_input_per_mtok = 0.0
         "verdict": [{"policy": "C", "ok": True}]}))
     _jsonl(root / "data/scenarios/org_a.jsonl", [{"id": "s20", "title": "가상 시나리오", "expected": {"articles": p["gold"]}}])
     _jsonl(root / "results/voice/rp-C/s20-r1-rp-C.jsonl", replay_log(p))
+    # 관리 콘솔 음성 시험: 시험용 고객(모의 업무 API 자료 모양), 분당 비용을 낼 음성 기록 요약, 끝난 시험 통화 하나
+    day = p["date"].date()
+    _w(root / "domain/org_a/customers.json", json.dumps({"customers": [{
+        "id": "C001", "name": "가상 고객 하나", "phone": "010-0000-0001", "status": "active",
+        "subscriptions": [{"plan": "monthly", "price": p["price"], "next_billing": (day + timedelta(days=p["window"])).isoformat()}],
+        "payments": [{"date": day.isoformat(), "amount": p["amount"], "method": "card"}]}]}, ensure_ascii=False))
+    _w(root / "results/voice/voice-barge-C/summary.json", json.dumps({"sessions": [
+        {"cost_usd": {"engine": p["cost"] * p["mult"], "stt_estimate": p["lat"] / 10000}, "stt_stream_min": 1.0}]}))
+    _jsonl(root / "results/voice/live/20990101-000000/voice-test-20990101-000000.jsonl", replay_log(p))
     return root
 
 

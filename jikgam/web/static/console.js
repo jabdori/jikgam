@@ -15,6 +15,8 @@
 //                         목록 항목은 새 자리로 옮겨 가고 막대는 새 길이로 바뀐다. 다른 화면으로 가는 링크는 CSS 화면 전환으로 연다
 //   data-listen="audio id" 누르면 그 녹음을 data-audio-at 요소가 가리키는 지금 위치부터 재생하거나 멈춘다
 //   data-cursor           재생 위치를 전체 길이 대비 비율(--at)로 옮긴다
+//   data-voice-test       관리 콘솔 음성 시험. 시작하면 에코 제거를 켠 마이크로 WebRTC 연결을 열고(data-offer), AI 음성을
+//                         숨은 audio로 재생한다. 종료(data-stop)나 연결이 끊기면 정리하고 화면을 다시 맞춘다
 // 움직임의 시간과 곡선은 tokens.css의 --motion-*, --ease-*에서 읽는다. 움직임 줄이기 설정이면 움직이지 않는다.
 (function () {
   "use strict";
@@ -265,10 +267,12 @@
     });
     startReveal();
     timer = setInterval(function () {
-      if (!document.contains(el)) { clearInterval(timer); return; }  // 영역을 바꾸며 이 갱신 영역이 사라졌다
+      var src = el.getAttribute("data-live");
+      // 영역을 바꾸며 이 갱신 영역이 사라졌거나, 같은 자리에 맞춰진 새 화면이 더 갱신하지 않는다(통화가 끝났다)
+      if (!document.contains(el) || !src) { clearInterval(timer); return; }
       if (busy || document.hidden) return;
       busy = true;
-      fetch(el.getAttribute("data-live"), { credentials: "same-origin" })
+      fetch(src, { credentials: "same-origin" })
         .then(function (r) { return r.ok ? r.text() : null; })
         .then(function (text) {
           if (text === null || !document.contains(el)) return;
@@ -516,6 +520,116 @@
     window.addEventListener("popstate", function () { swapTo(window.location.href, false); });
   }
 
+  // --- 관리 콘솔 음성 시험: 브라우저 마이크 ↔ 음성 파이프라인(WebRTC) ---------------------------------------
+  // 마이크는 에코 제거·잡음 억제·자동 음량을 켜서 연다. 스피커로 나온 AI 목소리가 마이크로 다시 들어가 끼어들기로 잡히지 않게 한다.
+  // 알림 글은 서버가 넣어 두고, 여기서는 지금 상태의 알림만 보인다.
+
+  function waitIce(pc) {
+    if (pc.iceGatheringState === "complete") return Promise.resolve();
+    return new Promise(function (resolve) {
+      function done() {
+        if (pc.iceGatheringState !== "complete") return;
+        pc.removeEventListener("icegatheringstatechange", done);
+        resolve();
+      }
+      pc.addEventListener("icegatheringstatechange", done);
+      setTimeout(resolve, 2000);  // 이 PC 안의 연결이라 후보를 오래 기다리지 않는다
+    });
+  }
+
+  function voiceTest(box) {
+    var start = box.querySelector("[data-voice-start]");
+    var stop = box.querySelector("[data-voice-stop]");
+    var audio = box.querySelector("[data-voice-audio]");
+    var pc = null;
+    var stream = null;
+    var call = null;
+    if (!start || !stop || !audio) return;
+
+    function show(name) {
+      box.querySelectorAll("[data-voice-msg]").forEach(function (el) {
+        el.hidden = el.getAttribute("data-voice-msg") !== name;
+      });
+    }
+    function running(on) {
+      start.disabled = on;
+      stop.disabled = !on;
+    }
+    function cleanup() {
+      if (pc) pc.close();
+      pc = null;
+      if (stream) stream.getTracks().forEach(function (t) { t.stop(); });
+      stream = null;
+      running(false);
+    }
+    function refresh() {
+      swapTo(window.location.href, false);
+    }
+
+    start.addEventListener("click", function () {
+      if (pc) return;
+      running(true);
+      show("connecting");
+      var denied = {};
+      navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+                                            video: false })
+        .catch(function () { throw denied; })
+        .then(function (s) {
+          stream = s;
+          pc = new RTCPeerConnection();
+          s.getAudioTracks().forEach(function (t) { pc.addTrack(t, s); });
+          pc.addEventListener("track", function (e) {
+            audio.srcObject = e.streams[0] || new MediaStream([e.track]);
+            audio.play().catch(function () {});
+          });
+          pc.addEventListener("connectionstatechange", function () {
+            if (!pc || ["failed", "closed", "disconnected"].indexOf(pc.connectionState) < 0) return;
+            cleanup();
+            show("ended");
+            refresh();
+          });
+          return pc.createOffer()
+            .then(function (offer) { return pc.setLocalDescription(offer); })
+            .then(function () { return waitIce(pc); });
+        })
+        .then(function () {
+          return fetch(box.getAttribute("data-offer"), {
+            method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sdp: pc.localDescription.sdp, type: pc.localDescription.type,
+                                   customer: box.getAttribute("data-customer") })
+          });
+        })
+        .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw j; return j; }); })
+        .then(function (answer) {
+          call = answer.call;
+          return pc.setRemoteDescription({ sdp: answer.sdp, type: answer.type });
+        })
+        .then(function () {
+          show("");  // 이제부터는 서버가 그리는 상태 줄('연결 중' → '통화 중')이 안내한다
+          var url = new URL(window.location.href);
+          url.searchParams.set("call", call);
+          swapTo(url.href, true);
+        })
+        .catch(function (e) {
+          show(e === denied ? "denied" : "failed");
+          cleanup();
+        });
+    });
+
+    stop.addEventListener("click", function () {
+      var id = call || box.getAttribute("data-call");
+      stop.disabled = true;
+      fetch(box.getAttribute("data-stop"), {
+        method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ call: id })
+      }).catch(function () {}).then(function () {
+        cleanup();
+        show("ended");
+        refresh();
+      });
+    });
+  }
+
   // --- 그 밖의 동작 ------------------------------------------------------------------------------------
 
   function focusDrawer() {
@@ -590,6 +704,7 @@
     scope.querySelectorAll("[data-listen]").forEach(function (el) { once(el, listen); });
     scope.querySelectorAll("[data-play]").forEach(function (el) { once(el, playButton); });
     scope.querySelectorAll("form").forEach(function (el) { once(el, showFor); });
+    scope.querySelectorAll("[data-voice-test]").forEach(function (el) { once(el, voiceTest); });
   }
 
   onReady(function () {

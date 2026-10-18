@@ -14,12 +14,17 @@ from ..ui import fmt
 from .common import Ctx, shell
 
 
+LIVE_PREFIX = "live/"  # results/voice/live/: 관리 콘솔 음성 시험 기록
+
+
 def key(s: rp.Session) -> str:
     return f"{s.run}/{s.name}"
 
 
 def short(s: rp.Session) -> str:
     """"voice-barge-C · s20 · 1회차 · 정책 C"처럼 실행, 시나리오, 회차, 정책만."""
+    if s.run.startswith(LIVE_PREFIX):  # 관리 콘솔 음성 시험(평가 아님)
+        return " · ".join(x for x in ("음성 시험", s.run.split("/")[-1], f"정책 {s.policy}" if s.policy else None) if x)
     rep = next((part[1:] for part in s.name.split("-") if part.startswith("r") and part[1:].isdigit()), None)
     return " · ".join(x for x in (s.run.split("/")[-1], s.scenario, f"{rep}회차" if rep else None,
                                   f"정책 {s.policy}" if s.policy else None) if x)

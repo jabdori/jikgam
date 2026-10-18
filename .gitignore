@@ -21,3 +21,6 @@ results/voice/**/*.log
 
 # v2 원본 중 다시 배포해도 되는지 확인하지 못한 문서(ADR 0023)
 data/v2/local/
+
+# 관리 콘솔 음성 시험의 기록(사람 목소리와 말이 들어 있다. 평가 결과가 아니다)
+results/voice/live/

@@ -20,11 +20,13 @@
 - POST /admin/retrieval             검색 val 실행의 비용 확인과 시작
 - GET  /admin/replay[/{run}/{session}][?at=]  통화 리플레이, /admin/replay/{run}/{session}/audio 녹음
 - GET  /admin/tenants[?org=]        고객사 관리
+- GET  /admin/voice-test[?call=&customer=]  음성 시험(이 PC에서만). POST /admin/voice-test/offer(브라우저 WebRTC 제안 → 응답),
+  POST /admin/voice-test/stop(종료)
 """
 
 import time
 from dataclasses import dataclass, field
-from urllib.parse import quote
+from urllib.parse import quote, urlsplit
 from pathlib import Path
 from typing import Any, Awaitable, Callable
 
@@ -32,7 +34,7 @@ from starlette.applications import Starlette
 from starlette.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
-from starlette.responses import FileResponse, HTMLResponse, PlainTextResponse, RedirectResponse, Response
+from starlette.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse, RedirectResponse, Response
 from starlette.routing import Mount, Route
 from starlette.staticfiles import StaticFiles
 
@@ -42,10 +44,12 @@ from . import auth, settings
 from .admin import models as admin_models
 from .admin import replay as admin_replay
 from .admin import tenants as admin_tenants
+from .admin import voicetest as admin_voicetest
 from .admin.common import Ctx as AdminCtx
 from .data import benchmarks as bm
 from .data import processing as proc
 from .data import replay as replay_data
+from .data import voicetest as voice_data
 from .data.live import Feeds
 from .data.tenants import calls_of, load_tenants
 from .saas import calls as saas_calls
@@ -96,6 +100,7 @@ def create_app(cfg: WebConfig) -> Starlette:
     feeds = Feeds(cfg.root, tenants, cfg.clock)
     jobs = bm.Jobs(cfg.root, cfg.job_runner)
     processing = proc.Processing(cfg.root)
+    voice_tests = voice_data.VoiceTests(cfg.root)
 
     def ctx(request: Request) -> Ctx:
         acct: auth.Account = request.state.account
@@ -257,6 +262,43 @@ def create_app(cfg: WebConfig) -> Starlette:
             return not_found()
         return FileResponse(rec["path"], media_type="audio/wav")
 
+    def local_only(request: Request) -> Response | None:
+        """음성 시험은 이 PC에서만 연다. 쓰기 요청은 같은 출처에서 온 것만 받는다(다른 사이트가 통화를 열지 못하게)."""
+        host = request.client.host if request.client else ""
+        if host not in settings.VOICE_TEST_LOCAL_HOSTS:
+            return PlainTextResponse("음성 시험은 이 PC(127.0.0.1)에서만 열 수 있습니다.", status_code=403)
+        origin = request.headers.get("origin")
+        if request.method == "POST" and origin and urlsplit(origin).netloc != request.url.netloc:
+            return PlainTextResponse("다른 출처의 요청은 받지 않습니다.", status_code=403)
+        return None
+
+    async def voice_test_page(request: Request) -> Response:
+        return local_only(request) or html(admin_voicetest.page(actx(request), voice_tests))
+
+    async def voice_test_offer(request: Request) -> Response:
+        if (deny := local_only(request)) is not None:
+            return deny
+        try:
+            body = await request.json()
+            sdp, sdp_type = str(body["sdp"]), str(body["type"])
+        except (ValueError, KeyError, TypeError):
+            return JSONResponse({"error": "브라우저 연결 제안(SDP)이 없습니다."}, status_code=400)
+        try:
+            answer = await voice_tests.start(sdp, sdp_type, body.get("customer"))
+        except voice_data.VoiceTestError as e:
+            return JSONResponse({"error": str(e)}, status_code=409)
+        return JSONResponse(answer)
+
+    async def voice_test_stop(request: Request) -> Response:
+        if (deny := local_only(request)) is not None:
+            return deny
+        try:
+            call_id = str((await request.json()).get("call") or "")
+        except ValueError:
+            call_id = ""
+        call = await voice_tests.stop(call_id, "시험자가 종료를 눌렀다") if call_id else None
+        return JSONResponse({"call": call.id if call else None, "status": call.status if call else None})
+
     routes = [
         Route("/", home),
         Route("/app", app_home),
@@ -279,6 +321,9 @@ def create_app(cfg: WebConfig) -> Starlette:
         Route("/admin/tenants", tenants_page),
         Route("/admin", admin_home),
         Route("/admin/replay/audio", replay_audio),
+        Route("/admin/voice-test", voice_test_page),
+        Route("/admin/voice-test/offer", voice_test_offer, methods=["POST"]),
+        Route("/admin/voice-test/stop", voice_test_stop, methods=["POST"]),
         Mount("/static", StaticFiles(directory=STATIC), name="static"),
     ]
     return Starlette(routes=routes, middleware=[Middleware(AuthMiddleware, accounts=cfg.accounts)])

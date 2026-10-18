@@ -226,6 +226,7 @@ class Row:
     href: str | None = None   # 줄 전체를 그 주소로 가는 링크로(첫 칸에 링크를 둔다)
     selected: bool = False
     tone: str | None = None
+    key: str | None = None    # 줄 이름. 없으면 href. 갱신 때 같은 줄을 그대로 두고 새 줄만 붙인다
 
 
 def _plain(node: Node) -> str:
@@ -257,7 +258,7 @@ def table(cols: Sequence[Col], rows: Sequence[Row], caption: str, wide: bool = F
                                  "data-label": _plain(c.label) if stack and i else None}, v))
         body.append(h("tr", {"class": classes("is-selected" if r.selected else None,
                                               "has-link" if r.href else None, f"tone-{r.tone}" if r.tone else None),
-                             "data-key": r.href},
+                             "data-key": r.key or r.href},
                       *cells))
     tbl = h("table", {"class": classes("table", "table-stack" if stack else None, "table-fixed" if fixed else None)},
             h("caption", {"class": "sr-only"}, caption),
@@ -593,6 +594,24 @@ def slot(name: str, *children: Node, polite: bool = False, inline: bool = False)
     """live 안에서 갱신되는 영역. polite면 화면 읽기 프로그램에 바뀐 내용을 조용히 알린다. inline이면 글자 안에 둔다."""
     return h("span" if inline else "div", {"class": "slot", "data-slot": name, "aria-live": "polite" if polite else None},
              *children)
+
+
+def voice_controls(start_label: Node, stop_label: Node, offer_url: str, stop_url: str, customer: str | None,
+                   call: str | None, running: bool, can_start: bool, messages: Sequence[tuple[str, Node, str]],
+                   note: Node = None) -> Markup:
+    """브라우저 마이크로 하는 음성 시험의 시작·종료 버튼과 상태 알림(console.js의 data-voice-test). 마이크는 에코 제거·잡음
+    억제·자동 음량을 켜서 연다. messages는 (상태 이름, 글, 색)이고, 스크립트가 지금 상태의 알림만 보인다(글은 만들지 않는다).
+    AI 음성은 숨은 audio 요소로 재생한다."""
+    start = h("button", {"class": "btn btn-primary", "type": "button", "data-voice-start": True,
+                         "disabled": running or not can_start}, start_label)
+    stop = h("button", {"class": "btn btn-secondary", "type": "button", "data-voice-stop": True, "disabled": not running},
+             stop_label)
+    notes = [h("p", {"class": f"notice tone-{_tone(tone)}", "data-voice-msg": name, "role": "status", "hidden": True}, text)
+             for name, text, tone in messages]
+    return h("div", {"class": "voice-controls", "data-voice-test": True, "data-offer": offer_url, "data-stop": stop_url,
+                     "data-customer": customer, "data-call": call},
+             h("div", {"class": "voice-buttons"}, start, stop, note), *notes,
+             h("audio", {"data-voice-audio": True, "autoplay": True, "hidden": True}))
 
 
 def listen_source(id: str, src: str, at_s: float | None) -> Markup:

@@ -81,6 +81,7 @@
   - Jev: `TYPESAFE_API_KEY`
 - **지식·정책 화면:** 표준약관 두 개의 원문과 구간 정보를 읽는다. 이 자료는 다시 배포해도 되는지 확인하지 못해 저장소 밖(`data/v2/local/`)에 둔다. 새로 받은 저장소에서는 [ADR 0023](docs/adr/0023-v2-원본-문서와-텍스트-추출.md)의 절차(`scripts/v2_fetch_sources.py`)로 받아 처리해야 이 화면이 열린다.
 - **학습한 2B로 분할하기:** WSL2에서 판별 서버를 띄워야 선택할 수 있다(`scripts/run_v2_test.sh` 머리말).
+- **음성 시험(관리 콘솔 → 음성 시험):** 브라우저 마이크로 직접 말하며 엔진을 시험한다. 다른 터미널에서 모의 업무 API(`cd bizapi && go run ./cmd/bizapi`)를 먼저 띄우고, 이 PC의 브라우저에서 연다. `.env`에 `GCP_API_KEY`(Gemini STT·생성·TTS)와 `TYPESAFE_API_KEY`(Jev)가 있어야 하고 유료 호출이 든다(화면에 분당 예상 비용). 기록은 `results/voice/live/`에 남고 평가 수치에 쓰지 않는다([docs/voice.md §8](docs/voice.md)).
 
 ## 그 밖의 실행
 

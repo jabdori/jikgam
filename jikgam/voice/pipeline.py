@@ -1,6 +1,6 @@
 """음성 파이프라인 조립: 입력 → VAD(Silero) → STT(Gemini, VERBATIM) → EngineBridge → TTS(Gemini) → 출력."""
 
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -8,6 +8,7 @@ from pipecat.audio.vad.silero import SileroVADAnalyzer
 from pipecat.audio.vad.vad_analyzer import VADParams
 from pipecat.pipeline.pipeline import Pipeline
 from pipecat.pipeline.worker import PipelineParams, PipelineWorker
+from pipecat.processors.frame_processor import FrameProcessor
 from pipecat.processors.audio.vad_processor import VADProcessor
 from pipecat.services.google.tts import GeminiTTSService
 from pipecat.transcriptions.language import Language
@@ -38,8 +39,12 @@ def make_tts(cfg: VoiceConfig, api_key: str) -> GeminiTTSService:
 
 def build_voice_pipeline(session: SessionLike, cfg: VoiceConfig, transport: BaseTransport, *,
                          marker_for: Callable[[float | None, float], dict[str, Any] | None] | None = None,
-                         stale_guard: bool = True, provisional: bool = False) -> VoicePipeline:
-    """stale_guard=False는 정책 A(대화 버전이 없는 개선형 RAG)용, provisional=True는 정책 D용이다(jikgam/voice/bridge.py)."""
+                         stale_guard: bool = True, provisional: bool = False,
+                         after_input: Sequence[FrameProcessor] = (),
+                         after_output: Sequence[FrameProcessor] = ()) -> VoicePipeline:
+    """stale_guard=False는 정책 A(대화 버전이 없는 개선형 RAG)용, provisional=True는 정책 D용이다(jikgam/voice/bridge.py).
+    after_input·after_output은 입력 전송 뒤·출력 전송 뒤에 붙여 지나가는 프레임을 보기만 하는 처리기다(관리 콘솔 음성 시험의
+    녹음, jikgam/voice/recorder.py). 프레임을 바꾸지 않으므로 파이프라인 동작은 같다."""
     env = secrets()
     vad = VADProcessor(vad_analyzer=SileroVADAnalyzer(params=VADParams(
         confidence=cfg.vad.confidence, start_secs=cfg.vad.start_secs, stop_secs=cfg.vad.stop_secs,
@@ -49,7 +54,7 @@ def build_voice_pipeline(session: SessionLike, cfg: VoiceConfig, transport: Base
                           play_start_timeout_ms=cfg.channel.play_start_timeout_ms, marker_for=marker_for,
                           stale_guard=stale_guard, provisional=provisional, name="engine-bridge")
     tts = make_tts(cfg, env[cfg.tts.api_key_env])
-    pipeline = Pipeline([transport.input(), vad, stt, bridge, tts, transport.output()])
+    pipeline = Pipeline([transport.input(), *after_input, vad, stt, bridge, tts, transport.output(), *after_output])
     worker = PipelineWorker(pipeline, params=PipelineParams(audio_in_sample_rate=IN_RATE, audio_out_sample_rate=OUT_RATE,
                                                             enable_metrics=True),
                             idle_timeout_secs=None, cancel_on_idle_timeout=False, enable_rtvi=False)

@@ -17,6 +17,9 @@ web = [
 ]
 # 음성 런타임(ADR 0008). 엔진 코드는 이 그룹에 의존하지 않는다(jikgam/voice만 쓴다).
 voice = ["pipecat-ai[google]==1.12.0"]
+# 관리 콘솔 음성 시험의 브라우저 WebRTC 전송(Pipecat SmallWebRTC). Pipecat [webrtc]에서 오디오에 필요한 aiortc만 받는다
+# (opencv는 영상 프레임에만 쓰여 뺀다).
+voice-web = ["aiortc>=1.14.0,<2"]
 ui = [
     "axe-playwright-python==0.1.8",
     "playwright==1.63.0",
@@ -44,7 +47,7 @@ build-backend = "hatchling.build"
 packages = ["jikgam"]
 
 [tool.uv]
-default-groups = ["dev", "web", "voice", "ui", "ingest"]
+default-groups = ["dev", "web", "voice", "voice-web", "ui", "ingest"]
 
 [tool.uv.sources]
 torch = [{ index = "pytorch-cu130" }]
