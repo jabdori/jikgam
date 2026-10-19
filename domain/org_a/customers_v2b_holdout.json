@@ -1,0 +1,193 @@
+{
+  "_note": "가상 데이터. v2 미공개 2차 묶음(v2b) 시나리오 고객(C401~C424). 기준일 2026-10-12. 모든 날짜는 KST. 개발용·v1 보류용·v2 보류용 파일과 함께 읽는다(bizapi -data 네 파일). 장애 기록은 새로 더하지 않았다(기존 파일의 장애 기록을 쓴다). _case에는 기록 사실만 적었다. 엔진 개발자는 엔진 설정을 고정하기 전에 이 파일을 읽지 않는다.",
+  "reference_date": "2026-10-12",
+  "incidents": [],
+  "customers": [
+    {"id": "C401", "name": "함지우", "phone": "010-4401-2736", "birth": "1993-02-11", "status": "active",
+     "subscriptions": [{"id": "S401", "plan": "monthly", "price": 9900, "start": "2026-07-10", "next_billing": "2026-11-10"}],
+     "payments": [
+       {"id": "P401a", "sub": "S401", "date": "2026-08-10", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P401b", "sub": "S401", "date": "2026-09-10", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P401c", "sub": "S401", "date": "2026-10-10", "amount": 9900, "method": "card", "dispute": false}
+     ],
+     "usage": [{"date": "2026-08-15", "type": "play"}, {"date": "2026-09-18", "type": "play"}, {"date": "2026-10-03", "type": "play"}],
+     "_case": "hw01. 월 구독 카드 자동 갱신 결제 2026-10-10. 마지막 이용 2026-10-03(직전 결제 기간)"},
+
+    {"id": "C402", "name": "엄태경", "phone": "010-4402-8159", "birth": "1988-06-30", "status": "active",
+     "subscriptions": [{"id": "S402", "plan": "annual", "price": 99000, "promo": false, "start": "2026-08-10", "next_billing": "2027-08-10"}],
+     "payments": [{"id": "P402", "sub": "S402", "date": "2026-08-10", "amount": 99000, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-08-11", "type": "play"}, {"date": "2026-09-15", "type": "download"}, {"date": "2026-10-04", "type": "play"}],
+     "_case": "hw02. 연 구독 정상 요금 카드 결제 2026-08-10, 이용 있음"},
+
+    {"id": "C403", "name": "노은채", "phone": "010-4403-4620", "birth": "1995-12-03", "status": "active",
+     "subscriptions": [{"id": "S403", "plan": "monthly", "price": 9900, "start": "2026-05-22", "next_billing": "2026-10-22"}],
+     "payments": [
+       {"id": "P403a", "sub": "S403", "date": "2026-08-22", "amount": 9900, "method": "mobile", "dispute": false},
+       {"id": "P403b", "sub": "S403", "date": "2026-09-22", "amount": 9900, "method": "mobile", "dispute": false},
+       {"id": "P403c", "sub": "S403", "date": "2026-09-22", "amount": 9900, "method": "mobile", "dispute": false}
+     ],
+     "usage": [{"date": "2026-09-25", "type": "play"}, {"date": "2026-10-05", "type": "play"}],
+     "_case": "hw03. 월 구독 휴대폰 결제. 2026-09-22에 같은 금액 결제 2건(P403b 먼저 승인, P403c), 등록 계좌 없음"},
+
+    {"id": "C404", "name": "탁민서", "phone": "010-4404-9384", "birth": "1990-09-17", "status": "active",
+     "subscriptions": [{"id": "S404", "plan": "annual", "price": 99000, "promo": false, "start": "2026-10-06", "next_billing": "2027-10-06"}],
+     "payments": [{"id": "P404", "sub": "S404", "date": "2026-10-06", "amount": 99000, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-10-07", "type": "play"}, {"date": "2026-10-10", "type": "play"}],
+     "_case": "hw04. 연 구독 정상 요금 카드 결제 2026-10-06, 결제 후 이용 있음"},
+
+    {"id": "C405", "name": "하승우", "phone": "010-4405-1597", "birth": "1979-04-25", "status": "active",
+     "subscriptions": [{"id": "S405", "plan": "annual", "price": 99000, "promo": false, "start": "2026-02-14", "next_billing": "2027-02-14"}],
+     "payments": [{"id": "P405", "sub": "S405", "date": "2026-02-14", "amount": 99000, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-02-15", "type": "play"}, {"date": "2026-09-30", "type": "play"}],
+     "_case": "hw05. 연 구독 카드 결제 2026-02-14, 이용 있음"},
+
+    {"id": "C406", "name": "류정훈", "phone": "010-4406-7241", "birth": "1984-08-08", "status": "active",
+     "subscriptions": [{"id": "S406", "plan": "annual", "price": 99000, "promo": false, "start": "2026-03-03", "next_billing": "2027-03-03"}],
+     "payments": [{"id": "P406", "sub": "S406", "date": "2026-03-03", "amount": 99000, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-03-04", "type": "play"}, {"date": "2026-09-12", "type": "play"}],
+     "_case": "hw06. 연 구독 카드 결제 2026-03-03. 통화자는 계정 소유자가 아닌 배우자"},
+
+    {"id": "C407", "name": "설아린", "phone": "010-4407-3068", "birth": "2000-05-05", "status": "active",
+     "subscriptions": [{"id": "S407", "plan": "monthly", "price": 9900, "trial": true, "trial_end": "2026-10-20", "start": "2026-10-06", "next_billing": "2026-10-20"}],
+     "payments": [],
+     "usage": [{"date": "2026-10-07", "type": "play", "_during_trial": true}, {"date": "2026-10-10", "type": "play", "_during_trial": true}],
+     "_case": "hw07. 무료 체험 중(체험 종료일 2026-10-20), 결제 내역 없음"},
+
+    {"id": "C408", "name": "왕지석", "phone": "010-4408-5912", "birth": "1991-01-19", "status": "active",
+     "subscriptions": [{"id": "S408", "plan": "annual", "price": 99000, "promo": false, "start": "2025-10-10", "next_billing": "2027-10-10"}],
+     "payments": [
+       {"id": "P408a", "sub": "S408", "date": "2025-10-10", "amount": 79000, "method": "card", "dispute": false},
+       {"id": "P408b", "sub": "S408", "date": "2026-10-10", "amount": 99000, "method": "card", "dispute": false}
+     ],
+     "usage": [{"date": "2026-09-27", "type": "play"}],
+     "_case": "hw08. 첫 해 프로모션 79,000원(2025-10-10) 뒤 정상 요금 99,000원으로 자동 갱신 결제 2026-10-10. 갱신 결제 후 이용 없음"},
+
+    {"id": "C409", "name": "육소연", "phone": "010-4409-2475", "birth": "1986-11-27", "status": "active",
+     "subscriptions": [{"id": "S409", "plan": "annual", "price": 99000, "promo": false, "start": "2026-06-20", "next_billing": "2027-06-20"}],
+     "payments": [{"id": "P409", "sub": "S409", "date": "2026-06-20", "amount": 99000, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-06-21", "type": "play"}, {"date": "2026-08-02", "type": "play"}, {"date": "2026-10-01", "type": "play"}],
+     "_case": "hw09. 연 구독 정상 요금 카드 결제 2026-06-20(약관 2026.07 시행 전), 이용 있음"},
+
+    {"id": "C410", "name": "기현우", "phone": "010-4410-8836", "birth": "1997-03-08", "status": "active",
+     "subscriptions": [{"id": "S410", "plan": "monthly", "price": 9900, "start": "2026-09-28", "next_billing": "2026-10-28"}],
+     "payments": [{"id": "P410", "sub": "S410", "date": "2026-09-28", "amount": 9900, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-09-29", "type": "play"}, {"date": "2026-10-03", "type": "play"}],
+     "_case": "hw10. 월 구독 신규 카드 결제 2026-09-28, 이용 있음"},
+
+    {"id": "C411", "name": "봉예진", "phone": "010-4411-1309", "birth": "1992-07-14", "status": "active",
+     "subscriptions": [{"id": "S411", "plan": "monthly", "price": 9900, "start": "2026-10-09", "next_billing": "2026-11-09"}],
+     "payments": [{"id": "P411", "sub": "S411", "date": "2026-10-09", "amount": 9900, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-10-10", "type": "download"}],
+     "_case": "hw11. 월 구독 신규 카드 결제 2026-10-09, 2026-10-10 내려받기 기록"},
+
+    {"id": "C412", "name": "채민혁", "phone": "010-4412-6754", "birth": "1989-10-02", "status": "suspended",
+     "subscriptions": [{"id": "S412", "plan": "monthly", "price": 9900, "start": "2026-04-09", "next_billing": "2026-11-09"}],
+     "payments": [
+       {"id": "P412a", "sub": "S412", "date": "2026-09-09", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P412b", "sub": "S412", "date": "2026-10-09", "amount": 9900, "method": "card", "dispute": false}
+     ],
+     "usage": [{"date": "2026-09-20", "type": "play"}, {"date": "2026-10-05", "type": "play"}],
+     "_case": "hw12. 이용 정지 계정. 월 구독 카드 자동 갱신 결제 2026-10-09, 마지막 이용 2026-10-05"},
+
+    {"id": "C413", "name": "맹수빈", "phone": "010-4413-4182", "birth": "1996-04-21", "status": "active",
+     "subscriptions": [{"id": "S413", "plan": "monthly", "price": 9900, "start": "2026-10-09", "next_billing": "2026-11-09"}],
+     "payments": [{"id": "P413", "sub": "S413", "date": "2026-10-09", "amount": 9900, "method": "card", "dispute": true}],
+     "usage": [],
+     "_case": "hw13. 월 구독 신규 카드 결제 2026-10-09, 카드사 이의 제기 진행 중, 이용 없음"},
+
+    {"id": "C414", "name": "표재윤", "phone": "010-4414-9027", "birth": "1994-02-28", "status": "active",
+     "subscriptions": [{"id": "S414", "plan": "monthly", "price": 9900, "start": "2026-02-10", "next_billing": "2026-11-10"}],
+     "payments": [
+       {"id": "P414a", "sub": "S414", "date": "2026-09-10", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P414b", "sub": "S414", "date": "2026-10-10", "amount": 9900, "method": "card", "dispute": false}
+     ],
+     "usage": [{"date": "2026-09-12", "type": "play"}, {"date": "2026-10-10", "type": "play"}, {"date": "2026-10-11", "type": "play"}],
+     "_case": "hw14. 월 구독 카드 자동 갱신 결제 2026-10-10, 결제 후 이용 기록 2건"},
+
+    {"id": "C415", "name": "국하은", "phone": "010-4415-3561", "birth": "1983-12-09", "status": "active",
+     "subscriptions": [{"id": "S415", "plan": "monthly", "price": 9900, "start": "2026-01-20", "next_billing": "2026-10-20"}],
+     "payments": [
+       {"id": "P415a", "sub": "S415", "date": "2026-08-20", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P415b", "sub": "S415", "date": "2026-09-20", "amount": 9900, "method": "card", "dispute": false}
+     ],
+     "usage": [{"date": "2026-09-21", "type": "play"}, {"date": "2026-10-08", "type": "play"}],
+     "_case": "hw15. 월 구독 카드 결제 2026-09-20, 다음 결제일 2026-10-20"},
+
+    {"id": "C416", "name": "은다율", "phone": "010-4416-7493", "birth": "1999-09-09", "status": "active",
+     "subscriptions": [
+       {"id": "S416", "plan": "monthly", "price": 9900, "start": "2026-10-09", "next_billing": "2026-11-09"},
+       {"id": "S416F", "plan": "family_addon", "price": 3900, "start": "2026-10-09", "next_billing": "2026-11-09"}
+     ],
+     "payments": [
+       {"id": "P416", "sub": "S416", "date": "2026-10-09", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P416F", "sub": "S416F", "date": "2026-10-09", "amount": 3900, "method": "card", "dispute": false}
+     ],
+     "usage": [{"date": "2026-10-10", "type": "play"}],
+     "_case": "hw16. 월 구독 신규 가입과 가족 공유 부가 상품이 같은 날(2026-10-09) 카드 결제, 2026-10-10 이용"},
+
+    {"id": "C417", "name": "선우진", "phone": "010-4417-2840", "birth": "1981-06-06", "status": "active",
+     "subscriptions": [{"id": "S417", "plan": "annual", "price": 79000, "promo": true, "start": "2026-04-15", "next_billing": "2027-04-15"}],
+     "payments": [{"id": "P417", "sub": "S417", "date": "2026-04-15", "amount": 79000, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-04-16", "type": "play"}, {"date": "2026-07-01", "type": "play"}, {"date": "2026-10-02", "type": "play"}],
+     "_case": "hw17. 연 구독 첫 해 프로모션 79,000원 카드 결제 2026-04-15(약관 2026.07 시행 전), 이용 있음"},
+
+    {"id": "C418", "name": "위서준", "phone": "010-4418-6125", "birth": "1998-08-18", "status": "active",
+     "subscriptions": [{"id": "S418", "plan": "monthly", "price": 9900, "start": "2026-08-01", "next_billing": "2026-11-01"}],
+     "payments": [
+       {"id": "P418a", "sub": "S418", "date": "2026-09-01", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P418b", "sub": "S418", "date": "2026-10-01", "amount": 9900, "method": "card", "dispute": false}
+     ],
+     "usage": [{"date": "2026-10-03", "type": "play"}],
+     "_case": "hw18. 월 구독 카드 결제 2026-10-01, 다음 결제일 2026-11-01"},
+
+    {"id": "C419", "name": "소현아", "phone": "010-4419-5378", "birth": "1990-03-30", "status": "active",
+     "subscriptions": [{"id": "S419", "plan": "monthly", "price": 9900, "start": "2026-06-02", "next_billing": "2026-11-02"}],
+     "payments": [
+       {"id": "P419a", "sub": "S419", "date": "2026-09-02", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P419b", "sub": "S419", "date": "2026-10-02", "amount": 9900, "method": "card", "dispute": false}
+     ],
+     "usage": [{"date": "2026-10-04", "type": "play"}, {"date": "2026-10-09", "type": "play"}],
+     "_case": "hw19. 월 구독 카드 결제 2026-10-02, 이용 있음"},
+
+    {"id": "C420", "name": "금태호", "phone": "010-4420-1964", "birth": "1985-05-15", "status": "active",
+     "subscriptions": [{"id": "S420", "plan": "annual", "price": 99000, "promo": false, "start": "2026-10-09", "next_billing": "2027-10-09"}],
+     "payments": [{"id": "P420", "sub": "S420", "date": "2026-10-09", "amount": 99000, "method": "card", "dispute": false}],
+     "usage": [{"date": "2026-10-10", "type": "play"}],
+     "_case": "hw20. 연 구독 정상 요금 카드 결제 2026-10-09, 2026-10-10 이용"},
+
+    {"id": "C421", "name": "길나연", "phone": "010-4421-8417", "birth": "1993-11-11", "status": "active",
+     "subscriptions": [{"id": "S421", "plan": "monthly", "price": 9900, "start": "2026-03-01", "next_billing": "2026-11-01"}],
+     "payments": [
+       {"id": "P421a", "sub": "S421", "date": "2026-09-01", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P421b", "sub": "S421", "date": "2026-10-01", "amount": 9900, "method": "card", "dispute": false}
+     ],
+     "usage": [{"date": "2026-10-02", "type": "play"}, {"date": "2026-10-05", "type": "play"}],
+     "_case": "hw21. 월 구독 카드 결제 2026-10-01, 다음 결제일 2026-11-01, 이용 있음"},
+
+    {"id": "C422", "name": "도하람", "phone": "010-4422-3290", "birth": "1996-01-24", "status": "active",
+     "subscriptions": [{"id": "S422", "plan": "monthly", "price": 9900, "start": "2026-09-30", "next_billing": "2026-10-30"}],
+     "payments": [{"id": "P422", "sub": "S422", "date": "2026-09-30", "amount": 9900, "method": "card", "dispute": false}],
+     "usage": [],
+     "_case": "hw22. 월 구독 신규 카드 결제 2026-09-30, 이용 없음"},
+
+    {"id": "C423", "name": "경민재", "phone": "010-4423-7652", "birth": "1987-07-07", "status": "active",
+     "subscriptions": [
+       {"id": "S423", "plan": "monthly", "price": 9900, "start": "2026-07-06", "next_billing": "2026-11-06"},
+       {"id": "S423F", "plan": "family_addon", "price": 3900, "start": "2026-08-06", "next_billing": "2026-11-06"}
+     ],
+     "payments": [
+       {"id": "P423a", "sub": "S423", "date": "2026-09-06", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P423Fa", "sub": "S423F", "date": "2026-09-06", "amount": 3900, "method": "card", "dispute": false},
+       {"id": "P423b", "sub": "S423", "date": "2026-10-06", "amount": 9900, "method": "card", "dispute": false},
+       {"id": "P423Fb", "sub": "S423F", "date": "2026-10-06", "amount": 3900, "method": "card", "dispute": false}
+     ],
+     "usage": [{"date": "2026-10-06", "type": "play"}, {"date": "2026-10-09", "type": "play"}],
+     "_case": "hw23. 월 구독과 가족 공유 부가 상품 카드 결제 2026-10-06, 결제 후 이용 있음"},
+
+    {"id": "C424", "name": "마유나", "phone": "010-4424-4031", "birth": "2001-02-02", "status": "active",
+     "subscriptions": [{"id": "S424", "plan": "monthly", "price": 9900, "start": "2026-10-10", "next_billing": "2026-11-10"}],
+     "payments": [{"id": "P424", "sub": "S424", "date": "2026-10-10", "amount": 9900, "method": "easy_pay", "dispute": false}],
+     "usage": [],
+     "_case": "hw24. 월 구독 신규 간편결제 2026-10-10, 이용 없음"}
+  ]
+}
