@@ -242,7 +242,7 @@
  "conditions": {
   "pass_noninferior": true,
   "pass_improved": true,
-  "unsupported_not_higher": null,
+  "unsupported_not_higher": false,
   "refresh_p95_le_500": true,
   "law_evidence_better": false
  },
@@ -250,8 +250,8 @@
   "status": "확인 완료",
   "claims": {
    "sampled": 30,
-   "matched": 8,
-   "agreement": 0.26666666666666666
+   "matched": 30,
+   "agreement": 1.0
   },
   "scenario_items": {
    "sampled": 10,
@@ -266,7 +266,5 @@
   "refresh_p95_le_500": true,
   "law_evidence_better": false
  },
- "deferred_conditions": [
-  "unsupported_not_higher"
- ]
+ "deferred_conditions": []
 }
