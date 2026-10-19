@@ -79,7 +79,7 @@ async def rerank_remote(law, backend, query: str, ranked: list[tuple[str, float]
             "cost_usd": tr.rerank_cost_usd, "tokens": tr.rerank_tokens}
 
 
-def run(run_dirs: list[Path], backends: list[str], name: str, only_estimate: bool) -> dict:
+def run(run_dirs: list[Path], backends: list[str], name: str, only_estimate: bool, ns: tuple[int, ...] = NS) -> dict:
     org = load_org("org_a")
     law = bundle(load_law("r4"))
     rows = [r for r in events(run_dirs) if r["profile"] == "r4"]
@@ -108,7 +108,7 @@ def run(run_dirs: list[Path], backends: list[str], name: str, only_estimate: boo
 
     with cache_path.open("a", encoding="utf-8", newline="\n") as out:
         for b in backends:
-            todo = [(n, q) for n in NS for q in queries if key(b, n, q) not in cache or cache[key(b, n, q)].get("error")]
+            todo = [(n, q) for n in ns for q in queries if key(b, n, q) not in cache or cache[key(b, n, q)].get("error")]
             if b == "r2":
                 ce = CrossEncoderReranker(law)
                 for i, (n, q) in enumerate(todo, 1):
@@ -152,7 +152,7 @@ def run(run_dirs: list[Path], backends: list[str], name: str, only_estimate: boo
             base[f"found@{k}"] += sum(found(r["gold"], ids[:k]))
     report["configs"]["a"] = base
     for b in backends:
-        for n in NS:
+        for n in ns:
             calls = [cache[key(b, n, q)] for q in queries]
             ok = [c for c in calls if not c.get("error") and c.get("latency_ms") is not None]
             stat = {"items": 0, **{f"found@{k}": 0 for k in KS}, "calls": len(calls), "failed": len(calls) - len(ok),
@@ -184,8 +184,10 @@ def main() -> None:
     ap.add_argument("--backends", default="r1", help="쉼표로 구분: r1, r2, r3")
     ap.add_argument("--name", default="dev-v2")
     ap.add_argument("--estimate", action="store_true", help="호출하지 않고 r1 예상 비용만 낸다")
+    ap.add_argument("--ns", default=",".join(map(str, NS)), help="돌릴 N(쉼표로 구분)")
     args = ap.parse_args()
-    out = run(args.run_dirs, [b.strip() for b in args.backends.split(",") if b.strip()], args.name, args.estimate)
+    out = run(args.run_dirs, [b.strip() for b in args.backends.split(",") if b.strip()], args.name, args.estimate,
+              tuple(int(x) for x in args.ns.split(",") if x.strip()))
     print(json.dumps(out if args.estimate else {k: (v["rate@8"], v["rate@16"], v.get("latency_ms")) for k, v in out["configs"].items()},
                      ensure_ascii=False))
 

@@ -1,0 +1,108 @@
+{
+ "profile": "r4",
+ "runs": [
+  "results/engine/scenarios/dev-v2-r4-1",
+  "results/engine/scenarios/dev-v2-r4-2",
+  "results/engine/scenarios/dev-v2-r4-3"
+ ],
+ "events": 397,
+ "unique_queries": 237,
+ "r2_model": {
+  "name": "BAAI/bge-reranker-v2-m3",
+  "revision": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e",
+  "max_length": 512
+ },
+ "configs": {
+  "a": {
+   "items": 504,
+   "found@8": 228,
+   "found@16": 260,
+   "rate@8": 0.4524,
+   "rate@16": 0.5159
+  },
+  "r1-N16": {
+   "items": 504,
+   "found@8": 246,
+   "found@16": 260,
+   "calls": 237,
+   "failed": 0,
+   "latency_ms": {
+    "p50": 235.4,
+    "p95": 292.2
+   },
+   "cost_usd": 0.1598,
+   "rate@8": 0.4881,
+   "rate@16": 0.5159
+  },
+  "r1-N32": {
+   "items": 504,
+   "found@8": 257,
+   "found@16": 285,
+   "calls": 237,
+   "failed": 0,
+   "latency_ms": {
+    "p50": 303.0,
+    "p95": 342.2
+   },
+   "cost_usd": 0.3059,
+   "rate@8": 0.5099,
+   "rate@16": 0.5655
+  },
+  "r3-N16": {
+   "items": 504,
+   "found@8": 198,
+   "found@16": 260,
+   "calls": 237,
+   "failed": 0,
+   "latency_ms": {
+    "p50": 649.8,
+    "p95": 707.7
+   },
+   "cost_usd": 0.0,
+   "rate@8": 0.3929,
+   "rate@16": 0.5159
+  },
+  "r2-N16": {
+   "items": 504,
+   "found@8": 155,
+   "found@16": 260,
+   "calls": 237,
+   "failed": 0,
+   "latency_ms": {
+    "p50": 105.0,
+    "p95": 107.1
+   },
+   "cost_usd": 0.0,
+   "rate@8": 0.3075,
+   "rate@16": 0.5159
+  },
+  "r2-N32": {
+   "items": 504,
+   "found@8": 128,
+   "found@16": 215,
+   "calls": 237,
+   "failed": 0,
+   "latency_ms": {
+    "p50": 196.4,
+    "p95": 200.6
+   },
+   "cost_usd": 0.0,
+   "rate@8": 0.254,
+   "rate@16": 0.4266
+  },
+  "r2-N50": {
+   "items": 504,
+   "found@8": 123,
+   "found@16": 196,
+   "calls": 237,
+   "failed": 0,
+   "latency_ms": {
+    "p50": 297.3,
+    "p95": 300.5
+   },
+   "cost_usd": 0.0,
+   "rate@8": 0.244,
+   "rate@16": 0.3889
+  }
+ }
+}
