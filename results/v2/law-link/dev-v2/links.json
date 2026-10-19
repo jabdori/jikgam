@@ -1,0 +1,201 @@
+{
+ "A-01": {
+  "b-W4000-C800-raw:terms-act:0000": 0.52,
+  "b-W4000-C800-raw:content-act:0013": 0.51,
+  "b-W4000-C800-raw:content-act:0014": 0.6,
+  "b-W4000-C800-raw:game-terms:0011": 0.57
+ },
+ "A-02": {},
+ "A-03": {
+  "b-W4000-C800-raw:content-guide:0003": 0.55
+ },
+ "A-04": {
+  "b-W4000-C800-raw:ecom-act:0009": 0.59,
+  "b-W4000-C800-raw:terms-act:0001": 0.66,
+  "b-W4000-C800-raw:dispute-std:0059": 0.83,
+  "b-W4000-C800-raw:dispute-std:0061": 0.8,
+  "b-W4000-C800-raw:dispute-std:0062": 0.51,
+  "b-W4000-C800-raw:dispute-std:0065": 0.63,
+  "b-W4000-C800-raw:dispute-std:0068": 0.57,
+  "b-W4000-C800-raw:content-guide:0010": 0.9
+ },
+ "A-05": {
+  "b-W4000-C800-raw:ecom-act:0008": 0.54,
+  "b-W4000-C800-raw:ecom-act:0012": 0.85,
+  "b-W4000-C800-raw:ecom-act:0014": 0.78,
+  "b-W4000-C800-raw:ecom-act:0015": 0.76,
+  "b-W4000-C800-raw:ecom-act:0025": 0.52,
+  "b-W4000-C800-raw:ecom-decree:0012": 0.6,
+  "b-W4000-C800-raw:terms-act:0001": 0.58,
+  "b-W4000-C800-raw:content-act:0013": 0.75,
+  "b-W4000-C800-raw:content-act:0014": 0.52,
+  "b-W4000-C800-raw:dispute-std:0010": 0.64,
+  "b-W4000-C800-raw:dispute-std:0059": 0.78,
+  "b-W4000-C800-raw:dispute-std:0061": 0.75,
+  "b-W4000-C800-raw:dispute-std:0062": 0.57,
+  "b-W4000-C800-raw:dispute-std:0064": 0.73,
+  "b-W4000-C800-raw:dispute-std:0068": 0.63,
+  "b-W4000-C800-raw:content-guide:0003": 0.66,
+  "b-W4000-C800-raw:content-guide:0006": 0.82,
+  "b-W4000-C800-raw:content-guide:0007": 0.67,
+  "b-W4000-C800-raw:game-terms:0008": 0.9,
+  "b-W4000-C800-raw:ecom-terms:0007": 0.87
+ },
+ "A-06": {
+  "b-W4000-C800-raw:ecom-act:0012": 0.85,
+  "b-W4000-C800-raw:ecom-decree:0012": 0.57,
+  "b-W4000-C800-raw:terms-act:0001": 0.64,
+  "b-W4000-C800-raw:content-act:0013": 0.69,
+  "b-W4000-C800-raw:content-guide:0006": 0.8,
+  "b-W4000-C800-raw:game-terms:0008": 0.84,
+  "b-W4000-C800-raw:ecom-terms:0007": 0.84
+ },
+ "A-07": {
+  "b-W4000-C800-raw:terms-act:0001": 0.72,
+  "b-W4000-C800-raw:content-act:0013": 0.55,
+  "b-W4000-C800-raw:content-act:0014": 0.61,
+  "b-W4000-C800-raw:dispute-std:0010": 0.64,
+  "b-W4000-C800-raw:dispute-std:0059": 0.75,
+  "b-W4000-C800-raw:dispute-std:0061": 0.72,
+  "b-W4000-C800-raw:dispute-std:0062": 0.56,
+  "b-W4000-C800-raw:dispute-std:0064": 0.67,
+  "b-W4000-C800-raw:dispute-std:0068": 0.57,
+  "b-W4000-C800-raw:content-guide:0003": 0.65,
+  "b-W4000-C800-raw:content-guide:0008": 0.71,
+  "b-W4000-C800-raw:content-guide:0009": 0.65,
+  "b-W4000-C800-raw:content-guide:0011": 0.7,
+  "b-W4000-C800-raw:game-terms:0008": 0.6,
+  "b-W4000-C800-raw:game-terms:0011": 0.61,
+  "b-W4000-C800-raw:ecom-terms:0007": 0.72
+ },
+ "A-08": {
+  "b-W4000-C800-raw:terms-act:0001": 0.71,
+  "b-W4000-C800-raw:content-act:0013": 0.55,
+  "b-W4000-C800-raw:content-act:0014": 0.65,
+  "b-W4000-C800-raw:dispute-std:0010": 0.82,
+  "b-W4000-C800-raw:dispute-std:0051": 0.5,
+  "b-W4000-C800-raw:dispute-std:0059": 0.77,
+  "b-W4000-C800-raw:dispute-std:0061": 0.75,
+  "b-W4000-C800-raw:dispute-std:0064": 0.67,
+  "b-W4000-C800-raw:dispute-std:0068": 0.59,
+  "b-W4000-C800-raw:dispute-std:0111": 0.57,
+  "b-W4000-C800-raw:dispute-std:0112": 0.57,
+  "b-W4000-C800-raw:dispute-std:0121": 0.68,
+  "b-W4000-C800-raw:dispute-std:0122": 0.54,
+  "b-W4000-C800-raw:dispute-std:0129": 0.53,
+  "b-W4000-C800-raw:content-guide:0008": 0.78,
+  "b-W4000-C800-raw:content-guide:0009": 0.77,
+  "b-W4000-C800-raw:content-guide:0011": 0.86,
+  "b-W4000-C800-raw:game-terms:0011": 0.83
+ },
+ "A-09": {
+  "b-W4000-C800-raw:content-act:0013": 0.5,
+  "b-W4000-C800-raw:content-act:0014": 0.64,
+  "b-W4000-C800-raw:dispute-std:0049": 0.59,
+  "b-W4000-C800-raw:dispute-std:0051": 0.56,
+  "b-W4000-C800-raw:dispute-std:0052": 0.68,
+  "b-W4000-C800-raw:dispute-std:0053": 0.66,
+  "b-W4000-C800-raw:dispute-std:0059": 0.9,
+  "b-W4000-C800-raw:dispute-std:0061": 0.86,
+  "b-W4000-C800-raw:dispute-std:0062": 0.63,
+  "b-W4000-C800-raw:dispute-std:0064": 0.79,
+  "b-W4000-C800-raw:content-guide:0012": 0.92,
+  "b-W4000-C800-raw:game-terms:0005": 0.91,
+  "b-W4000-C800-raw:ecom-terms:0002": 0.74
+ },
+ "A-10": {
+  "b-W4000-C800-raw:dispute-std:0048": 0.66,
+  "b-W4000-C800-raw:dispute-std:0049": 0.77,
+  "b-W4000-C800-raw:dispute-std:0050": 0.68,
+  "b-W4000-C800-raw:content-guide:0005": 0.64
+ },
+ "A-11": {
+  "b-W4000-C800-raw:content-guide:0011": 0.61
+ },
+ "A-12": {
+  "b-W4000-C800-raw:dispute-std:0059": 0.58,
+  "b-W4000-C800-raw:dispute-std:0061": 0.55,
+  "b-W4000-C800-raw:dispute-std:0065": 0.51,
+  "b-W4000-C800-raw:content-guide:0010": 0.61
+ },
+ "A-13": {
+  "b-W4000-C800-raw:ecom-act:0008": 0.86,
+  "b-W4000-C800-raw:ecom-act:0039": 0.55,
+  "b-W4000-C800-raw:ecom-decree:0016": 0.68,
+  "b-W4000-C800-raw:ecom-decree:0046": 0.55,
+  "b-W4000-C800-raw:dispute-std:0052": 0.8,
+  "b-W4000-C800-raw:dispute-std:0053": 0.77,
+  "b-W4000-C800-raw:dispute-std:0059": 0.9,
+  "b-W4000-C800-raw:dispute-std:0061": 0.84,
+  "b-W4000-C800-raw:dispute-std:0062": 0.76,
+  "b-W4000-C800-raw:dispute-std:0064": 0.79,
+  "b-W4000-C800-raw:dispute-std:0066": 0.55,
+  "b-W4000-C800-raw:content-guide:0004": 0.9,
+  "b-W4000-C800-raw:game-terms:0002": 0.51,
+  "b-W4000-C800-raw:game-terms:0007": 0.84,
+  "b-W4000-C800-raw:ecom-terms:0004": 0.89
+ },
+ "A-14": {
+  "b-W4000-C800-raw:ecom-act:0014": 0.79,
+  "b-W4000-C800-raw:ecom-act:0015": 0.66,
+  "b-W4000-C800-raw:ecom-act:0025": 0.57,
+  "b-W4000-C800-raw:content-act:0014": 0.53,
+  "b-W4000-C800-raw:content-guide:0005": 0.54,
+  "b-W4000-C800-raw:content-guide:0007": 0.75,
+  "b-W4000-C800-raw:content-guide:0009": 0.76,
+  "b-W4000-C800-raw:game-terms:0008": 0.65,
+  "b-W4000-C800-raw:ecom-terms:0006": 0.62,
+  "b-W4000-C800-raw:ecom-terms:0007": 0.78
+ },
+ "A-15": {
+  "b-W4000-C800-raw:ecom-act:0006": 0.5,
+  "b-W4000-C800-raw:game-terms:0009": 0.68
+ },
+ "A-16": {
+  "b-W4000-C800-raw:game-terms:0009": 0.52,
+  "b-W4000-C800-raw:game-terms:0011": 0.74,
+  "b-W4000-C800-raw:ecom-terms:0003": 0.63
+ },
+ "A-17": {},
+ "A-18": {
+  "b-W4000-C800-raw:terms-act:0001": 0.5,
+  "b-W4000-C800-raw:content-guide:0008": 0.52,
+  "b-W4000-C800-raw:content-guide:0009": 0.56,
+  "b-W4000-C800-raw:game-terms:0011": 0.57
+ },
+ "A-19": {},
+ "A-20": {
+  "b-W4000-C800-raw:ecom-act:0014": 0.61,
+  "b-W4000-C800-raw:ecom-act:0015": 0.52,
+  "b-W4000-C800-raw:consumer-act:0035": 0.52,
+  "b-W4000-C800-raw:content-act:0013": 0.51,
+  "b-W4000-C800-raw:content-act:0014": 0.62,
+  "b-W4000-C800-raw:dispute-std:0059": 0.55,
+  "b-W4000-C800-raw:dispute-std:0109": 0.51,
+  "b-W4000-C800-raw:content-guide:0007": 0.61,
+  "b-W4000-C800-raw:content-guide:0008": 0.52,
+  "b-W4000-C800-raw:content-guide:0009": 0.72,
+  "b-W4000-C800-raw:content-guide:0011": 0.64,
+  "b-W4000-C800-raw:game-terms:0008": 0.64,
+  "b-W4000-C800-raw:game-terms:0011": 0.64,
+  "b-W4000-C800-raw:ecom-terms:0007": 0.57
+ },
+ "A-21": {},
+ "T-01": {},
+ "T-02": {
+  "b-W4000-C800-raw:ecom-act:0016": 0.58,
+  "b-W4000-C800-raw:terms-act:0001": 0.56,
+  "b-W4000-C800-raw:content-act:0014": 0.53,
+  "b-W4000-C800-raw:dispute-std:0010": 0.73,
+  "b-W4000-C800-raw:dispute-std:0059": 0.71,
+  "b-W4000-C800-raw:dispute-std:0061": 0.65,
+  "b-W4000-C800-raw:dispute-std:0064": 0.52,
+  "b-W4000-C800-raw:dispute-std:0111": 0.53,
+  "b-W4000-C800-raw:dispute-std:0112": 0.51,
+  "b-W4000-C800-raw:dispute-std:0121": 0.55,
+  "b-W4000-C800-raw:content-guide:0008": 0.8,
+  "b-W4000-C800-raw:content-guide:0009": 0.75,
+  "b-W4000-C800-raw:content-guide:0011": 0.8,
+  "b-W4000-C800-raw:game-terms:0011": 0.77
+ }
+}

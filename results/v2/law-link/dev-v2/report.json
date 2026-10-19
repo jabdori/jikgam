@@ -1,0 +1,278 @@
+{
+ "profile": "r4",
+ "runs": [
+  "results/engine/scenarios/dev-v2-r4-1",
+  "results/engine/scenarios/dev-v2-r4-2",
+  "results/engine/scenarios/dev-v2-r4-3"
+ ],
+ "events": 397,
+ "estimate": {
+  "link_calls": 552,
+  "link_chars": 9159717,
+  "doc_calls": 240,
+  "doc_chars": 1032425,
+  "est_cost_usd": 0.428
+ },
+ "logged_top8_checked": 134,
+ "logged_top8_same": 134,
+ "link_table": {
+  "articles": 23,
+  "segments": 378,
+  "pairs": 8694,
+  "calls": 552,
+  "failed": 0,
+  "links": 158,
+  "articles_with_links": 18,
+  "cost_usd": 0.2811,
+  "wall_s": 125.1,
+  "request_ms": {
+   "p50": 222.095,
+   "p95": 261.514
+  }
+ },
+ "doc_pick": {
+  "calls": 240,
+  "failed": 0,
+  "latency_ms": {
+   "p50": 181.753,
+   "p95": 240.157
+  },
+  "cost_usd": 0.0323,
+  "docs_picked_mean": 2.24
+ },
+ "s1_merge_ms": {
+  "p50": 0.041,
+  "p95": 0.049
+ },
+ "fallback": {
+  "s1": 58,
+  "s2": 54,
+  "s1_same": 22
+ },
+ "configs": {
+  "a": {
+   "items": 504,
+   "found@8": 228,
+   "found@16": 260,
+   "rate@8": 0.4524,
+   "rate@16": 0.5159
+  },
+  "s1": {
+   "items": 504,
+   "found@8": 251,
+   "found@16": 265,
+   "rate@8": 0.498,
+   "rate@16": 0.5258
+  },
+  "s2": {
+   "items": 504,
+   "found@8": 205,
+   "found@16": 261,
+   "rate@8": 0.4067,
+   "rate@16": 0.5179
+  },
+  "s3": {
+   "items": 504,
+   "found@8": 256,
+   "found@16": 281,
+   "rate@8": 0.5079,
+   "rate@16": 0.5575
+  },
+  "s1_same": {
+   "items": 504,
+   "found@8": 251,
+   "found@16": 268,
+   "rate@8": 0.498,
+   "rate@16": 0.5317
+  }
+ },
+ "sessions_top8": {
+  "a": {
+   "items": 45,
+   "found@8": 24,
+   "rate@8": 0.5333
+  },
+  "s1": {
+   "items": 45,
+   "found@8": 26,
+   "rate@8": 0.5778
+  },
+  "s2": {
+   "items": 45,
+   "found@8": 31,
+   "rate@8": 0.6889
+  },
+  "s3": {
+   "items": 45,
+   "found@8": 26,
+   "rate@8": 0.5778
+  },
+  "s1_same": {
+   "items": 45,
+   "found@8": 26,
+   "rate@8": 0.5778
+  }
+ },
+ "links_sample": [
+  {
+   "article": "T-02",
+   "article_title": "별표 2 (연 구독 중도 해지 환불 계산 예시)",
+   "segment": "b-W4000-C800-raw:dispute-std:0061",
+   "document": "소비자분쟁해결기준",
+   "lines": "1843~1900",
+   "p": 0.65
+  },
+  {
+   "article": "A-09",
+   "article_title": "제9조 (서비스 장애에 따른 보상과 환불)",
+   "segment": "b-W4000-C800-raw:dispute-std:0061",
+   "document": "소비자분쟁해결기준",
+   "lines": "1843~1900",
+   "p": 0.86
+  },
+  {
+   "article": "A-05",
+   "article_title": "제5조 (청약철회)",
+   "segment": "b-W4000-C800-raw:ecom-terms:0007",
+   "document": "전자상거래 표준약관",
+   "lines": "195~237",
+   "p": 0.87
+  },
+  {
+   "article": "A-07",
+   "article_title": "제7조 (월 구독의 해지)",
+   "segment": "b-W4000-C800-raw:game-terms:0011",
+   "document": "온라인게임 표준약관",
+   "lines": "424~440",
+   "p": 0.61
+  },
+  {
+   "article": "A-14",
+   "article_title": "제14조 (환불 방법과 기간)",
+   "segment": "b-W4000-C800-raw:game-terms:0008",
+   "document": "온라인게임 표준약관",
+   "lines": "331~370",
+   "p": 0.65
+  },
+  {
+   "article": "A-20",
+   "article_title": "제20조 (안내 의무)",
+   "segment": "b-W4000-C800-raw:dispute-std:0109",
+   "document": "소비자분쟁해결기준",
+   "lines": "3398~3447",
+   "p": 0.51
+  },
+  {
+   "article": "A-09",
+   "article_title": "제9조 (서비스 장애에 따른 보상과 환불)",
+   "segment": "b-W4000-C800-raw:content-act:0013",
+   "document": "콘텐츠산업 진흥법",
+   "lines": "319~347",
+   "p": 0.5
+  },
+  {
+   "article": "A-08",
+   "article_title": "제8조 (연 구독의 중도 해지와 환불)",
+   "segment": "b-W4000-C800-raw:dispute-std:0112",
+   "document": "소비자분쟁해결기준",
+   "lines": "3506~3523",
+   "p": 0.57
+  },
+  {
+   "article": "A-04",
+   "article_title": "제4조 (결제와 자동 갱신)",
+   "segment": "b-W4000-C800-raw:dispute-std:0061",
+   "document": "소비자분쟁해결기준",
+   "lines": "1843~1900",
+   "p": 0.8
+  },
+  {
+   "article": "A-10",
+   "article_title": "제10조 (중복 결제)",
+   "segment": "b-W4000-C800-raw:dispute-std:0049",
+   "document": "소비자분쟁해결기준",
+   "lines": "1498~1514",
+   "p": 0.77
+  },
+  {
+   "article": "A-06",
+   "article_title": "제6조 (청약철회의 제한)",
+   "segment": "b-W4000-C800-raw:ecom-act:0012",
+   "document": "전자상거래 등에서의 소비자보호에 관한 법률",
+   "lines": "226~255",
+   "p": 0.85
+  },
+  {
+   "article": "A-01",
+   "article_title": "제1조 (목적)",
+   "segment": "b-W4000-C800-raw:content-act:0014",
+   "document": "콘텐츠산업 진흥법",
+   "lines": "348~356",
+   "p": 0.6
+  },
+  {
+   "article": "A-20",
+   "article_title": "제20조 (안내 의무)",
+   "segment": "b-W4000-C800-raw:ecom-act:0014",
+   "document": "전자상거래 등에서의 소비자보호에 관한 법률",
+   "lines": "262~288",
+   "p": 0.61
+  },
+  {
+   "article": "A-09",
+   "article_title": "제9조 (서비스 장애에 따른 보상과 환불)",
+   "segment": "b-W4000-C800-raw:content-act:0014",
+   "document": "콘텐츠산업 진흥법",
+   "lines": "348~356",
+   "p": 0.64
+  },
+  {
+   "article": "A-14",
+   "article_title": "제14조 (환불 방법과 기간)",
+   "segment": "b-W4000-C800-raw:content-guide:0005",
+   "document": "콘텐츠이용자 보호지침",
+   "lines": "93~107",
+   "p": 0.54
+  },
+  {
+   "article": "A-08",
+   "article_title": "제8조 (연 구독의 중도 해지와 환불)",
+   "segment": "b-W4000-C800-raw:dispute-std:0121",
+   "document": "소비자분쟁해결기준",
+   "lines": "3773~3794",
+   "p": 0.68
+  },
+  {
+   "article": "A-20",
+   "article_title": "제20조 (안내 의무)",
+   "segment": "b-W4000-C800-raw:game-terms:0008",
+   "document": "온라인게임 표준약관",
+   "lines": "331~370",
+   "p": 0.64
+  },
+  {
+   "article": "A-09",
+   "article_title": "제9조 (서비스 장애에 따른 보상과 환불)",
+   "segment": "b-W4000-C800-raw:dispute-std:0053",
+   "document": "소비자분쟁해결기준",
+   "lines": "1609~1650",
+   "p": 0.66
+  },
+  {
+   "article": "A-05",
+   "article_title": "제5조 (청약철회)",
+   "segment": "b-W4000-C800-raw:dispute-std:0059",
+   "document": "소비자분쟁해결기준",
+   "lines": "1761~1805",
+   "p": 0.78
+  },
+  {
+   "article": "A-05",
+   "article_title": "제5조 (청약철회)",
+   "segment": "b-W4000-C800-raw:dispute-std:0061",
+   "document": "소비자분쟁해결기준",
+   "lines": "1843~1900",
+   "p": 0.75
+  }
+ ]
+}
