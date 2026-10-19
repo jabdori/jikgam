@@ -1,0 +1,50 @@
+{
+ "ecom-act": {
+  "name": "전자상거래 등에서의 소비자보호에 관한 법률",
+  "kind": "법률",
+  "ministry": "공정거래위원회",
+  "source": "법제처 오픈 API(lawService, target=law)"
+ },
+ "ecom-decree": {
+  "name": "전자상거래 등에서의 소비자보호에 관한 법률 시행령",
+  "kind": "대통령령",
+  "ministry": "공정거래위원회",
+  "source": "법제처 오픈 API(lawService, target=law)"
+ },
+ "ecom-rule": {
+  "name": "전자상거래 등에서의 소비자보호에 관한 법률 시행규칙",
+  "kind": "총리령",
+  "ministry": "공정거래위원회",
+  "source": "법제처 오픈 API(lawService, target=law)"
+ },
+ "terms-act": {
+  "name": "약관의 규제에 관한 법률",
+  "kind": "법률",
+  "ministry": "공정거래위원회",
+  "source": "법제처 오픈 API(lawService, target=law)"
+ },
+ "consumer-act": {
+  "name": "소비자기본법",
+  "kind": "법률",
+  "ministry": "공정거래위원회",
+  "source": "법제처 오픈 API(lawService, target=law)"
+ },
+ "content-act": {
+  "name": "콘텐츠산업 진흥법",
+  "kind": "법률",
+  "ministry": "문화체육관광부",
+  "source": "법제처 오픈 API(lawService, target=law)"
+ },
+ "dispute-std": {
+  "name": "소비자분쟁해결기준",
+  "kind": "고시",
+  "ministry": "공정거래위원회",
+  "source": "법제처 오픈 API(lawService, target=admrul)"
+ },
+ "content-guide": {
+  "name": "콘텐츠이용자 보호지침",
+  "kind": "고시",
+  "ministry": "문화체육관광부",
+  "source": "법제처 오픈 API(lawService, target=admrul)"
+ }
+}
