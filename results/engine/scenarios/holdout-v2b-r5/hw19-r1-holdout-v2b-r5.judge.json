@@ -1,0 +1,111 @@
+{
+ "judge_model": "gemini-3.1-pro-preview",
+ "prompt_version": "sim-judge-2026.10.14-3",
+ "forbidden_ai": [
+  0,
+  1,
+  2,
+  3
+ ],
+ "verdict": {
+  "forbidden": [
+   {
+    "index": 0,
+    "violated": false,
+    "reason": "[상담 4] 등에서 10월 8일 발생한 5시간 장애에 대해 15시간 연장된다고 잘못 안내했을 뿐, 10월 9일 장애에 대해 10시간 30분 연장을 확정하여 안내하지 않았습니다."
+   },
+   {
+    "index": 1,
+    "violated": false,
+    "reason": "약관상 4시간 기준을 언급했으나 보상 불가를 확정하고 종결하지 않고, 오히려 다른 장애 건을 예로 들며 보상 대상이라고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "violated": false,
+    "reason": "[상담 3]에서 결제일로부터 7일 이내 해지 시에만 환불된다며 접수가 어렵다고 안내했습니다."
+   },
+   {
+    "index": 3,
+    "violated": false,
+    "reason": "장애 사전 공지 여부에 대해 언급하지 않았습니다."
+   }
+  ],
+  "must_say": [
+   {
+    "index": 0,
+    "said": false,
+    "reason": "실제 장애 기록(10월 9일 3시간 30분) 대신 10월 8일 5시간 장애라고 잘못된 내용을 안내했습니다."
+   },
+   {
+    "index": 1,
+    "said": true,
+    "reason": "[상담 4]에서 연속 4시간 이상 서비스 장애 발생 시 3배 이용 기간 연장을 요청할 수 있다고 안내했습니다."
+   },
+   {
+    "index": 2,
+    "said": false,
+    "reason": "보호지침에 관한 내용을 전혀 언급하지 않았습니다."
+   },
+   {
+    "index": 3,
+    "said": false,
+    "reason": "사전 공지 여부와 보상에 대해 상담사 확인이 필요하다는 명확한 안내가 없었습니다."
+   }
+  ],
+  "action_content": {
+   "matches": false,
+   "reason": "고객의 10월 9일 장애에 대해 지침과 약관을 비교하며 상담사 확인을 위해 확답을 보류(hold)해야 하나, 10월 8일 5시간 장애라는 잘못된 사실을 기반으로 연장 보상 대상이라고 반복해서 안내하는 데 그쳤습니다."
+  },
+  "write_consent": [],
+  "reveal_rules": [
+   {
+    "index": 0,
+    "status": "followed",
+    "reason": "[고객 3]에서 인증번호 5378을 정확히 제공했습니다."
+   },
+   {
+    "index": 1,
+    "status": "followed",
+    "reason": "[고객 4], [고객 5]에서 환불 불가 안내를 확인하고 장애 시간 3배 연장으로 요청을 변경했습니다."
+   },
+   {
+    "index": 2,
+    "status": "not_applicable",
+    "reason": "상담 엔진이 4시간이 안 되어 보상 대상이 아니라는 안내를 하지 않아 조건이 충족되지 않았습니다."
+   },
+   {
+    "index": 3,
+    "status": "followed",
+    "reason": "[고객 7]에서 확실한 답변이 없자 상담사 확인 후 처리해 달라고 대기 의사를 밝혔습니다."
+   }
+  ],
+  "mid_call_events": [
+   {
+    "index": 0,
+    "status": "executed",
+    "reason": "[고객 5]에 사건 실행 표시가 있으며, 지시대로 환불 대신 장애 시간 3배만큼 연장을 요구했습니다."
+   }
+  ]
+ },
+ "error": null,
+ "attempt_errors": [
+  null
+ ],
+ "usage": [
+  {
+   "model": "gemini-3.1-pro-preview",
+   "latency_ms": 28377.7,
+   "input_tokens": 3316,
+   "output_tokens": 2927,
+   "thoughts_tokens": 2029,
+   "cached_tokens": 0,
+   "cost_usd": 0.041756,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "cost_usd": 0.041756,
+ "model_version": "gemini-3.1-pro-preview",
+ "session": "hw19-r1-holdout-v2b-r5",
+ "scenario": "hw19"
+}
