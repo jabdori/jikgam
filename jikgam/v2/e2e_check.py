@@ -207,6 +207,12 @@ def build(r0, r4, name, root=ROOT):
 
 
 DISPLAY_FIELDS = ("id", "item", "claim", "input", "context", "expected")
+# 심사 기준(ADR 0027 정의). 화면에 그대로 보인다. 2026-10-20 사람 확인에서 근거 범위를 적지 않아 다른 범위로 확인한 일이 있었다(ADR 0031)
+CLAIM_CRITERION = ("근거로 보는 것은 그 제안을 만들 때 생성 모델에 넘긴 입력 전체입니다. 조항 글(articles: 약관·법령), "
+                   "견적(quotes), 업무 API 결과(system_facts, receipts), 계획(plan), 대화(conversation)가 모두 들어갑니다. "
+                   "이 가운데 어디에든 주장을 뒷받침하는 내용이 있으면 '근거 있음', 어디에도 없으면 '근거 없음'입니다. "
+                   "주장이 실제로 맞는지, 안내가 적절한지는 묻지 않습니다.")
+ITEM_CRITERION = "대화가 그 항목의 기대 내용을 충족하는지만 판단합니다. 다른 항목이나 대화의 다른 잘못은 보지 않습니다."
 REFERENCE_FIELDS = {"refs", "references", "cited_articles", "article_ids", "generator_cited", "evidence_sources"}
 
 
@@ -285,7 +291,8 @@ def render_page(sample):
         for i, item in enumerate(displayed[group]):
             if group == "claims":
                 content = f'<h3>판정할 주장</h3><p class="target">{esc(item["claim"])}</p>'
-                content += '<p>생성에 넘긴 입력에 이 주장을 뒷받침하는 내용이 있습니까?</p>'
+                content += ('<p>생성에 넘긴 입력 전체(조항 글, 견적, 업무 API 결과, 계획, 대화) 어디에든 '
+                            '이 주장을 뒷받침하는 내용이 있습니까?</p>')
                 labels = ("근거 있음", "근거 없음")
                 extra = f'<details><summary>생성에 넘긴 입력 전체</summary><pre>{esc(item["input"])}</pre></details>'
             else:
@@ -306,7 +313,7 @@ def render_page(sample):
 <style>body{margin:0;background:#f3f5f7;color:#17222e;font:16px/1.65 system-ui,sans-serif}
 main{max-width:1060px;margin:auto;padding:32px 24px}h1{font-size:28px}h2{font-size:21px}h3{font-size:16px}
 .bar{position:sticky;top:0;background:#fff;padding:14px 18px;border:1px solid #d4dce4;border-radius:10px;z-index:1;display:flex;gap:22px;align-items:center;flex-wrap:wrap}
-.item{background:#fff;border:1px solid #d4dce4;border-radius:12px;padding:24px;margin:20px 0 36px}
+.item,.criteria{background:#fff;border:1px solid #d4dce4;border-radius:12px;padding:24px;margin:20px 0 36px}
 .target{background:#eef4fc;border-left:4px solid #356eb1;padding:14px;font-weight:600}
 pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.7 ui-monospace,monospace}
 details{border-top:1px solid #e2e7ec;margin-top:20px;padding-top:14px}summary{cursor:pointer;font-weight:600}
@@ -314,6 +321,8 @@ select,button{font:inherit;padding:9px 14px;border-radius:6px;border:1px solid #
 button:disabled{opacity:.45;cursor:default}.note{color:#526171}a{color:#205e9e}label{display:block;margin:20px 0}
 @media(max-width:600px){main{padding:16px}.item{padding:16px}}</style></head><body><main>
 <h1>엔드투엔드 판정 사람 확인</h1><p>주장 30개와 시나리오 항목 10개를 확인해 주세요. 모델 판정은 표시하지 않습니다.</p>
+<section class="criteria"><h2>심사 기준</h2><h3>주장 근거</h3><p>''' + esc(CLAIM_CRITERION) + '''</p>
+<h3>시나리오 항목</h3><p>''' + esc(ITEM_CRITERION) + '''</p></section>
 <p class="note">각 항목은 제시된 입력과 대화로만 판단해 주세요. 선택은 이 브라우저에 저장됩니다.
 모두 확인한 뒤 결과 JSON을 내려받아 전달해 주세요.</p>
 <div class="bar"><button id="download" disabled>결과 내려받기</button><span id="progress" role="status"></span>

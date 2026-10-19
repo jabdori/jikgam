@@ -199,3 +199,12 @@ def test_build_accepts_r5_as_the_second_run_and_still_hides_the_configuration(in
     put(dirs[1] / "summary.json", {**runs[dirs[1]]["summary"], "sessions": []})
     with pytest.raises(ValueError, match="R4 또는 R5"):
         check.build(*dirs, "개발3", root)
+
+
+def test_page_states_the_claim_criterion_and_counts_only_review_cards(inputs):
+    root, dirs, out, _ = build_sample(inputs)
+    page = Path(out["page"]).read_text(encoding="utf-8")
+    assert "심사 기준" in page and page.count('class="item"') == 40
+    for part in ("articles", "quotes", "system_facts", "receipts", "plan", "conversation"):
+        assert part in page
+    assert "주장이 실제로 맞는지" in page
