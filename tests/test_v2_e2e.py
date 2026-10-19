@@ -373,3 +373,78 @@ def test_judge_session_accumulates_prior_cost_and_usage(tmp_path, monkeypatch):
     assert rec["cost_usd"] == pytest.approx(0.3)
     assert len(rec["usage"]) == 2 and rec["previous_judgments"] == 1
     assert saved == [(path, rec)]
+
+
+def test_law_evidence_rate_and_r5_condition_use_valid_runs_and_the_same_draws():
+    a = [{**row(run=i), "law_items": 2, "law_found": 0} for i in (1, 2, 3)]
+    b = [{**row(run=i), "law_items": 2, "law_found": 1} for i in (1, 2, 3)]
+    b.append({**row(run=4, valid=False), "law_items": 2, "law_found": 2})  # 무효 실행은 세지 않는다
+    a.append({**row(run=4, valid=False), "law_items": 2, "law_found": 0})
+    assert report.law_rate(a) == 0 and report.law_rate(b) == 0.5
+    result = report.compare(a, b, [{}, {}], "r5")
+    assert result["other"] == "r5" and result["r5"]["law_evidence"] == {"items": 6, "found": 3, "rate": 0.5}
+    assert result["law_evidence_delta"] == 0.5 and result["conditions"]["law_evidence_better"] is True
+    assert result["bootstrap"]["ci95"]["law_delta"] == [0.5, 0.5] and "pass_r5" in result["bootstrap"]["ci95"]
+    b[0]["valid"] = None  # 준수 미판정이 남으면 주 지표도 보류
+    assert report.compare(a, b, [{}, {}], "r5")["conditions"]["law_evidence_better"] is None
+    with pytest.raises(ValueError, match="비교할 구성"):
+        report.compare(a, b, [{}, {}], "r1")
+
+
+def test_law_evidence_condition_needs_ten_points_and_interval_above_zero():
+    a = [{**row(scenario=s, run=1), "law_items": 10, "law_found": 5} for s in "가나다라"]
+    b = [{**row(scenario=s, run=1), "law_items": 10, "law_found": f} for s, f in zip("가나다라", (5, 5, 5, 9))]
+    result = report.compare(a, b, [{}, {}], "r5")
+    assert result["law_evidence_delta"] == pytest.approx(0.1)
+    assert result["bootstrap"]["ci95"]["law_delta"][0] == 0  # 아래 끝이 0이면 낫다고 하지 않는다
+    assert result["conditions"]["law_evidence_better"] is False
+
+
+def test_judge_law_stats_counts_gold_items_covered_by_the_session_union():
+    from jikgam.ingest import chunk as chunking
+    from jikgam.sim import judge
+
+    c1, c2 = chunking.load("b-W4000-C800-raw")[:2]
+    gold = [{"alternatives": [{"doc": c.doc, "start": c.start, "end": c.end}]} for c in (c1, c2)]
+    es = [{"type": "suggestion.created", "suggestion_id": "s", "t_ms": 0, "cited_articles": ["A-01", c1.id]},
+          {"type": "suggestion.exposed", "suggestion_id": "s", "t_ms": 1},
+          {"type": "suggestion.created", "suggestion_id": "u", "t_ms": 2, "cited_articles": [c2.id]}]  # 노출 안 함
+    stats = judge.law_stats({"expected": {"law_evidence": gold}}, judge.LogView(es))
+    assert (stats["law_items"], stats["law_found"]) == (2, 1)
+
+
+def test_second_holdout_contract_fixes_four_bizapi_files_and_r5_profile_files():
+    from jikgam.v2 import e2e_contract
+
+    args = SimpleNamespace(org="org_a", scenario_file=e2e_contract.HOLDOUT_B_SCENARIO)
+    arguments, _, profiles = e2e_contract.selected(args)
+    assert arguments["bizapi_data"] == e2e_contract.HOLDOUT_B_BIZAPI_DATA
+    assert arguments["customers"] == ["domain/org_a/customers_v2b_holdout.json"]
+    assert set(profiles) == {"r0", "r4", "r5"}
+    assert {"data/v2/law-meta/b-W4000-C800-raw.json", "data/question_sets/extra/law-topic-v1.json"} <= profiles["r5"]
+    assert profiles["r5"] - profiles["r4"] == {"data/v2/law-meta/b-W4000-C800-raw.json",
+                                               "data/question_sets/extra/law-topic-v1.json"}
+    wrong = SimpleNamespace(**vars(args), bizapi_data=e2e_contract.HOLDOUT_BIZAPI_DATA)
+    with pytest.raises(ValueError, match="네 파일 순서"):
+        e2e_contract.selected(wrong)
+
+
+def test_second_holdout_lock_requires_adr_and_accepts_r5(tmp_path, monkeypatch):
+    from jikgam.v2 import e2e_contract
+
+    target = tmp_path / e2e_contract.HOLDOUT_B_SCENARIO
+    put(target, {"합성": True})
+    with pytest.raises(SystemExit, match="--frozen"):
+        freeze.require_e2e_frozen(target, None, tmp_path)
+    contract = {"arguments": {"scenario_file": e2e_contract.HOLDOUT_B_SCENARIO}, "files": {}, "law_profiles": {}}
+    monkeypatch.setattr(e2e_contract, "build_contract", lambda *_: contract)
+    (tmp_path / "docs/adr").mkdir(parents=True)
+    (tmp_path / "docs/adr/0030-설정-고정.md").write_text("합성 고정 기록", encoding="utf-8")
+    names = [target.relative_to(tmp_path).as_posix()]
+    monkeypatch.setattr(freeze, "e2e_input_paths", lambda root: names)
+    freeze.write_manifest(tmp_path, "0030", names, contract=contract)
+    assert freeze.require_e2e_frozen(target, "0030", tmp_path, SimpleNamespace(law="r5")) == contract
+    with pytest.raises(SystemExit, match="R0·R4·R5"):
+        freeze.require_e2e_frozen(target, "0030", tmp_path, SimpleNamespace(law="r1"))
+    with pytest.raises(SystemExit, match="정확한 저장소 경로"):
+        freeze.require_e2e_frozen(tmp_path / "data/org_a_v2b_holdout.jsonl", None, tmp_path)

@@ -9,6 +9,24 @@ from jikgam.engine.org import ROOT
 HOLDOUT_SCENARIO = "data/scenarios/org_a_v2_holdout.jsonl"
 HOLDOUT_BIZAPI_DATA = ["domain/org_a/customers.json", "domain/org_a/customers_holdout.json",
                       "domain/org_a/customers_v2_holdout.json"]
+# 두 번째 v2 미공개 묶음(data/scenarios/HOLDOUT_V2B.md). 업무 API는 앞의 세 파일에 이 묶음의 고객 파일을 더한다
+HOLDOUT_B_SCENARIO = "data/scenarios/org_a_v2b_holdout.jsonl"
+HOLDOUT_B_BIZAPI_DATA = [*HOLDOUT_BIZAPI_DATA, "domain/org_a/customers_v2b_holdout.json"]
+# 미공개 시나리오 파일 → 정해진 업무 API 데이터 순서. 실행기 고객 파일은 그 마지막 파일이다
+HOLDOUTS = {HOLDOUT_SCENARIO: HOLDOUT_BIZAPI_DATA, HOLDOUT_B_SCENARIO: HOLDOUT_B_BIZAPI_DATA}
+LAW_PROFILES = ("r0", "r4", "r5")
+
+
+def profile_files(p, root):
+    """법령 프로필이 실제로 읽는 파일: 구간, 구간 정보, r5의 구간 메타데이터와 주제 질문."""
+    chosen = {f"data/v2/chunks/{p['chunks']}.jsonl"}
+    if p.get("meta", "none") != "none":
+        chosen.update(relative(x, root) for x in (
+            root / f"data/v2/meta/{p['chunks']}.jsonl", root / f"data/v2/local/meta/{p['chunks']}.jsonl") if x.exists())
+    for key in ("labels", "topic_question_set"):
+        if p.get(key):
+            chosen.add(relative(p[key], root))
+    return chosen
 
 
 def relative(path, root):
@@ -27,17 +45,17 @@ def selected(args, root=ROOT):
     org = relative(org_arg if str(org_arg).endswith(".toml") else f"config/orgs/{org_arg}.toml", root)
     raw = tomllib.loads((root / org).read_text(encoding="utf-8"))
     scenario = relative(getattr(args, "scenario_file", None) or f"data/scenarios/{raw['org']}.jsonl", root)
-    defaults = [HOLDOUT_BIZAPI_DATA[-1]] if scenario == HOLDOUT_SCENARIO else [str(Path(raw["terms"]).parent / "customers.json")]
+    holdout = HOLDOUTS.get(scenario)
+    defaults = [holdout[-1]] if holdout else [str(Path(raw["terms"]).parent / "customers.json")]
     customers = sorted({relative(p, root) for p in (getattr(args, "customers", None) or defaults)})
-    bizapi_data = [relative(p, root) for p in (getattr(args, "bizapi_data", None)
-                   or (HOLDOUT_BIZAPI_DATA if scenario == HOLDOUT_SCENARIO else customers))]
+    bizapi_data = [relative(p, root) for p in (getattr(args, "bizapi_data", None) or (holdout or customers))]
     if len(set(bizapi_data)) != len(bizapi_data):
         raise ValueError("업무 API 데이터 파일 중복은 허용하지 않습니다")
-    if scenario == HOLDOUT_SCENARIO and bizapi_data != HOLDOUT_BIZAPI_DATA:
-        raise ValueError("미공개 실행 계약의 업무 API 데이터는 정해진 세 파일 순서여야 합니다")
+    if holdout and bizapi_data != holdout:
+        raise ValueError(f"미공개 실행 계약의 업무 API 데이터는 정해진 {({3: '세', 4: '네'}).get(len(holdout), len(holdout))} 파일 순서여야 합니다")
     for path in [scenario, *customers, *bizapi_data]:
         if "holdout" in Path(path).name.casefold():
-            allowed = {HOLDOUT_SCENARIO, *HOLDOUT_BIZAPI_DATA}
+            allowed = {*HOLDOUTS, *(p for files in HOLDOUTS.values() for p in files)}
             if path not in allowed:
                 raise ValueError("미공개 파일은 정확한 저장소 경로만 허용합니다")
     from jikgam.sim.scenario import normalize_selection
@@ -66,13 +84,9 @@ def selected(args, root=ROOT):
         law = tomllib.loads(cfg.read_text(encoding="utf-8"))
         if law.get("question_set"):
             files.add(relative(law["question_set"], root))
-        for name in ("r0", "r4"):
-            p = law[name]
-            chosen = {f"data/v2/chunks/{p['chunks']}.jsonl"}
-            if p.get("meta", "none") != "none":
-                chosen.update(relative(x, root) for x in (
-                    root / f"data/v2/meta/{p['chunks']}.jsonl", root / f"data/v2/local/meta/{p['chunks']}.jsonl") if x.exists())
-            profiles[name] = chosen
+        for name in LAW_PROFILES:
+            if name in law:
+                profiles[name] = profile_files(law[name], root)
     summary = root / "data/v2/extracted/summary.json"
     if summary.exists():
         import json

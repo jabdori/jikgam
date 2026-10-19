@@ -495,8 +495,14 @@ def law_stats(scn: dict[str, Any], lv: LogView) -> dict[str, Any] | None:
         cov.add(c.doc, c.start, c.end)
         if law and any(t["scorer"].found({"evidence": law}, cov)):
             useful += 1
+    # 법령 근거 포함(docs/evaluation-v2-r5.md §3): 항목 10과 같은 합집합으로 정답 법령 항목마다 덮었는지 센다
+    union = t["Coverage"]()
+    for c in chunks:
+        union.add(c.doc, c.start, c.end)
+    found = t["scorer"].found({"evidence": law}, union) if law else []
     return {"law_chunks": len(chunks), "law_tokens": sum(c.tokens for c in chunks),
-            "law_precision": round(useful / len(chunks), 3) if chunks else None}
+            "law_precision": round(useful / len(chunks), 3) if chunks else None,
+            "law_items": len(law or []), "law_found": sum(bool(f) for f in found)}
 
 
 def check_item10_last(scn: dict[str, Any], lv: LogView) -> ItemVerdict:

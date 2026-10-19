@@ -83,8 +83,19 @@ def invert(value):
     return not value if type(value) is bool else None
 
 
+OTHERS = ("r4", "r5")  # R0와 비교하는 구성
+
+
+def other_law(run_dir, root=ROOT):
+    """두 번째 실행의 구성(r4 또는 r5). 화면에는 쓰지 않는다."""
+    law = json.loads(read_text(Path(run_dir) / "summary.json", root)).get("law")
+    if law not in OTHERS:
+        raise ValueError("두 번째 실행은 R4 또는 R5의 완료된 실행이어야 합니다")
+    return law
+
+
 def gather(r0, r4, root=ROOT):
-    """캐시와 로그의 연결을 확인하고, 표본 모집단과 모든 입력 파일 해시를 만든다."""
+    """캐시와 로그의 연결을 확인하고, 표본 모집단과 모든 입력 파일 해시를 만든다. r4는 두 번째 실행(R4 또는 R5)이다."""
     pools = {"claims": [], "scenario_items": []}
     paths = []
     for path in ("config/decision_models.toml", "config/v2/law.toml", "jikgam/sim/judge.py", "jikgam/v2/e2e_claims.py",
@@ -92,7 +103,7 @@ def gather(r0, r4, root=ROOT):
         paths.append(root / path)
     hashes = source_hashes(paths, root)
     model = load_config()[answer.JUDGE_MODEL]["model"]
-    for law, run_dir in (("r0", r0), ("r4", r4)):
+    for law, run_dir in (("r0", r0), (other_law(r4, root), r4)):
         summary_path = original_path(run_dir / "summary.json", root)
         hashes.update(source_hashes([summary_path, run_dir / MANIFEST], root))
         before = json.loads(read_text(run_dir / "summary.json", root))
@@ -150,7 +161,8 @@ def gather(r0, r4, root=ROOT):
 
 def sample_claims(population, size=CLAIMS):
     """구성별 주장 수 비례 할당(최대 나머지법) 후 구성 안에서 무작위로 뽑는다."""
-    groups = {law: [x for x in population if x["law"] == law] for law in ("r0", "r4")}
+    laws = ["r0", *sorted({x["law"] for x in population} - {"r0"})] or ["r0", "r4"]
+    groups = {law: [x for x in population if x["law"] == law] for law in laws}
     if len(population) < size:
         raise ValueError(f"확인할 주장이 {size}개보다 적습니다")
     exact = {k: size * len(v) / len(population) for k, v in groups.items()}
@@ -181,7 +193,7 @@ def build(r0, r4, name, root=ROOT):
     sample = {"name": name, "seed": SEED,
               "runs": [p.relative_to(root.resolve()).as_posix() for p in runs],
               "source_hashes": hashes, "input_hash": digest(hashes),
-              "population": {group: {law: sum(x["law"] == law for x in items) for law in ("r0", "r4")}
+              "population": {group: {law: sum(x["law"] == law for x in items) for law in ("r0", other_law(runs[1], root))}
                              for group, items in pools.items()}, "items": chosen}
     sample["id_aliases"] = id_aliases(sample["items"])
     sample["sample_digest"] = sample_digest(sample)
@@ -201,7 +213,7 @@ REFERENCE_FIELDS = {"refs", "references", "cited_articles", "article_ids", "gene
 def input_law_ids(items):
     """생성 입력의 실제 조항 ID·참조만 수집하고 본문·업무 사실은 해석하지 않는다."""
     config = tomllib.loads((ROOT / "config/v2/law.toml").read_text(encoding="utf-8"))
-    prefixes = tuple(config[p]["chunks"] + ":" for p in ("r0", "r4"))
+    prefixes = tuple(sorted({config[p]["chunks"] + ":" for p in ("r0", "r4", "r5") if p in config}))
     ids = set()
 
     def add(value):
@@ -405,7 +417,7 @@ def main():
     commands = ap.add_subparsers(dest="command", required=True)
     b = commands.add_parser("build", help="모델 판정을 숨긴 사람 확인 페이지 생성")
     b.add_argument("r0", type=Path)
-    b.add_argument("r4", type=Path)
+    b.add_argument("r4", type=Path, help="R4 또는 R5 실행 폴더")
     a = commands.add_parser("apply", help="사람 확인 결과의 해시 검증과 일치율 반영")
     a.add_argument("result", type=Path)
     for command in (b, a):

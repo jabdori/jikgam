@@ -112,6 +112,9 @@ def e2e_input_paths(root=ROOT):
              "data/scenarios/org_a_v2.jsonl", "data/scenarios/org_a_v2_holdout.jsonl",
              "domain/org_a/customers.json", "domain/org_a/customers_v2_holdout.json"}
     paths.add("domain/org_a/customers_holdout.json")
+    # 두 번째 v2 미공개 묶음과 그 기준 문서(있을 때). 나중에 생기면 목록이 달라져 verify가 감지한다
+    paths.update(p for p in ("docs/evaluation-v2-r5.md", "data/scenarios/org_a_v2b_holdout.jsonl",
+                             "domain/org_a/customers_v2b_holdout.json") if (root / p).is_file())
     for pattern in ("jikgam/engine/*.py", "jikgam/decision/*.py", "jikgam/sim/*.py", "jikgam/v2/*.py",
                     "jikgam/ingest/*.py", "jikgam/eval/*.py", "config/*.toml", "config/orgs/*.toml",
                     "config/v2/law.toml", "config/decision_models.d/*.toml", "domain/org_a/*.md",
@@ -124,12 +127,17 @@ def e2e_input_paths(root=ROOT):
     cfg_path = root / "config/v2/law.toml"
     if cfg_path.exists():
         cfg = tomllib.loads(cfg_path.read_text(encoding="utf-8"))
-        for profile in ("r0", "r4"):
+        for profile in ("r0", "r4", "r5"):
+            if profile not in cfg:
+                continue
             name = cfg[profile]["chunks"]
             paths.add(f"data/v2/chunks/{name}.jsonl")
             if cfg[profile].get("meta", "none") != "none":
                 for base in ("data/v2/meta", "data/v2/local/meta"):
                     paths.add(f"{base}/{name}.jsonl")
+            for key in ("labels", "topic_question_set"):
+                if cfg[profile].get(key):
+                    paths.add(cfg[profile][key])
     summary = root / "data/v2/extracted/summary.json"
     paths.add("data/v2/extracted/summary.json")
     if summary.exists():
@@ -142,14 +150,17 @@ def require_e2e_frozen(scenario_file, adr, root=ROOT, args=None):
     from pathlib import Path
     import re
 
+    from jikgam.v2.e2e_contract import HOLDOUTS
+
     target = Path(scenario_file).resolve()
-    expected = (root / "data/scenarios/org_a_v2_holdout.jsonl").resolve()
+    holdouts = {(root / p).resolve(): p for p in HOLDOUTS}
+    names = {p.name.casefold() for p in holdouts}
     requested = adr is not None
-    if not requested and target != expected and target.name.casefold() != expected.name.casefold():
+    if not requested and target not in holdouts and target.name.casefold() not in names:
         if "holdout" in target.name.casefold() and "v2" in target.name.casefold():
             raise SystemExit("미공개 v2 파일은 정확한 저장소 경로만 허용합니다")
         return
-    if not requested and target != expected:
+    if not requested and target not in holdouts:
         raise SystemExit("미공개 v2 파일은 정확한 저장소 경로만 허용합니다")
     if not adr or not re.fullmatch(r"\d{4}", adr):
         raise SystemExit("미공개 v2 실행에는 설정 고정 ADR 번호(--frozen)가 필요합니다")
@@ -168,11 +179,11 @@ def require_e2e_frozen(scenario_file, adr, root=ROOT, args=None):
         from jikgam.v2.e2e_contract import build_contract, contract_files
         if args is None or not isinstance(manifest.get("contract"), dict):
             raise ValueError("정규화한 실행 계약이 필요합니다")
-        if getattr(args, "law", None) not in ("r0", "r4") or getattr(args, "no_judge", False):
-            raise ValueError("미공개 v2는 R0·R4와 시나리오 판정이 필요합니다")
+        if getattr(args, "law", None) not in ("r0", "r4", "r5") or getattr(args, "no_judge", False):
+            raise ValueError("미공개 v2는 R0·R4·R5 가운데 하나와 시나리오 판정이 필요합니다")
         frozen_scenario = manifest["contract"].get("arguments", {}).get("scenario_file")
-        holdout_contract = frozen_scenario == "data/scenarios/org_a_v2_holdout.jsonl"
-        verification["scenario_path_match"] = not holdout_contract or target == expected
+        holdout_contract = frozen_scenario in HOLDOUTS
+        verification["scenario_path_match"] = not holdout_contract or target == (root / frozen_scenario).resolve()
         frozen_paths = set(e2e_input_paths(root)) | contract_files(manifest["contract"])
         changed = verify_manifest(root, adr, paths=frozen_paths)
         verification["manifest_match"] = not changed

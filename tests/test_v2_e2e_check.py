@@ -184,3 +184,18 @@ def test_names_cannot_escape_review_or_result_directory(tmp_path):
     for name in ("../외부", "a/b", "a\\b", "", ".", "..", "<script>"):
         with pytest.raises(ValueError):
             check.directory(name, tmp_path)
+
+
+def test_build_accepts_r5_as_the_second_run_and_still_hides_the_configuration(inputs):
+    root, dirs, runs = inputs
+    runs[dirs[1]]["summary"]["law"] = "r5"
+    put(dirs[1] / "summary.json", {**runs[dirs[1]]["summary"], "sessions": [{"session": "세션0"}, {"session": "세션1"}]})
+    out = check.build(*dirs, "개발2", root)
+    sample = json.loads((check.directory("개발2", root) / "sample.json").read_text(encoding="utf-8"))
+    assert sample["population"] == {"claims": {"r0": 40, "r5": 40}, "scenario_items": {"r0": 6, "r5": 6}}
+    page = Path(out["page"]).read_text(encoding="utf-8")
+    assert "R5" not in page and "r5" not in page and '"law"' not in page
+    runs[dirs[1]]["summary"]["law"] = "r1"
+    put(dirs[1] / "summary.json", {**runs[dirs[1]]["summary"], "sessions": []})
+    with pytest.raises(ValueError, match="R4 또는 R5"):
+        check.build(*dirs, "개발3", root)

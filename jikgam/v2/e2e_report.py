@@ -1,4 +1,7 @@
-"""두 구성의 §8.4 수치 보고. 주장 글과 실패 사유 원문은 결과 폴더에 쓰지 않는다."""
+"""두 구성(R0와 R4 또는 R5)의 §8.4 수치 보고. 주장 글과 실패 사유 원문은 결과 폴더에 쓰지 않는다.
+
+R5 확정 측정(docs/evaluation-v2-r5.md)의 주 지표인 법령 근거 포함률(정답 법령 항목 단위)도 함께 낸다.
+"""
 
 import argparse
 import json
@@ -17,6 +20,7 @@ from jikgam.v2.e2e_contract import legacy_contract, verify_comparison
 
 SEED = 20261016
 REPS = 10_000
+OTHERS = ("r4", "r5")  # R0와 비교하는 구성
 
 
 def mean(values):
@@ -81,6 +85,8 @@ def collect(run_dir, expected_law=None):
                      "legacy_unsupported": sum(not c["supported"] for c in legacy),
                      "ai_error": bool((s.get("ai") or {}).get("error")),
                      "items": {n: v["ok"] for n, v in r["items"].items()},
+                     "law_items": (r["aux"].get("law") or {}).get("law_items", 0),
+                     "law_found": (r["aux"].get("law") or {}).get("law_found", 0),
                      "aux": r["aux"], "metrics": s["metrics"]})
     summary = run["summary"]
     selection = (summary.get("contract") or {}).get("arguments", {}).get("scenarios", summary.get("scenarios", "all"))
@@ -93,7 +99,7 @@ def collect(run_dir, expected_law=None):
         for k in range(summary.get("run_start", 1), summary.get("run_start", 1) + summary["runs"]):
             if (sid, k) not in seen:
                 rows.append({"scenario": sid, "run": k, "valid": None, "pass": None, "claims": 0,
-                             "unsupported": 0, "missing": 0, "planned_missing": True,
+                             "unsupported": 0, "missing": 0, "planned_missing": True, "law_items": 0, "law_found": 0,
                              "execution_contract": summary.get("contract") or legacy_contract(summary),
                              "items": {n: None for n in range(1, 11)}, "aux": {"precision": None},
                              "metrics": metrics.session_metrics([])})
@@ -109,12 +115,19 @@ def totals(rows):
     valid = [r for r in rows if r["valid"] is True]
     return {"valid": len(valid), "passed": sum(r["pass"] is True for r in valid),
             "claims": sum(r["claims"] for r in valid), "unsupported": sum(r["unsupported"] for r in valid),
-            "missing": sum(r["missing"] for r in valid)}
+            "missing": sum(r["missing"] for r in valid),
+            "law_items": sum(r.get("law_items", 0) for r in valid), "law_found": sum(r.get("law_found", 0) for r in valid)}
 
 
 def rates(rows):
     t = totals(rows)
     return ratio(t["passed"], t["valid"]), (None if t["missing"] else ratio(t["unsupported"], t["claims"]))
+
+
+def law_rate(rows):
+    """법령 근거 포함률: 유효 실행의 정답 법령 항목 중 상담 근거(노출 제안 인용 합집합)에 든 비율."""
+    t = totals(rows)
+    return ratio(t["law_found"], t["law_items"])
 
 
 def summarize(rows, cost):
@@ -140,6 +153,7 @@ def summarize(rows, cost):
             "log_sources": {"private_sessions": sum(r.get("private_log", False) for r in rows),
                             "public_sessions": sum(not r.get("private_log", False) for r in rows)},
             "pass_rate": rates(rows)[0], "unsupported_claim_rate": rates(rows)[1],
+            "law_evidence": {"items": t["law_items"], "found": t["law_found"], "rate": law_rate(rows)},
             "claim_judgment_complete": t["missing"] == 0,
             "refresh_ms": agg["refresh"]["stats"],
             "stale": {"by_channel": {ch: {k: c[k] for k in ("invalid", "denominator", "unconfirmed")}
@@ -154,31 +168,34 @@ def summarize(rows, cost):
             "cost_usd": cost}
 
 
-def paired_bootstrap(r0, r4, reps=REPS, seed=SEED):
-    ids = sorted({r["scenario"] for r in r0} | {r["scenario"] for r in r4})
-    if not ids or {r["scenario"] for r in r0} != {r["scenario"] for r in r4}:
+def paired_bootstrap(r0, other_rows, reps=REPS, seed=SEED, other="r4"):
+    ids = sorted({r["scenario"] for r in r0} | {r["scenario"] for r in other_rows})
+    if not ids or {r["scenario"] for r in r0} != {r["scenario"] for r in other_rows}:
         raise ValueError("두 구성은 같은 시나리오 묶음이어야 합니다")
     keys = lambda rows: sorted((r["scenario"], r["run"]) for r in rows)
-    if keys(r0) != keys(r4):
+    if keys(r0) != keys(other_rows):
         raise ValueError("두 구성의 시나리오별 반복이 다릅니다")
-    groups = [{sid: [r for r in rows if r["scenario"] == sid] for sid in ids} for rows in (r0, r4)]
+    groups = [{sid: [r for r in rows if r["scenario"] == sid] for sid in ids} for rows in (r0, other_rows)]
     rng = random.Random(seed)
-    draws = {"pass_r0": [], "pass_r4": [], "pass_delta": [],
-             "unsupported_r0": [], "unsupported_r4": [], "unsupported_delta": []}
-    complete_claims = not any(totals(rows)["missing"] for rows in (r0, r4))
-    known = not any(r["valid"] is None for rows in (r0, r4) for r in rows)
-    known_pass = known and not any(r["pass"] is None for rows in (r0, r4) for r in rows if r["valid"] is True)
+    names = ("pass", "unsupported", "law")
+    draws = {f"{n}_{k}": [] for n in names for k in ("r0", other, "delta")}
+    complete_claims = not any(totals(rows)["missing"] for rows in (r0, other_rows))
+    known = not any(r["valid"] is None for rows in (r0, other_rows) for r in rows)
+    known_pass = known and not any(r["pass"] is None for rows in (r0, other_rows) for r in rows if r["valid"] is True)
+    usable = {"pass": known_pass, "unsupported": known and complete_claims, "law": known}
     for _ in range(reps):
+        # 한 번 뽑은 시나리오 묶음을 세 지표에 같이 쓴다(docs/evaluation-v2-r5.md §5)
         chosen = rng.choices(ids, k=len(ids))
-        values = [rates([r for sid in chosen for r in g[sid]]) for g in groups]
-        for i, name in enumerate(("pass", "unsupported")):
-            if not known or (i == 0 and not known_pass) or (i == 1 and not complete_claims):
+        picked = [[r for sid in chosen for r in g[sid]] for g in groups]
+        values = [(*rates(rows), law_rate(rows)) for rows in picked]
+        for i, name in enumerate(names):
+            if not usable[name]:
                 continue
             a, b = values[0][i], values[1][i]
             if a is not None:
                 draws[f"{name}_r0"].append(a)
             if b is not None:
-                draws[f"{name}_r4"].append(b)
+                draws[f"{name}_{other}"].append(b)
             if a is not None and b is not None:
                 draws[f"{name}_delta"].append(b - a)
     return {"reps": reps, "seed": seed, "scenarios": len(ids),
@@ -186,22 +203,31 @@ def paired_bootstrap(r0, r4, reps=REPS, seed=SEED):
                      for k, v in draws.items()}, "effective_draws": {k: len(v) for k, v in draws.items()}}
 
 
-def compare(r0, r4, costs):
-    contract_status = verify_comparison(r0, r4)
-    a, b = summarize(r0, costs[0]), summarize(r4, costs[1])
+def compare(r0, other_rows, costs, other="r4"):
+    if other not in OTHERS:
+        raise ValueError(f"R0와 비교할 구성은 {OTHERS} 중 하나입니다")
+    contract_status = verify_comparison(r0, other_rows)
+    a, b = summarize(r0, costs[0]), summarize(other_rows, costs[1])
     delta = b["pass_rate"] - a["pass_rate"] if None not in (a["pass_rate"], b["pass_rate"]) else None
     unsupported = None if None in (a["unsupported_claim_rate"], b["unsupported_claim_rate"]) else (
         b["unsupported_claim_rate"] <= a["unsupported_claim_rate"])
     known = not any(s["unknown_compliance"] or s["unknown_pass"] for s in (a, b))
     p95 = b["refresh_ms"]["p95"]
-    bootstrap = paired_bootstrap(r0, r4)
+    bootstrap = paired_bootstrap(r0, other_rows, REPS, SEED, other)
     ci = bootstrap["ci95"]["pass_delta"]
     compliance_known = not any(s["unknown_compliance"] for s in (a, b))
-    return {"r0": a, "r4": b, "pass_delta": delta, "bootstrap": bootstrap, "contract_status": contract_status,
+    law_a, law_b = a["law_evidence"]["rate"], b["law_evidence"]["rate"]
+    law_delta = law_b - law_a if None not in (law_a, law_b) else None
+    law_ci = bootstrap["ci95"].get("law_delta")
+    return {"r0": a, other: b, "other": other, "pass_delta": delta, "law_evidence_delta": law_delta,
+            "bootstrap": bootstrap, "contract_status": contract_status,
             "conditions": {"pass_noninferior": delta >= -0.05 if delta is not None and known else None,
                            "pass_improved": delta >= 0.10 and ci[0] > 0 if delta is not None and known and ci else None,
                            "unsupported_not_higher": unsupported if compliance_known else None,
-                           "refresh_p95_le_500": p95 <= 500 if compliance_known and not math.isnan(p95) else None}}
+                           "refresh_p95_le_500": p95 <= 500 if compliance_known and not math.isnan(p95) else None,
+                           # 주 지표(R5 확정 측정): 코드로 계산하므로 사람 확인으로 보류하지 않는다
+                           "law_evidence_better": (law_delta >= 0.10 and law_ci[0] > 0)
+                           if law_delta is not None and compliance_known and law_ci else None}}
 
 
 def serializable(value):
@@ -234,9 +260,10 @@ def reflect_check(report, check):
 
 
 def render(report):
+    other = report.get("other", "r4")
     lines = ["| 구성 | 통과/유효 | 무효 | 항목 1~10 실패 | 근거 없는 주장 | 근거 갱신 p50/p95(ms) | 비용($) |",
              "|---|---:|---:|---|---:|---:|---:|"]
-    for key in ("r0", "r4"):
+    for key in ("r0", other):
         s = report[key]
         rate = s["unsupported_claim_rate"]
         claim_text = (f"{s['unsupported']}/{s['claims']} ({rate:.2%})" if rate is not None
@@ -247,19 +274,25 @@ def render(report):
                      f"{s['refresh_ms']['p50']}/{s['refresh_ms']['p95']} | {s['cost_usd']['total']:.4f} |")
     lines += ["", "| 구성 | 무효 노출/분모 | 미재확인 | 근거 정밀도 | 법령 정밀도 | 법령 토큰 평균/합계 | 미판정 제안/실패 판정 |",
               "|---|---:|---:|---:|---:|---:|---:|"]
-    for key in ("r0", "r4"):
+    for key in ("r0", other):
         s = report[key]
         channels = s["stale"]["by_channel"].values()
         lines.append(f"| {key.upper()} | {sum(c['invalid'] for c in channels)}/{sum(c['denominator'] for c in channels)} | "
                      f"{sum(c['unconfirmed'] for c in channels)} | {s['precision']} | {s['law_precision']} | "
                      f"{s['law_tokens']['mean']}/{s['law_tokens']['sum']} | {s['missing']}/{s['claim_judge_failures']} |")
-    lines += ["", f"통과율 차이(R4−R0): {report['pass_delta']}",
+    lines += ["", "| 구성 | 법령 근거 포함(항목) | 포함률 |", "|---|---:|---:|"]
+    for key in ("r0", other):
+        law = report[key].get("law_evidence") or {}
+        lines.append(f"| {key.upper()} | {law.get('found')}/{law.get('items')} | {law.get('rate')} |")
+    lines += ["", f"법령 근거 포함률 차이({other.upper()}−R0): {report.get('law_evidence_delta')}",
+              f"통과율 차이({other.upper()}−R0): {report['pass_delta']}",
               f"시나리오 단위 짝지은 부트스트랩 95% 구간: {report['bootstrap']['ci95']}",
               f"판정 조건: {report['conditions']}",
-              f"입력 로그 출처: R0 {report['r0']['log_sources']}, R4 {report['r4']['log_sources']}"]
+              f"입력 로그 출처: R0 {report['r0']['log_sources']}, {other.upper()} {report[other]['log_sources']}"]
     lines += [f"실행 계약: {report.get('contract_status', '미확인')}",
-              f"준수 미판정: R0 {report['r0']['unknown_compliance']}, R4 {report['r4']['unknown_compliance']}",
-              f"주장 판정 제외 고정 제안: R0 {report['r0']['excluded_fixed_suggestions']}, R4 {report['r4']['excluded_fixed_suggestions']}"]
+              f"준수 미판정: R0 {report['r0']['unknown_compliance']}, {other.upper()} {report[other]['unknown_compliance']}",
+              f"주장 판정 제외 고정 제안: R0 {report['r0']['excluded_fixed_suggestions']}, "
+              f"{other.upper()} {report[other]['excluded_fixed_suggestions']}"]
     check = report.get("human_check")
     if check:
         lines += ["", f"사람 확인: {check['status']}"]
@@ -270,22 +303,32 @@ def render(report):
                 lines.append(f"| {title} | {c['matched']}/{c['sampled']} | {c['agreement']:.2%} |")
         if report.get("deferred_conditions"):
             lines.append("판정 보류(일치율 0.80 미만 또는 입력 변경): " + ", ".join(report["deferred_conditions"]))
-    if any(report[k]["legacy_cited_articles"]["claims"] for k in ("r0", "r4")):
+    if any(report[k]["legacy_cited_articles"]["claims"] for k in ("r0", other)):
         lines += ["", "인용 조항만 준 이전 판정(새 정의와 직접 비교하지 않음)"]
-        for key in ("r0", "r4"):
+        for key in ("r0", other):
             legacy = report[key]["legacy_cited_articles"]
             lines.append(f"- {key.upper()}: {legacy['unsupported']}/{legacy['claims']} ({legacy['rate']})")
     return "\n".join(lines) + "\n"
 
 
-def write_report(r0_dir, r4_dir, name, root=ROOT):
+def run_law(run_dir, root=ROOT):
+    from jikgam.v2.e2e_logs import read_text
+
+    return json.loads(read_text(Path(run_dir) / "summary.json", root)).get("law")
+
+
+def write_report(r0_dir, other_dir, name, root=ROOT):
+    """두 번째 실행의 구성(r4 또는 r5)은 실행 요약의 법령 프로필로 정한다."""
     from jikgam.v2.e2e_check import load_check, public_path
 
     public_path(name, root)
+    other = run_law(other_dir, root)
+    if other not in OTHERS:
+        raise ValueError(f"{Path(other_dir).name}: R0와 비교할 구성({', '.join(OTHERS)})의 결과가 아닙니다")
     r0, c0 = collect(r0_dir, "r0")
-    r4, c4 = collect(r4_dir, "r4")
-    report = serializable(reflect_check(compare(r0, r4, [c0, c4]),
-                                       load_check(name, r0_dir, r4_dir, root)))
+    rows, cost = collect(other_dir, other)
+    report = serializable(reflect_check(compare(r0, rows, [c0, cost], other),
+                                       load_check(name, r0_dir, other_dir, root)))
     dest = root / "results/v2/e2e" / name
     dest.mkdir(parents=True, exist_ok=True)
     (dest / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=1, allow_nan=False) + "\n",
@@ -297,10 +340,10 @@ def write_report(r0_dir, r4_dir, name, root=ROOT):
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("r0", type=Path)
-    ap.add_argument("r4", type=Path)
+    ap.add_argument("other", type=Path, help="R4 또는 R5 실행 폴더")
     ap.add_argument("--name", required=True)
     args = ap.parse_args()
-    print(render(write_report(args.r0, args.r4, args.name)))
+    print(render(write_report(args.r0, args.other, args.name)))
 
 
 if __name__ == "__main__":
