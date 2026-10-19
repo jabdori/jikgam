@@ -70,6 +70,8 @@
 
   function userOwned(el, name) {
     if (cursorLive && (name === "style" || name === "aria-valuenow") && el.hasAttribute("data-cursor")) return true;
+    // 재생·듣기 버튼의 눌림 상태는 소리가 정한다(재생 중에 영역을 바꿔도 서버가 그린 '멈춤' 상태로 되돌리지 않는다)
+    if (name === "aria-pressed" && (el.hasAttribute("data-play") || el.hasAttribute("data-listen"))) return true;
     return keepOpen && name === "open" && el.nodeName === "DETAILS";
   }
 
@@ -744,7 +746,9 @@
       audio.play();
       btn.setAttribute("aria-pressed", "true");
     });
-    audio.addEventListener("pause", function () { btn.setAttribute("aria-pressed", "false"); });
+    ["play", "pause", "ended", "emptied"].forEach(function (name) {
+      audio.addEventListener(name, function () { btn.setAttribute("aria-pressed", audio.paused ? "false" : "true"); });
+    });
   }
 
   // 재생 띠: 누르거나 끌면 그 위치로 옮긴다(재생 중이었으면 놓은 뒤 이어서 재생). 위치 선은 키보드 슬라이더다
@@ -838,11 +842,15 @@
     var box = btn.closest("[data-player]");
     var audio = box && box.querySelector("audio");
     if (!audio) return;
+    function sync() {
+      btn.setAttribute("aria-pressed", audio.paused ? "false" : "true");
+    }
     btn.addEventListener("click", function () {
       if (audio.paused) audio.play(); else audio.pause();
+      sync();
     });
-    audio.addEventListener("play", function () { btn.setAttribute("aria-pressed", "true"); });
-    audio.addEventListener("pause", function () { btn.setAttribute("aria-pressed", "false"); });
+    ["play", "pause", "ended", "emptied"].forEach(function (name) { audio.addEventListener(name, sync); });
+    sync();
   }
 
   function showFor(form) {
