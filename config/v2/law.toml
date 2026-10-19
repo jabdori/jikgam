@@ -26,6 +26,21 @@ embed = "snow"
 fusion = "rrf"
 max_candidates = 8
 
+[r5]
+# R4 + 메타데이터 거르기(docs/v2-law-final.md의 최종 구성 (m3), ADR 0029). 검색은 R4와 같다.
+# 조직 설정 law_industries에 해당하는 구간만 남기고, 직전 판단의 상담 주제(law_topic, 확률 0.5 이상)가 있으면 그 주제 구간만 남긴다.
+# 상위 8개 중 2자리는 거르지 않은 검색 순위로 채운다. 주제 질문은 엔진의 첫 판별 요청에 더한다(호출 수는 늘지 않는다)
+mode = "r5"
+chunks = "b-W4000-C800-raw"
+meta = "full"
+embed = "snow"
+fusion = "rrf"
+max_candidates = 8
+labels = "data/v2/law-meta/b-W4000-C800-raw.json"
+topic_question_set = "data/question_sets/extra/law-topic-v1.json"
+reserved = 2
+topic_threshold = 0.5
+
 # 약관과 법령이 어긋날 때 생성 모델이 판단하지 않게 하는 결정적 검사(결정 기록 0004와 같은 원칙).
 # 금액과 환불 자격은 지금처럼 업무 API 결과(견적)를 따른다(대상 견적이 없으면 환불이 된다고 말할 수 없다).
 # 아래 검사는 법령 묶음을 켠 세션의 생성 결과에 더한다. 위반이면 지적을 붙여 한 번 더 생성하고, 그래도 남으면 고정 문구다.

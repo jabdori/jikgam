@@ -130,6 +130,13 @@ class Session:
             if set(law_bank) & set(self.bank):
                 raise ValueError(f"법령 질문 세트의 ID가 겹친다: {sorted(set(law_bank) & set(self.bank))}")
             self.bank.update(law_bank)
+        if self.law is not None and org.law.topic_question_set is not None:
+            # r5: 상담 주제 질문(law_topic). 첫 판별 요청에 더하고, 답은 다음 법령 검색에서 쓴다(호출 수는 늘지 않는다)
+            _, topic_bank = load_bank(org.law.topic_question_set)
+            if set(topic_bank) & set(self.bank):
+                raise ValueError(f"주제 질문 세트의 ID가 겹친다: {sorted(set(topic_bank) & set(self.bank))}")
+            self.bank.update(topic_bank)
+        self._law_topic: tuple[str | None, float] | None = None  # r5: 직전 판단의 (주제, 확률)
         self.decider = decision_client or make_client(self.backend)
         self.generator = generator or gen.make_generator(org.generator)
         self.biz = bizapi or BizApiClient(org.bizapi_url, session_id)
@@ -333,12 +340,19 @@ class Session:
                     # 법령만 전체 고객 발화와 기존 의도·표현 확장을 쓴다. 조직 약관 검색어는 그대로다.
                     law_query = self.index.query_text(self._retrieval_context(), all_turns=True) \
                         if self.law.cfg.query_scope == "all" else result.query
-                    law_ids, law_ms = self.law.search(law_query)
+                    law_filter = None
+                    if self.law.cfg.mode == "r5":
+                        topic = self._law_topic[0] if (self._law_topic is not None
+                                                       and self._law_topic[1] >= self.law.cfg.topic_threshold) else None
+                        law_ids, law_ms, law_filter = self.law.search_filtered(law_query, self.org.law_industries, topic)
+                    else:
+                        law_ids, law_ms = self.law.search(law_query)
                     law_ids = [a for a in law_ids if a not in result.candidates]
                     result.candidates = result.candidates + law_ids
                     result.sources.update({a: "law" for a in law_ids})
                     law_extra = {"law_candidates": law_ids, "law_ms": round(law_ms, 3),
-                                 "law_profile": self.law.cfg.profile, "law_query": law_query}
+                                 "law_profile": self.law.cfg.profile, "law_query": law_query,
+                                 **({"law_filter": law_filter} if law_filter is not None else {})}
                 out.append(self.log.emit(ev.RETRIEVAL_DONE, self.state.version, started_version=my_v,
                                          duration_ms=round(now_ms() - t0, 3), candidates=result.candidates,
                                          sources=result.sources, query=result.query, **law_extra))
@@ -352,9 +366,11 @@ class Session:
                     out.append(self._discard(stage, my_v, backend=res.backend))
                     return
                 labels, probs = self._labels(res, qids)
+                if "law_topic" in labels:  # r5: 다음 법령 검색에서 쓸 상담 주제
+                    self._law_topic = (self.law.topics.get(labels["law_topic"]), probs["law_topic"])
                 # 5. 근거 선택과 이전 제안 무효화
                 selected = [a for a in result.candidates if probs.get(self._applies_qid(a), 0.0) >= self.org.applies_threshold]
-                if self.law is not None and self.law.cfg.mode == "r4":
+                if self.law is not None and self.law.cfg.mode in ("r4", "r5"):
                     # R4: 법령 근거는 판별 확률 순(리랭킹). 약관 근거는 v1처럼 검색 순서다
                     law_sel = [a for a in selected if result.sources.get(a) == "law"]
                     law_sel.sort(key=lambda a: -probs.get(self._applies_qid(a), 0.0))
@@ -491,6 +507,8 @@ class Session:
         if candidates:
             qids.append("sufficient")
         qids += ["next_info", "action"]
+        if first and self.law is not None and self.law.cfg.mode == "r5" and "law_topic" in self.bank:
+            qids.append("law_topic")
         if first and latest is not None:
             qids.append("suggestion_valid")
             if latest.proposal is not None:

@@ -466,7 +466,7 @@ def argument_parser():
     ap.add_argument("--judge-model", default=judge.DEFAULT_JUDGE_MODEL)
     ap.add_argument("--no-judge", action="store_true", help="AI 판정을 건너뛴다(나중에 jikgam.sim.judge로 한다)")
     ap.add_argument("--decision-backend", help="정책 C의 판별 백엔드(config/decision_models의 이름). 생략하면 조직 설정 값")
-    ap.add_argument("--law", choices=["r0", "r4"], help="v2 법령·고시 묶음(config/v2/law.toml의 프로필)")
+    ap.add_argument("--law", choices=["r0", "r4", "r5"], help="v2 법령·고시 묶음(config/v2/law.toml의 프로필)")
     ap.add_argument("--frozen", help="미공개 v2 실행에 필요한 설정 고정 ADR 번호와 해시 목록")
     ap.add_argument("--bizapi-record", type=Path, help=argparse.SUPPRESS)
     return ap

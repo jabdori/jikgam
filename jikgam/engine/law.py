@@ -5,10 +5,14 @@
 
 - r0: 조 단위 구간 + v1 검색 규칙(jikgam/v2/search.py rank_r0), 후보 max_candidates개
 - r4: (b) 구간 + 구간 정보, 키워드·임베딩 결합(jikgam/v2/hybrid.py). 리랭킹은 엔진의 applies 판별이 한다
+- r5: r4 검색 순위에서 조직의 적용 업종(조직 설정 law_industries)과 직전 판단의 상담 주제(law_topic, 확률 topic_threshold
+  이상일 때)에 해당하는 구간만 남긴다. 상위 max_candidates개 중 reserved 자리는 거르지 않은 순위로 채운다(docs/v2-law-final.md).
+  구간 메타데이터는 labels 파일, 주제 질문은 topic_question_set이다
 
 색인과 임베딩 모델은 프로세스 안에서 한 번만 만든다(세션마다 다시 쓴다).
 """
 
+import json
 import re
 import time
 import tomllib
@@ -43,6 +47,10 @@ class LawConfig:
     guards: tuple[Guard, ...] = field(default_factory=tuple)
     question_set: Path | None = None  # 법령 구간의 판별 질문(law_applies)
     query_scope: str = "recent"
+    labels: Path | None = None  # r5: 구간 메타데이터(적용 업종, 주제)
+    topic_question_set: Path | None = None  # r5: 상담 주제 질문(law_topic)
+    reserved: int = 0  # r5: 상위 후보 중 거르지 않은 순위로 채우는 자리 수
+    topic_threshold: float = 0.5  # r5: 주제로 거르는 최소 확률
 
 
 def load_law(profile: str, path: Path = CONFIG) -> LawConfig:
@@ -51,7 +59,26 @@ def load_law(profile: str, path: Path = CONFIG) -> LawConfig:
     guards = tuple(Guard(g["id"], re.compile(g["pattern"]), int(g["min"]), g["message"]) for g in raw.get("guards", []))
     qs = raw.get("question_set")
     return LawConfig(profile, p["mode"], p["chunks"], p.get("meta", "none"), p.get("embed"), p.get("fusion", "rrf"),
-                     int(p.get("max_candidates", 8)), guards, ROOT / qs if qs else None, raw.get("query_scope", "recent"))
+                     int(p.get("max_candidates", 8)), guards, ROOT / qs if qs else None, raw.get("query_scope", "recent"),
+                     ROOT / p["labels"] if p.get("labels") else None,
+                     ROOT / p["topic_question_set"] if p.get("topic_question_set") else None,
+                     int(p.get("reserved", 0)), float(p.get("topic_threshold", 0.5)))
+
+
+def filter_candidates(ranked: list[str], labels: dict[str, dict[str, Any]], industries: tuple[str, ...] | list[str],
+                      topic: str | None, reserved: int, k: int) -> tuple[list[str], dict[str, Any]]:
+    """r5 거르기. ranked는 지금 검색의 전체 순위다. 업종(있으면)과 주제(있으면)에 해당하는 구간만 남긴 순위의 앞 k−reserved개,
+    거르지 않은 순위에서 아직 없는 앞 reserved개, 나머지 거른 순위, 나머지 거르지 않은 순위 차례로 k개를 고른다."""
+    if not industries and topic is None:
+        return ranked[:k], {"filtered": False, "topic": None, "kept": len(ranked)}
+    keep = [c for c in ranked if not industries or set(industries) & set((labels.get(c) or {}).get("적용 업종", ()))]
+    if topic is not None:
+        keep = [c for c in keep if topic in (labels.get(c) or {}).get("주제", ())]
+    head = keep[:k - reserved]
+    extra = [c for c in ranked if c not in head][:reserved]
+    taken = set(head) | set(extra)
+    order = head + extra + [c for c in keep if c not in taken] + [c for c in ranked if c not in taken and c not in set(keep)]
+    return order[:k], {"filtered": True, "topic": topic, "kept": len(keep)}
 
 
 def guard_violations(text: str, guards: list[dict[str, Any]]) -> list[str]:
@@ -80,8 +107,14 @@ class LawBundle:
         self.articles: dict[str, Article] = {
             c.id: Article(c.id, f"「{docs[c.doc].title}」 {c.start_line}~{c.end_line}줄", LAW_TYPE, (), self.cs.text(c))
             for c in chunks}
+        self.labels: dict[str, dict[str, Any]] = {}
+        if cfg.labels is not None:
+            self.labels = json.loads(cfg.labels.read_text(encoding="utf-8"))["segments"]
+        self.topics: dict[str, str] = {}  # 주제 질문의 선택지 키 → 주제 값
+        if cfg.topic_question_set is not None:
+            self.topics = json.loads(cfg.topic_question_set.read_text(encoding="utf-8"))["topics"]
         self.hybrid = None
-        if cfg.mode == "r4":
+        if cfg.mode in ("r4", "r5"):
             from jikgam.v2.embed import EmbeddingIndex
             from jikgam.v2.hybrid import Hybrid, HybridConfig
 
@@ -103,6 +136,13 @@ class LawBundle:
         else:
             ranked = [c for c, _ in self.hybrid.retrieve(query)[0]]
         return ranked[:self.cfg.max_candidates], (time.perf_counter() - t0) * 1000
+
+    def search_filtered(self, query: str, industries: tuple[str, ...], topic: str | None) -> tuple[list[str], float, dict[str, Any]]:
+        """r5: (법령 후보 id, 걸린 시간 ms, 거르기 정보). 검색은 r4와 같다."""
+        t0 = time.perf_counter()
+        ranked = [c for c, _ in self.hybrid.retrieve(query)[0]]
+        ids, info = filter_candidates(ranked, self.labels, industries, topic, self.cfg.reserved, self.cfg.max_candidates)
+        return ids, (time.perf_counter() - t0) * 1000, info
 
 
 _BUNDLES: dict[str, LawBundle] = {}

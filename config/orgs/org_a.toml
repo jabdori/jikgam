@@ -20,6 +20,10 @@ addon_threshold = 0.5                 # addon_only: 해지 대상이 부가 상�
 identity_unavailable_threshold = 0.5  # identity_unavailable: 고객이 본인 확인을 마칠 수 없다고 말함
 generator = "gemini-flash"      # config/decision_models.toml의 이름(모델 ID, 키, 단가를 그대로 쓴다)
 required_notices = ["환불 예정액과 산정 근거", "환불 방법과 예상 소요 기간", "이용 가능한 마지막 날"]
+# v2 법령 묶음. law_profile을 두면 그 프로필(config/v2/law.toml)을 켠다(없으면 끔, 실행기의 --law가 우선한다).
+# law_industries는 r5 프로필이 법령 후보를 거르는 조직의 적용 업종이다(값 목록 results/v2/law-meta/values.json, docs/v2-law-meta.md).
+# law_profile = "r5"
+law_industries = ["업종 공통", "전자상거래·통신판매", "디지털콘텐츠"]
 
 [retrieval]
 max_candidates = 8              # 판별에 넘기는 후보 조항 수 상한

@@ -111,8 +111,10 @@ class OrgConfig:
     required_notices: tuple[str, ...]
     retrieval: RetrievalConfig
     policy: PolicyConfig
-    # v2 법령·고시 묶음(jikgam.engine.law.LawConfig). 실행기에서 --law로 켠다. 없으면 v1과 같다
+    # v2 법령·고시 묶음(jikgam.engine.law.LawConfig). 실행기의 --law나 조직 설정 law_profile로 켠다. 없으면 v1과 같다
     law: Any = None
+    # r5 법령 프로필에서 법령 후보를 거르는 조직의 적용 업종(값 목록 results/v2/law-meta/values.json의 값)
+    law_industries: tuple[str, ...] = ()
 
 
 def _retrieval(raw: dict[str, Any]) -> RetrievalConfig:
@@ -182,4 +184,14 @@ def load_org(name_or_path: str | Path) -> OrgConfig:
         identity_unavailable_threshold=float(raw["identity_unavailable_threshold"]),
         generator=raw["generator"], required_notices=tuple(raw["required_notices"]),
         retrieval=_retrieval(raw["retrieval"]), policy=_policy(raw["policy"]),
+        law=_law(raw.get("law_profile")), law_industries=tuple(raw.get("law_industries", ())),
     )
+
+
+def _law(profile: str | None) -> Any:
+    """조직 설정 law_profile(config/v2/law.toml의 프로필 이름). 없으면 법령 묶음을 켜지 않는다."""
+    if not profile:
+        return None
+    from jikgam.engine.law import load_law
+
+    return load_law(profile)
