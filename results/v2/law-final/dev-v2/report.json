@@ -1,0 +1,108 @@
+{
+ "profile": "r4",
+ "events": 397,
+ "estimate": {
+  "m4_calls": 240,
+  "m4_chars": 1013465,
+  "est_cost_usd": 0.043
+ },
+ "configs": {
+  "a": {
+   "items": 504,
+   "found@8": 228,
+   "found@16": 260,
+   "topic_filtered_events": 0,
+   "gold_dropped_items": 0,
+   "gold_dropped_events": 0,
+   "rate@8": 0.4524,
+   "rate@16": 0.5159,
+   "topic_filtered_rate": 0.0
+  },
+  "m3": {
+   "items": 504,
+   "found@8": 265,
+   "found@16": 280,
+   "topic_filtered_events": 369,
+   "gold_dropped_items": 213,
+   "gold_dropped_events": 174,
+   "rate@8": 0.5258,
+   "rate@16": 0.5556,
+   "topic_filtered_rate": 0.9295
+  },
+  "m4": {
+   "items": 504,
+   "found@8": 235,
+   "found@16": 293,
+   "topic_filtered_events": 397,
+   "gold_dropped_items": 165,
+   "gold_dropped_events": 143,
+   "rate@8": 0.4663,
+   "rate@16": 0.5813,
+   "topic_filtered_rate": 1.0
+  },
+  "m3_prev": {
+   "items": 504,
+   "found@8": 257,
+   "found@16": 277,
+   "topic_filtered_events": 338,
+   "gold_dropped_items": 190,
+   "gold_dropped_events": 159,
+   "rate@8": 0.5099,
+   "rate@16": 0.5496,
+   "topic_filtered_rate": 0.8514
+  },
+  "m4_prev": {
+   "items": 504,
+   "found@8": 224,
+   "found@16": 297,
+   "topic_filtered_events": 361,
+   "gold_dropped_items": 155,
+   "gold_dropped_events": 135,
+   "rate@8": 0.4444,
+   "rate@16": 0.5893,
+   "topic_filtered_rate": 0.9093
+  }
+ },
+ "sessions_top8": {
+  "a": {
+   "items": 45,
+   "found@8": 24,
+   "rate@8": 0.5333
+  },
+  "m3": {
+   "items": 45,
+   "found@8": 36,
+   "rate@8": 0.8
+  },
+  "m4": {
+   "items": 45,
+   "found@8": 26,
+   "rate@8": 0.5778
+  },
+  "m3_prev": {
+   "items": 45,
+   "found@8": 36,
+   "rate@8": 0.8
+  },
+  "m4_prev": {
+   "items": 45,
+   "found@8": 26,
+   "rate@8": 0.5778
+  }
+ },
+ "m4_topics_per_dialogue_mean": 2.96,
+ "jev_latency_ms": {
+  "m3": {
+   "p50": 180.3,
+   "p95": 222.3
+  },
+  "m4": {
+   "p50": 184.2,
+   "p95": 241.9
+  }
+ },
+ "m4_calls": 240,
+ "m4_failed": 0,
+ "m4_cost_usd": 0.0298,
+ "final": "m3"
+}
