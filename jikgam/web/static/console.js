@@ -378,6 +378,23 @@
       if (!isNaN(start)) audio.currentTime = start;
       place(audio.currentTime);
     });
+    // 재생 중에는 화면을 그릴 때마다 위치 선을 실제 재생 시각에 둔다(재생 시각 알림은 초당 네 번쯤이라 끊겨 보인다)
+    var frame = null;
+    function tick() {
+      if (audio.paused) {
+        frame = null;
+        return;
+      }
+      if (!scrubbing()) place(audio.currentTime);
+      frame = window.requestAnimationFrame(tick);
+    }
+    function playing(on) {
+      var lanes = document.querySelector("[data-scrub]");
+      if (lanes) lanes.classList.toggle("c-playing", on);
+      if (on && frame === null) frame = window.requestAnimationFrame(tick);
+    }
+    audio.addEventListener("play", function () { playing(true); });
+    ["pause", "ended", "emptied"].forEach(function (name) { audio.addEventListener(name, function () { playing(false); }); });
     // 위치를 옮기면(재생 띠, 재생 목록, 판단 시점 멈춤) 선을 옮기고 그 시각의 판단 화면으로 바꾼다
     audio.addEventListener("seeked", function () {
       place(audio.currentTime);
