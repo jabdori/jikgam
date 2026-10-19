@@ -16,7 +16,7 @@
 법령 근거 포함률 차이(R5−R0): 0.08846700245382927
 통과율 차이(R5−R0): 0.12384716732542819
 시나리오 단위 짝지은 부트스트랩 95% 구간: {'pass_r0': [0.0, 0.1323529411764706], 'pass_r5': [0.045454545454545456, 0.34328358208955223], 'pass_delta': [0.014688058420452786, 0.255011124501715], 'unsupported_r0': [0.003457142302691584, 0.022840544758121712], 'unsupported_r5': [0.00405648748813008, 0.027563395810363836], 'unsupported_delta': [-0.006355761316055159, 0.011314909935157614], 'law_r0': [0.17647058823529413, 0.5517241379310345], 'law_r5': [0.2702635135135135, 0.6144810009267837], 'law_delta': [-0.10284125207797398, 0.27077675212160907]}
-판정 조건: {'pass_noninferior': True, 'pass_improved': True, 'unsupported_not_higher': False, 'refresh_p95_le_500': True, 'law_evidence_better': False}
+판정 조건: {'pass_noninferior': True, 'pass_improved': True, 'unsupported_not_higher': None, 'refresh_p95_le_500': True, 'law_evidence_better': False}
 입력 로그 출처: R0 {'private_sessions': 72, 'public_sessions': 0}, R5 {'private_sessions': 72, 'public_sessions': 0}
 실행 계약: 계약 일치
 준수 미판정: R0 0, R5 0
@@ -25,5 +25,6 @@
 사람 확인: 확인 완료
 | 사람 확인 | 일치/표본 | 일치율 |
 |---|---:|---:|
-| 주장 근거 | 30/30 | 100.00% |
+| 주장 근거 | 8/30 | 26.67% |
 | 시나리오 항목 | 9/10 | 90.00% |
+판정 보류(일치율 0.80 미만 또는 입력 변경): unsupported_not_higher
