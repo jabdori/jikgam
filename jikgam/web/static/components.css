@@ -456,7 +456,9 @@ h2.pane-title { font-size: var(--text-lg); font-weight: var(--weight-semibold); 
 /* --- 관리 콘솔: 재생 띠, 재생 목록, 순위 ------------------------------------------------------------ */
 
 .lanes { display: grid; grid-template-columns: var(--size-play-kind) minmax(var(--space-0), 1fr); row-gap: var(--space-3); column-gap: var(--space-5); align-items: center; font-size: var(--text-xs); color: var(--color-text-muted); }
-.lane-track { position: relative; height: var(--size-track); background: var(--color-track); border-radius: var(--radius-xs); }
+.lane-track { position: relative; height: var(--size-track); background: var(--color-track); border-radius: var(--radius-xs); overflow-x: clip; }
+/* 아직 재생하지 않은 부분을 옅게 가린다. 띠 폭만 한 막을 지금 위치(--pct)만큼 오른쪽으로 민다 */
+.lane-ahead { position: absolute; inset: var(--space-0); transform: translateX(var(--pct)); background: var(--color-surface); opacity: var(--opacity-ahead); pointer-events: none; will-change: transform; }
 .lane-seg { position: absolute; top: var(--space-0); bottom: var(--space-0); left: var(--at); width: var(--len); border-radius: var(--radius-xs); }
 .lane-seg.customer { background: var(--color-caution); }
 .lane-cut { position: absolute; left: var(--at); top: calc(var(--space-2) * -1); bottom: calc(var(--space-2) * -1); width: var(--border-2); background: var(--color-negative); }
@@ -465,12 +467,19 @@ h2.pane-title { font-size: var(--text-lg); font-weight: var(--weight-semibold); 
 .lane-mark.is-current { background: var(--color-inverse); color: var(--color-on-inverse); }
 .lane-ticks { position: relative; height: var(--space-6); }
 .lane-tick { position: absolute; left: var(--at); transform: translateX(-50%); font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--color-text-muted); }
-.lane-cursor { position: absolute; left: var(--at); top: calc(var(--size-track) * -4); bottom: var(--space-0); width: var(--border-2); background: var(--color-text); }
+/* 위치 선: 띠 폭만 한 투명한 막의 왼쪽 끝에 선을 그리고, 막을 지금 위치(--pct)만큼 민다. 막이 띠 밖으로 나간 부분은
+   위치 선만 감싼 층(lane-rail)에서 가로로 잘라 낸다(시간 눈금 글자는 자르지 않는다) */
+.lane-rail { position: absolute; left: var(--space-0); right: var(--space-0); top: calc(var(--size-track) * -4); bottom: var(--space-0); overflow-x: clip; pointer-events: none; }
+.lane-cursor { position: absolute; left: var(--space-0); width: 100%; top: var(--space-0); bottom: var(--space-0); transform: translateX(var(--pct)); will-change: transform; }
+.lane-cursor::after { content: ""; position: absolute; left: var(--space-0); top: var(--space-0); bottom: var(--space-0); width: var(--border-2); transform: translateX(-50%); background: var(--color-text); }
+.lane-cursor:focus-visible { outline: none; }
+.lane-cursor:focus-visible::before { outline: var(--size-focus) solid var(--color-focus); outline-offset: var(--size-focus); }
 /* 끌 수 있는 재생 띠: 띠 어디를 눌러도 옮기고, 위치 선 위쪽 손잡이로 끈다. 세로 스크롤은 그대로 둔다 */
 .lanes[data-scrub] { cursor: pointer; touch-action: pan-y; user-select: none; }
-.lanes[data-scrub] .lane-cursor::before { content: ""; position: absolute; top: calc(var(--space-3) * -1); left: 50%; width: var(--space-6); height: var(--space-6); transform: translateX(-50%); border-radius: var(--radius-round); background: var(--color-text); }
+.lanes[data-scrub] .lane-cursor::before { content: ""; position: absolute; top: calc(var(--space-3) * -1); left: var(--space-0); width: var(--space-6); height: var(--space-6); transform: translateX(-50%); border-radius: var(--radius-round); background: var(--color-text); }
 .lanes.c-scrubbing { cursor: grabbing; }
-.lanes.c-scrubbing .lane-cursor, .lanes.c-playing .lane-cursor { transition: none; }  /* 끌거나 재생 중이면 선이 시각을 바로 따른다 */
+.lanes.c-scrubbing .lane-cursor, .lanes.c-playing .lane-cursor, .lanes.c-scrubbing .lane-ahead, .lanes.c-playing .lane-ahead { transition: none; }  /* 끌거나 재생 중이면 시각을 바로 따른다 */
+.play-time { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 .playlist { display: flex; flex-direction: column; }
 .play-item { display: grid; grid-template-columns: var(--size-play-time) var(--size-play-kind) minmax(var(--space-0), 1fr); gap: var(--space-4); padding: var(--space-3) var(--space-8); font-size: var(--text-sm); color: var(--color-text-muted); text-decoration: none; }
@@ -691,7 +700,7 @@ button.play-item { width: 100%; border: none; background: none; font: inherit; f
 .link-list li.is-current a { color: var(--color-accent-strong); font-weight: var(--weight-semibold); }
 
 /* 관리 콘솔 리플레이: 재생 위치 선이 다음 판단 위치로 미끄러진다. 순위 행 이동과 막대 길이는 console.js가 같은 토큰으로 움직인다 */
-.lane-cursor { transition: left var(--motion-slow) var(--ease-standard); }
+.lane-cursor, .lane-ahead { transition: transform var(--motion-slow) var(--ease-standard); }
 
 /* 막대: 처음 그릴 때 0에서 자라고, 같은 화면 안에서 값이 바뀌면 새 길이로 늘거나 준다 */
 @keyframes bar-grow {

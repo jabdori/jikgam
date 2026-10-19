@@ -121,8 +121,10 @@ def ready_state(path: str) -> str:
 
 
 def focus_visible(page: Page) -> None:
+    # 포커스 테두리는 요소에, 또는 요소가 그리는 손잡이(::before, ::after, 예: 재생 띠의 위치 선)에 있으면 된다
     ok = page.evaluate("""() => { const el = document.activeElement; if (!el) return false;
-        const s = getComputedStyle(el); return s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) > 0; }""")
+        return [null, '::before', '::after'].some(p => { const s = getComputedStyle(el, p);
+          return s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) > 0; }); }""")
     if not ok:
         raise AssertionError("포커스가 보이지 않는다(outline 없음)")
 

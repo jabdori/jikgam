@@ -51,6 +51,8 @@ STYLE_VARS = re.compile(r"--(pct|at|len|alpha)")
 JS_STRING = re.compile(r"""(?P<q>["'`])(?P<s>(?:\\.|(?!(?P=q)).)*)(?P=q)""", re.S)
 JS_COMMENT = re.compile(r"//[^\n]*|/\*.*?\*/", re.S)
 JS_TEXT = re.compile(r"\.(textContent|innerText)\s*=|createTextNode|insertAdjacentText")
+# 재생기의 지금 재생 시각만 JS가 고쳐 쓴다(기록의 수치가 아니라 재생기 상태다, ADR 0022 예외). 그 줄에 이 표시를 둔다
+JS_TEXT_EXCEPTION = "ADR 0022 예외: 재생 시각"
 JS_HTML = re.compile(r"\.(innerHTML|outerHTML)\s*=(?!=)(?!\s*html\b)")
 JS_STYLE = re.compile(r"\.style\b(?!\.setProperty\(\s*[\"']--(at|pct)[\"'])")
 
@@ -139,10 +141,14 @@ def lint_js(text: str, path: str) -> list[Problem]:
             probs.append(Problem(path, ln, "px", f"px 값이 든 문자열 {s[:40]!r}"))
         elif DIGIT.search(s):
             probs.append(Problem(path, ln, "digit", f"숫자가 든 문자열 {s[:40]!r}"))
+    lines = text.splitlines()
     for rx, rule, msg in ((JS_TEXT, "js-text", "JS가 글자를 만든다"), (JS_HTML, "js-html", "html 조각이 아닌 값을 HTML로 넣는다"),
                           (JS_STYLE, "style", "style 대입(--at, --pct의 setProperty만 허용)")):
         for m in rx.finditer(clean):
-            probs.append(Problem(path, _line(clean, m.start()), rule, msg))
+            ln = _line(clean, m.start())
+            if rule == "js-text" and JS_TEXT_EXCEPTION in lines[ln - 1]:
+                continue
+            probs.append(Problem(path, ln, rule, msg))
     return probs
 
 

@@ -73,8 +73,8 @@ def band(r: rp.Replay, cur: rp.Decision, s: rp.Session, audio: str | None) -> An
     prev = ui.button("◀ 이전 판단", href=href(s, idx - 1), size="sm", disabled=idx <= 1, key="prev")
     nxt = ui.button("다음 판단 ▶", href=href(s, idx + 1), size="sm", disabled=idx >= len(r.decisions), key="next")
     stop = ui.toggle("stop", "판단 시점마다 멈춤", True, stop_toggle="yes")
-    controls = ui.row(prev, nxt, ui.text(ui.joined(fmt.clock(cur.at_s, tenths=True), fmt.clock(r.duration_s, tenths=True),
-                                                   sep=" / "), mono=True), stop, gap="sm")
+    controls = ui.row(prev, nxt, ui.play_time(fmt.clock(cur.at_s, tenths=True), fmt.clock(r.duration_s, tenths=True)), stop,
+                      gap="sm")
     lanes = ui.lanes(
         [ui.Lane("고객", [ui.Seg(pct(r, a), pct(r, b - a), "customer") for a, b, _ in r.customer]),
          ui.Lane("AI", [ui.Seg(pct(r, a), pct(r, b - a), "series-b" if ans.invalidated_at is not None and ans.cut else "series-a")

@@ -113,6 +113,7 @@
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
   --ease-move: cubic-bezier(0.4, 0, 0.2, 1);  /* 자리를 옮기는 움직임(처음과 끝이 느리다) */
   --motion-rise: var(--space-2);  /* 새 줄이 올라오며 나타나는 거리 */
+  --opacity-ahead: 0.55;          /* 재생 띠에서 아직 재생하지 않은 부분을 가리는 정도 */
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -14,8 +14,9 @@
 //                         보내는 GET 폼은 문서를 새로 열지 않고 이 영역에서 바뀐 부분만 맞춘다. data-key가 같은 순위 행·표 행·
 //                         목록 항목은 새 자리로 옮겨 가고 막대는 새 길이로 바뀐다. 다른 화면으로 가는 링크는 CSS 화면 전환으로 연다
 //   data-listen="audio id" 누르면 그 녹음을 data-audio-at 요소가 가리키는 지금 위치부터 재생하거나 멈춘다
-//   data-cursor           재생 위치를 전체 길이 대비 비율(--at)로 옮긴다. 녹음을 불러온 뒤에는 영역을 바꿔도 서버 값으로
-//                         되돌리지 않는다
+//   data-cursor           재생 위치 선. 위치는 재생 띠의 --pct(전체 길이 대비 %)이고 transform으로 움직여 느려도 부드럽다.
+//                         녹음을 불러온 뒤에는 영역을 바꿔도 서버 값으로 되돌리지 않는다
+//   data-play-time        재생기의 지금 재생 시각. 스크립트가 고쳐 쓰는 유일한 글자다(ADR 0022 예외)
 //   data-scrub            재생 띠. 누르거나 끌면 그 위치로 옮긴다. 위치 선은 키보드 슬라이더다(←/→ data-step 초,
 //                         PageUp/PageDown 판단 하나, Home/End). 끄는 동안 화면은 움직임 없이 바로 바뀐다
 //   data-decisions        재생기의 판단 시각 목록. 재생하거나 위치를 옮기면 그 시각 직전의 판단 화면(data-decision-href 뒤에
@@ -69,7 +70,8 @@
   var cursorLive = false;  // 녹음을 불러온 뒤에는 재생 위치 선의 위치와 값을 재생기가 맡는다
 
   function userOwned(el, name) {
-    if (cursorLive && (name === "style" || name === "aria-valuenow") && el.hasAttribute("data-cursor")) return true;
+    if (cursorLive && name === "style" && el.hasAttribute("data-scrub")) return true;
+    if (cursorLive && name === "aria-valuenow" && el.hasAttribute("data-cursor")) return true;
     // 재생·듣기 버튼의 눌림 상태는 소리가 정한다(재생 중에 영역을 바꿔도 서버가 그린 '멈춤' 상태로 되돌리지 않는다)
     if (name === "aria-pressed" && (el.hasAttribute("data-play") || el.hasAttribute("data-listen"))) return true;
     return keepOpen && name === "open" && el.nodeName === "DETAILS";
@@ -348,11 +350,7 @@
       return audio.duration || parseFloat((lanes && lanes.getAttribute("data-duration")) || "");
     }
     function place(t) {
-      var cursor = document.querySelector("[data-cursor]");
-      var d = total();
-      if (!cursor || !d) return;
-      cursor.style.setProperty("--at", Math.min(100, (t / d) * 100) + "%");
-      if (cursor.hasAttribute("aria-valuenow")) cursor.setAttribute("aria-valuenow", t.toFixed(1));
+      moveTo(t, total());
     }
     function decisionAt(t) {
       var idx = 1;
@@ -768,6 +766,24 @@
     });
   }
 
+  // 재생 위치(초)를 화면에 둔다: 재생 띠의 --pct(위치 선과 남은 부분 가림막이 따라 움직인다), 슬라이더 값, 지금 재생 시각
+  var shownTime = null;
+
+  function moveTo(t, d) {
+    if (!d) return;
+    var lanes = document.querySelector("[data-scrub]") || document.querySelector(".lanes");
+    if (lanes) lanes.style.setProperty("--pct", Math.min(100, Math.max(0, (t / d) * 100)) + "%");
+    var cursor = document.querySelector("[data-cursor]");
+    if (cursor && cursor.hasAttribute("aria-valuenow")) cursor.setAttribute("aria-valuenow", t.toFixed(1));
+    var now = document.querySelector("[data-play-time]");
+    var tenths = Math.floor(t * 10);
+    if (!now || tenths === shownTime) return;
+    shownTime = tenths;
+    var sec = Math.floor(tenths / 10) % 60;
+    var text = Math.floor(tenths / 600) + ":" + String(100 + sec).slice(1) + "." + (tenths % 10);
+    now.textContent = text;  // ADR 0022 예외: 재생 시각(기록의 수치가 아니라 재생기 상태)
+  }
+
   // 재생 띠: 누르거나 끌면 그 위치로 옮긴다(재생 중이었으면 놓은 뒤 이어서 재생). 위치 선은 키보드 슬라이더다
   function scrubber(lanes) {
     var dragging = false;
@@ -782,8 +798,7 @@
       var d = total(a);
       if (!a || !d) return;
       a.currentTime = Math.max(0, Math.min(d, t));
-      var cursor = lanes.querySelector("[data-cursor]");
-      if (cursor) cursor.style.setProperty("--at", (a.currentTime / d) * 100 + "%");
+      moveTo(a.currentTime, d);
     }
     function at(x) {
       var track = lanes.querySelector(".lane-track");

@@ -583,6 +583,11 @@ def player(src: str, label: str, start: float | None = None, stops: Sequence[flo
                h("span", {"class": "play-on"}, "▶ 재생"), h("span", {"class": "play-off"}, "❚❚ 멈춤")), controls)
 
 
+def play_time(now: Node, total: Node) -> Markup:
+    """재생기의 '지금 재생 시각 / 전체 길이'. 재생하거나 위치를 옮기면 스크립트가 지금 시각을 고쳐 쓴다(ADR 0022 예외)."""
+    return h("span", {"class": "play-time"}, h("span", {"data-play-time": True}, now), " / ", total)
+
+
 def toggle(name: str, label: str, checked: bool = False, **data: str) -> Markup:
     """켜고 끄는 상자 하나(판단 시점마다 멈춤 등)."""
     return h("label", {"class": "check-option"},
@@ -661,7 +666,8 @@ def lanes(rows: Sequence[Lane], marks: Sequence[Mark], cursor: float | None, tic
         out.append(h("div", {"class": "lane-track"},
                      *[h("span", {"class": f"lane-seg {s.tone}", "style": _style_vars(at=s.at, len=s.len)}) for s in ln.segs],
                      *([h("span", {"class": "lane-cut", "style": _style_vars(at=c)}) for c in cuts]
-                       if ln is rows[-1] else [])))
+                       if ln is rows[-1] else []),
+                     h("span", {"class": "lane-ahead", "aria-hidden": "true"}) if scrub else None))
     out.append(h("span", {"class": "lane-label"}, "판단"))
     out.append(h("div", {"class": "lane-marks"}, *[
         (h("a", {"class": classes("lane-mark", "is-current" if m.current else None), "href": m.href,
@@ -670,12 +676,14 @@ def lanes(rows: Sequence[Lane], marks: Sequence[Mark], cursor: float | None, tic
                                    "style": _style_vars(at=m.at)}, m.label)) for m in marks]))
     out.append(h("span", {"class": "lane-label"}))
     out.append(h("div", {"class": "lane-ticks"},
-                 h("span", {"class": "lane-cursor", "style": _style_vars(at=cursor), "data-cursor": True, "data-key": "cursor",
-                            **({"role": "slider", "tabindex": "0", "aria-label": "재생 위치(초)", "aria-valuemax": f"{scrub[0]:.1f}",
-                                "aria-valuenow": f"{scrub[1]:.1f}"} if scrub else {})})
+                 h("span", {"class": "lane-rail"},
+                   h("span", {"class": "lane-cursor", "data-cursor": True, "data-key": "cursor",
+                              **({"role": "slider", "tabindex": "0", "aria-label": "재생 위치(초)",
+                                  "aria-valuemax": f"{scrub[0]:.1f}", "aria-valuenow": f"{scrub[1]:.1f}"} if scrub else {})}))
                  if cursor is not None else None,
                  *[h("span", {"class": "lane-tick", "style": _style_vars(at=at)}, t) for at, t in ticks]))
     return h("div", {"class": "lanes", "role": "group", "aria-label": label,
+                     "style": _style_vars(pct=cursor),
                      **({"data-scrub": True, "data-duration": f"{scrub[0]:.3f}", "data-step": f"{scrub[2]:.3f}"} if scrub else {})},
              *out)
 

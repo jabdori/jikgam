@@ -48,6 +48,9 @@ def test_js_rules():
     got = lint.lint_js(js, "x.js")
     assert rules(got) == ["digit", "js-html", "js-text", "style"]
     assert sum(p.rule == "js-html" for p in got) == 1
+    # 재생 시각 한 곳만 예외 표시로 허용한다. 표시가 없는 줄은 그대로 잡는다
+    marked = 'now.textContent = clock(t);  // ' + lint.JS_TEXT_EXCEPTION + '\nother.textContent = clock(t);\n'
+    assert [(p.rule, p.line) for p in lint.lint_js(marked, "x.js")] == [("js-text", 2)]
 
 
 def test_page_code_rules():
