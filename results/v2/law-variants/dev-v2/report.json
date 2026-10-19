@@ -1,0 +1,186 @@
+{
+ "documents": [
+  "consumer-act",
+  "content-act",
+  "content-guide",
+  "dispute-std",
+  "ecom-act",
+  "ecom-decree",
+  "ecom-rule",
+  "ecom-terms",
+  "terms-act"
+ ],
+ "runs": [
+  "results/engine/scenarios/dev-v2-r0-1",
+  "results/engine/scenarios/dev-v2-r0-2",
+  "results/engine/scenarios/dev-v2-r0-3",
+  "results/engine/scenarios/dev-v2-r4-1",
+  "results/engine/scenarios/dev-v2-r4-2",
+  "results/engine/scenarios/dev-v2-r4-3"
+ ],
+ "paid_cost_usd": 0,
+ "profiles": {
+  "r0": {
+   "events": 399,
+   "fallback_c": 36,
+   "logged_query_checked": 137,
+   "logged_query_same": 137,
+   "logged_top8_same": 137,
+   "variants": {
+    "a": {
+     "items": 506,
+     "found@8": 197,
+     "found@16": 253,
+     "rate@8": 0.3893,
+     "rate@16": 0.5
+    },
+    "b": {
+     "items": 506,
+     "found@8": 219,
+     "found@16": 268,
+     "rate@8": 0.4328,
+     "rate@16": 0.5296
+    },
+    "c": {
+     "items": 506,
+     "found@8": 128,
+     "found@16": 147,
+     "rate@8": 0.253,
+     "rate@16": 0.2905
+    },
+    "d": {
+     "items": 506,
+     "found@8": 138,
+     "found@16": 191,
+     "rate@8": 0.2727,
+     "rate@16": 0.3775
+    },
+    "c_intent": {
+     "items": 506,
+     "found@8": 128,
+     "found@16": 156,
+     "rate@8": 0.253,
+     "rate@16": 0.3083
+    }
+   },
+   "sessions": {
+    "a": {
+     "items": 45,
+     "found@8": 20,
+     "found@16": 26,
+     "rate@8": 0.4444,
+     "rate@16": 0.5778
+    },
+    "b": {
+     "items": 45,
+     "found@8": 22,
+     "found@16": 31,
+     "rate@8": 0.4889,
+     "rate@16": 0.6889
+    },
+    "c": {
+     "items": 45,
+     "found@8": 18,
+     "found@16": 21,
+     "rate@8": 0.4,
+     "rate@16": 0.4667
+    },
+    "d": {
+     "items": 45,
+     "found@8": 21,
+     "found@16": 27,
+     "rate@8": 0.4667,
+     "rate@16": 0.6
+    },
+    "c_intent": {
+     "items": 45,
+     "found@8": 18,
+     "found@16": 21,
+     "rate@8": 0.4,
+     "rate@16": 0.4667
+    }
+   }
+  },
+  "r4": {
+   "events": 397,
+   "fallback_c": 36,
+   "logged_query_checked": 134,
+   "logged_query_same": 134,
+   "logged_top8_same": 134,
+   "variants": {
+    "a": {
+     "items": 504,
+     "found@8": 228,
+     "found@16": 260,
+     "rate@8": 0.4524,
+     "rate@16": 0.5159
+    },
+    "b": {
+     "items": 504,
+     "found@8": 235,
+     "found@16": 269,
+     "rate@8": 0.4663,
+     "rate@16": 0.5337
+    },
+    "c": {
+     "items": 504,
+     "found@8": 159,
+     "found@16": 171,
+     "rate@8": 0.3155,
+     "rate@16": 0.3393
+    },
+    "d": {
+     "items": 504,
+     "found@8": 159,
+     "found@16": 171,
+     "rate@8": 0.3155,
+     "rate@16": 0.3393
+    },
+    "c_intent": {
+     "items": 504,
+     "found@8": 159,
+     "found@16": 180,
+     "rate@8": 0.3155,
+     "rate@16": 0.3571
+    }
+   },
+   "sessions": {
+    "a": {
+     "items": 45,
+     "found@8": 24,
+     "found@16": 25,
+     "rate@8": 0.5333,
+     "rate@16": 0.5556
+    },
+    "b": {
+     "items": 45,
+     "found@8": 24,
+     "found@16": 27,
+     "rate@8": 0.5333,
+     "rate@16": 0.6
+    },
+    "c": {
+     "items": 45,
+     "found@8": 18,
+     "found@16": 21,
+     "rate@8": 0.4,
+     "rate@16": 0.4667
+    },
+    "d": {
+     "items": 45,
+     "found@8": 18,
+     "found@16": 21,
+     "rate@8": 0.4,
+     "rate@16": 0.4667
+    },
+    "c_intent": {
+     "items": 45,
+     "found@8": 18,
+     "found@16": 21,
+     "rate@8": 0.4,
+     "rate@16": 0.4667
+    }
+   }
+  }
+ }
+}
