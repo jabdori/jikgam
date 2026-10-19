@@ -118,6 +118,10 @@ def test_replay_swaps_in_place_with_keyed_rank_rows(tmp_path):
     rows = re.findall(r'<li class="rank-row[^"]*" data-key="([^"]+)"', page)
     assert rows and len(rows) == len(set(rows))
     assert re.search(r'data-key="(prev|next)"', page)
+    # 재생 목록의 발화 줄은 그 위치부터 재생하는 버튼이다. 첫 줄은 고객의 첫 발화라 처음부터 들을 수 있다
+    seeks = [float(x) for x in re.findall(r'<button class="play-item[^"]*" type="button" data-seek="([\d.]+)"', page)]
+    first = re.search(r'<ol class="playlist"[^>]*>\s*<li><(\w+) ', page)
+    assert seeks and first and first.group(1) == "button" and seeks[0] == min(seeks)
 
 
 def test_progress_refreshes_itself_only_while_running():

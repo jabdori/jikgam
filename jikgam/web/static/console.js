@@ -15,6 +15,7 @@
 //                         목록 항목은 새 자리로 옮겨 가고 막대는 새 길이로 바뀐다. 다른 화면으로 가는 링크는 CSS 화면 전환으로 연다
 //   data-listen="audio id" 누르면 그 녹음을 data-audio-at 요소가 가리키는 지금 위치부터 재생하거나 멈춘다
 //   data-cursor           재생 위치를 전체 길이 대비 비율(--at)로 옮긴다
+//   data-seek             재생 목록의 발화 줄. 누르면 녹음의 그 위치(초)부터 재생한다
 //   data-voice-test       관리 콘솔 음성 시험. 시작하면 에코 제거를 켠 마이크로 WebRTC 연결을 열고(data-offer), AI 음성을
 //                         숨은 audio로 재생한다. 종료(data-stop)나 연결이 끊기면 정리하고 화면을 다시 맞춘다
 // 움직임의 시간과 곡선은 tokens.css의 --motion-*, --ease-*에서 읽는다. 움직임 줄이기 설정이면 움직이지 않는다.
@@ -669,6 +670,17 @@
     audio.addEventListener("pause", function () { btn.setAttribute("aria-pressed", "false"); });
   }
 
+  // 재생 목록의 발화 줄: 그 위치부터 재생한다(판단 줄은 그 판단으로 옮기는 링크다)
+  function seekButton(btn) {
+    btn.addEventListener("click", function () {
+      var audio = document.querySelector("[data-player] audio");
+      var t = parseFloat(btn.getAttribute("data-seek") || "");
+      if (!audio || isNaN(t)) return;
+      audio.currentTime = t;
+      audio.play();
+    });
+  }
+
   function playButton(btn) {
     var box = btn.closest("[data-player]");
     var audio = box && box.querySelector("audio");
@@ -708,6 +720,7 @@
     scope.querySelectorAll("[data-play]").forEach(function (el) { once(el, playButton); });
     scope.querySelectorAll("form").forEach(function (el) { once(el, showFor); });
     scope.querySelectorAll("[data-voice-test]").forEach(function (el) { once(el, voiceTest); });
+    scope.querySelectorAll("[data-seek]").forEach(function (el) { once(el, seekButton); });
   }
 
   onReady(function () {

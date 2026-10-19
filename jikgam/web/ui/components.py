@@ -679,6 +679,7 @@ class PlayItem:
     current: bool = False
     past: bool = False
     cue: tuple[float, float] | None = None
+    seek: float | None = None   # 누르면 녹음의 이 위치(초)부터 재생한다(href가 없는 발화 줄)
 
 
 def playlist(items: Sequence[PlayItem], label: str) -> Markup:
@@ -688,8 +689,12 @@ def playlist(items: Sequence[PlayItem], label: str) -> Markup:
         inner = [h("span", {"class": "play-at"}, it.at), h("span", {"class": f"play-kind t-{it.kind_tone}"}, it.kind),
                  h("span", {"class": "play-text"}, it.text)]
         cls = classes("play-item", "is-current" if it.current else None, "is-past" if it.past else None)
-        node = h("a", {"class": cls, "href": it.href, "aria-current": "true" if it.current else None, **cue}, *inner) \
-            if it.href else h("div", {"class": cls, **cue}, *inner)
+        if it.href:
+            node = h("a", {"class": cls, "href": it.href, "aria-current": "true" if it.current else None, **cue}, *inner)
+        elif it.seek is not None:
+            node = h("button", {"class": cls, "type": "button", "data-seek": f"{it.seek:.3f}", **cue}, *inner)
+        else:
+            node = h("div", {"class": cls, **cue}, *inner)
         out.append(h("li", None, node))
     return h("ol", {"class": "playlist", "aria-label": label}, *out)
 

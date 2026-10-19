@@ -92,12 +92,12 @@ def band(r: rp.Replay, cur: rp.Decision, s: rp.Session, audio: str | None) -> An
 def playlist(r: rp.Replay, cur: rp.Decision, s: rp.Session) -> Any:
     items: list[tuple[float, ui.PlayItem]] = []
     for a, b, text in r.customer:
-        items.append((a, ui.PlayItem(fmt.clock(a, tenths=True), "고객", "caution", text)))
+        items.append((a, ui.PlayItem(fmt.clock(a, tenths=True), "고객", "caution", text, seek=a)))
     for a, b, ans in r.ai:
-        items.append((a, ui.PlayItem(fmt.clock(a, tenths=True), "AI", "accent", ans.text)))
+        items.append((a, ui.PlayItem(fmt.clock(a, tenths=True), "AI", "accent", ans.text, seek=a)))
     for t, played, _ in r.barges:
         items.append((t, ui.PlayItem(fmt.clock(t, tenths=True), "끼어듦", "negative",
-                                     ui.joined("AI 음성 ", fmt.seconds_fine(played), " 만에 중단", sep=""))))
+                                     ui.joined("AI 음성 ", fmt.seconds_fine(played), " 만에 중단", sep=""), seek=t)))
     for d in r.decisions:
         text = ui.joined("이전 답 무효" if d.invalidated else None, intent(d.intent), lb.label(lb.ACTION, d.action))
         items.append((d.at_s, ui.PlayItem(fmt.clock(d.at_s, tenths=True), f"v{d.version}",
