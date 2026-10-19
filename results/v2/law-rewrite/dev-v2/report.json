@@ -1,0 +1,212 @@
+{
+ "documents": [
+  "consumer-act",
+  "content-act",
+  "content-guide",
+  "dispute-std",
+  "ecom-act",
+  "ecom-decree",
+  "ecom-rule",
+  "ecom-terms",
+  "terms-act"
+ ],
+ "runs": [
+  "results/engine/scenarios/dev-v2-r0-1",
+  "results/engine/scenarios/dev-v2-r0-2",
+  "results/engine/scenarios/dev-v2-r0-3",
+  "results/engine/scenarios/dev-v2-r4-1",
+  "results/engine/scenarios/dev-v2-r4-2",
+  "results/engine/scenarios/dev-v2-r4-3"
+ ],
+ "estimate": {
+  "calls": 468,
+  "input_chars": 386350,
+  "est_tokens_in": 386350,
+  "est_tokens_out": 280800,
+  "est_cost_usd": 1.343,
+  "model": "gemini-3.8-flash",
+  "thinking_level": "low"
+ },
+ "prompt": "다음은 고객센터 상담 대화다. 이 대화에서 고객의 상황과 요청을, 관련 규정을 찾는 데 쓸 독립된 검색 문장 하나로 다시 써라.\n- 고객이 말한 구체적인 단서(상품이나 서비스, 기간과 날짜, 금액, 결제 방법, 상황)는 빠뜨리지 말고 남긴다.\n- 대화에 없는 사실은 더하지 않는다. 고객 이름, 전화번호, 인증번호 같은 개인 정보는 넣지 않는다.\n- 설명 없이 검색 문장 한 줄만 답한다.",
+ "generator": "gemini-flash",
+ "profiles": {
+  "r0": {
+   "events": 399,
+   "rewrite_failed": 0,
+   "logged_query_checked": 137,
+   "logged_query_same": 137,
+   "logged_top8_same": 137,
+   "variants": {
+    "a": {
+     "items": 506,
+     "found@8": 197,
+     "found@16": 253,
+     "rate@8": 0.3893,
+     "rate@16": 0.5
+    },
+    "e1": {
+     "items": 506,
+     "found@8": 105,
+     "found@16": 169,
+     "rate@8": 0.2075,
+     "rate@16": 0.334
+    },
+    "e2": {
+     "items": 506,
+     "found@8": 121,
+     "found@16": 177,
+     "rate@8": 0.2391,
+     "rate@16": 0.3498
+    },
+    "f": {
+     "items": 506,
+     "found@8": 106,
+     "found@16": 185,
+     "rate@8": 0.2095,
+     "rate@16": 0.3656
+    },
+    "g": {
+     "items": 506,
+     "found@8": 118,
+     "found@16": 193,
+     "rate@8": 0.2332,
+     "rate@16": 0.3814
+    }
+   },
+   "sessions": {
+    "a": {
+     "items": 45,
+     "found@8": 20,
+     "found@16": 26,
+     "rate@8": 0.4444,
+     "rate@16": 0.5778
+    },
+    "e1": {
+     "items": 45,
+     "found@8": 24,
+     "found@16": 30,
+     "rate@8": 0.5333,
+     "rate@16": 0.6667
+    },
+    "e2": {
+     "items": 45,
+     "found@8": 24,
+     "found@16": 29,
+     "rate@8": 0.5333,
+     "rate@16": 0.6444
+    },
+    "f": {
+     "items": 45,
+     "found@8": 22,
+     "found@16": 30,
+     "rate@8": 0.4889,
+     "rate@16": 0.6667
+    },
+    "g": {
+     "items": 45,
+     "found@8": 23,
+     "found@16": 31,
+     "rate@8": 0.5111,
+     "rate@16": 0.6889
+    }
+   }
+  },
+  "r4": {
+   "events": 397,
+   "rewrite_failed": 0,
+   "logged_query_checked": 134,
+   "logged_query_same": 134,
+   "logged_top8_same": 134,
+   "variants": {
+    "a": {
+     "items": 504,
+     "found@8": 228,
+     "found@16": 260,
+     "rate@8": 0.4524,
+     "rate@16": 0.5159
+    },
+    "e1": {
+     "items": 504,
+     "found@8": 175,
+     "found@16": 203,
+     "rate@8": 0.3472,
+     "rate@16": 0.4028
+    },
+    "e2": {
+     "items": 504,
+     "found@8": 191,
+     "found@16": 243,
+     "rate@8": 0.379,
+     "rate@16": 0.4821
+    },
+    "f": {
+     "items": 504,
+     "found@8": 153,
+     "found@16": 230,
+     "rate@8": 0.3036,
+     "rate@16": 0.4563
+    },
+    "g": {
+     "items": 504,
+     "found@8": 161,
+     "found@16": 254,
+     "rate@8": 0.3194,
+     "rate@16": 0.504
+    }
+   },
+   "sessions": {
+    "a": {
+     "items": 45,
+     "found@8": 24,
+     "found@16": 25,
+     "rate@8": 0.5333,
+     "rate@16": 0.5556
+    },
+    "e1": {
+     "items": 45,
+     "found@8": 27,
+     "found@16": 31,
+     "rate@8": 0.6,
+     "rate@16": 0.6889
+    },
+    "e2": {
+     "items": 45,
+     "found@8": 27,
+     "found@16": 31,
+     "rate@8": 0.6,
+     "rate@16": 0.6889
+    },
+    "f": {
+     "items": 45,
+     "found@8": 26,
+     "found@16": 35,
+     "rate@8": 0.5778,
+     "rate@16": 0.7778
+    },
+    "g": {
+     "items": 45,
+     "found@8": 27,
+     "found@16": 35,
+     "rate@8": 0.6,
+     "rate@16": 0.7778
+    }
+   }
+  }
+ },
+ "rewrite": {
+  "calls": 468,
+  "ok": 468,
+  "failed": 0,
+  "latency_ms": {
+   "p50": 1842.4,
+   "p95": 2614.3,
+   "max": 4209.5
+  },
+  "tokens_in": 224414,
+  "tokens_out": 20730,
+  "cost_usd": 0.246,
+  "models": [
+   "gemini-3.8-flash"
+  ]
+ }
+}
