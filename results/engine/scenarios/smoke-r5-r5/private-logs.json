@@ -1,0 +1,30 @@
+{
+ "version": 1,
+ "run_id": "smoke-r5-r5",
+ "files": {
+  "summary.json": {
+   "sha256": "d7ddbc0463063afcc20f8ec245c29a5f8e680afad1f8ccc5f7515c1253252221",
+   "redacted_regions": 0,
+   "redacted_fragments": 0,
+   "public_sha256": "d7ddbc0463063afcc20f8ec245c29a5f8e680afad1f8ccc5f7515c1253252221"
+  },
+  "sv02-r1-smoke-r5-r5.jsonl": {
+   "sha256": "1c253d9e5fc9ba2a737780767c8a1abe8b0304c3747a86fe462fab1756cc4c45",
+   "redacted_regions": 0,
+   "redacted_fragments": 0,
+   "public_sha256": "1c253d9e5fc9ba2a737780767c8a1abe8b0304c3747a86fe462fab1756cc4c45"
+  },
+  "sv02-r1-smoke-r5-r5.judge.json": {
+   "sha256": "744df9abe6494eac2fad7bfdad4d3847a11208d3f3a4ec0358a0493453025a3d",
+   "redacted_regions": 0,
+   "redacted_fragments": 0,
+   "public_sha256": "744df9abe6494eac2fad7bfdad4d3847a11208d3f3a4ec0358a0493453025a3d"
+  },
+  "sv02-r1-smoke-r5-r5.sim.jsonl": {
+   "sha256": "2ea843bb162de14901fbbccfc098931c857176605f8c2a95fd13dcf2d11111a7",
+   "redacted_regions": 0,
+   "redacted_fragments": 0,
+   "public_sha256": "2ea843bb162de14901fbbccfc098931c857176605f8c2a95fd13dcf2d11111a7"
+  }
+ }
+}

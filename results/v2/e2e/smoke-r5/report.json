@@ -1,0 +1,260 @@
+{
+ "r0": {
+  "valid": 1,
+  "passed": 1,
+  "claims": 19,
+  "unsupported": 0,
+  "missing": 0,
+  "law_items": 1,
+  "law_found": 1,
+  "invalid": 0,
+  "unknown_compliance": 0,
+  "missing_planned_runs": 0,
+  "excluded_fixed_suggestions": 0,
+  "claim_status": "판정 완료",
+  "generation_inputs_missing": 0,
+  "legacy_cited_articles": {
+   "label": "인용 조항만 준 이전 판정",
+   "claims": 0,
+   "unsupported": 0,
+   "rate": null
+  },
+  "unknown_pass": 0,
+  "ai_judge_errors": 0,
+  "unknown_items": {
+   "1": 0,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 0,
+   "6": 0,
+   "7": 0,
+   "8": 0,
+   "9": 0,
+   "10": 0
+  },
+  "claim_judge_failures": 0,
+  "log_sources": {
+   "private_sessions": 1,
+   "public_sessions": 0
+  },
+  "pass_rate": 1.0,
+  "unsupported_claim_rate": 0.0,
+  "law_evidence": {
+   "items": 1,
+   "found": 1,
+   "rate": 1.0
+  },
+  "claim_judgment_complete": true,
+  "refresh_ms": {
+   "events": 1,
+   "p50": 266.764,
+   "p95": 266.764,
+   "misses": 0
+  },
+  "stale": {
+   "by_channel": {
+    "chat": {
+     "invalid": 0,
+     "denominator": 3,
+     "unconfirmed": 0
+    }
+   },
+   "events_total": 1,
+   "events_with_invalid": 0
+  },
+  "failures": {
+   "1": 0,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 0,
+   "6": 0,
+   "7": 0,
+   "8": 0,
+   "9": 0,
+   "10": 0
+  },
+  "precision": 0.4,
+  "law_precision": 0.167,
+  "law_tokens": {
+   "mean": 2270.0,
+   "sum": 2270
+  },
+  "cost_usd": {
+   "customer": 0.0073620000000000005,
+   "decision": 0.0045982440000000005,
+   "generation": 0.02841825,
+   "judge": 0.027304,
+   "claims": 0.150066,
+   "total": 0.21774849400000001
+  }
+ },
+ "r5": {
+  "valid": 1,
+  "passed": 1,
+  "claims": 14,
+  "unsupported": 0,
+  "missing": 0,
+  "law_items": 1,
+  "law_found": 1,
+  "invalid": 0,
+  "unknown_compliance": 0,
+  "missing_planned_runs": 0,
+  "excluded_fixed_suggestions": 0,
+  "claim_status": "판정 완료",
+  "generation_inputs_missing": 0,
+  "legacy_cited_articles": {
+   "label": "인용 조항만 준 이전 판정",
+   "claims": 0,
+   "unsupported": 0,
+   "rate": null
+  },
+  "unknown_pass": 0,
+  "ai_judge_errors": 0,
+  "unknown_items": {
+   "1": 0,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 0,
+   "6": 0,
+   "7": 0,
+   "8": 0,
+   "9": 0,
+   "10": 0
+  },
+  "claim_judge_failures": 0,
+  "log_sources": {
+   "private_sessions": 1,
+   "public_sessions": 0
+  },
+  "pass_rate": 1.0,
+  "unsupported_claim_rate": 0.0,
+  "law_evidence": {
+   "items": 1,
+   "found": 1,
+   "rate": 1.0
+  },
+  "claim_judgment_complete": true,
+  "refresh_ms": {
+   "events": 1,
+   "p50": 327.603,
+   "p95": 327.603,
+   "misses": 0
+  },
+  "stale": {
+   "by_channel": {
+    "chat": {
+     "invalid": 0,
+     "denominator": 3,
+     "unconfirmed": 0
+    }
+   },
+   "events_total": 1,
+   "events_with_invalid": 0
+  },
+  "failures": {
+   "1": 0,
+   "2": 0,
+   "3": 0,
+   "4": 0,
+   "5": 0,
+   "6": 0,
+   "7": 0,
+   "8": 0,
+   "9": 0,
+   "10": 0
+  },
+  "precision": 0.5,
+  "law_precision": 0.25,
+  "law_tokens": {
+   "mean": 3071.0,
+   "sum": 3071
+  },
+  "cost_usd": {
+   "customer": 0.00580575,
+   "decision": 0.00590247,
+   "generation": 0.02633925,
+   "judge": 0.030392,
+   "claims": 0.126626,
+   "total": 0.19506547
+  }
+ },
+ "other": "r5",
+ "pass_delta": 0.0,
+ "law_evidence_delta": 0.0,
+ "bootstrap": {
+  "reps": 10000,
+  "seed": 20261016,
+  "scenarios": 1,
+  "ci95": {
+   "pass_r0": [
+    1.0,
+    1.0
+   ],
+   "pass_r5": [
+    1.0,
+    1.0
+   ],
+   "pass_delta": [
+    0.0,
+    0.0
+   ],
+   "unsupported_r0": [
+    0.0,
+    0.0
+   ],
+   "unsupported_r5": [
+    0.0,
+    0.0
+   ],
+   "unsupported_delta": [
+    0.0,
+    0.0
+   ],
+   "law_r0": [
+    1.0,
+    1.0
+   ],
+   "law_r5": [
+    1.0,
+    1.0
+   ],
+   "law_delta": [
+    0.0,
+    0.0
+   ]
+  },
+  "effective_draws": {
+   "pass_r0": 10000,
+   "pass_r5": 10000,
+   "pass_delta": 10000,
+   "unsupported_r0": 10000,
+   "unsupported_r5": 10000,
+   "unsupported_delta": 10000,
+   "law_r0": 10000,
+   "law_r5": 10000,
+   "law_delta": 10000
+  }
+ },
+ "contract_status": "계약 일치",
+ "conditions": {
+  "pass_noninferior": true,
+  "pass_improved": false,
+  "unsupported_not_higher": true,
+  "refresh_p95_le_500": true,
+  "law_evidence_better": false
+ },
+ "human_check": {
+  "status": "미확인"
+ },
+ "automated_conditions": {
+  "pass_noninferior": true,
+  "pass_improved": false,
+  "unsupported_not_higher": true,
+  "refresh_p95_le_500": true,
+  "law_evidence_better": false
+ },
+ "deferred_conditions": []
+}

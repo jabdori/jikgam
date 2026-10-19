@@ -1,0 +1,30 @@
+{
+ "version": 1,
+ "run_id": "smoke-r5-r0",
+ "files": {
+  "summary.json": {
+   "sha256": "ccc31d8d1d9ea2e955dc2b01524537c85218fcd5635d729f7493974516384b94",
+   "redacted_regions": 0,
+   "redacted_fragments": 0,
+   "public_sha256": "ccc31d8d1d9ea2e955dc2b01524537c85218fcd5635d729f7493974516384b94"
+  },
+  "sv02-r1-smoke-r5-r0.jsonl": {
+   "sha256": "6dee431598f243aecddeb40beb15fabeb9a00a587f5e00b2d2532ca6673c78e1",
+   "redacted_regions": 2,
+   "redacted_fragments": 2,
+   "public_sha256": "6b669683433b577682f9f535083a893fe478d9fa7144a0efc48b228003dbabf6"
+  },
+  "sv02-r1-smoke-r5-r0.judge.json": {
+   "sha256": "113f1a7f0c6e1fe49ec248bd3547c32b6e3193d58b219599940435dfb4d0fa3f",
+   "redacted_regions": 0,
+   "redacted_fragments": 0,
+   "public_sha256": "113f1a7f0c6e1fe49ec248bd3547c32b6e3193d58b219599940435dfb4d0fa3f"
+  },
+  "sv02-r1-smoke-r5-r0.sim.jsonl": {
+   "sha256": "2a15283c60e0365f11fce2119949d8723ae4eb27e3d4f0264f5d169766ec2580",
+   "redacted_regions": 0,
+   "redacted_fragments": 0,
+   "public_sha256": "2a15283c60e0365f11fce2119949d8723ae4eb27e3d4f0264f5d169766ec2580"
+  }
+ }
+}
