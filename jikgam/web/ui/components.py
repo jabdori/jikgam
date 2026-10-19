@@ -564,13 +564,18 @@ def item_list(items: Sequence[ListItem], label: str, cards: bool = False) -> Mar
 
 
 def player(src: str, label: str, start: float | None = None, stops: Sequence[float] = (), target: str | None = None,
-           controls: Node = None, native: bool = True) -> Markup:
+           controls: Node = None, native: bool = True, decisions: Sequence[float] = (), decision: int | None = None,
+           decision_href: str | None = None) -> Markup:
     """녹음 재생기. 같은 문서의 data-cue-start/end 요소(대화 줄, 재생 목록)가 재생 위치에 맞춰 강조된다.
     stops는 '판단 시점마다 멈춤'에 쓰는 시각(초), target은 맞출 영역의 id(없으면 문서 전체).
-    native=False면 브라우저 기본 컨트롤 대신 재생 버튼 하나를 두고, 위치는 화면의 재생 띠(lanes)로 보인다."""
+    native=False면 브라우저 기본 컨트롤 대신 재생 버튼 하나를 두고, 위치는 화면의 재생 띠(lanes)로 보인다.
+    decisions(판단 번호 순서의 시각)와 decision_href(뒤에 번호를 붙이면 그 판단 화면)를 주면, 재생하거나 위치를 옮길 때
+    화면이 그 시각 직전의 판단(decision은 지금 화면의 번호)으로 제자리에서 바뀐다."""
     a = {"class": "player", "data-player": True, "data-target": target,
          "data-stops": " ".join(f"{s:.3f}" for s in stops) or None,
-         "data-start": None if start is None else f"{start:.3f}"}
+         "data-start": None if start is None else f"{start:.3f}",
+         "data-decisions": " ".join(f"{t:.3f}" for t in decisions) or None,
+         "data-decision": None if decision is None else str(decision), "data-decision-href": decision_href}
     if native:
         return h("div", a, h("audio", {"controls": True, "preload": "metadata", "src": src, "aria-label": label}), controls)
     return h("div", a, h("audio", {"preload": "metadata", "src": src, "aria-label": label}),
@@ -646,8 +651,10 @@ class Mark:
 
 
 def lanes(rows: Sequence[Lane], marks: Sequence[Mark], cursor: float | None, ticks: Sequence[tuple[float, Node]],
-          label: str, cuts: Sequence[float] = ()) -> Markup:
-    """통화 전체 위의 화자별 구간 띠, 판단 표시, 지금 위치 선. 위치는 모두 전체 길이 대비 %다. cuts는 끼어들기 위치."""
+          label: str, cuts: Sequence[float] = (), scrub: tuple[float, float, float] | None = None) -> Markup:
+    """통화 전체 위의 화자별 구간 띠, 판단 표시, 지금 위치 선. 위치는 모두 전체 길이 대비 %다. cuts는 끼어들기 위치.
+    scrub=(전체 초, 지금 초, 키보드 한 칸 초)이면 띠를 누르거나 끌어 재생 위치를 옮기고, 위치 선은 키보드 슬라이더다
+    (←/→ 한 칸, PageUp/PageDown 판단 하나, Home/End 처음·끝)."""
     out = []
     for ln in rows:
         out.append(h("span", {"class": "lane-label"}, ln.label))
@@ -663,10 +670,14 @@ def lanes(rows: Sequence[Lane], marks: Sequence[Mark], cursor: float | None, tic
                                    "style": _style_vars(at=m.at)}, m.label)) for m in marks]))
     out.append(h("span", {"class": "lane-label"}))
     out.append(h("div", {"class": "lane-ticks"},
-                 h("span", {"class": "lane-cursor", "style": _style_vars(at=cursor), "data-cursor": True})
+                 h("span", {"class": "lane-cursor", "style": _style_vars(at=cursor), "data-cursor": True, "data-key": "cursor",
+                            **({"role": "slider", "tabindex": "0", "aria-label": "재생 위치(초)", "aria-valuemax": f"{scrub[0]:.1f}",
+                                "aria-valuenow": f"{scrub[1]:.1f}"} if scrub else {})})
                  if cursor is not None else None,
                  *[h("span", {"class": "lane-tick", "style": _style_vars(at=at)}, t) for at, t in ticks]))
-    return h("div", {"class": "lanes", "role": "group", "aria-label": label}, *out)
+    return h("div", {"class": "lanes", "role": "group", "aria-label": label,
+                     **({"data-scrub": True, "data-duration": f"{scrub[0]:.3f}", "data-step": f"{scrub[2]:.3f}"} if scrub else {})},
+             *out)
 
 
 @dataclass

@@ -124,6 +124,19 @@ def test_replay_swaps_in_place_with_keyed_rank_rows(tmp_path):
     assert seeks and first and first.group(1) == "button" and seeks[0] == min(seeks)
 
 
+
+def test_scrubbable_band_and_player_that_follows_decisions():
+    """재생 띠는 끌 수 있고 위치 선은 키보드 슬라이더다. 재생기는 판단 시각과 판단 주소를 알아 화면이 재생 위치를 따라간다."""
+    band = str(ui.lanes([ui.Lane("고객", [ui.Seg(10.0, 5.0, "customer")])], [], 25.0, [], "통화", scrub=(80.0, 20.0, 2.0)))
+    assert 'data-scrub data-duration="80.000" data-step="2.000"' in band
+    assert re.search(r'class="lane-cursor"[^>]*data-key="cursor" role="slider" tabindex="0"[^>]*aria-valuenow="20.0"', band)
+    plain = str(ui.lanes([ui.Lane("고객", [])], [], 25.0, [], "통화"))
+    assert "data-scrub" not in plain and "slider" not in plain  # 녹음이 없으면 끌 수 없다
+    player = str(ui.player("/a.wav", "녹음", start=20.0, native=False, decisions=[6.4, 20.0, 31.5], decision=2,
+                           decision_href="/admin/replay?s=r/x&at="))
+    assert 'data-decisions="6.400 20.000 31.500" data-decision="2" data-decision-href="/admin/replay?s=r/x&amp;at="' in player
+
+
 def test_progress_refreshes_itself_only_while_running():
     from jikgam.web.admin import retrieval
     from jikgam.web.saas import knowledge

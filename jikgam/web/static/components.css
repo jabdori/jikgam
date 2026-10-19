@@ -466,6 +466,11 @@ h2.pane-title { font-size: var(--text-lg); font-weight: var(--weight-semibold); 
 .lane-ticks { position: relative; height: var(--space-6); }
 .lane-tick { position: absolute; left: var(--at); transform: translateX(-50%); font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--color-text-muted); }
 .lane-cursor { position: absolute; left: var(--at); top: calc(var(--size-track) * -4); bottom: var(--space-0); width: var(--border-2); background: var(--color-text); }
+/* 끌 수 있는 재생 띠: 띠 어디를 눌러도 옮기고, 위치 선 위쪽 손잡이로 끈다. 세로 스크롤은 그대로 둔다 */
+.lanes[data-scrub] { cursor: pointer; touch-action: pan-y; user-select: none; }
+.lanes[data-scrub] .lane-cursor::before { content: ""; position: absolute; top: calc(var(--space-3) * -1); left: 50%; width: var(--space-6); height: var(--space-6); transform: translateX(-50%); border-radius: var(--radius-round); background: var(--color-text); }
+.lanes.c-scrubbing { cursor: grabbing; }
+.lanes.c-scrubbing .lane-cursor { transition: none; }
 
 .playlist { display: flex; flex-direction: column; }
 .play-item { display: grid; grid-template-columns: var(--size-play-time) var(--size-play-kind) minmax(var(--space-0), 1fr); gap: var(--space-4); padding: var(--space-3) var(--space-8); font-size: var(--text-sm); color: var(--color-text-muted); text-decoration: none; }
@@ -619,6 +624,11 @@ button.play-item { width: 100%; border: none; background: none; font: inherit; f
   margin var(--motion-base) var(--ease-standard); }
 
 /* 새 대화 줄은 아래에서 살짝 올라오며 나타난다. 처음 연 화면의 줄에는 붙지 않는다(console.js가 새로 붙인 줄에만 c-enter) */
+.rank-row.c-moved { animation: rank-moved var(--motion-rank) var(--ease-move); border-radius: var(--radius-xs); }
+@keyframes rank-moved {
+  from { background: var(--color-selected); }
+  to { background: transparent; }
+}
 @keyframes rise-in {
   from { opacity: 0; transform: translateY(var(--motion-rise)); }
   to { opacity: 1; transform: none; }

@@ -15,6 +15,7 @@ HEAT_DARK_ABOVE = 0.45
 REPLAY_DEFAULT = "20261014-voice-r2/s20-voice-20261014-voice-r2"
 # 통화 리플레이: 음성 세션인지 볼 때 읽는 로그 앞부분 줄 수(voice.session은 세션 시작 직후에 있다)
 REPLAY_HEAD_LINES = 12
+REPLAY_SCRUB_STEP_S = 2.0  # 재생 위치 선을 키보드 ←/→로 옮기는 한 칸(초)
 # 통화 리플레이: 재생 띠에서 판단 표시를 하나로 묶는 거리(전체 길이 대비 %)
 REPLAY_MARK_MERGE_PCT = 2.5
 # 재생 띠 아래 눈금 간격(초)

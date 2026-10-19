@@ -261,6 +261,17 @@ def keys_replay(page: Page, base: str) -> None:
     press_and_wait(page, "Enter")
     if "at=" not in page.url:
         raise AssertionError("재생 목록의 판단을 키보드로 열 수 없다")
+    # 재생 띠의 위치 선(슬라이더): Home으로 처음, PageUp으로 다음 판단. 화면이 그 판단으로 바뀌고 포커스는 그대로다
+    page.goto(base + "/admin/replay", wait_until="networkidle")
+    keys_skip(page)
+    tab_until(page, "[data-cursor][role=slider]")
+    focus_visible(page)
+    page.keyboard.press("Home")
+    page.wait_for_function("() => new URL(location.href).searchParams.get('at') === '1'", timeout=5000)
+    page.keyboard.press("PageUp")
+    page.wait_for_function("() => new URL(location.href).searchParams.get('at') === '2'", timeout=5000)
+    if not page.evaluate("() => document.activeElement && document.activeElement.hasAttribute('data-cursor')"):
+        raise AssertionError("재생 위치를 키보드로 옮긴 뒤 포커스를 잃는다")
 
 
 def keys_models(page: Page, base: str) -> None:

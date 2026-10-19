@@ -82,9 +82,11 @@ def band(r: rp.Replay, cur: rp.Decision, s: rp.Session, audio: str | None) -> An
         marks(r, cur, s), pct(r, cur.at_s),
         [(pct(r, t), fmt.clock(t, kind="axis")) for t in range(0, int(r.duration_s), settings.REPLAY_TICK_S)]
         + [(pct(r, r.duration_s), fmt.clock(r.duration_s))],
-        label="통화 전체 위의 발화와 판단", cuts=[pct(r, t) for t, _, _ in r.barges])
+        label="통화 전체 위의 발화와 판단", cuts=[pct(r, t) for t, _, _ in r.barges],
+        scrub=(r.duration_s, cur.at_s, settings.REPLAY_SCRUB_STEP_S) if audio else None)
     player = ui.player(audio, label="통화 녹음", start=cur.at_s, stops=[d.at_s for d in r.decisions], target="playlist",
-                       controls=controls, native=False) if audio \
+                       controls=controls, native=False, decisions=[d.at_s for d in r.decisions], decision=cur.index,
+                       decision_href=href(s) + "&at=") if audio \
         else ui.stack(ui.notice("이 통화의 녹음 파일이 없어 재생할 수 없습니다.", tone="caution"), controls, gap="sm")
     return ui.card(player, lanes, label="재생")
 
